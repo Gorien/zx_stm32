@@ -1768,8 +1768,11 @@ static void op_0xca(void)
 
 static void op_0xcb(void)
 {
-	prefix=0xCB;
-	no_int=1;
+	//prefix=0xCB;
+	//no_int=1;
+	R++;
+	opcode=NEXT_BYTE;
+	(*opcode_cb[opcode])();
 	return;
 }
 
@@ -1977,8 +1980,11 @@ static void op_0xdc(void)
 
 static void op_0xdd(void)
 {
-	prefix=0xDD;
-	no_int=1;
+	//prefix=0xDD;
+	//no_int=1;
+	R++;
+	opcode=NEXT_BYTE;
+	(*opcode_dd[opcode])();
 	return;
 }
 
@@ -2158,8 +2164,11 @@ static void op_0xec(void)
 
 static void op_0xed(void)
 {
-	prefix=0xED;
-	no_int=1;
+	//prefix=0xED;
+	//no_int=1;
+	R++;
+	opcode=NEXT_BYTE;
+	(*opcode_ed[opcode])();
 	return;
 }
 
@@ -2337,8 +2346,11 @@ static void op_0xfc(void)
 
 static void op_0xfd(void)
 {
-	prefix=0xFD;
-	no_int=1;
+	//prefix=0xFD;
+	//no_int=1;
+	R++;
+	opcode=NEXT_BYTE;
+	(*opcode_fd[opcode])();
 	return;
 }
 

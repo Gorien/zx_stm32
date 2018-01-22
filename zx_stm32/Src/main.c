@@ -42,6 +42,7 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN Includes */
+#include "z80.h"
 
 /* USER CODE END Includes */
 
@@ -96,10 +97,13 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  z80_reset();
+
   while (1)
   {
+	  z80_run();
 
-	  HAL_Delay(500);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */

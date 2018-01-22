@@ -733,6 +733,14 @@ static void op_FD_0xbe(void)
 }
 
 
+static void op_FD_0xcb(void)
+{
+	d.u=NEXT_BYTE;
+	opcode=NEXT_BYTE;
+	(*opcode_fdcb[opcode])();
+	return;
+}
+
 /*POP IY*/
 static void op_FD_0xe1(void)
 {
@@ -795,7 +803,7 @@ static void (*opcode_fd[0x100])(void)={
 	non_FD    , non_FD    , non_FD    , non_FD    , op_FD_0x94, op_FD_0x95, op_FD_0x96, non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , op_FD_0x9c, op_FD_0x9d, op_FD_0x9e, non_FD    ,
 	non_FD    , non_FD    , non_FD    , non_FD    , op_FD_0xa4, op_FD_0xa5, op_FD_0xa6, non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , op_FD_0xac, op_FD_0xad, op_FD_0xae, non_FD    ,
 	non_FD    , non_FD    , non_FD    , non_FD    , op_FD_0xb4, op_FD_0xb5, op_FD_0xb6, non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , op_FD_0xbc, op_FD_0xbd, op_FD_0xbe, non_FD    ,
-	non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    ,
+	non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , op_FD_0xcb, non_FD    , non_FD    , non_FD    , non_FD    ,
 	non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    ,
 	non_FD    , op_FD_0xe1, non_FD    , op_FD_0xe3, non_FD    , op_FD_0xe5, non_FD    , non_FD    , non_FD    , op_FD_0xe9, non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    ,
 	non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , op_FD_0xf9, non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD

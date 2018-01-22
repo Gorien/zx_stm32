@@ -7,20 +7,21 @@
 
 
 #include "stm32f4xx_hal.h"
-
 #include "z80.h"
 #include "z80_macros.h"
 
+static void (*opcode_cb[0x100])(void);
+static void (*opcode_dd[0x100])(void);
+static void (*opcode_ddcb[0x100])(void);
+static void (*opcode_ed[0x100])(void);
+static void (*opcode_fd[0x100])(void);
+static void (*opcode_fdcb[0x100])(void);
+
 #include "z80_rom.c"
 #include "z80_ram.c"
-
-/*include z80 registr*/
 #include "z80_registers.c"
-
-/*include tables*/
 #include "z80_table.c"
 
-/*include opcodes*/
 #include "z80_opcodes_base.c"
 #include "z80_opcodes_cb.c"
 #include "z80_opcodes_dd.c"
@@ -101,7 +102,7 @@ void z80_run(void)
 	(*opcode_base[opcode])();
 	R++;
 
-	if (prefix==0xCB)
+	/*if (prefix==0xCB)
 	{
 		opcode=NEXT_BYTE;
 		(*opcode_cb[opcode])();
@@ -160,50 +161,50 @@ void z80_run(void)
 			no_int=0;
 			m_cycle+=4;
 		}
-		}
+		}*/
 	}
 }
 
 
 void poke(uint16_t addr, uint8_t value)
 {
-	if (addr<0x4000)//ROM
+	if (addr<0x4000)
 	{
 	}
-	else if (addr<0x5800)//screen_RAM
+	else if (addr<0x5800)
 	{
 		addr=addr-0x4000;
 		screen_RAM [((addr&0x181F)|((addr&0xE0)<<3)|((addr&0x700)>>3))]=(value);
 	}
-	else if (addr<0x5B00)//attribute_RAM
+	else if (addr<0x5B00)
 	{
 		attribute_RAM [addr-0x5800]=value;
 	}
 	else
 	{
-		RAM[addr-0x5B00]=value;//RAM
+		RAM[addr-0x5B00]=value;
 	}
 }
 
 uint8_t peek(uint16_t addr)
 {
 	uint8_t value;
-	if (addr<0x4000)//ROM
+	if (addr<0x4000)
 	{
 		value=ROM[addr];
 	}
-	else if (addr<0x5800)//screen_RAM
+	else if (addr<0x5800)
 	{
 		addr=addr-0x4000;
 		value=screen_RAM [((addr&0x181F)|((addr&0xE0)<<3)|((addr&0x700)>>3))];
 	}
-	else if (addr<0x5B00)//attribute_RAM
+	else if (addr<0x5B00)
 	{
 		value=attribute_RAM [addr-0x5800];
 	}
 	else
 	{
-		value=RAM[addr-0x5B00];//RAM
+		value=RAM[addr-0x5B00];
 	}
 	return value;
 }
@@ -222,7 +223,7 @@ uint16_t peek16(uint16_t addr)
 uint8_t in(uint16_t port)
 {
 	uint8_t input;
-	if ((port&0x00FF)==0xFE)//перехват порта 0xFE
+	if ((port&0x00FF)==0xFE)//port 0xFE
 	{
 		//GPIOC->ODR&=0x00FF;
 		//GPIOC->ODR|=port&0xFF00;
@@ -248,7 +249,7 @@ uint8_t in(uint16_t port)
 
 void out(uint16_t port, uint8_t value)
 {
-	if ((port&0xFF)==0x00FE)//перехват порта 0xFE
+	if ((port&0xFF)==0x00FE)//port 0xFE
 	{
 		//border=color [value&0x07];//D[0-2]цвет бордюра
 
