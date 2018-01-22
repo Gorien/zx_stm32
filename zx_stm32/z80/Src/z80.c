@@ -1,24 +1,33 @@
+/*
+ * z80.c
+ *
+ *  Created on: 22 янв. 2018 г.
+ *      Author: Beloussov
+ */
+
+
 #include "stm32f4xx_hal.h"
 
 #include "z80.h"
+#include "z80_macros.h"
 
-#include "ROM.c"
-#include "RAM.c"
+#include "z80_rom.c"
+#include "z80_ram.c"
 
 /*include z80 registr*/
-#include "z80_reg.c"
+#include "z80_registers.c"
 
 /*include tables*/
-#include "z80_tables.c"
+#include "z80_table.c"
 
 /*include opcodes*/
-#include "z80_opcode_base.c"
-#include "z80_opcode_cb.c"
-#include "z80_opcode_dd.c"
-#include "z80_opcode_ed.c"
-#include "z80_opcode_fd.c"
-#include "z80_opcode_ddcb.c"
-#include "z80_opcode_fdcb.c"
+#include "z80_opcodes_base.c"
+#include "z80_opcodes_cb.c"
+#include "z80_opcodes_dd.c"
+#include "z80_opcodes_ed.c"
+#include "z80_opcodes_fd.c"
+#include "z80_opcodes_ddcb.c"
+#include "z80_opcodes_fdcb.c"
 
 uint8_t pa;
 uint8_t o;
@@ -215,19 +224,19 @@ uint8_t in(uint16_t port)
 	uint8_t input;
 	if ((port&0x00FF)==0xFE)//перехват порта 0xFE
 	{
-		GPIOC->ODR&=0x00FF;
-		GPIOC->ODR|=port&0xFF00;
+		//GPIOC->ODR&=0x00FF;
+		//GPIOC->ODR|=port&0xFF00;
 
 		for (pa=0; pa<20; pa++)
 		{
 			o++;
 		}
-		input=(GPIOA->IDR&0x1F);
+		//input=(GPIOA->IDR&0x1F);
 
-		if ((ADC1->DR)>4)
-		{
-			input|=0x40;
-		}
+		//if ((ADC1->DR)>4)
+		//{
+			//input|=0x40;
+		//}
 			return (input);
 	}
 	else

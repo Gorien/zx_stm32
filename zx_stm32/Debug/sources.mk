@@ -17,6 +17,6 @@ C_DEPS :=
 SUBDIRS := \
 Drivers/STM32F4xx_HAL_Driver/Src \
 Src \
-ZX_Spectrum/Src \
 startup \
+z80/Src \
 

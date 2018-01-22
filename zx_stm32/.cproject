@@ -38,9 +38,9 @@
 									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F4xx/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
-									<listOptionValue builtIn="false" value="../ZX_Spectrum"/>
-									<listOptionValue builtIn="false" value="../ZX_Spectrum/Inc"/>
-									<listOptionValue builtIn="false" value="../ZX_Spectrum/Src"/>
+									<listOptionValue builtIn="false" value="../z80"/>
+									<listOptionValue builtIn="false" value="../z80/Inc"/>
+									<listOptionValue builtIn="false" value="../z80/Src"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.371327255" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__weak=__attribute__((weak))"/>
@@ -50,6 +50,7 @@
 								</option>
 								<option id="fr.ac6.managedbuild.gnu.c.compiler.option.misc.other.105230089" superClass="fr.ac6.managedbuild.gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-fmessage-length=0" valueType="string"/>
 								<option id="gnu.c.compiler.option.dialect.std.320686788" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.include.files.2143129192" superClass="gnu.c.compiler.option.include.files" valueType="includeFiles"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.1691467279" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s.55839144" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s"/>
 							</tool>
@@ -80,8 +81,8 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Inc"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ZX_Spectrum"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="startup"/>
+						<entry excluding="Src/z80_table.c|Src/z80_rom.c|Src/z80_registers.c|Src/z80_ram.c|Src/z80_opcodes_fdcb.c|Src/z80_opcodes_fd.c|Src/z80_opcodes_ed.c|Src/z80_opcodes_ddcb.c|Src/z80_opcodes_dd.c|Src/z80_opcodes_cb.c|Src/z80_opcodes_base.c|z80_opcode_base.c|z80_opcodes_base.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="z80"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -156,18 +157,14 @@
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1216972415" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.1667273521" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
 							</tool>
-							<tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.exe.release.438769658" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.exe.release">
-								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.732458227" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
-								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.1592273577" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
-							</tool>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Inc"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Src"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ZX_Spectrum"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="startup"/>
+						<entry excluding="Src/z80_table.c|Src/z80_rom.c|Src/z80_registers.c|Src/z80_ram.c|Src/z80_opcodes_fdcb.c|Src/z80_opcodes_fd.c|Src/z80_opcodes_ed.c|Src/z80_opcodes_ddcb.c|Src/z80_opcodes_dd.c|Src/z80_opcodes_cb.c|Src/z80_opcodes_base.c|z80_opcode_base.c|z80_opcodes_base.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="z80"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -188,9 +185,10 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
-		<configuration artifactName="${ProjName}" configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="zx_stm32"/>
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/zx_stm32"/>
 		</configuration>
+		<configuration configurationName="Release"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>

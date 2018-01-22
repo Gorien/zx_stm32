@@ -1,5 +1,12 @@
-#include "stm32f4xx_hal.h"
-#include "z80.h"
+/*
+ * z80_table.c
+ *
+ *  Created on: 22 џэт. 2018 у.
+ *      Author: Beloussov
+ */
+
+
+
 
 /*Whether a half carry occured or not can be determined by looking at
 the 3rd bit of the two arguments and the result; these are hashed
