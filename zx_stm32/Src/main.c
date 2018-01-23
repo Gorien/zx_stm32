@@ -39,7 +39,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
+#include "dma.h"
 #include "gpio.h"
+#include "fsmc.h"
 
 /* USER CODE BEGIN Includes */
 #include "z80.h"
@@ -90,6 +92,8 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
+  MX_FSMC_Init();
 
   /* USER CODE BEGIN 2 */
 

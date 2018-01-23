@@ -39,6 +39,7 @@
 #ifndef __MAIN_H
 #define __MAIN_H
   /* Includes ------------------------------------------------------------------*/
+#include "stm32f4xx_hal.h"
 
 /* Includes ------------------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -46,6 +47,13 @@
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
+
+#define green_LED_Pin GPIO_PIN_12
+#define green_LED_GPIO_Port GPIOD
+#define orange_LED_Pin GPIO_PIN_13
+#define orange_LED_GPIO_Port GPIOD
+#define reset_LCD_Pin GPIO_PIN_6
+#define reset_LCD_GPIO_Port GPIOD
 
 /* ########################## Assert Selection ############################## */
 /**
