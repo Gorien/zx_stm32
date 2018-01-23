@@ -1,8 +1,10 @@
 /*
- * z80_macros.h
  *
- *  Created on: 22 џэт. 2018 у.
- *      Author: Beloussov
+ *	Author: Beloussov Yegor
+ *	Created on: january 2018
+ *
+ *	Header file with macros
+ *
  */
 
 #ifndef INC_Z80_MACROS_H_

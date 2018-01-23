@@ -1,8 +1,11 @@
 /*
- * z80_opcodes_ed.c
  *
- *  Created on: 22 џэт. 2018 у.
- *      Author: Beloussov
+ *	Author: Beloussov Yegor
+ *	Created on: january 2018
+ *
+ *	The program emulating the work of the processor z80
+ *	Attention! this part must be included in the main program code
+ *
  */
 
 

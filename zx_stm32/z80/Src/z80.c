@@ -1,8 +1,10 @@
 /*
- * z80.c
  *
- *  Created on: 22 џэт. 2018 у.
- *      Author: Beloussov
+ *	Author: Beloussov Yegor
+ *	Created on: january 2018
+ *
+ *	The program emulating the work of the processor z80
+ *
  */
 
 
@@ -10,15 +12,7 @@
 #include "z80.h"
 #include "z80_macros.h"
 
-static void (*opcode_cb[0x100])(void);
-static void (*opcode_dd[0x100])(void);
-static void (*opcode_ddcb[0x100])(void);
-static void (*opcode_ed[0x100])(void);
-static void (*opcode_fd[0x100])(void);
-static void (*opcode_fdcb[0x100])(void);
-
-#include "z80_rom.c"
-#include "z80_ram.c"
+#include "z80_memory.c"
 #include "z80_registers.c"
 #include "z80_table.c"
 
@@ -34,6 +28,7 @@ uint8_t pa;
 uint8_t o;
 uint16_t vector_nmi;
 uint8_t IRQ_Z80;
+uint8_t screen_IRQ;
 
 void z80_reset(void)
 {
@@ -63,9 +58,35 @@ void z80_run(void)
 
 	if (IRQ_Z80==1)
 	{
-/*		if (screen_IRQ==1)
+		if (screen_IRQ==1)
 		{
-			if (IM==0)
+			switch(IM)
+			{
+			case(0):
+					IFF1=0;
+					IFF2=0;
+					RST(0x38);
+					halt=0;
+					break;
+			case(1):
+					IFF1=0;
+					IFF2=0;
+					RST(0x38);
+					halt=0;
+					break;
+			case(2):
+					IFF1=0;
+					IFF2=0;
+					vector_nmi=((I*256)+255);
+					vector_nmi=READ_WORD(vector_nmi);
+					RST(vector_nmi);
+					halt=0;
+					break;
+			default:
+				break;
+			}
+
+			/*if (IM==0)
 			{
 				IFF1=0;
 				IFF2=0;
@@ -87,8 +108,8 @@ void z80_run(void)
 				vector_nmi=READ_WORD(vector_nmi);
 				RST(vector_nmi);
 				halt=0;
-			}
-		}*/
+			}*/
+		}
 	}
 
 	if (IFF1==1)
@@ -98,69 +119,116 @@ void z80_run(void)
 
 	if (halt==0)
 	{
-	opcode=NEXT_BYTE;
-	(*opcode_base[opcode])();
-	R++;
 
-	/*if (prefix==0xCB)
-	{
-		opcode=NEXT_BYTE;
-		(*opcode_cb[opcode])();
-		prefix=0;
-		no_int=0;
-		m_cycle+=4;
-		R++;
-	}
-	if (prefix==0xED)
-	{
-		opcode=NEXT_BYTE;
-		(*opcode_ed[opcode])();
-		prefix=0;
-		no_int=0;
-		m_cycle+=4;
-		R++;
-	}
-	if (prefix==0xDD)
-	{
 		opcode=NEXT_BYTE;
 		R++;
-		if (opcode==0xCB)
+
+		switch(opcode)
 		{
-			d.u=NEXT_BYTE;
+		case(0xCB):
+				opcode=NEXT_BYTE;
+				(*opcode_cb[opcode])();
+				R++;
+				m_cycle+=4;
+				break;
+		case(0xED):
+				opcode=NEXT_BYTE;
+				(*opcode_ed[opcode])();
+				R++;
+				m_cycle+=4;
+				break;
+		case(0xDD):
+				opcode=NEXT_BYTE;
+				R++;
+				m_cycle+=4;
+				if (opcode==0xCB)
+				{
+					d.u=NEXT_BYTE;
+					opcode=NEXT_BYTE;
+					(*opcode_ddcb[opcode])();
+					m_cycle+=4;
+				}
+				else
+				{
+					(*opcode_dd[opcode])();
+				}
+				break;
+		case(0xFD):
+				opcode=NEXT_BYTE;
+				R++;
+				m_cycle+=4;
+				if (opcode==0xCB)
+				{
+					d.u=NEXT_BYTE;
+					opcode=NEXT_BYTE;
+					(*opcode_fdcb[opcode])();
+					m_cycle+=4;
+				}
+				else
+				{
+					(*opcode_fd[opcode])();
+				}
+				break;
+		default:
+			(*opcode_base[opcode])();
+			break;
+		}
+
+
+
+
+/*		if (prefix==0xCB)
+		{
 			opcode=NEXT_BYTE;
-			(*opcode_ddcb[opcode])();
-			prefix=0;
-			no_int=0;
+			(*opcode_cb[opcode])();
+			R++;
 			m_cycle+=4;
+		}
+		else if (prefix==0xED)
+		{
+			opcode=NEXT_BYTE;
+			(*opcode_ed[opcode])();
+			R++;
+			m_cycle+=4;
+		}
+		else if (prefix==0xDD)
+		{
+			opcode=NEXT_BYTE;
+			R++;
+			m_cycle+=4;
+			if (opcode==0xCB)
+			{
+				d.u=NEXT_BYTE;
+				opcode=NEXT_BYTE;
+				(*opcode_ddcb[opcode])();
+				m_cycle+=4;
+			}
+			else
+			{
+				(*opcode_dd[opcode])();
+
+			}
+		}
+		else if (prefix==0xFD)
+		{
+			opcode=NEXT_BYTE;
+			R++;
+			m_cycle+=4;
+			if (opcode==0xCB)
+			{
+				d.u=NEXT_BYTE;
+				opcode=NEXT_BYTE;
+				(*opcode_fdcb[opcode])();
+				m_cycle+=4;
+			}
+			else
+			{
+				(*opcode_fd[opcode])();
+			}
 		}
 		else
 		{
-			(*opcode_dd[opcode])();
-			prefix=0;
-			no_int=0;
-			m_cycle+=4;
-		}
-	}
-	if (prefix==0xFD)
-	{
-		opcode=NEXT_BYTE;
-		R++;
-		if (opcode==0xCB)
-		{
-			d.u=NEXT_BYTE;
-			opcode=NEXT_BYTE;
-			(*opcode_fdcb[opcode])();
-			prefix=0;
-			no_int=0;
-			m_cycle+=4;
-		}
-		else
-		{
-			(*opcode_fd[opcode])();
-			prefix=0;
-			no_int=0;
-			m_cycle+=4;
-		}
+			(*opcode_base[opcode])();
 		}*/
 	}
 }

@@ -1,10 +1,12 @@
 /*
- * z80_opcodes_dd.c
  *
- *  Created on: 22 џэт. 2018 у.
- *      Author: Beloussov
+ *	Author: Beloussov Yegor
+ *	Created on: january 2018
+ *
+ *	The program emulating the work of the processor z80
+ *	Attention! this part must be included in the main program code
+ *
  */
-
 
 
 /*ADD IX, BC*/
@@ -732,11 +734,9 @@ static void op_DD_0xbe(void)
 	return;
 }
 
+/*prefix DDCB*/
 static void op_DD_0xcb(void)
 {
-	d.u=NEXT_BYTE;
-	opcode=NEXT_BYTE;
-	(*opcode_ddcb[opcode])();
 	return;
 }
 
@@ -787,7 +787,6 @@ static void op_DD_0xf9(void)
 /*NONI*/
 static void non_DD (void)
 {
-	(*opcode_base[opcode])();
 	return;
 }
 

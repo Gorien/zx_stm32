@@ -1,10 +1,12 @@
 /*
- * z80_opcodes_fd.c
  *
- *  Created on: 22 џэт. 2018 у.
- *      Author: Beloussov
+ *	Author: Beloussov Yegor
+ *	Created on: january 2018
+ *
+ *	The program emulating the work of the processor z80
+ *	Attention! this part must be included in the main program code
+ *
  */
-
 
 
 /*ADD IY, BC*/
@@ -732,12 +734,9 @@ static void op_FD_0xbe(void)
 	return;
 }
 
-
+/*prefix FDCB*/
 static void op_FD_0xcb(void)
 {
-	d.u=NEXT_BYTE;
-	opcode=NEXT_BYTE;
-	(*opcode_fdcb[opcode])();
 	return;
 }
 
@@ -786,7 +785,6 @@ static void op_FD_0xf9(void)
 /*NONI*/
 static void non_FD (void)
 {
-	(*opcode_base[opcode])();
 	return;
 }
 

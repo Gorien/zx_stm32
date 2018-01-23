@@ -1,19 +1,14 @@
 /*
- * z80_table.c
  *
- *  Created on: 22 џэт. 2018 у.
- *      Author: Beloussov
+ *	Author: Beloussov Yegor
+ *	Created on: january 2018
+ *
+ *	The program emulating the work of the processor z80
+ *	Attention! this part must be included in the main program code
+ *
  */
 
 
-
-
-/*Whether a half carry occured or not can be determined by looking at
-the 3rd bit of the two arguments and the result; these are hashed
-into this table in the form r12, where r is the 3rd bit of the
-result, 1 is the 3rd bit of the 1st argument and 2 is the
-third bit of the 2nd argument; the tables differ for add and subtract
-operations*/
 static const uint8_t halfcarry_add_table[]=
 {
 	0, FLAG_H, FLAG_H, FLAG_H, 0, 0, 0, FLAG_H

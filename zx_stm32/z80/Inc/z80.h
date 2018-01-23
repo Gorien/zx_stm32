@@ -1,8 +1,13 @@
 /*
- * z80.h
  *
- *  Created on: 22 џэт. 2018 у.
- *      Author: Beloussov
+ *	Author: Beloussov Yegor
+ *	Created on: january 2018
+ *
+ *	The main interface header file of the processor emulator is z80. In writing
+ *	the emulator code, different Internet resources were used. Most of the code
+ *	is borrowed from https://sourceforge.net/projects/z80ex/. Creation of the
+ *	famous Pigmaker57 aka Boo-boo.
+ *
  */
 
 #ifndef INC_Z80_H_

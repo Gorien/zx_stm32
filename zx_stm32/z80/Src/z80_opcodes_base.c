@@ -1,10 +1,12 @@
 /*
- * z80_opcodes_base.c
  *
- *  Created on: 22 џэт. 2018 у.
- *      Author: Beloussov
+ *	Author: Beloussov Yegor
+ *	Created on: january 2018
+ *
+ *	The program emulating the work of the processor z80
+ *	Attention! this part must be included in the main program code
+ *
  */
-
 
 
 /*NOP*/
@@ -1766,13 +1768,9 @@ static void op_0xca(void)
 	return;
 }
 
+/*prefix CB*/
 static void op_0xcb(void)
 {
-	//prefix=0xCB;
-	//no_int=1;
-	R++;
-	opcode=NEXT_BYTE;
-	(*opcode_cb[opcode])();
 	return;
 }
 
@@ -1978,13 +1976,9 @@ static void op_0xdc(void)
 	return;
 }
 
+/*prefix DD*/
 static void op_0xdd(void)
 {
-	//prefix=0xDD;
-	//no_int=1;
-	R++;
-	opcode=NEXT_BYTE;
-	(*opcode_dd[opcode])();
 	return;
 }
 
@@ -2162,13 +2156,9 @@ static void op_0xec(void)
 	return;
 }
 
+/*prefix ED*/
 static void op_0xed(void)
 {
-	//prefix=0xED;
-	//no_int=1;
-	R++;
-	opcode=NEXT_BYTE;
-	(*opcode_ed[opcode])();
 	return;
 }
 
@@ -2344,13 +2334,9 @@ static void op_0xfc(void)
 	return;
 }
 
+/*prefix FD*/
 static void op_0xfd(void)
 {
-	//prefix=0xFD;
-	//no_int=1;
-	R++;
-	opcode=NEXT_BYTE;
-	(*opcode_fd[opcode])();
 	return;
 }
 
