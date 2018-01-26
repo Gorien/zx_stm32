@@ -49,7 +49,7 @@ void z80_reset(void)
 
 uint16_t i;
 
-void z80_run(void)
+uint8_t z80_run(void)
 {
 	if (IFF1==0)
 	{
@@ -140,33 +140,33 @@ void z80_run(void)
 		case(0xDD):
 				opcode=NEXT_BYTE;
 				R++;
-				m_cycle+=4;
 				if (opcode==0xCB)
 				{
 					d.u=NEXT_BYTE;
 					opcode=NEXT_BYTE;
 					(*opcode_ddcb[opcode])();
-					m_cycle+=4;
+					m_cycle+=8;
 				}
 				else
 				{
 					(*opcode_dd[opcode])();
+					m_cycle+=4;
 				}
 				break;
 		case(0xFD):
 				opcode=NEXT_BYTE;
 				R++;
-				m_cycle+=4;
 				if (opcode==0xCB)
 				{
 					d.u=NEXT_BYTE;
 					opcode=NEXT_BYTE;
 					(*opcode_fdcb[opcode])();
-					m_cycle+=4;
+					m_cycle+=8;
 				}
 				else
 				{
 					(*opcode_fd[opcode])();
+					m_cycle+=4;
 				}
 				break;
 		default:
@@ -231,12 +231,15 @@ void z80_run(void)
 			(*opcode_base[opcode])();
 		}*/
 	}
+	return m_cycle;
 }
 
 
 void poke(uint16_t addr, uint8_t value)
 {
-	if (addr<0x4000)
+	memory[addr]=value;
+
+	/*if (addr<0x4000)
 	{
 	}
 	else if (addr<0x5800)
@@ -251,12 +254,14 @@ void poke(uint16_t addr, uint8_t value)
 	else
 	{
 		RAM[addr-0x5B00]=value;
-	}
+	}*/
 }
 
 uint8_t peek(uint16_t addr)
 {
-	uint8_t value;
+	return memory[addr];
+
+	/*uint8_t value;
 	if (addr<0x4000)
 	{
 		value=ROM[addr];
@@ -274,7 +279,7 @@ uint8_t peek(uint16_t addr)
 	{
 		value=RAM[addr-0x5B00];
 	}
-	return value;
+	return value;*/
 }
 
 void poke16(uint16_t addr, uint16_t value)

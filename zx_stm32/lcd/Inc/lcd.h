@@ -14,10 +14,11 @@
 
 #include "stm32f4xx_hal.h"
 
-#define LCD_reg (*((volatile uint16_t*)0x60000000))
-#define LCD_data (*((volatile uint16_t*)0x60020000))
+#define LCD_reg *(uint16_t*)0x60000000
+#define LCD_data *(uint16_t*)0x60020000
 
-extern uint8_t screen_IRQ;
+#define Reset_Pin_Active HAL_GPIO_WritePin(reset_LCD_GPIO_Port, reset_LCD_Pin, GPIO_PIN_RESET);
+#define Reset_Pin_Idle HAL_GPIO_WritePin(reset_LCD_GPIO_Port, reset_LCD_Pin, GPIO_PIN_SET);
 
 /*LCD цвета*/
 #define Green          0x03E0
@@ -29,26 +30,10 @@ extern uint8_t screen_IRQ;
 #define Blue2          0x07FF
 #define Yellow         0xFFE0
 
-extern uint16_t border;
-extern uint16_t color [8];
-extern uint16_t const byte_color [256][128][8];
 
-
-void Delay(uint32_t nCount);
-
-void LCD_WriteReg(uint16_t LCD_Reg,uint16_t LCD_RegValue);
-uint16_t LCD_ReadReg(uint8_t LCD_Reg);
-void LCD_WriteCommand(uint16_t LCD_RegValue);
-void LCD_WriteRAM(uint16_t RGB_Code);
-void LCD_WriteRAM_Prepare(void);
-
-void LCD_Initializtion(void);
-void LCD_Set_Scr(void);
-void LCD_Clear_Window(uint16_t Color);
+void LCD_Init(void);
 void LCD_Clear(uint16_t Color);
 void LCD_SetCursor(uint16_t x, uint16_t y);
-
-void init_screen(void);
-void TIM6_DAC_IRQHandler(void);
+void LCD_Write(uint16_t LCD_RegValue);
 
 #endif /* INC_LCD_H_ */

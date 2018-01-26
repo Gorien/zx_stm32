@@ -20,4 +20,5 @@ Src \
 lcd/Src \
 startup \
 z80/Src \
+zx_spectrum/Src \
 

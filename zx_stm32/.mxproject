@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=C:/Users/Yegor/Documents/GitHub/zx_stm32/zx_stm32/Inc
+HeaderPath=C:/Users/Beloussov/Documents/GitHub/zx_stm32/zx_stm32/Inc
 HeaderFiles=gpio.h;sdio.h;stm32f4xx_it.h;stm32f4xx_hal_conf.h;main.h;fsmc.h;dma.h;
-SourcePath=C:/Users/Yegor/Documents/GitHub/zx_stm32/zx_stm32/Src
+SourcePath=C:/Users/Beloussov/Documents/GitHub/zx_stm32/zx_stm32/Src
 SourceFiles=gpio.c;sdio.c;stm32f4xx_it.c;stm32f4xx_hal_msp.c;main.c;fsmc.c;dma.c;
 
 [PreviousLibFiles]

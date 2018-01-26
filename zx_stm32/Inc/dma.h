@@ -50,7 +50,6 @@
 
 /* DMA memory to memory transfer handles -------------------------------------*/
 extern DMA_HandleTypeDef hdma_memtomem_dma2_stream0;
-extern DMA_HandleTypeDef hdma_memtomem_dma2_stream1;
 extern void _Error_Handler(char*, int);
 
 /* USER CODE BEGIN Includes */
