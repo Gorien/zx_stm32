@@ -3554,7 +3554,7 @@ LOAD c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15
                 0x08000000                g_pfnVectors
                 0x08000188                . = ALIGN (0x4)
 
-.text           0x08000188    0x143e4
+.text           0x08000188    0x143dc
                 0x08000188                . = ALIGN (0x4)
  *(.text)
  .text          0x08000188       0x6c c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
@@ -5834,171 +5834,171 @@ LOAD c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15
  .text.op_0x22  0x08013904       0x3c z80/Src/z80.o
  .text.op_0x21  0x08013940       0x2c z80/Src/z80.o
  .text.op_0x11  0x0801396c       0x2c z80/Src/z80.o
- .text.op_0x01  0x08013998       0x2c z80/Src/z80.o
+ .text.op_0x01  0x08013998       0x24 z80/Src/z80.o
  .text.op_FD_0xe3
-                0x080139c4       0x38 z80/Src/z80.o
+                0x080139bc       0x38 z80/Src/z80.o
  .text.op_FD_0xe1
-                0x080139fc       0x24 z80/Src/z80.o
+                0x080139f4       0x24 z80/Src/z80.o
  .text.op_FD_0x2a
-                0x08013a20       0x3c z80/Src/z80.o
+                0x08013a18       0x3c z80/Src/z80.o
  .text.op_FD_0x22
-                0x08013a5c       0x3c z80/Src/z80.o
+                0x08013a54       0x3c z80/Src/z80.o
  .text.op_FD_0x21
-                0x08013a98       0x2c z80/Src/z80.o
+                0x08013a90       0x2c z80/Src/z80.o
  .text.op_DD_0xe3
-                0x08013ac4       0x38 z80/Src/z80.o
+                0x08013abc       0x38 z80/Src/z80.o
  .text.op_DD_0xe1
-                0x08013afc       0x24 z80/Src/z80.o
+                0x08013af4       0x24 z80/Src/z80.o
  .text.op_DD_0x2a
-                0x08013b20       0x3c z80/Src/z80.o
+                0x08013b18       0x3c z80/Src/z80.o
  .text.op_DD_0x22
-                0x08013b5c       0x3c z80/Src/z80.o
+                0x08013b54       0x3c z80/Src/z80.o
  .text.op_DD_0x21
-                0x08013b98       0x2c z80/Src/z80.o
+                0x08013b90       0x2c z80/Src/z80.o
  .text.op_ED_0x7d
-                0x08013bc4       0x34 z80/Src/z80.o
+                0x08013bbc       0x34 z80/Src/z80.o
  .text.op_ED_0x7b
-                0x08013bf8       0x3c z80/Src/z80.o
+                0x08013bf0       0x3c z80/Src/z80.o
  .text.op_ED_0x75
-                0x08013c34       0x34 z80/Src/z80.o
+                0x08013c2c       0x34 z80/Src/z80.o
  .text.op_ED_0x73
-                0x08013c68       0x3c z80/Src/z80.o
+                0x08013c60       0x3c z80/Src/z80.o
  .text.op_ED_0x6d
-                0x08013ca4       0x34 z80/Src/z80.o
+                0x08013c9c       0x34 z80/Src/z80.o
  .text.op_ED_0x6b
-                0x08013cd8       0x3c z80/Src/z80.o
+                0x08013cd0       0x3c z80/Src/z80.o
  .text.op_ED_0x65
-                0x08013d14       0x34 z80/Src/z80.o
+                0x08013d0c       0x34 z80/Src/z80.o
  .text.op_ED_0x63
-                0x08013d48       0x3c z80/Src/z80.o
+                0x08013d40       0x3c z80/Src/z80.o
  .text.op_ED_0x5d
-                0x08013d84       0x34 z80/Src/z80.o
+                0x08013d7c       0x34 z80/Src/z80.o
  .text.op_ED_0x5b
-                0x08013db8       0x3c z80/Src/z80.o
+                0x08013db0       0x3c z80/Src/z80.o
  .text.op_ED_0x55
-                0x08013df4       0x34 z80/Src/z80.o
+                0x08013dec       0x34 z80/Src/z80.o
  .text.op_ED_0x53
-                0x08013e28       0x3c z80/Src/z80.o
+                0x08013e20       0x3c z80/Src/z80.o
  .text.op_ED_0x4d
-                0x08013e64       0x34 z80/Src/z80.o
+                0x08013e5c       0x34 z80/Src/z80.o
  .text.op_ED_0x4b
-                0x08013e98       0x3c z80/Src/z80.o
+                0x08013e90       0x3c z80/Src/z80.o
  .text.op_ED_0x45
-                0x08013ed4       0x34 z80/Src/z80.o
+                0x08013ecc       0x34 z80/Src/z80.o
  .text.op_ED_0x43
-                0x08013f08       0x3c z80/Src/z80.o
- .text.in       0x08013f44       0x34 z80/Src/z80.o
-                0x08013f44                in
- .text.op_0xdb  0x08013f78       0x44 z80/Src/z80.o
+                0x08013f00       0x3c z80/Src/z80.o
+ .text.in       0x08013f3c       0x34 z80/Src/z80.o
+                0x08013f3c                in
+ .text.op_0xdb  0x08013f70       0x44 z80/Src/z80.o
  .text.op_ED_0xba
-                0x08013fbc       0xa8 z80/Src/z80.o
+                0x08013fb4       0xa8 z80/Src/z80.o
  .text.op_ED_0xb2
-                0x08014064       0xa8 z80/Src/z80.o
+                0x0801405c       0xa8 z80/Src/z80.o
  .text.op_ED_0xaa
-                0x0801410c       0x8c z80/Src/z80.o
+                0x08014104       0x8c z80/Src/z80.o
  .text.op_ED_0xa2
-                0x08014198       0x8c z80/Src/z80.o
+                0x08014190       0x8c z80/Src/z80.o
  .text.op_ED_0x78
-                0x08014224       0x3c z80/Src/z80.o
+                0x0801421c       0x3c z80/Src/z80.o
  .text.op_ED_0x70
-                0x08014260       0x40 z80/Src/z80.o
+                0x08014258       0x40 z80/Src/z80.o
  .text.op_ED_0x68
-                0x080142a0       0x3c z80/Src/z80.o
+                0x08014298       0x3c z80/Src/z80.o
  .text.op_ED_0x60
-                0x080142dc       0x3c z80/Src/z80.o
+                0x080142d4       0x3c z80/Src/z80.o
  .text.op_ED_0x58
-                0x08014318       0x3c z80/Src/z80.o
+                0x08014310       0x3c z80/Src/z80.o
  .text.op_ED_0x50
-                0x08014354       0x3c z80/Src/z80.o
+                0x0801434c       0x3c z80/Src/z80.o
  .text.op_ED_0x48
-                0x08014390       0x3c z80/Src/z80.o
+                0x08014388       0x3c z80/Src/z80.o
  .text.op_ED_0x40
-                0x080143cc       0x3c z80/Src/z80.o
- .text.zx_run   0x08014408      0x104 zx_spectrum/Src/zx.o
-                0x08014408                zx_run
+                0x080143c4       0x3c z80/Src/z80.o
+ .text.zx_run   0x08014400      0x104 zx_spectrum/Src/zx.o
+                0x08014400                zx_run
  .text.__libc_init_array
-                0x0801450c       0x48 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-init.o)
-                0x0801450c                __libc_init_array
+                0x08014504       0x48 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-init.o)
+                0x08014504                __libc_init_array
  *(.glue_7)
- .glue_7        0x08014554        0x0 linker stubs
+ .glue_7        0x0801454c        0x0 linker stubs
  *(.glue_7t)
- .glue_7t       0x08014554        0x0 linker stubs
+ .glue_7t       0x0801454c        0x0 linker stubs
  *(.eh_frame)
- .eh_frame      0x08014554        0x0 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
+ .eh_frame      0x0801454c        0x0 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
  *(.init)
- .init          0x08014554        0x4 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crti.o
-                0x08014554                _init
- .init          0x08014558        0x8 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtn.o
+ .init          0x0801454c        0x4 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crti.o
+                0x0801454c                _init
+ .init          0x08014550        0x8 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtn.o
  *(.fini)
- .fini          0x08014560        0x4 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crti.o
-                0x08014560                _fini
- .fini          0x08014564        0x8 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtn.o
-                0x0801456c                . = ALIGN (0x4)
-                0x0801456c                _etext = .
+ .fini          0x08014558        0x4 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crti.o
+                0x08014558                _fini
+ .fini          0x0801455c        0x8 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtn.o
+                0x08014564                . = ALIGN (0x4)
+                0x08014564                _etext = .
 
-.vfp11_veneer   0x0801456c        0x0
- .vfp11_veneer  0x0801456c        0x0 linker stubs
+.vfp11_veneer   0x08014564        0x0
+ .vfp11_veneer  0x08014564        0x0 linker stubs
 
-.v4_bx          0x0801456c        0x0
- .v4_bx         0x0801456c        0x0 linker stubs
+.v4_bx          0x08014564        0x0
+ .v4_bx         0x08014564        0x0 linker stubs
 
-.iplt           0x0801456c        0x0
- .iplt          0x0801456c        0x0 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
+.iplt           0x08014564        0x0
+ .iplt          0x08014564        0x0 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
 
-.rodata         0x0801456c     0x6f70
-                0x0801456c                . = ALIGN (0x4)
+.rodata         0x08014564     0x6f70
+                0x08014564                . = ALIGN (0x4)
  *(.rodata)
- .rodata        0x0801456c        0x8 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o
- .rodata        0x08014574       0x18 Src/system_stm32f4xx.o
-                0x08014574                AHBPrescTable
-                0x08014584                APBPrescTable
- .rodata        0x0801458c     0x6f20 z80/Src/z80.o
-                0x080174ac                ROM
+ .rodata        0x08014564        0x8 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o
+ .rodata        0x0801456c       0x18 Src/system_stm32f4xx.o
+                0x0801456c                AHBPrescTable
+                0x0801457c                APBPrescTable
+ .rodata        0x08014584     0x6f20 z80/Src/z80.o
+                0x080174a4                ROM
  *(.rodata*)
  .rodata.str1.4
-                0x0801b4ac        0xd Src/dma.o
- *fill*         0x0801b4b9        0x3 
+                0x0801b4a4        0xd Src/dma.o
+ *fill*         0x0801b4b1        0x3 
  .rodata.str1.4
-                0x0801b4bc        0xe Src/fsmc.o
- *fill*         0x0801b4ca        0x2 
+                0x0801b4b4        0xe Src/fsmc.o
+ *fill*         0x0801b4c2        0x2 
  .rodata.str1.4
-                0x0801b4cc       0x10 Src/main.o
+                0x0801b4c4       0x10 Src/main.o
                                   0xe (size before relaxing)
-                0x0801b4dc                . = ALIGN (0x4)
+                0x0801b4d4                . = ALIGN (0x4)
 
 .ARM.extab
  *(.ARM.extab* .gnu.linkonce.armextab.*)
 
-.ARM            0x0801b4dc        0x8
-                0x0801b4dc                __exidx_start = .
+.ARM            0x0801b4d4        0x8
+                0x0801b4d4                __exidx_start = .
  *(.ARM.exidx*)
- .ARM.exidx     0x0801b4dc        0x8 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard\libgcc.a(_udivmoddi4.o)
-                0x0801b4e4                __exidx_end = .
+ .ARM.exidx     0x0801b4d4        0x8 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard\libgcc.a(_udivmoddi4.o)
+                0x0801b4dc                __exidx_end = .
 
-.rel.dyn        0x0801b4e4        0x0
- .rel.iplt      0x0801b4e4        0x0 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
+.rel.dyn        0x0801b4dc        0x0
+ .rel.iplt      0x0801b4dc        0x0 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
 
-.preinit_array  0x0801b4e4        0x0
-                0x0801b4e4                PROVIDE (__preinit_array_start, .)
+.preinit_array  0x0801b4dc        0x0
+                0x0801b4dc                PROVIDE (__preinit_array_start, .)
  *(.preinit_array*)
-                0x0801b4e4                PROVIDE (__preinit_array_end, .)
+                0x0801b4dc                PROVIDE (__preinit_array_end, .)
 
-.init_array     0x0801b4e4        0x4
-                0x0801b4e4                PROVIDE (__init_array_start, .)
+.init_array     0x0801b4dc        0x4
+                0x0801b4dc                PROVIDE (__init_array_start, .)
  *(SORT(.init_array.*))
  *(.init_array*)
- .init_array    0x0801b4e4        0x4 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
-                0x0801b4e8                PROVIDE (__init_array_end, .)
+ .init_array    0x0801b4dc        0x4 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
+                0x0801b4e0                PROVIDE (__init_array_end, .)
 
-.fini_array     0x0801b4e8        0x4
+.fini_array     0x0801b4e0        0x4
                 [!provide]                PROVIDE (__fini_array_start, .)
  *(SORT(.fini_array.*))
  *(.fini_array*)
- .fini_array    0x0801b4e8        0x4 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
+ .fini_array    0x0801b4e0        0x4 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
                 [!provide]                PROVIDE (__fini_array_end, .)
-                0x0801b4ec                _sidata = LOADADDR (.data)
+                0x0801b4e4                _sidata = LOADADDR (.data)
 
-.data           0x20000000        0x4 load address 0x0801b4ec
+.data           0x20000000        0x4 load address 0x0801b4e4
                 0x20000000                . = ALIGN (0x4)
                 0x20000000                _sdata = .
  *(.data)
@@ -6007,15 +6007,15 @@ LOAD c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15
  *(.data*)
                 0x20000004                . = ALIGN (0x4)
                 0x20000004                _edata = .
-                0x0801b4f0                _siccmram = LOADADDR (.ccmram)
+                0x0801b4e8                _siccmram = LOADADDR (.ccmram)
 
-.jcr            0x20000004        0x0 load address 0x0801b4f0
+.jcr            0x20000004        0x0 load address 0x0801b4e8
  .jcr           0x20000004        0x0 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
 
-.igot.plt       0x20000004        0x0 load address 0x0801b4f0
+.igot.plt       0x20000004        0x0 load address 0x0801b4e8
  .igot.plt      0x20000004        0x0 c:/ac6/systemworkbench/plugins/fr.ac6.mcu.externaltools.arm-none.win32_1.15.0.201708311556/tools/compiler/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
 
-.ccmram         0x10000000        0x0 load address 0x0801b4f0
+.ccmram         0x10000000        0x0 load address 0x0801b4e8
                 0x10000000                . = ALIGN (0x4)
                 0x10000000                _sccmram = .
  *(.ccmram)
@@ -6355,7 +6355,7 @@ OUTPUT(zx_stm32.elf elf32-littlearm)
  .debug_macro   0x000216c0      0x3ce z80/Src/z80.o
  .debug_macro   0x00021a8e      0x332 zx_spectrum/Src/zx.o
 
-.debug_line     0x00000000    0x1059c
+.debug_line     0x00000000    0x1059b
  .debug_line    0x00000000      0x971 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o
  .debug_line    0x00000971      0x9f0 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o
  .debug_line    0x00001361      0xaf9 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o
@@ -6372,8 +6372,8 @@ OUTPUT(zx_stm32.elf elf32-littlearm)
  .debug_line    0x00007793      0x804 Src/system_stm32f4xx.o
  .debug_line    0x00007f97      0x8e1 lcd/Src/lcd.o
  .debug_line    0x00008878       0x7f startup/startup_stm32f407xx.o
- .debug_line    0x000088f7     0x73fb z80/Src/z80.o
- .debug_line    0x0000fcf2      0x8aa zx_spectrum/Src/zx.o
+ .debug_line    0x000088f7     0x73fa z80/Src/z80.o
+ .debug_line    0x0000fcf1      0x8aa zx_spectrum/Src/zx.o
 
 .debug_str      0x00000000    0xc326f
  .debug_str     0x00000000    0xbbb1a Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o

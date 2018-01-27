@@ -16,11 +16,10 @@ static void op_0x00(void)
 	return;
 }
 
-/*LD BC,@*/
+/*LD BC, @*/
 static void op_0x01(void)
 {
-	nn=NEXT_WORD;
-	LD16(BC, nn);
+	LD16(BC, NEXT_WORD);
 	T_WAIT_UNTIL(10);
 	return;
 }
@@ -28,8 +27,8 @@ static void op_0x01(void)
 /*LD (BC), A*/
 static void op_0x02(void)
 {
-	LD_A_TO_ADDR_MPTR(temp8, A, (BC));
-	WRITE_BYTE((BC), temp8);
+	LD_A_TO_ADDR_MPTR(A, (BC));
+	WRITE_BYTE((BC), A);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -61,8 +60,7 @@ static void op_0x05(void)
 /*LD B, #*/
 static void op_0x06(void)
 {
-	n=NEXT_BYTE;
-	LD(B, n);
+	LD(B, NEXT_BYTE);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -94,8 +92,7 @@ static void op_0x09(void)
 /*LD A, (BC)*/
 static void op_0x0a(void)
 {
-	temp8=READ_BYTE(BC);
-	LD_A_FROM_ADDR_MPTR(A, temp8, BC);
+	LD_A_FROM_ADDR_MPTR(A, READ_BYTE(BC), BC);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -127,8 +124,7 @@ static void op_0x0d(void)
 /*LD C, #*/
 static void op_0x0e(void)
 {
-	n=NEXT_BYTE;
-	LD(C, n);
+	LD(C, NEXT_BYTE);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -161,8 +157,7 @@ static void op_0x10(void)
 /*LD DE, @*/
 static void op_0x11(void)
 {
-	nn=NEXT_WORD;
-	LD16(DE, nn);
+	LD16(DE, NEXT_WORD);
 	T_WAIT_UNTIL(10);
 	return;
 }
@@ -170,8 +165,8 @@ static void op_0x11(void)
 /*LD (DE), A*/
 static void op_0x12(void)
 {
-	LD_A_TO_ADDR_MPTR(temp8, A, DE);
-	WRITE_BYTE(DE, temp8);
+	LD_A_TO_ADDR_MPTR(A, DE);
+	WRITE_BYTE(DE, A);
 	T_WAIT_UNTIL(7);
 	return;
 }
