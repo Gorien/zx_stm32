@@ -24,4 +24,3 @@
 "lcd/Src/lcd.o"
 "startup/startup_stm32f407xx.o"
 "z80/Src/z80.o"
-"zx_spectrum/Src/zx.o"

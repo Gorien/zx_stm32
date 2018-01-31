@@ -8,7 +8,6 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
--include zx_spectrum/Src/subdir.mk
 -include z80/Src/subdir.mk
 -include startup/subdir.mk
 -include lcd/Src/subdir.mk

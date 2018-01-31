@@ -44,7 +44,7 @@
 #include "fsmc.h"
 
 /* USER CODE BEGIN Includes */
-#include "zx.h"
+#include "z80.h"
 
 /* USER CODE END Includes */
 
@@ -60,6 +60,7 @@ void SystemClock_Config(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
+
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -101,11 +102,11 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-
+  z80_reset();
 
   while (1)
   {
-	  zx_run();
+	  z80_run();
 
   /* USER CODE END WHILE */
 
