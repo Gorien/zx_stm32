@@ -40,11 +40,12 @@
 #include "main.h"
 #include "stm32f4xx_hal.h"
 #include "dma.h"
+#include "tim.h"
 #include "gpio.h"
 #include "fsmc.h"
 
 /* USER CODE BEGIN Includes */
-#include "z80.h"
+#include "zx.h"
 
 /* USER CODE END Includes */
 
@@ -60,7 +61,6 @@ void SystemClock_Config(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -94,6 +94,7 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_FSMC_Init();
+  MX_TIM10_Init();
 
   /* USER CODE BEGIN 2 */
 
@@ -102,11 +103,11 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  z80_reset();
+
 
   while (1)
   {
-	  z80_run();
+	  zx_run();
 
   /* USER CODE END WHILE */
 

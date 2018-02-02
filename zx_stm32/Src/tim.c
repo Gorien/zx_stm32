@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * File Name          : dma.c
+  * File Name          : TIM.c
   * Description        : This file provides code for the configuration
-  *                      of all the requested memory to memory DMA transfers.
+  *                      of the TIM instances.
   ******************************************************************************
   ** This notice applies to any and all portions of this file
   * that are not between comment pairs USER CODE BEGIN and
@@ -36,56 +36,74 @@
   *
   ******************************************************************************
   */
+
 /* Includes ------------------------------------------------------------------*/
-#include "dma.h"
+#include "tim.h"
 
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
 
-/*----------------------------------------------------------------------------*/
-/* Configure DMA                                                              */
-/*----------------------------------------------------------------------------*/
+TIM_HandleTypeDef htim10;
 
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */
-DMA_HandleTypeDef hdma_memtomem_dma2_stream0;
-
-/** 
-  * Enable DMA controller clock
-  * Configure DMA for memory to memory transfers
-  *   hdma_memtomem_dma2_stream0
-  */
-void MX_DMA_Init(void) 
+/* TIM10 init function */
+void MX_TIM10_Init(void)
 {
-  /* DMA controller clock enable */
-  __HAL_RCC_DMA2_CLK_ENABLE();
 
-  /* Configure DMA request hdma_memtomem_dma2_stream0 on DMA2_Stream0 */
-  hdma_memtomem_dma2_stream0.Instance = DMA2_Stream0;
-  hdma_memtomem_dma2_stream0.Init.Channel = DMA_CHANNEL_0;
-  hdma_memtomem_dma2_stream0.Init.Direction = DMA_MEMORY_TO_MEMORY;
-  hdma_memtomem_dma2_stream0.Init.PeriphInc = DMA_PINC_ENABLE;
-  hdma_memtomem_dma2_stream0.Init.MemInc = DMA_MINC_DISABLE;
-  hdma_memtomem_dma2_stream0.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
-  hdma_memtomem_dma2_stream0.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
-  hdma_memtomem_dma2_stream0.Init.Mode = DMA_NORMAL;
-  hdma_memtomem_dma2_stream0.Init.Priority = DMA_PRIORITY_MEDIUM;
-  hdma_memtomem_dma2_stream0.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
-  hdma_memtomem_dma2_stream0.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
-  hdma_memtomem_dma2_stream0.Init.MemBurst = DMA_MBURST_SINGLE;
-  hdma_memtomem_dma2_stream0.Init.PeriphBurst = DMA_PBURST_SINGLE;
-  if (HAL_DMA_Init(&hdma_memtomem_dma2_stream0) != HAL_OK)
+  htim10.Instance = TIM10;
+  htim10.Init.Prescaler = 48;
+  htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim10.Init.Period = 0xffff;
+  htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
 
 }
 
-/* USER CODE BEGIN 2 */
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
+{
 
-/* USER CODE END 2 */
+  if(tim_baseHandle->Instance==TIM10)
+  {
+  /* USER CODE BEGIN TIM10_MspInit 0 */
+
+  /* USER CODE END TIM10_MspInit 0 */
+    /* TIM10 clock enable */
+    __HAL_RCC_TIM10_CLK_ENABLE();
+
+    /* TIM10 interrupt Init */
+    HAL_NVIC_SetPriority(TIM1_UP_TIM10_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
+  /* USER CODE BEGIN TIM10_MspInit 1 */
+
+  /* USER CODE END TIM10_MspInit 1 */
+  }
+}
+
+void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
+{
+
+  if(tim_baseHandle->Instance==TIM10)
+  {
+  /* USER CODE BEGIN TIM10_MspDeInit 0 */
+
+  /* USER CODE END TIM10_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_TIM10_CLK_DISABLE();
+
+    /* TIM10 interrupt Deinit */
+    HAL_NVIC_DisableIRQ(TIM1_UP_TIM10_IRQn);
+  /* USER CODE BEGIN TIM10_MspDeInit 1 */
+
+  /* USER CODE END TIM10_MspDeInit 1 */
+  }
+} 
+
+/* USER CODE BEGIN 1 */
+
+/* USER CODE END 1 */
 
 /**
   * @}

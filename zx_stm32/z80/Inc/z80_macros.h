@@ -10,6 +10,7 @@
 #ifndef INC_Z80_MACROS_H_
 #define INC_Z80_MACROS_H_
 
+
 /*macros used for accessing the registers*/
 #define A	reg.r[7]
 #define F   reg.r[6]
@@ -87,6 +88,9 @@
 #define READ_BYTE(addr) peek(addr);
 #define WRITE_BYTE(addr, value) poke(addr, value);
 
+
+
+
 /*macros R/W port*/
 #define READ_PORT(port) in(port);
 #define WRITE_PORT(port, value) out(port, value);
@@ -96,11 +100,112 @@
 
 
 
-/*Instructions Table*/
-/*Instructions 8-Bit and 16-Bit Load Group*/
-#define LD(dst, src) \
+
+/*Instructions Table 8-Bit Load Group*/
+#define LD_R_TO_R(dst, src) \
 { \
 	dst=src; \
+}
+
+#define LD_n_TO_R(dst) \
+{ \
+	dst=memory[PC]; \
+	PC+=1; \
+}
+
+#define LD_ADDR_HL_TO_R(dst) \
+{ \
+	dst=memory[HL]; \
+}
+
+#define LD_ADDR_HL_FROM_R(src) \
+{ \
+	if (HL>0x3fff) \
+	{ \
+		memory[HL]=src; \
+	} \
+}
+
+#define LD_n_TO_ADDR_HL \
+{ \
+	if (HL>0x3fff) \
+	{ \
+		memory[HL]=memory[PC]; \
+	} \
+	PC+=1; \
+}
+
+#define LD_ADDR_RP_AND_OFFSET_TO_R(dst, src) \
+{ \
+	d.u=memory[PC]; \
+	PC+=1; \
+	MEMPTR=(src+d.s); \
+	dst=memory[MEMPTR]; \
+}
+
+#define LD_ADDR_RP_AND_OFFSET_FROM_R(dst, src) \
+{ \
+	d.u=memory[PC]; \
+	PC+=1; \
+	MEMPTR=(IX+d.s); \
+	if (MEMPTR>0x3fff) \
+	{ \
+		memory[MEMPTR]=src; \
+	} \
+}
+
+#define LD_n_TO_ADDR_RP_AND_OFFSET(dst) \
+{ \
+	d.u=memory[PC]; \
+	PC+=1; \
+	MEMPTR=(dst+d.s); \
+	if (MEMPTR>0x3fff) \
+	{ \
+		memory[MEMPTR]=memory[PC]; \
+	} \
+	PC+=1; \
+}
+
+/*LD A, (BC|DE)*/
+#define LD_A_FROM_ADDR_RP_MPTR(src) \
+{ \
+	A=memory[src]; \
+	MEMPTR=src+1; \
+}
+
+/*LD A, (nnnn)*/
+#define LD_A_FROM_ADDR_MPTR \
+{ \
+	MEMPTRL=memory[PC]; \
+	MEMPTRH=memory[PC+1]; \
+	PC+=2; \
+	A=memory[MEMPTR]; \
+	MEMPTR+=1; \
+}
+
+/*LD (BC|DE), A*/
+#define LD_A_TO_ADDR_RP_MPTR(dst) \
+{ \
+	if (dst>0x3fff) \
+	{ \
+		memory[dst]=A; \
+	} \
+	MEMPTR=dst+1; \
+	MEMPTRH=A; \
+}
+
+/*LD (nnnn), A*/
+#define LD_A_TO_ADDR_MPTR \
+{ \
+	MEMPTRL=memory[PC]; \
+	MEMPTRH=memory[PC+1]; \
+	PC+=2; \
+	if (MEMPTR>0x3fff) \
+	{ \
+		memory[MEMPTR]=A; \
+	} \
+	MEMPTR+=1; \
+	MEMPTRH=A; \
 }
 
 #define LD_A_I() \
@@ -115,67 +220,201 @@
 	F=(F&FLAG_C)|sz53_table[A]|(IFF2?FLAG_V:0); \
 }
 
+#define LD_R_A() \
+{ \
+	R=R7=A; \
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#define LD(dst, src) \
+{ \
+	dst=src; \
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*Instructions Table 16-Bit Load Group*/
+#define LD_RP_TO_RP(dst, src) \
+{ \
+	dst=src; \
+}
+
+#define LD_nn_TO_RP(dst) \
+{ \
+	dst=(memory[PC+1]<<8)|memory[PC]; \
+	PC+=2; \
+}
+
+#define LD_ADDR_nn_TO_RP(dst) \
+{ \
+	MEMPTRL=memory[PC]; \
+	MEMPTRH=memory[PC+1]; \
+	PC+=2; \
+	dst=(memory[MEMPTR+1]<<8)|memory[MEMPTR]; \
+	MEMPTR+=1; \
+}
+
+#define LD_ADDR_nn_FROM_RP(src) \
+{ \
+	MEMPTRL=memory[PC]; \
+	MEMPTRH=memory[PC+1]; \
+	PC+=2; \
+	if (MEMPTR>0x3fff) \
+	{ \
+		memory[MEMPTR]=src&0xff; \
+	} \
+	MEMPTR+=1; \
+	if (MEMPTR>0x3fff) \
+	{ \
+		memory[MEMPTR]=src>>8; \
+	} \
+}
+
 #define PUSH(rp) \
 { \
 	SP-=2; \
-	WRITE_WORD(SP, rp); \
+	if (SP>0x3fff) \
+	{ \
+		memory[SP]=rp&0xff; \
+	} \
+	if (SP>0x3fff) \
+	{ \
+		memory[SP+1]=rp>>8; \
+	} \
 }
 
 #define POP(rp) \
 { \
-	rp=READ_WORD(SP); \
+	rp=(memory[SP+1]<<8)|memory[SP]; \
 	SP+=2; \
 }
 
-/*#define LD_R_A() \
-{ \
-	R=R7=A; \
-}*/
 
 
 
-/*ld a, (BC|DE|nnnn)*/
-/*#define LD_A_FROM_ADDR_MPTR(dst, src, addr) \
-{ \
-	dst=src; \
-	MEMPTR=addr+1; \
-}
 
-/*ld (nnnn|BC|DE), A*/
-/*#define LD_A_TO_ADDR_MPTR(src, addr) \
-{ \
-	MEMPTRH=A; \
-	MEMPTRL=((addr+1) & 0xFF); \
-}
 
-/*ld BC|DE|SP|HL|IX|IY, (nnnn)*/
-/*#define LD_RP_FROM_ADDR_MPTR_16(dst, src, addr) \
-{ \
-	dst=src; \
-	MEMPTR=addr+1; \
-}
 
-/*ld (nnnn), BC|DE|SP|HL|IX|IY*/
-/*#define LD_RP_TO_ADDR_MPTR_16(dst, src, addr) \
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#define LD16(dst, src) \
 { \
 	dst=src; \
-	MEMPTR=addr+1; \
-}*/
-
-
-/*instructions Exchange, Block Transfer, Search Group*/
-#define EX(rp1, rp2) \
-{ \
-	uint16_t temp; \
-	temp=rp1; rp1=rp2; rp2=temp; \
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*Instructions Table Exchange, Block Transfer, Search Group*/
 #define EXX() \
 { \
-	uint16_t temp; \
-	temp=BC; BC=BC_; BC_=temp; \
-	temp=DE; DE=DE_; DE_=temp; \
-	temp=HL; HL=HL_; HL_=temp; \
+	exx_temp=BC; BC=BC_; BC_=exx_temp; \
+	exx_temp=DE; DE=DE_; DE_=exx_temp; \
+	exx_temp=HL; HL=HL_; HL_=exx_temp; \
+}
+
+#define EX(rp1, rp2) \
+{ \
+	exx_temp=rp1; rp1=rp2; rp2=exx_temp; \
+}
+
+/*EX (SP), HL|IX|IY*/
+#define EX_MPTR(rp) \
+{ \
+	MEMPTRL=memory[SP]; \
+	MEMPTRH=memory[SP+1]; \
+	exx_temp=MEMPTR; MEMPTR=rp; \
+	if (SP>0x3fff) \
+	{ \
+		memory[SP]=MEMPTRL; \
+	} \
+	if (SP+1>0x3fff) \
+	{ \
+		memory[SP+1]=MEMPTRH; \
+	} \
+	rp=exx_temp; \
+	MEMPTR=exx_temp; \
 }
 
 #define LDI() \
@@ -185,6 +424,17 @@
 	BC--; \
 	DE++; \
 	HL++; \
+	bo_temp+=A; \
+	F=(F&(FLAG_C|FLAG_Z|FLAG_S))|(BC?FLAG_V:0)|(bo_temp&FLAG_3)|((bo_temp&0x02)?FLAG_5:0); \
+}
+
+#define LDD() \
+{ \
+	bo_temp=READ_BYTE(HL); \
+	WRITE_BYTE(DE, bo_temp); \
+	BC--; \
+	DE--; \
+	HL--; \
 	bo_temp+=A; \
 	F=(F&(FLAG_C|FLAG_Z|FLAG_S))|(BC?FLAG_V:0)|(bo_temp&FLAG_3)|((bo_temp&0x02)?FLAG_5:0); \
 }
@@ -209,19 +459,6 @@
 		T_WAIT_UNTIL(12); \
 	} \
 }
-
-#define LDD() \
-{ \
-	bo_temp=READ_BYTE(HL); \
-	WRITE_BYTE(DE, bo_temp); \
-	BC--; \
-	DE--; \
-	HL--; \
-	bo_temp+=A; \
-	F=(F&(FLAG_C|FLAG_Z|FLAG_S))|(BC?FLAG_V:0)|(bo_temp&FLAG_3)|((bo_temp&0x02)?FLAG_5:0); \
-}
-
-
 
 #define LDDR() \
 { \
@@ -260,6 +497,22 @@
 	MEMPTR=MEMPTR+1; \
 }
 
+#define CPD(rd) \
+{ \
+	bo_temp=READ_BYTE(HL); \
+	cp_temp=A-bo_temp; \
+	lookup=((A&0x08)>>3)|((bo_temp&0x08 )>>2)|((cp_temp&0x08)>>1); \
+	HL--; \
+	BC--; \
+	F=(F&FLAG_C)|(BC?(FLAG_V|FLAG_N):FLAG_N)|halfcarry_sub_table[lookup]|(cp_temp?0:FLAG_Z)|(cp_temp&FLAG_S ); \
+	if(F&FLAG_H) \
+	{ \
+		cp_temp--; \
+	} \
+	F|=(cp_temp&FLAG_3)|((cp_temp&0x02)?FLAG_5:0); \
+	MEMPTR=MEMPTR-1; \
+}
+
 #define CPIR() \
 { \
 	bo_temp=READ_BYTE(HL); \
@@ -284,22 +537,6 @@
 		MEMPTR=MEMPTR+1; \
 		T_WAIT_UNTIL(12); \
 	} \
-}
-
-#define CPD(rd) \
-{ \
-	bo_temp=READ_BYTE(HL); \
-	cp_temp=A-bo_temp; \
-	lookup=((A&0x08)>>3)|((bo_temp&0x08 )>>2)|((cp_temp&0x08)>>1); \
-	HL--; \
-	BC--; \
-	F=(F&FLAG_C)|(BC?(FLAG_V|FLAG_N):FLAG_N)|halfcarry_sub_table[lookup]|(cp_temp?0:FLAG_Z)|(cp_temp&FLAG_S ); \
-	if(F&FLAG_H) \
-	{ \
-		cp_temp--; \
-	} \
-	F|=(cp_temp&FLAG_3)|((cp_temp&0x02)?FLAG_5:0); \
-	MEMPTR=MEMPTR-1; \
 }
 
 #define CPDR() \
@@ -328,16 +565,176 @@
 	} \
 }
 
-/*Instructions 8-Bit Arithmetic and Logical Group*/
-#define ADD(value) \
+/*Instructions Table 8-Bit Arithmetic and Logical Group*/
+#define ADD_A_AND_R(src) \
 { \
-	add_temp=A+(value); \
-	lookup=((A&0x88 )>>3 )|(((value)&0x88)>>2)|((add_temp&0x88)>>1);  \
+	add_temp=A+(src); \
+	lookup=((A&0x88 )>>3 )|(((src)&0x88)>>2)|((add_temp&0x88)>>1); \
 	A=add_temp; \
 	F=(add_temp&0x100?FLAG_C:0)|halfcarry_add_table[lookup&0x07]|overflow_add_table[lookup>>4]|sz53_table[A]; \
 }
 
-#define ADC(value) \
+#define ADD_A_AND_n \
+{ \
+	temp8=memory[PC]; \
+	PC+=1; \
+	add_temp=A+(temp8); \
+	lookup=((A&0x88 )>>3 )|(((temp8)&0x88)>>2)|((add_temp&0x88)>>1); \
+	A=add_temp; \
+	F=(add_temp&0x100?FLAG_C:0)|halfcarry_add_table[lookup&0x07]|overflow_add_table[lookup>>4]|sz53_table[A]; \
+}
+
+#define ADD_A_AND_HL \
+{ \
+	temp8=memory[HL]; \
+	add_temp=A+(temp8); \
+	lookup=((A&0x88 )>>3 )|(((temp8)&0x88)>>2)|((add_temp&0x88)>>1); \
+	A=add_temp; \
+	F=(add_temp&0x100?FLAG_C:0)|halfcarry_add_table[lookup&0x07]|overflow_add_table[lookup>>4]|sz53_table[A]; \
+}
+
+#define ADD_A_AND_RP_AND_OFFSET(src) \
+{ \
+	d.u=memory[PC]; \
+	PC+=1; \
+	MEMPTR=(src+d.s); \
+	temp8=memory[MEMPTR]; \
+	add_temp=A+(temp8); \
+	lookup=((A&0x88 )>>3 )|(((temp8)&0x88)>>2)|((add_temp&0x88)>>1); \
+	A=add_temp; \
+	F=(add_temp&0x100?FLAG_C:0)|halfcarry_add_table[lookup&0x07]|overflow_add_table[lookup>>4]|sz53_table[A]; \
+}
+
+
+#define SUB_A_AND_R(src) \
+{ \
+	sub_temp=A-(src); \
+	lookup=((A&0x88)>>3)|(((src)&0x88)>>2)|((sub_temp&0x88)>>1); \
+	A=sub_temp; \
+	F=(sub_temp&0x100?FLAG_C:0)|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|sz53_table[A]; \
+}
+
+#define SUB_A_AND_n \
+{ \
+	temp8=memory[PC]; \
+	PC+=1; \
+	sub_temp=A-(temp8); \
+	lookup=((A&0x88)>>3)|(((temp8)&0x88)>>2)|((sub_temp&0x88)>>1); \
+	A=sub_temp; \
+	F=(sub_temp&0x100?FLAG_C:0)|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|sz53_table[A]; \
+}
+
+#define SUB_A_AND_HL \
+{ \
+	temp8=memory[HL]; \
+	sub_temp=A-(temp8); \
+	lookup=((A&0x88)>>3)|(((temp8)&0x88)>>2)|((sub_temp&0x88)>>1); \
+	A=sub_temp; \
+	F=(sub_temp&0x100?FLAG_C:0)|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|sz53_table[A]; \
+}
+
+#define SUB_A_AND_RP_AND_OFFSET(temp8) \
+{ \
+	d.u=memory[PC]; \
+	PC+=1; \
+	MEMPTR=(temp8+d.s); \
+	temp8=memory[MEMPTR]; \
+	sub_temp=A-(temp8); \
+	lookup=((A&0x88)>>3)|(((temp8)&0x88)>>2)|((sub_temp&0x88)>>1); \
+	A=sub_temp; \
+	F=(sub_temp&0x100?FLAG_C:0)|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|sz53_table[A]; \
+}
+
+#define INC_R(value) \
+{ \
+	(value)++; \
+	F=(F&FLAG_C)|((value)==0x80?FLAG_V:0)|((value)&0x0f?0:FLAG_H)|sz53_table[(value)]; \
+}
+
+#define INC_ADDR_HL \
+{ \
+	temp8=memory[HL]; \
+	temp8++; \
+	F=(F&FLAG_C)|((temp8)==0x80?FLAG_V:0)|((temp8)&0x0f?0:FLAG_H)|sz53_table[(temp8)]; \
+	if (HL>0x3fff) \
+	{ \
+		memory[HL]=temp8; \
+	} \
+}
+
+#define INC_ADDR_RP_AND_OFSET(temp16) \
+{ \
+	d.u=memory[PC]; \
+	PC+=1; \
+	MEMPTR=(temp16+d.s); \
+	temp8=memory[MEMPTR]; \
+	temp8++; \
+	F=(F&FLAG_C)|((temp8)==0x80?FLAG_V:0)|((temp8)&0x0f?0:FLAG_H)|sz53_table[(temp8)]; \
+	if (MEMPTR>0x3fff) \
+	{ \
+		memory[MEMPTR]=temp8; \
+	} \
+}
+
+#define DEC_R(value) \
+{ \
+	F=(F&FLAG_C)|((value)&0x0f?0:FLAG_H)|FLAG_N; \
+	(value)--; \
+	F|=((value)==0x7f?FLAG_V:0)|sz53_table[(value)]; \
+}
+
+#define DEC_ADDR_HL \
+{ \
+	temp8=memory[HL]; \
+	F=(F&FLAG_C)|((temp8)&0x0f?0:FLAG_H)|FLAG_N; \
+	temp8--; \
+	F|=((temp8)==0x7f?FLAG_V:0)|sz53_table[(temp8)]; \
+	if (HL>0x3fff) \
+	{ \
+		memory[HL]=temp8; \
+	} \
+}
+
+#define DEC_ADDR_RP_AND_OFSET(temp16) \
+{ \
+	d.u=memory[PC]; \
+	PC+=1; \
+	MEMPTR=(temp16+d.s); \
+	temp8=memory[MEMPTR]; \
+	F=(F&FLAG_C)|((temp8)&0x0f?0:FLAG_H)|FLAG_N; \
+	temp8--; \
+	F|=((temp8)==0x7f?FLAG_V:0)|sz53_table[(temp8)]; \
+	if (MEMPTR>0x3fff) \
+	{ \
+		memory[MEMPTR]=temp8; \
+	} \
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#define ADDC(a, value) \
 { \
 	add_temp=A+(value)+(F&FLAG_C); \
 	lookup=((A&0x88)>>3)|(((value)&0x88)>>2 )|((add_temp&0x88)>>1); \
@@ -345,20 +742,19 @@
 	F=(add_temp&0x100?FLAG_C:0)|halfcarry_add_table[lookup & 0x07]|overflow_add_table[lookup>>4]|sz53_table[A]; \
 }
 
-#define SUB(value) \
-{ \
-	sub_temp=A-(value); \
-	lookup=((A&0x88)>>3)|(((value)&0x88)>>2)|((sub_temp&0x88)>>1); \
-	A=sub_temp; \
-	F=(sub_temp&0x100?FLAG_C:0)|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|sz53_table[A]; \
-}
-
-#define SBC(value) \
+#define SUBC(a, value) \
 { \
 	sub_temp=A-(value)-(F&FLAG_C); \
 	lookup=((A&0x88)>>3)|(((value)&0x88)>>2)|((sub_temp&0x88)>>1); \
 	A=sub_temp;\
 	F=(sub_temp&0x100?FLAG_C:0)|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|sz53_table[A]; \
+}
+
+#define CP(value) \
+{ \
+	cp_temp=A-(value); \
+	lookup=((A&0x88)>>3)|(((value)&0x88)>>2)|((cp_temp&0x88)>>1); \
+	F=(cp_temp&0x100?FLAG_C:(cp_temp?0:FLAG_Z))|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|((value)&(FLAG_3|FLAG_5))|(cp_temp&FLAG_S); \
 }
 
 #define AND(value) \
@@ -379,62 +775,7 @@
 	F=sz53p_table[A]; \
 }
 
-#define CP(value) \
-{ \
-	cp_temp=A-(value); \
-	lookup=((A&0x88)>>3)|(((value)&0x88)>>2)|((cp_temp&0x88)>>1); \
-	F=(cp_temp&0x100?FLAG_C:(cp_temp?0:FLAG_Z))|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|((value)&(FLAG_3|FLAG_5))|(cp_temp&FLAG_S); \
-}
-
-#define INC(value) \
-{ \
-	(value)++; \
-	F=(F&FLAG_C)|((value)==0x80?FLAG_V:0)|((value)&0x0f?0:FLAG_H)|sz53_table[(value)]; \
-}
-
-#define DEC(value) \
-{ \
-	F=(F&FLAG_C)|((value)&0x0f?0:FLAG_H)|FLAG_N; \
-	(value)--; \
-	F|=((value)==0x7f?FLAG_V:0)|sz53_table[(value)]; \
-}
-
-/*General_purpose Arithmetic and CPU Control Group*/
-#define DAA() \
-{ \
-	daa_temp=((A+0x100*((F&3)+((F>>2)&4)))*2); \
-	F=daatab[daa_temp]; \
-	A=daatab[daa_temp+1]; \
-}
-
-#define CPL() \
-{ \
-	A^= 0xff; \
-	F=(F&(FLAG_C|FLAG_P|FLAG_Z|FLAG_S))|(A&(FLAG_3|FLAG_5))|(FLAG_N|FLAG_H); \
-}
-
-#define NEG() \
-{ \
-	neg_temp=A; \
-	A=0; \
-	SUB(neg_temp); \
-}
-
-#define CCF() \
-{ \
-	F=(F&(FLAG_P|FLAG_Z|FLAG_S))|((F&FLAG_C)?FLAG_H:FLAG_C)|(A&(FLAG_3|FLAG_5)); \
-}
-
-#define SCF() \
-{ \
-	F=(F&(FLAG_P|FLAG_Z|FLAG_S))|(A&(FLAG_3|FLAG_5))|FLAG_C; \
-}
-
-#define HALT() \
-{ \
-	halt=1; \
-}
-
+/*Instructions Table General-Purpose Arithmetic and CPU Control Group*/
 #define DI() \
 { \
 	IFF1=IFF2=0; \
@@ -450,7 +791,42 @@
 	IM=(value); \
 }
 
-/*Instructions 16-Bit Arithmetic Group*/
+#define CPL() \
+{ \
+	A^= 0xff; \
+	F=(F&(FLAG_C|FLAG_P|FLAG_Z|FLAG_S))|(A&(FLAG_3|FLAG_5))|(FLAG_N|FLAG_H); \
+}
+
+#define NEG() \
+{ \
+	neg_temp=A; \
+	A=0; \
+	SUB_A_AND_R(neg_temp); \
+}
+
+#define SCF() \
+{ \
+	F=(F&(FLAG_P|FLAG_Z|FLAG_S))|(A&(FLAG_3|FLAG_5))|FLAG_C; \
+}
+
+#define CCF() \
+{ \
+	F=(F&(FLAG_P|FLAG_Z|FLAG_S))|((F&FLAG_C)?FLAG_H:FLAG_C)|(A&(FLAG_3|FLAG_5)); \
+}
+
+#define HALT() \
+{ \
+	halt=1; \
+}
+
+#define DAA() \
+{ \
+	daa_temp=((A+0x100*((F&3)+((F>>2)&4)))*2); \
+	F=daatab[daa_temp]; \
+	A=daatab[daa_temp+1]; \
+}
+
+/*Instructions Table 16-Bit Arithmetic Group*/
 #define ADD16(value1, value2) \
 { \
 	add_temp=(value1)+(value2); \
@@ -458,24 +834,6 @@
 	MEMPTR=value1+1; \
 	(value1)=add_temp; \
 	F=(F&(FLAG_V|FLAG_Z|FLAG_S))|(add_temp&0x10000?FLAG_C:0)|((add_temp>>8)&(FLAG_3|FLAG_5))|halfcarry_add_table[lookup]; \
-}
-
-#define ADC16(hl, value) \
-{ \
-	add_temp=HL+(value)+(F&FLAG_C); \
-	lookup=((HL&0x8800)>>11)|(((value)&0x8800)>>10)|((add_temp&0x8800)>>9); \
-	MEMPTR=hl+1; \
-	HL=add_temp; \
-	F=(add_temp&0x10000?FLAG_C:0)|overflow_add_table[lookup>>4]|(H&(FLAG_3|FLAG_5|FLAG_S))|halfcarry_add_table[lookup&0x07]|(HL?0:FLAG_Z); \
-}
-
-#define SBC16(hl, value) \
-{ \
-	sub_temp=HL-(value)-(F&FLAG_C); \
-	lookup=((HL&0x8800)>>11)|(((value)&0x8800)>>10)|((sub_temp&0x8800)>>9); \
-	MEMPTR=hl+1; \
-	HL=sub_temp; \
-	F=(sub_temp&0x10000?FLAG_C:0)|FLAG_N|overflow_sub_table[lookup>>4]|(H&(FLAG_3|FLAG_5|FLAG_S))|halfcarry_sub_table[lookup&0x07]|(HL?0:FLAG_Z); \
 }
 
 #define INC16(value) \
@@ -488,59 +846,37 @@
 	(value)--; \
 }
 
+#define ADDC16(hl, value) \
+{ \
+	add_temp=HL+(value)+(F&FLAG_C); \
+	lookup=((HL&0x8800)>>11)|(((value)&0x8800)>>10)|((add_temp&0x8800)>>9); \
+	MEMPTR=hl+1; \
+	HL=add_temp; \
+	F=(add_temp&0x10000?FLAG_C:0)|overflow_add_table[lookup>>4]|(H&(FLAG_3|FLAG_5|FLAG_S))|halfcarry_add_table[lookup&0x07]|(HL?0:FLAG_Z); \
+}
+
+#define SUBC16(hl, value) \
+{ \
+	sub_temp=HL-(value)-(F&FLAG_C); \
+	lookup=((HL&0x8800)>>11)|(((value)&0x8800)>>10)|((sub_temp&0x8800)>>9); \
+	MEMPTR=hl+1; \
+	HL=sub_temp; \
+	F=(sub_temp&0x10000?FLAG_C:0)|FLAG_N|overflow_sub_table[lookup>>4]|(H&(FLAG_3|FLAG_5|FLAG_S))|halfcarry_sub_table[lookup&0x07]|(HL?0:FLAG_Z); \
+}
+
 /*Instructions Rotate and Shift Group*/
-#define RLCA() \
-{ \
-	A=(A<<1)|(A>>7); \
-	F=(F&(FLAG_P|FLAG_Z|FLAG_S))|(A&(FLAG_C|FLAG_3|FLAG_5)); \
-}
-
-#define RLA() \
-{ \
-	rot_temp=A; \
-	A=(A<<1)|(F&FLAG_C); \
-	F=(F&(FLAG_P|FLAG_Z|FLAG_S))|(A&(FLAG_3|FLAG_5))|(rot_temp>>7); \
-}
-
-#define RRCA() \
-{ \
-	F=(F&(FLAG_P|FLAG_Z|FLAG_S))|(A&FLAG_C); \
-	A=(A>>1)|(A<<7); \
-	F|=(A&(FLAG_3|FLAG_5)); \
-}
-
-#define RRA() \
-{ \
-	rot_temp=A; \
-	A=(A>>1)|(F<<7); \
-	F=(F&(FLAG_P|FLAG_Z|FLAG_S))|(A&(FLAG_3|FLAG_5))|(rot_temp&FLAG_C); \
-}
-
-#define RLC(value) \
-{ \
-	(value)=((value)<<1)|((value)>>7); \
-	F=((value)&FLAG_C)|sz53p_table[(value)]; \
-}
-
-#define RL(value) \
-{ \
-	rot_temp=(value); \
-	(value)=((value)<<1)|( F & FLAG_C ); \
-	F=(rot_temp>>7)|sz53p_table[(value)]; \
-}
-
-#define RRC(value) \
+#define SRL(value) \
 { \
 	F=(value)&FLAG_C; \
-	(value)=((value)>>1)|((value)<<7); \
+	(value)>>=1; \
 	F|=sz53p_table[(value)]; \
 }
 
-#define RR(value) \
+#define SRA(value) \
 { \
-	rot_temp=(value); \
-	(value)=((value)>>1)|(F<<7); \
-	F=(rot_temp&FLAG_C)|sz53p_table[(value)]; \
+	F=(value)&FLAG_C; \
+	(value)=((value)&0x80)|((value)>>1); \
+	F|=sz53p_table[(value)]; \
 }
 
 #define SLA(value) \
@@ -557,27 +893,58 @@
 	F|=sz53p_table[(value)]; \
 }
 
-#define SRA(value) \
+#define RL(value) \
+{ \
+	rot_temp=(value); \
+	(value)=((value)<<1)|( F & FLAG_C ); \
+	F=(rot_temp>>7)|sz53p_table[(value)]; \
+}
+
+#define RR(value) \
+{ \
+	rot_temp=(value); \
+	(value)=((value)>>1)|(F<<7); \
+	F=(rot_temp&FLAG_C)|sz53p_table[(value)]; \
+}
+
+#define RLC(value) \
+{ \
+	(value)=((value)<<1)|((value)>>7); \
+	F=((value)&FLAG_C)|sz53p_table[(value)]; \
+}
+
+#define RRC(value) \
 { \
 	F=(value)&FLAG_C; \
-	(value)=((value)&0x80)|((value)>>1); \
+	(value)=((value)>>1)|((value)<<7); \
 	F|=sz53p_table[(value)]; \
 }
 
-#define SRL(value) \
+#define RLA() \
 { \
-	F=(value)&FLAG_C; \
-	(value)>>=1; \
-	F|=sz53p_table[(value)]; \
+	rot_temp=A; \
+	A=(A<<1)|(F&FLAG_C); \
+	F=(F&(FLAG_P|FLAG_Z|FLAG_S))|(A&(FLAG_3|FLAG_5))|(rot_temp>>7); \
 }
 
-#define RLD() \
+#define RRA() \
 { \
-	rot_temp=READ_BYTE(HL); \
-	WRITE_BYTE(HL, (rot_temp<<4)|(A&0x0f)); \
-	A=(A&0xf0)|(rot_temp>>4); \
-	F=(F&FLAG_C)|sz53p_table[A]; \
-	MEMPTR=HL+1; \
+	rot_temp=A; \
+	A=(A>>1)|(F<<7); \
+	F=(F&(FLAG_P|FLAG_Z|FLAG_S))|(A&(FLAG_3|FLAG_5))|(rot_temp&FLAG_C); \
+}
+
+#define RLCA() \
+{ \
+	A=(A<<1)|(A>>7); \
+	F=(F&(FLAG_P|FLAG_Z|FLAG_S))|(A&(FLAG_C|FLAG_3|FLAG_5)); \
+}
+
+#define RRCA() \
+{ \
+	F=(F&(FLAG_P|FLAG_Z|FLAG_S))|(A&FLAG_C); \
+	A=(A>>1)|(A<<7); \
+	F|=(A&(FLAG_3|FLAG_5)); \
 }
 
 #define RRD() \
@@ -585,6 +952,15 @@
 	rot_temp=READ_BYTE(HL); \
 	WRITE_BYTE(HL, (A<<4)|(rot_temp>>4)); \
 	A=(A&0xf0)|(rot_temp&0x0f); \
+	F=(F&FLAG_C)|sz53p_table[A]; \
+	MEMPTR=HL+1; \
+}
+
+#define RLD() \
+{ \
+	rot_temp=READ_BYTE(HL); \
+	WRITE_BYTE(HL, (rot_temp<<4)|(A&0x0f)); \
+	A=(A&0xf0)|(rot_temp>>4); \
 	F=(F&FLAG_C)|sz53p_table[A]; \
 	MEMPTR=HL+1; \
 }
@@ -611,7 +987,7 @@
 	value&=~(1<<bit); \
 }
 
-/*Instructions Jump Group*/
+/*Instructions Table Jump Group*/
 #define JP(addr) \
 { \
 	PC=addr; \
@@ -629,8 +1005,14 @@
 	MEMPTR=PC; \
 }
 
+/*Instructions Table Call and Return Group*/
+#define RST(addr) \
+{ \
+	PUSH(PC); \
+	PC=addr; \
+	MEMPTR=PC; \
+}
 
-/*Instructions Call and Return Group*/
 #define CALL(addr) \
 { \
 	PUSH(PC); \
@@ -644,27 +1026,19 @@
 	MEMPTR=PC; \
 }
 
-#define RETI() \
-{ \
-	IFF1=IFF2; \
-	RET(); \
-}
-
+/*same as RETI, only opcode is different*/
 #define RETN() \
 { \
 	IFF1=IFF2; \
 	RET(); \
 }
 
-#define RST(addr) \
+#define RETI() \
 { \
-	PUSH(PC); \
-	PC=addr; \
-	MEMPTR=PC; \
+	IFF1=IFF2; \
+	RET(); \
 }
-
 /*Instructions Input and Output Group*/
-/*instructions IN PORT*/
 #define IN_A(reg, port) \
 { \
 	reg=READ_PORT(port); \
@@ -754,8 +1128,6 @@
 	F|=parity_table[(((pbyte+((C+(c_add))&0xff))&7)^B)]; \
 }
 
-
-/*instructions OUT PORT*/
 #define OUT_A(port, reg) \
 { \
 	WRITE_PORT(port, reg); \

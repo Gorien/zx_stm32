@@ -21,6 +21,8 @@
 "Src/stm32f4xx_hal_msp.o"
 "Src/stm32f4xx_it.o"
 "Src/system_stm32f4xx.o"
+"Src/tim.o"
 "lcd/Src/lcd.o"
 "startup/startup_stm32f407xx.o"
 "z80/Src/z80.o"
+"zx_spectrum/Src/zx.o"

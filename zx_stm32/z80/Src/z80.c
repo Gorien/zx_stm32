@@ -49,7 +49,7 @@ void z80_reset(void)
 
 uint16_t i;
 
-void z80_run(void)
+uint8_t z80_run(void)
 {
 	if (IFF1==0)
 	{
@@ -86,7 +86,7 @@ void z80_run(void)
 				break;
 			}
 
-			/*if (IM==0)
+			if (IM==0)
 			{
 				IFF1=0;
 				IFF2=0;
@@ -108,7 +108,7 @@ void z80_run(void)
 				vector_nmi=READ_WORD(vector_nmi);
 				RST(vector_nmi);
 				halt=0;
-			}*/
+			}
 		}
 	}
 
@@ -139,14 +139,13 @@ void z80_run(void)
 				break;
 		case(0xDD):
 				opcode=NEXT_BYTE;
-				R++;
 				m_cycle+=4;
+				R++;
 				if (opcode==0xCB)
 				{
 					d.u=NEXT_BYTE;
 					opcode=NEXT_BYTE;
 					(*opcode_ddcb[opcode])();
-					m_cycle+=4;
 				}
 				else
 				{
@@ -155,14 +154,13 @@ void z80_run(void)
 				break;
 		case(0xFD):
 				opcode=NEXT_BYTE;
-				R++;
 				m_cycle+=4;
+				R++;
 				if (opcode==0xCB)
 				{
 					d.u=NEXT_BYTE;
 					opcode=NEXT_BYTE;
 					(*opcode_fdcb[opcode])();
-					m_cycle+=4;
 				}
 				else
 				{
@@ -173,64 +171,8 @@ void z80_run(void)
 			(*opcode_base[opcode])();
 			break;
 		}
-
-
-
-
-/*		if (prefix==0xCB)
-		{
-			opcode=NEXT_BYTE;
-			(*opcode_cb[opcode])();
-			R++;
-			m_cycle+=4;
-		}
-		else if (prefix==0xED)
-		{
-			opcode=NEXT_BYTE;
-			(*opcode_ed[opcode])();
-			R++;
-			m_cycle+=4;
-		}
-		else if (prefix==0xDD)
-		{
-			opcode=NEXT_BYTE;
-			R++;
-			m_cycle+=4;
-			if (opcode==0xCB)
-			{
-				d.u=NEXT_BYTE;
-				opcode=NEXT_BYTE;
-				(*opcode_ddcb[opcode])();
-				m_cycle+=4;
-			}
-			else
-			{
-				(*opcode_dd[opcode])();
-
-			}
-		}
-		else if (prefix==0xFD)
-		{
-			opcode=NEXT_BYTE;
-			R++;
-			m_cycle+=4;
-			if (opcode==0xCB)
-			{
-				d.u=NEXT_BYTE;
-				opcode=NEXT_BYTE;
-				(*opcode_fdcb[opcode])();
-				m_cycle+=4;
-			}
-			else
-			{
-				(*opcode_fd[opcode])();
-			}
-		}
-		else
-		{
-			(*opcode_base[opcode])();
-		}*/
 	}
+	return m_cycle;
 }
 
 
@@ -239,42 +181,15 @@ void poke(uint16_t addr, uint8_t value)
 	if (addr<0x4000)
 	{
 	}
-	else if (addr<0x5800)
-	{
-		addr=addr-0x4000;
-		screen_RAM [((addr&0x181F)|((addr&0xE0)<<3)|((addr&0x700)>>3))]=(value);
-	}
-	else if (addr<0x5B00)
-	{
-		attribute_RAM [addr-0x5800]=value;
-	}
 	else
 	{
-		RAM[addr-0x5B00]=value;
+		memory[addr]=value;
 	}
 }
 
 uint8_t peek(uint16_t addr)
 {
-	uint8_t value;
-	if (addr<0x4000)
-	{
-		value=ROM[addr];
-	}
-	else if (addr<0x5800)
-	{
-		addr=addr-0x4000;
-		value=screen_RAM [((addr&0x181F)|((addr&0xE0)<<3)|((addr&0x700)>>3))];
-	}
-	else if (addr<0x5B00)
-	{
-		value=attribute_RAM [addr-0x5800];
-	}
-	else
-	{
-		value=RAM[addr-0x5B00];
-	}
-	return value;
+	return memory[addr];
 }
 
 void poke16(uint16_t addr, uint16_t value)

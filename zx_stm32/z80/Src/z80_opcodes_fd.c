@@ -28,8 +28,7 @@ static void op_FD_0x19(void)
 /*LD IY, @*/
 static void op_FD_0x21(void)
 {
-	nn=NEXT_WORD;
-	LD16(IY, nn);
+	LD_nn_TO_RP(IY);
 	T_WAIT_UNTIL(10);
 	return;
 }
@@ -37,9 +36,7 @@ static void op_FD_0x21(void)
 /*LD (@), IY*/
 static void op_FD_0x22(void)
 {
-	nn=NEXT_WORD;
-	LD_RP_TO_ADDR_MPTR_16(temp16, IY, nn);
-	WRITE_WORD(nn, temp16);
+	LD_ADDR_nn_FROM_RP(IY);
 	T_WAIT_UNTIL(16);
 	return;
 }
@@ -55,7 +52,7 @@ static void op_FD_0x23(void)
 /*INC IYH*/
 static void op_FD_0x24(void)
 {
-	INC(IYH);
+	INC_R(IYH);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -63,7 +60,7 @@ static void op_FD_0x24(void)
 /*DEC IYH*/
 static void op_FD_0x25(void)
 {
-	DEC(IYH);
+	DEC_R(IYH);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -71,8 +68,7 @@ static void op_FD_0x25(void)
 /*LD IYH, #*/
 static void op_FD_0x26(void)
 {
-	n=NEXT_BYTE;
-	LD(IYH, n);
+	LD_n_TO_R(IYH);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -88,9 +84,7 @@ static void op_FD_0x29(void)
 /*LD IY, (@)*/
 static void op_FD_0x2a(void)
 {
-	nn=NEXT_WORD;
-	temp16=READ_WORD(nn);
-	LD_RP_FROM_ADDR_MPTR_16(IY, temp16, nn);
+	LD_ADDR_nn_TO_RP(IY);
 	T_WAIT_UNTIL(16);
 	return;
 }
@@ -106,7 +100,7 @@ static void op_FD_0x2b(void)
 /*INC IYL*/
 static void op_FD_0x2c(void)
 {
-	INC(IYL);
+	INC_R(IYL);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -114,7 +108,7 @@ static void op_FD_0x2c(void)
 /*DEC IYL*/
 static void op_FD_0x2d(void)
 {
-	DEC(IYL);
+	DEC_R(IYL);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -122,8 +116,7 @@ static void op_FD_0x2d(void)
 /*LD IYL, #*/
 static void op_FD_0x2e(void)
 {
-	n=NEXT_BYTE;
-	LD(IYL, n);
+	LD_n_TO_R(IYL);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -131,11 +124,7 @@ static void op_FD_0x2e(void)
 /*INC (IY+$)*/
 static void op_FD_0x34(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	INC(temp8);
-	WRITE_BYTE(IY+d.s, temp8);
+	INC_ADDR_RP_AND_OFSET(IY);
 	T_WAIT_UNTIL(19);
 	return;
 }
@@ -143,11 +132,7 @@ static void op_FD_0x34(void)
 /*DEC (IY+$)*/
 static void op_FD_0x35(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	DEC(temp8);
-	WRITE_BYTE(IY+d.s, temp8);
+	DEC_ADDR_RP_AND_OFSET(IY);
 	T_WAIT_UNTIL(19);
 	return;
 }
@@ -155,11 +140,7 @@ static void op_FD_0x35(void)
 /*LD (IY+$), #*/
 static void op_FD_0x36(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	n=NEXT_BYTE;
-	LD(n, n);
-	WRITE_BYTE(IY+d.s, n);
+	LD_n_TO_ADDR_RP_AND_OFFSET(IY);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -175,7 +156,7 @@ static void op_FD_0x39(void)
 /*LD B, IYH*/
 static void op_FD_0x44(void)
 {
-	LD(B, IYH);
+	LD_R_TO_R(B, IYH);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -183,7 +164,7 @@ static void op_FD_0x44(void)
 /*LD B, IYL*/
 static void op_FD_0x45(void)
 {
-	LD(B, IYL);
+	LD_R_TO_R(B, IYL);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -191,10 +172,7 @@ static void op_FD_0x45(void)
 /*LD B, (IY+$)*/
 static void op_FD_0x46(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	LD(B, temp8);
+	LD_ADDR_RP_AND_OFFSET_TO_R(B, IY);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -202,7 +180,7 @@ static void op_FD_0x46(void)
 /*LD C, IYH*/
 static void op_FD_0x4c(void)
 {
-	LD(C, IYH);
+	LD_R_TO_R(C, IYH);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -210,7 +188,7 @@ static void op_FD_0x4c(void)
 /*LD C, IYL*/
 static void op_FD_0x4d(void)
 {
-	LD(C, IYL);
+	LD_R_TO_R(C, IYL);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -218,10 +196,7 @@ static void op_FD_0x4d(void)
 /*LD C, (IY+$)*/
 static void op_FD_0x4e(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	LD(C, temp8);
+	LD_ADDR_RP_AND_OFFSET_TO_R(C, IY);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -229,7 +204,7 @@ static void op_FD_0x4e(void)
 /*LD D, IYH*/
 static void op_FD_0x54(void)
 {
-	LD(D, IYH);
+	LD_R_TO_R(D, IYH);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -237,7 +212,7 @@ static void op_FD_0x54(void)
 /*LD D, IYL*/
 static void op_FD_0x55(void)
 {
-	LD(D, IYL);
+	LD_R_TO_R(D, IYL);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -245,10 +220,7 @@ static void op_FD_0x55(void)
 /*LD D, (IY+$)*/
 static void op_FD_0x56(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	LD(D, temp8);
+	LD_ADDR_RP_AND_OFFSET_TO_R(D, IY);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -256,7 +228,7 @@ static void op_FD_0x56(void)
 /*LD E, IYH*/
 static void op_FD_0x5c(void)
 {
-	LD(E, IYH);
+	LD_R_TO_R(E, IYH);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -264,7 +236,7 @@ static void op_FD_0x5c(void)
 /*LD E, IYL*/
 static void op_FD_0x5d(void)
 {
-	LD(E, IYL);
+	LD_R_TO_R(E, IYL);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -272,10 +244,7 @@ static void op_FD_0x5d(void)
 /*LD E, (IY+$)*/
 static void op_FD_0x5e(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	LD(E, temp8);
+	LD_ADDR_RP_AND_OFFSET_TO_R(E, IY);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -283,7 +252,7 @@ static void op_FD_0x5e(void)
 /*LD IYH, B*/
 static void op_FD_0x60(void)
 {
-	LD(IYH, B);
+	LD_R_TO_R(IYH, B);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -291,7 +260,7 @@ static void op_FD_0x60(void)
 /*LD IYH, C*/
 static void op_FD_0x61(void)
 {
-	LD(IYH, C);
+	LD_R_TO_R(IYH, C);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -299,7 +268,7 @@ static void op_FD_0x61(void)
 /*LD IYH, D*/
 static void op_FD_0x62(void)
 {
-	LD(IYH, D);
+	LD_R_TO_R(IYH, D);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -307,7 +276,7 @@ static void op_FD_0x62(void)
 /*LD IYH, E*/
 static void op_FD_0x63(void)
 {
-	LD(IYH, E);
+	LD_R_TO_R(IYH, E);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -315,7 +284,7 @@ static void op_FD_0x63(void)
 /*LD IYH, IYH*/
 static void op_FD_0x64(void)
 {
-	LD(IYH, IYH);
+	LD_R_TO_R(IYH, IYH);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -323,7 +292,7 @@ static void op_FD_0x64(void)
 /*LD IYH, IYL*/
 static void op_FD_0x65(void)
 {
-	LD(IYH, IYL);
+	LD_R_TO_R(IYH, IYL);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -331,10 +300,7 @@ static void op_FD_0x65(void)
 /*LD H, (IY+$)*/
 static void op_FD_0x66(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	LD(H, temp8);
+	LD_ADDR_RP_AND_OFFSET_TO_R(H, IY);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -342,7 +308,7 @@ static void op_FD_0x66(void)
 /*LD IYH, A*/
 static void op_FD_0x67(void)
 {
-	LD(IYH, A);
+	LD_R_TO_R(IYH, A);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -350,7 +316,7 @@ static void op_FD_0x67(void)
 /*LD IYL, B*/
 static void op_FD_0x68(void)
 {
-	LD(IYL, B);
+	LD_R_TO_R(IYL, B);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -358,7 +324,7 @@ static void op_FD_0x68(void)
 /*LD IYL, C*/
 static void op_FD_0x69(void)
 {
-	LD(IYL, C);
+	LD_R_TO_R(IYL, C);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -366,7 +332,7 @@ static void op_FD_0x69(void)
 /*LD IYL, D*/
 static void op_FD_0x6a(void)
 {
-	LD(IYL, D);
+	LD_R_TO_R(IYL, D);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -374,7 +340,7 @@ static void op_FD_0x6a(void)
 /*LD IYL, E*/
 static void op_FD_0x6b(void)
 {
-	LD(IYL, E);
+	LD_R_TO_R(IYL, E);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -382,7 +348,7 @@ static void op_FD_0x6b(void)
 /*LD IYL, IYH*/
 static void op_FD_0x6c(void)
 {
-	LD(IYL, IYH);
+	LD_R_TO_R(IYL, IYH);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -390,7 +356,7 @@ static void op_FD_0x6c(void)
 /*LD IYL, IYL*/
 static void op_FD_0x6d(void)
 {
-	LD(IYL, IYL);
+	LD_R_TO_R(IYL, IYL);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -398,10 +364,7 @@ static void op_FD_0x6d(void)
 /*LD L, (IY+$)*/
 static void op_FD_0x6e(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	LD(L, temp8);
+	LD_ADDR_RP_AND_OFFSET_TO_R(L, IY);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -409,7 +372,7 @@ static void op_FD_0x6e(void)
 /*LD IYL, A*/
 static void op_FD_0x6f(void)
 {
-	LD(IYL, A);
+	LD_R_TO_R(IYL, A);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -417,10 +380,7 @@ static void op_FD_0x6f(void)
 /*LD (IY+$), B*/
 static void op_FD_0x70(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	LD(temp8, B);
-	WRITE_BYTE(IY+d.s, temp8);
+	LD_ADDR_RP_AND_OFFSET_FROM_R(IY, B);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -428,10 +388,7 @@ static void op_FD_0x70(void)
 /*LD (IY+$), C*/
 static void op_FD_0x71(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	LD(temp8, C);
-	WRITE_BYTE(IY+d.s, temp8);
+	LD_ADDR_RP_AND_OFFSET_FROM_R(IY, C);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -439,10 +396,7 @@ static void op_FD_0x71(void)
 /*LD (IY+$), D*/
 static void op_FD_0x72(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	LD(temp8, D);
-	WRITE_BYTE(IY+d.s, temp8);
+	LD_ADDR_RP_AND_OFFSET_FROM_R(IY, D);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -450,10 +404,7 @@ static void op_FD_0x72(void)
 /*LD (IY+$), E*/
 static void op_FD_0x73(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	LD(temp8, E);
-	WRITE_BYTE(IY+d.s, temp8);
+	LD_ADDR_RP_AND_OFFSET_FROM_R(IY, E);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -461,10 +412,7 @@ static void op_FD_0x73(void)
 /*LD (IY+$), H*/
 static void op_FD_0x74(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	LD(temp8, H);
-	WRITE_BYTE(IY+d.s, temp8);
+	LD_ADDR_RP_AND_OFFSET_FROM_R(IY, H);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -472,10 +420,7 @@ static void op_FD_0x74(void)
 /*LD (IY+$), L*/
 static void op_FD_0x75(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	LD(temp8, L);
-	WRITE_BYTE(IY+d.s, temp8);
+	LD_ADDR_RP_AND_OFFSET_FROM_R(IY, L);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -483,10 +428,7 @@ static void op_FD_0x75(void)
 /*LD (IY+$), A*/
 static void op_FD_0x77(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	LD(temp8, A);
-	WRITE_BYTE(IY+d.s, temp8);
+	LD_ADDR_RP_AND_OFFSET_FROM_R(IY, A);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -494,7 +436,7 @@ static void op_FD_0x77(void)
 /*LD A, IYH*/
 static void op_FD_0x7c(void)
 {
-	LD(A, IYH);
+	LD_R_TO_R(A, IYH);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -502,7 +444,7 @@ static void op_FD_0x7c(void)
 /*LD A, IYL*/
 static void op_FD_0x7d(void)
 {
-	LD(A, IYL);
+	LD_R_TO_R(A, IYL);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -510,10 +452,7 @@ static void op_FD_0x7d(void)
 /*LD A, (IY+$)*/
 static void op_FD_0x7e(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	LD(A, temp8);
+	LD_ADDR_RP_AND_OFFSET_TO_R(A, IY);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -521,7 +460,7 @@ static void op_FD_0x7e(void)
 /*ADD A, IYH*/
 static void op_FD_0x84(void)
 {
-	ADD(A, IYH);
+	ADD_A_AND_R(IYH);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -529,7 +468,7 @@ static void op_FD_0x84(void)
 /*ADD A, IYL*/
 static void op_FD_0x85(void)
 {
-	ADD(A, IYL);
+	ADD_A_AND_R(IYL);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -537,10 +476,7 @@ static void op_FD_0x85(void)
 /*ADD A, (IY+$)*/
 static void op_FD_0x86(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	ADD(A, temp8);
+	ADD_A_AND_RP_AND_OFFSET(IY);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -575,7 +511,7 @@ static void op_FD_0x8e(void)
 /*SUB IYH*/
 static void op_FD_0x94(void)
 {
-	SUB(IYH);
+	SUB_A_AND_R(IYH);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -583,7 +519,7 @@ static void op_FD_0x94(void)
 /*SUB IYL*/
 static void op_FD_0x95(void)
 {
-	SUB(IYL);
+	SUB_A_AND_R(IYL);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -591,10 +527,7 @@ static void op_FD_0x95(void)
 /*SUB (IY+$)*/
 static void op_FD_0x96(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SUB(temp8);
+	SUB_A_AND_RP_AND_OFFSET(IY);
 	T_WAIT_UNTIL(15);
 	return;
 }
@@ -751,9 +684,7 @@ static void op_FD_0xe1(void)
 /*EX (SP), IY*/
 static void op_FD_0xe3(void)
 {
-	temp16=READ_WORD(SP);
-	EX_MPTR(temp16, IY);
-	WRITE_WORD(SP, temp16);
+	EX_MPTR(IY);
 	T_WAIT_UNTIL(19);
 	return;
 }
@@ -777,7 +708,7 @@ static void op_FD_0xe9(void)
 /*LD SP, IY*/
 static void op_FD_0xf9(void)
 {
-	LD16(SP, IY);
+	LD_RP_TO_RP(SP, IY);
 	T_WAIT_UNTIL(6);
 	return;
 }

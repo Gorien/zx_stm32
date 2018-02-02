@@ -16,10 +16,10 @@ static void op_0x00(void)
 	return;
 }
 
-/*LD BC, @*/
+/*LD BC,@*/
 static void op_0x01(void)
 {
-	LD16(BC, NEXT_WORD);
+	LD_nn_TO_RP(BC);
 	T_WAIT_UNTIL(10);
 	return;
 }
@@ -27,8 +27,7 @@ static void op_0x01(void)
 /*LD (BC), A*/
 static void op_0x02(void)
 {
-	LD_A_TO_ADDR_MPTR(A, (BC));
-	WRITE_BYTE((BC), A);
+	LD_A_TO_ADDR_RP_MPTR(BC);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -44,7 +43,7 @@ static void op_0x03(void)
 /*INC B*/
 static void op_0x04(void)
 {
-	INC(B);
+	INC_R(B);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -52,7 +51,7 @@ static void op_0x04(void)
 /*DEC B*/
 static void op_0x05(void)
 {
-	DEC(B);
+	DEC_R(B);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -60,7 +59,7 @@ static void op_0x05(void)
 /*LD B, #*/
 static void op_0x06(void)
 {
-	LD(B, NEXT_BYTE);
+	LD_n_TO_R(B);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -92,7 +91,7 @@ static void op_0x09(void)
 /*LD A, (BC)*/
 static void op_0x0a(void)
 {
-	LD_A_FROM_ADDR_MPTR(A, READ_BYTE(BC), BC);
+	LD_A_FROM_ADDR_RP_MPTR(BC);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -108,7 +107,7 @@ static void op_0x0b(void)
 /*INC C*/
 static void op_0x0c(void)
 {
-	INC(C);
+	INC_R(C);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -116,7 +115,7 @@ static void op_0x0c(void)
 /*DEC C*/
 static void op_0x0d(void)
 {
-	DEC(C);
+	DEC_R(C);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -124,7 +123,7 @@ static void op_0x0d(void)
 /*LD C, #*/
 static void op_0x0e(void)
 {
-	LD(C, NEXT_BYTE);
+	LD_n_TO_R(C);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -157,7 +156,7 @@ static void op_0x10(void)
 /*LD DE, @*/
 static void op_0x11(void)
 {
-	LD16(DE, NEXT_WORD);
+	LD_nn_TO_RP(DE);
 	T_WAIT_UNTIL(10);
 	return;
 }
@@ -165,8 +164,7 @@ static void op_0x11(void)
 /*LD (DE), A*/
 static void op_0x12(void)
 {
-	LD_A_TO_ADDR_MPTR(A, DE);
-	WRITE_BYTE(DE, A);
+	LD_A_TO_ADDR_RP_MPTR(DE);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -182,7 +180,7 @@ static void op_0x13(void)
 /*INC D*/
 static void op_0x14(void)
 {
-	INC(D);
+	INC_R(D);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -190,7 +188,7 @@ static void op_0x14(void)
 /*DEC D*/
 static void op_0x15(void)
 {
-	DEC(D);
+	DEC_R(D);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -198,8 +196,7 @@ static void op_0x15(void)
 /*LD D, #*/
 static void op_0x16(void)
 {
-	n=NEXT_BYTE;
-	LD(D, n);
+	LD_n_TO_R(D);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -232,8 +229,7 @@ static void op_0x19(void)
 /*LD A,(DE)*/
 static void op_0x1a(void)
 {
-	temp8=READ_BYTE(DE);
-	LD_A_FROM_ADDR_MPTR(A, temp8, DE);
+	LD_A_FROM_ADDR_RP_MPTR(DE);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -249,7 +245,7 @@ static void op_0x1b(void)
 /*INC E*/
 static void op_0x1c(void)
 {
-	INC(E);
+	INC_R(E);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -257,7 +253,7 @@ static void op_0x1c(void)
 /*DEC E*/
 static void op_0x1d(void)
 {
-	DEC(E);
+	DEC_R(E);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -265,8 +261,7 @@ static void op_0x1d(void)
 /*LD E, #*/
 static void op_0x1e(void)
 {
-	n=NEXT_BYTE;
-	LD(E, n);
+	LD_n_TO_R(E);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -298,8 +293,7 @@ static void op_0x20(void)
 /*LD HL, @*/
 static void op_0x21(void)
 {
-	nn=NEXT_WORD;
-	LD16(HL, nn);
+	LD_nn_TO_RP(HL);
 	T_WAIT_UNTIL(10);
 	return;
 }
@@ -307,9 +301,7 @@ static void op_0x21(void)
 /*LD (@), HL*/
 static void op_0x22(void)
 {
-	nn=NEXT_WORD;
-	LD_RP_TO_ADDR_MPTR_16(temp16, HL, nn);
-	WRITE_WORD(nn, temp16);
+	LD_ADDR_nn_FROM_RP(HL);
 	T_WAIT_UNTIL(16);
 	return;
 }
@@ -325,7 +317,7 @@ static void op_0x23(void)
 /*INC H*/
 static void op_0x24(void)
 {
-	INC(H);
+	INC_R(H);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -333,7 +325,7 @@ static void op_0x24(void)
 /*DEC H*/
 static void op_0x25(void)
 {
-	DEC(H);
+	DEC_R(H);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -341,8 +333,7 @@ static void op_0x25(void)
 /*LD H, #*/
 static void op_0x26(void)
 {
-	n=NEXT_BYTE;
-	LD(H, n);
+	LD_n_TO_R(H);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -382,9 +373,7 @@ static void op_0x29(void)
 /*LD HL, (@)*/
 static void op_0x2a(void)
 {
-	nn=NEXT_WORD;
-	temp16=READ_WORD(nn);
-	LD_RP_FROM_ADDR_MPTR_16(HL, temp16, nn);
+	LD_ADDR_nn_TO_RP(HL);
 	T_WAIT_UNTIL(16);
 	return;
 }
@@ -400,7 +389,7 @@ static void op_0x2b(void)
 /*INC L*/
 static void op_0x2c(void)
 {
-	INC(L);
+	INC_R(L);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -408,7 +397,7 @@ static void op_0x2c(void)
 /*DEC L*/
 static void op_0x2d(void)
 {
-	DEC(L);
+	DEC_R(L);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -416,8 +405,7 @@ static void op_0x2d(void)
 /*LD L, #*/
 static void op_0x2e(void)
 {
-	n=NEXT_BYTE;
-	LD(L, n);
+	LD_n_TO_R(L);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -449,8 +437,7 @@ static void op_0x30(void)
 /*LD SP, @*/
 static void op_0x31(void)
 {
-	nn=NEXT_WORD;
-	LD16(SP, nn);
+	LD_nn_TO_RP(SP);
 	T_WAIT_UNTIL(10);
 	return;
 }
@@ -458,9 +445,7 @@ static void op_0x31(void)
 /*LD (@), A*/
 static void op_0x32(void)
 {
-	nn=NEXT_WORD;
-	LD_A_TO_ADDR_MPTR(temp8, A, nn);
-	WRITE_BYTE(nn, temp8);
+	LD_A_TO_ADDR_MPTR;
 	T_WAIT_UNTIL(13);
 	return;
 }
@@ -476,9 +461,7 @@ static void op_0x33(void)
 /*INC (HL)*/
 static void op_0x34(void)
 {
-	temp8=READ_BYTE(HL);
-	INC(temp8);
-	WRITE_BYTE(HL, temp8);
+	INC_ADDR_HL;
 	T_WAIT_UNTIL(11);
 	return;
 }
@@ -486,9 +469,7 @@ static void op_0x34(void)
 /*DEC (HL)*/
 static void op_0x35(void)
 {
-	temp8=READ_BYTE(HL);
-	DEC(temp8);
-	WRITE_BYTE(HL, temp8);
+	DEC_ADDR_HL;
 	T_WAIT_UNTIL(11);
 	return;
 }
@@ -496,9 +477,7 @@ static void op_0x35(void)
 /*LD (HL), #*/
 static void op_0x36(void)
 {
-	n=NEXT_BYTE;
-	LD(n, n);
-	WRITE_BYTE(HL, n);
+	LD_n_TO_ADDR_HL;
 	T_WAIT_UNTIL(10);
 	return;
 }
@@ -538,9 +517,7 @@ static void op_0x39(void)
 /*LD A, (@)*/
 static void op_0x3a(void)
 {
-	nn=NEXT_WORD;
-	temp8=READ_BYTE(nn);
-	LD_A_FROM_ADDR_MPTR(A, temp8, nn);
+	LD_A_FROM_ADDR_MPTR;
 	T_WAIT_UNTIL(13);
 	return;
 }
@@ -556,7 +533,7 @@ static void op_0x3b(void)
 /*INC A*/
 static void op_0x3c(void)
 {
-	INC(A);
+	INC_R(A);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -564,7 +541,7 @@ static void op_0x3c(void)
 /*DEC A*/
 static void op_0x3d(void)
 {
-	DEC(A);
+	DEC_R(A);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -572,8 +549,7 @@ static void op_0x3d(void)
 /*LD A, #*/
 static void op_0x3e(void)
 {
-	n=NEXT_BYTE;
-	LD(A, n);
+	LD_n_TO_R(A);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -589,7 +565,7 @@ static void op_0x3f(void)
 /*LD B, B*/
 static void op_0x40(void)
 {
-	LD(B, B);
+	LD_R_TO_R(B, B);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -597,7 +573,7 @@ static void op_0x40(void)
 /*LD B, C*/
 static void op_0x41(void)
 {
-	LD(B, C);
+	LD_R_TO_R(B, C);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -605,7 +581,7 @@ static void op_0x41(void)
 /*LD B, D*/
 static void op_0x42(void)
 {
-	LD(B, D);
+	LD_R_TO_R(B, D);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -613,7 +589,7 @@ static void op_0x42(void)
 /*LD B, E*/
 static void op_0x43(void)
 {
-	LD(B, E);
+	LD_R_TO_R(B, E);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -621,7 +597,7 @@ static void op_0x43(void)
 /*LD B, H*/
 static void op_0x44(void)
 {
-	LD(B, H);
+	LD_R_TO_R(B, H);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -629,7 +605,7 @@ static void op_0x44(void)
 /*LD B, L*/
 static void op_0x45(void)
 {
-	LD(B, L);
+	LD_R_TO_R(B, L);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -637,8 +613,7 @@ static void op_0x45(void)
 /*LD B, (HL)*/
 static void op_0x46(void)
 {
-	temp8=READ_BYTE(HL);
-	LD(B, temp8);
+	LD_ADDR_HL_TO_R(B);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -646,7 +621,7 @@ static void op_0x46(void)
 /*LD B, A*/
 static void op_0x47(void)
 {
-	LD(B, A);
+	LD_R_TO_R(B, A);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -654,7 +629,7 @@ static void op_0x47(void)
 /*LD C, B*/
 static void op_0x48(void)
 {
-	LD(C, B);
+	LD_R_TO_R(C, B);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -662,7 +637,7 @@ static void op_0x48(void)
 /*LD C, C*/
 static void op_0x49(void)
 {
-	LD(C, C);
+	LD_R_TO_R(C, C);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -670,7 +645,7 @@ static void op_0x49(void)
 /*LD C, D*/
 static void op_0x4a(void)
 {
-	LD(C, D);
+	LD_R_TO_R(C, D);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -678,7 +653,7 @@ static void op_0x4a(void)
 /*LD C, E*/
 static void op_0x4b(void)
 {
-	LD(C, E);
+	LD_R_TO_R(C, E);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -686,7 +661,7 @@ static void op_0x4b(void)
 /*LD C, H*/
 static void op_0x4c(void)
 {
-	LD(C, H);
+	LD_R_TO_R(C, H);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -694,7 +669,7 @@ static void op_0x4c(void)
 /*LD C, L*/
 static void op_0x4d(void)
 {
-	LD(C, L);
+	LD_R_TO_R(C, L);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -702,8 +677,7 @@ static void op_0x4d(void)
 /*LD C, (HL)*/
 static void op_0x4e(void)
 {
-	temp8=READ_BYTE(HL);
-	LD(C, temp8);
+	LD_ADDR_HL_TO_R(C);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -711,7 +685,7 @@ static void op_0x4e(void)
 /*LD C, A*/
 static void op_0x4f(void)
 {
-	LD(C, A);
+	LD_R_TO_R(C, A);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -719,7 +693,7 @@ static void op_0x4f(void)
 /*LD D, B*/
 static void op_0x50(void)
 {
-	LD(D, B);
+	LD_R_TO_R(D, B);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -727,7 +701,7 @@ static void op_0x50(void)
 /*LD D, C*/
 static void op_0x51(void)
 {
-	LD(D, C);
+	LD_R_TO_R(D, C);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -735,7 +709,7 @@ static void op_0x51(void)
 /*LD D, D*/
 static void op_0x52(void)
 {
-	LD(D, D);
+	LD_R_TO_R(D, D);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -743,7 +717,7 @@ static void op_0x52(void)
 /*LD D, E*/
 static void op_0x53(void)
 {
-	LD(D, E);
+	LD_R_TO_R(D, E);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -751,7 +725,7 @@ static void op_0x53(void)
 /*LD D, H*/
 static void op_0x54(void)
 {
-	LD(D, H);
+	LD_R_TO_R(D, H);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -759,7 +733,7 @@ static void op_0x54(void)
 /*LD D, L*/
 static void op_0x55(void)
 {
-	LD(D, L);
+	LD_R_TO_R(D, L);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -767,8 +741,7 @@ static void op_0x55(void)
 /*LD D, (HL)*/
 static void op_0x56(void)
 {
-	temp8=READ_BYTE(HL);
-	LD(D, temp8);
+	LD_ADDR_HL_TO_R(D);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -776,7 +749,7 @@ static void op_0x56(void)
 /*LD D, A*/
 static void op_0x57(void)
 {
-	LD(D, A);
+	LD_R_TO_R(D, A);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -784,7 +757,7 @@ static void op_0x57(void)
 /*LD E, B*/
 static void op_0x58(void)
 {
-	LD(E, B);
+	LD_R_TO_R(E, B);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -792,7 +765,7 @@ static void op_0x58(void)
 /*LD E, C*/
 static void op_0x59(void)
 {
-	LD(E, C);
+	LD_R_TO_R(E, C);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -800,7 +773,7 @@ static void op_0x59(void)
 /*LD E, D*/
 static void op_0x5a(void)
 {
-	LD(E, D);
+	LD_R_TO_R(E, D);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -808,7 +781,7 @@ static void op_0x5a(void)
 /*LD E, E*/
 static void op_0x5b(void)
 {
-	LD(E, E);
+	LD_R_TO_R(E, E);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -816,7 +789,7 @@ static void op_0x5b(void)
 /*LD E, H*/
 static void op_0x5c(void)
 {
-	LD(E, H);
+	LD_R_TO_R(E, H);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -824,7 +797,7 @@ static void op_0x5c(void)
 /*LD E, L*/
 static void op_0x5d(void)
 {
-	LD(E, L);
+	LD_R_TO_R(E, L);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -832,8 +805,7 @@ static void op_0x5d(void)
 /*LD E, (HL)*/
 static void op_0x5e(void)
 {
-	temp8=READ_BYTE(HL);
-	LD(E, temp8);
+	LD_ADDR_HL_TO_R(E);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -841,7 +813,7 @@ static void op_0x5e(void)
 /*LD E, A*/
 static void op_0x5f(void)
 {
-	LD(E, A);
+	LD_R_TO_R(E, A);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -849,7 +821,7 @@ static void op_0x5f(void)
 /*LD H, B*/
 static void op_0x60(void)
 {
-	LD(H, B);
+	LD_R_TO_R(H, B);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -857,7 +829,7 @@ static void op_0x60(void)
 /*LD H, C*/
 static void op_0x61(void)
 {
-	LD(H, C);
+	LD_R_TO_R(H, C);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -865,7 +837,7 @@ static void op_0x61(void)
 /*LD H, D*/
 static void op_0x62(void)
 {
-	LD(H, D);
+	LD_R_TO_R(H, D);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -873,7 +845,7 @@ static void op_0x62(void)
 /*LD H, E*/
 static void op_0x63(void)
 {
-	LD(H, E);
+	LD_R_TO_R(H, E);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -881,7 +853,7 @@ static void op_0x63(void)
 /*LD H, H*/
 static void op_0x64(void)
 {
-	LD(H, H);
+	LD_R_TO_R(H, H);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -889,7 +861,7 @@ static void op_0x64(void)
 /*LD H, L*/
 static void op_0x65(void)
 {
-	LD(H, L);
+	LD_R_TO_R(H, L);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -897,8 +869,7 @@ static void op_0x65(void)
 /*LD H, (HL)*/
 static void op_0x66(void)
 {
-	temp8=READ_BYTE(HL);
-	LD(H, temp8);
+	LD_ADDR_HL_TO_R(H);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -906,7 +877,7 @@ static void op_0x66(void)
 /*LD H, A*/
 static void op_0x67(void)
 {
-	LD(H, A);
+	LD_R_TO_R(H, A);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -914,7 +885,7 @@ static void op_0x67(void)
 /*LD L, B*/
 static void op_0x68(void)
 {
-	LD(L, B);
+	LD_R_TO_R(L, B);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -922,7 +893,7 @@ static void op_0x68(void)
 /*LD L, C*/
 static void op_0x69(void)
 {
-	LD(L, C);
+	LD_R_TO_R(L, C);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -930,7 +901,7 @@ static void op_0x69(void)
 /*LD L, D*/
 static void op_0x6a(void)
 {
-	LD(L, D);
+	LD_R_TO_R(L, D);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -938,7 +909,7 @@ static void op_0x6a(void)
 /*LD L, E*/
 static void op_0x6b(void)
 {
-	LD(L, E);
+	LD_R_TO_R(L, E);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -946,7 +917,7 @@ static void op_0x6b(void)
 /*LD L, H*/
 static void op_0x6c(void)
 {
-	LD(L, H);
+	LD_R_TO_R(L, H);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -954,7 +925,7 @@ static void op_0x6c(void)
 /*LD L, L*/
 static void op_0x6d(void)
 {
-	LD(L, L);
+	LD_R_TO_R(L, L);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -962,8 +933,7 @@ static void op_0x6d(void)
 /*LD L, (HL)*/
 static void op_0x6e(void)
 {
-	temp8=READ_BYTE(HL);
-	LD(L, temp8);
+	LD_ADDR_HL_TO_R(L);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -971,7 +941,7 @@ static void op_0x6e(void)
 /*LD L, A*/
 static void op_0x6f(void)
 {
-	LD(L, A);
+	LD_R_TO_R(L, A);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -979,8 +949,7 @@ static void op_0x6f(void)
 /*LD (HL), B*/
 static void op_0x70(void)
 {
-	LD(temp8, B);
-	WRITE_BYTE((HL), temp8);
+	LD_ADDR_HL_FROM_R(B);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -988,8 +957,7 @@ static void op_0x70(void)
 /*LD (HL), C*/
 static void op_0x71(void)
 {
-	LD(temp8, C);
-	WRITE_BYTE(HL, temp8);
+	LD_ADDR_HL_FROM_R(C);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -997,8 +965,7 @@ static void op_0x71(void)
 /*LD (HL), D*/
 static void op_0x72(void)
 {
-	LD(temp8, D);
-	WRITE_BYTE(HL, temp8);
+	LD_ADDR_HL_FROM_R(D);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -1006,8 +973,7 @@ static void op_0x72(void)
 /*LD (HL), E*/
 static void op_0x73(void)
 {
-	LD(temp8, E);
-	WRITE_BYTE(HL, temp8);
+	LD_ADDR_HL_FROM_R(E);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -1015,8 +981,7 @@ static void op_0x73(void)
 /*LD (HL), H*/
 static void op_0x74(void)
 {
-	LD(temp8, H);
-	WRITE_BYTE(HL, temp8);
+	LD_ADDR_HL_FROM_R(H);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -1024,8 +989,7 @@ static void op_0x74(void)
 /*LD (HL), L*/
 static void op_0x75(void)
 {
-	LD(temp8, L);
-	WRITE_BYTE(HL, temp8);
+	LD_ADDR_HL_FROM_R(L);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -1041,8 +1005,7 @@ static void op_0x76(void)
 /*LD (HL), A*/
 static void op_0x77(void)
 {
-	LD(temp8, A);
-	WRITE_BYTE(HL, temp8);
+	LD_ADDR_HL_FROM_R(A);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -1050,7 +1013,7 @@ static void op_0x77(void)
 /*LD A, B*/
 static void op_0x78(void)
 {
-	LD(A, B);
+	LD_R_TO_R(A, B);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1058,7 +1021,7 @@ static void op_0x78(void)
 /*LD A, C*/
 static void op_0x79(void)
 {
-	LD(A, C);
+	LD_R_TO_R(A, C);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1066,7 +1029,7 @@ static void op_0x79(void)
 /*LD A, D*/
 static void op_0x7a(void)
 {
-	LD(A, D);
+	LD_R_TO_R(A, D);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1074,7 +1037,7 @@ static void op_0x7a(void)
 /*LD A, E*/
 static void op_0x7b(void)
 {
-	LD(A, E);
+	LD_R_TO_R(A, E);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1082,7 +1045,7 @@ static void op_0x7b(void)
 /*LD A, H*/
 static void op_0x7c(void)
 {
-	LD(A, H);
+	LD_R_TO_R(A, H);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1090,7 +1053,7 @@ static void op_0x7c(void)
 /*LD A, L*/
 static void op_0x7d(void)
 {
-	LD(A, L);
+	LD_R_TO_R(A, L);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1098,8 +1061,7 @@ static void op_0x7d(void)
 /*LD A, (HL)*/
 static void op_0x7e(void)
 {
-	temp8=READ_BYTE(HL);
-	LD(A, temp8);
+	LD_ADDR_HL_TO_R(A);
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -1107,7 +1069,7 @@ static void op_0x7e(void)
 /*LD A, A*/
 static void op_0x7f(void)
 {
-	LD(A, A);
+	LD_R_TO_R(A, A);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1115,7 +1077,7 @@ static void op_0x7f(void)
 /*ADD A, B*/
 static void op_0x80(void)
 {
-	ADD(A, B);
+	ADD_A_AND_R(B);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1123,7 +1085,7 @@ static void op_0x80(void)
 /*ADD A, C*/
 static void op_0x81(void)
 {
-	ADD(A, C);
+	ADD_A_AND_R(C);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1131,7 +1093,7 @@ static void op_0x81(void)
 /*ADD A, D*/
 static void op_0x82(void)
 {
-	ADD(A, D);
+	ADD_A_AND_R(D);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1139,7 +1101,7 @@ static void op_0x82(void)
 /*ADD A, E*/
 static void op_0x83(void)
 {
-	ADD(A, E);
+	ADD_A_AND_R(E);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1147,7 +1109,7 @@ static void op_0x83(void)
 /*ADD A, H*/
 static void op_0x84(void)
 {
-	ADD(A, H);
+	ADD_A_AND_R(H);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1155,7 +1117,7 @@ static void op_0x84(void)
 /*ADD A, L*/
 static void op_0x85(void)
 {
-	ADD(A, L);
+	ADD_A_AND_R(L);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1163,8 +1125,7 @@ static void op_0x85(void)
 /*ADD A, (HL)*/
 static void op_0x86(void)
 {
-	temp8=READ_BYTE(HL);
-	ADD(A, temp8);
+	ADD_A_AND_HL;
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -1172,7 +1133,7 @@ static void op_0x86(void)
 /*ADD A, A*/
 static void op_0x87(void)
 {
-	ADD(A, A);
+	ADD_A_AND_R(A);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1245,7 +1206,7 @@ static void op_0x8f(void)
 /*SUB B*/
 static void op_0x90(void)
 {
-	SUB(B);
+	SUB_A_AND_R(B);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1253,7 +1214,7 @@ static void op_0x90(void)
 /*SUB C*/
 static void op_0x91(void)
 {
-	SUB(C);
+	SUB_A_AND_R(C);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1261,7 +1222,7 @@ static void op_0x91(void)
 /*SUB D*/
 static void op_0x92(void)
 {
-	SUB(D);
+	SUB_A_AND_R(D);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1269,7 +1230,7 @@ static void op_0x92(void)
 /*SUB E*/
 static void op_0x93(void)
 {
-	SUB(E);
+	SUB_A_AND_R(E);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1277,7 +1238,7 @@ static void op_0x93(void)
 /*SUB H*/
 static void op_0x94(void)
 {
-	SUB(H);
+	SUB_A_AND_R(H);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1285,7 +1246,7 @@ static void op_0x94(void)
 /*SUB L*/
 static void op_0x95(void)
 {
-	SUB(L);
+	SUB_A_AND_R(L);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1293,8 +1254,7 @@ static void op_0x95(void)
 /*SUB (HL)*/
 static void op_0x96(void)
 {
-	temp8=READ_BYTE(HL);
-	SUB(temp8);
+	SUB_A_AND_HL;
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -1302,7 +1262,7 @@ static void op_0x96(void)
 /*SUB A*/
 static void op_0x97(void)
 {
-	SUB(A);
+	SUB_A_AND_R(A);
 	T_WAIT_UNTIL(4);
 	return;
 }
@@ -1709,8 +1669,7 @@ static void op_0xc5(void)
 /*ADD A, #*/
 static void op_0xc6(void)
 {
-	n=NEXT_BYTE;
-	ADD(A, n);
+	ADD_A_AND_n;
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -1890,8 +1849,7 @@ static void op_0xd5(void)
 /*SUB #*/
 static void op_0xd6(void)
 {
-	n=NEXT_BYTE;
-	SUB(n);
+	SUB_A_AND_n;
 	T_WAIT_UNTIL(7);
 	return;
 }
@@ -2037,9 +1995,7 @@ static void op_0xe2(void)
 /*EX (SP), HL*/
 static void op_0xe3(void)
 {
-	temp16=READ_WORD(SP);
-	EX_MPTR(temp16, HL);
-	WRITE_WORD((SP), temp16);
+	EX_MPTR(HL);
 	T_WAIT_UNTIL(19);
 	return;
 }
@@ -2282,7 +2238,7 @@ static void op_0xf8(void)
 /*LD SP, HL*/
 static void op_0xf9(void)
 {
-	LD16(SP, HL);
+	LD_RP_TO_RP(SP, HL);
 	T_WAIT_UNTIL(6);
 	return;
 }

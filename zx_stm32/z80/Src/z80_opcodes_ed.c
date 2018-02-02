@@ -36,9 +36,7 @@ static void op_ED_0x42(void)
 /*LD (@), BC*/
 static void op_ED_0x43(void)
 {
-	nn=NEXT_WORD;
-	LD_RP_TO_ADDR_MPTR_16(temp16, BC, nn);
-	WRITE_WORD(nn, temp16);
+	LD_ADDR_nn_FROM_RP(BC);
 	T_WAIT_UNTIL(16);
 	return;
 }
@@ -70,7 +68,7 @@ static void op_ED_0x46(void)
 /*LD I, A*/
 static void op_ED_0x47(void)
 {
-	LD(I, A);
+	LD_R_TO_R(I, A);
 	T_WAIT_UNTIL(5);
 	return;
 }
@@ -102,9 +100,7 @@ static void op_ED_0x4a(void)
 /*LD BC, (@)*/
 static void op_ED_0x4b(void)
 {
-	nn=NEXT_WORD;
-	temp16=READ_WORD(nn);
-	LD_RP_FROM_ADDR_MPTR_16(BC, temp16, nn);
+	LD_ADDR_nn_TO_RP(BC);
 	T_WAIT_UNTIL(16);
 	return;
 }
@@ -168,9 +164,7 @@ static void op_ED_0x52(void)
 /*LD (@), DE*/
 static void op_ED_0x53(void)
 {
-	nn=NEXT_WORD;
-	LD_RP_TO_ADDR_MPTR_16(temp16, DE, nn);
-	WRITE_WORD(nn, temp16);
+	LD_ADDR_nn_FROM_RP(DE);
 	T_WAIT_UNTIL(16);
 	return;
 }
@@ -234,9 +228,7 @@ static void op_ED_0x5a(void)
 /*LD DE, (@)*/
 static void op_ED_0x5b(void)
 {
-	nn=NEXT_WORD;
-	temp16=READ_WORD(nn);
-	LD_RP_FROM_ADDR_MPTR_16(DE, temp16, nn);
+	LD_ADDR_nn_TO_RP(DE);
 	T_WAIT_UNTIL(16);
 	return;
 }
@@ -300,9 +292,7 @@ static void op_ED_0x62(void)
 /*LD (@), HL*/
 static void op_ED_0x63(void)
 {
-	nn=NEXT_WORD;
-	LD_RP_TO_ADDR_MPTR_16(temp16, HL, nn);
-	WRITE_WORD(nn, temp16);
+	LD_ADDR_nn_FROM_RP(HL);
 	T_WAIT_UNTIL(16);
 	return;
 }
@@ -366,9 +356,7 @@ static void op_ED_0x6a(void)
 /*LD HL, (@)*/
 static void op_ED_0x6b(void)
 {
-	nn=NEXT_WORD;
-	temp16=READ_WORD(nn);
-	LD_RP_FROM_ADDR_MPTR_16(HL, temp16, nn);
+	LD_ADDR_nn_TO_RP(HL);
 	T_WAIT_UNTIL(16);
 	return;
 }
@@ -432,9 +420,7 @@ static void op_ED_0x72(void)
 /*LD (@), SP*/
 static void op_ED_0x73(void)
 {
-	nn=NEXT_WORD;
-	LD_RP_TO_ADDR_MPTR_16(temp16, SP, nn);
-	WRITE_WORD(nn, temp16);
+	LD_ADDR_nn_FROM_RP(SP);
 	T_WAIT_UNTIL(16);
 	return;
 }
@@ -490,9 +476,7 @@ static void op_ED_0x7a(void)
 /*LD SP, (@)*/
 static void op_ED_0x7b(void)
 {
-	nn=NEXT_WORD;
-	temp16=READ_WORD(nn);
-	LD_RP_FROM_ADDR_MPTR_16(SP, temp16, nn);
+	LD_ADDR_nn_TO_RP(SP);
 	T_WAIT_UNTIL(16);
 	return;
 }
