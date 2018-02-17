@@ -94,7 +94,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="lcd" />
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="startup" />
 						<entry excluding="Src/Z80_memory.c|Src/z80_table.c|Src/z80_rom.c|Src/z80_registers.c|Src/z80_ram.c|Src/z80_opcodes_fdcb.c|Src/z80_opcodes_fd.c|Src/z80_opcodes_ed.c|Src/z80_opcodes_ddcb.c|Src/z80_opcodes_dd.c|Src/z80_opcodes_cb.c|Src/z80_opcodes_base.c|z80_opcode_base.c|z80_opcodes_base.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="z80" />
-						<entry excluding="Src/screen_table.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="zx_spectrum" />
+						<entry excluding="Src/scr_routine.c|Src/scr_table.c|Src/screen_routine.c|Src/screen_table.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="zx_spectrum" />
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -184,7 +184,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="lcd" />
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="startup" />
 						<entry excluding="Src/Z80_memory.c|Src/z80_table.c|Src/z80_rom.c|Src/z80_registers.c|Src/z80_ram.c|Src/z80_opcodes_fdcb.c|Src/z80_opcodes_fd.c|Src/z80_opcodes_ed.c|Src/z80_opcodes_ddcb.c|Src/z80_opcodes_dd.c|Src/z80_opcodes_cb.c|Src/z80_opcodes_base.c|z80_opcode_base.c|z80_opcodes_base.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="z80" />
-						<entry excluding="Src/screen_table.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="zx_spectrum" />
+						<entry excluding="Src/scr_routine.c|Src/scr_table.c|Src/screen_routine.c|Src/screen_table.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="zx_spectrum" />
 					</sourceEntries>
 				</configuration>
 			</storageModule>

@@ -3,9 +3,10 @@
  *	Author: Beloussov Yegor
  *	Created on: january 2018
  *
- *	Attention! this part must be included in the main program code
+ *	The program emulating the work ZX Spectrum
  *
  */
+
 
 #include "stm32f4xx_hal.h"
 

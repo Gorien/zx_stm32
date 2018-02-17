@@ -1,9 +1,13 @@
 /*
- * zx.c
  *
- *  Created on: 24 ���. 2018 �.
- *      Author: Beloussov
+ *	Author: Beloussov Yegor
+ *	Created on: january 2018
+ *
+ *	The program emulating the work ZX Spectrum
+ *
  */
+
+
 #include "stm32f4xx_hal.h"
 #include "z80.h"
 #include "lcd.h"
@@ -11,17 +15,24 @@
 #include "tim.h"
 #include "adc.h"
 
-#include "screen_table.c"
 
-	uint16_t count;
-	uint16_t pi_x_count=0;
-	uint16_t pi_y_count=0;
-	uint16_t pix=0;
-	uint16_t addr;
-	uint16_t border;
-	uint16_t pix_count=0;
-	uint16_t line_count=0;
-	uint16_t byte_count=0x4000;
+uint16_t count;
+uint16_t pi_x_count=0;
+uint16_t pi_y_count=0;
+uint16_t pix=0;
+uint16_t addr;
+uint16_t border;
+uint16_t pix_count=0;
+uint16_t line_count=0;
+uint16_t byte_count=0;
+uint8_t flash;
+uint8_t flash_count;
+
+#include "scr_table.c"
+#include "scr_routine.c"
+
+
+
 
 void zx_run(void)
 {
@@ -54,56 +65,50 @@ void zx_run(void)
 	DMA2_Stream1->NDTR=0x0008;
 	//DMA2_Stream1->CR|=DMA_SxCR_EN;
 
+	HAL_SuspendTick();//Disable SysTick Interrupt
+
 	//HAL_TIM_Base_Start_IT(&htim11);
-	//HAL_TIM_Base_Start(&htim11);
+	HAL_TIM_Base_Start(&htim11);
 
 	HAL_TIM_OC_Start_IT(&htim10, TIM_CHANNEL_1);
 	HAL_TIM_Base_Start(&htim10);
 
 	while (1)
 	{
-			if ((pi_x_count<256)&&(pi_y_count<192))
-				{
-					addr=(pix>>3)+16384;
-					if((memory[((addr&0xF81F)|((addr&0xE0)<<3)|((addr&0x700)>>3))])&(128>>(pix&7)))
-					{
-						LCD_Write(Black);
-					}
-					else
-					{
-						LCD_Write(White);
-					}
+		while ((TIM11->SR&TIM_SR_UIF)==0)
+		{
 
-					pix++;
-				}
-				else
-				{
-					LCD_Write(border);
-					if((pi_y_count==191)||(pi_y_count==70))
-					{
-						INT=1;
-					}
-					else
-					{
-						INT=0;
-					}
-				}
+		}
 
+		(*scr_out[byte_count>>3])(byte_count&0x7);
 
-				pi_x_count++;
-				if (pi_x_count==320)
-				{
-					pi_x_count=0;
-					pi_y_count++;
-					if (pi_y_count==240)
-					{
-						pi_y_count=0;
-						pix=0;
-					}
-				}
+		TIM11->SR=0;
+		byte_count++;
+		if (byte_count==9600)
+		{
+			byte_count=0;
+		}
+		while ((DMA2->LISR&(DMA_LISR_TCIF0|DMA_LISR_TCIF1))==0)
+		{
+
+		}
+		DMA2->LIFCR=~(0);
 	}
-
 }
+
+
+void zx(void)
+{
+	DMA2->LIFCR=~(0);
+	(*scr_out[byte_count&0xfff8])(byte_count&0x7);
+	byte_count++;
+	if (byte_count==9600)
+	{
+		byte_count=0;
+	}
+}
+
+
 
 /*void zx(void)
 {
@@ -155,8 +160,47 @@ void zx_run(void)
 
 
 
+/*
+ 		if ((pi_x_count<256)&&(pi_y_count<192))
+		{
+			addr=(pix>>3)+16384;
+			if((memory[((addr&0xF81F)|((addr&0xE0)<<3)|((addr&0x700)>>3))])&(128>>(pix&7)))
+			{
+				LCD_Write(Black);
+			}
+			else
+			{
+				LCD_Write(White);
+			}
+
+			pix++;
+		}
+		else
+		{
+			LCD_Write(border);
+			if((pi_y_count==191)||(pi_y_count==70))
+			{
+				INT=1;
+			}
+			else
+			{
+				INT=0;
+			}
+		}
 
 
+		pi_x_count++;
+		if (pi_x_count==320)
+		{
+			pi_x_count=0;
+			pi_y_count++;
+			if (pi_y_count==240)
+			{
+				pi_y_count=0;
+				pix=0;
+			}
+		}
+ */
 
 
 
