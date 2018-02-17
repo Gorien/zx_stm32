@@ -11,24 +11,26 @@
 #include "stm32f4xx_hal.h"
 #include "z80.h"
 #include "z80_macros.h"
+#include "zx.h"
+
+uint16_t vector_nmi;
+uint8_t INT;
+uint8_t INT_mask;
+uint16_t color [8]={0x0000,0x000F,0x7800,0x780F,0x03E0,0x03EF,0x7BE0,0x7BEF};
 
 #include "z80_memory.c"
 #include "z80_registers.c"
 #include "z80_table.c"
 
-#include "z80_opcodes_base.c"
+#include "z80_opcodes_ddcb.c"
+#include "z80_opcodes_fdcb.c"
 #include "z80_opcodes_cb.c"
 #include "z80_opcodes_dd.c"
 #include "z80_opcodes_ed.c"
 #include "z80_opcodes_fd.c"
-#include "z80_opcodes_ddcb.c"
-#include "z80_opcodes_fdcb.c"
+#include "z80_opcodes_base.c"
 
-uint8_t pa;
-uint8_t o;
-uint16_t vector_nmi;
-uint8_t IRQ_Z80;
-uint8_t screen_IRQ;
+
 
 void z80_reset(void)
 {
@@ -47,211 +49,94 @@ void z80_reset(void)
 }
 
 
-uint16_t i;
 
 uint8_t z80_run(void)
 {
-	if (IFF1==0)
+	if(INT&&INT_mask)
 	{
-		IRQ_Z80=0;
-	}
-
-	if (IRQ_Z80==1)
-	{
-		if (screen_IRQ==1)
-		{
-			switch(IM)
+			halt=DISABLE;
+			if(IM)
 			{
-			case(0):
-					IFF1=0;
-					IFF2=0;
-					RST(0x38);
-					halt=0;
-					break;
-			case(1):
-					IFF1=0;
-					IFF2=0;
-					RST(0x38);
-					halt=0;
-					break;
-			case(2):
-					IFF1=0;
-					IFF2=0;
-					vector_nmi=((I*256)+255);
-					vector_nmi=READ_WORD(vector_nmi);
-					RST(vector_nmi);
-					halt=0;
-					break;
-			default:
-				break;
+				IFF1=0;
+				IFF2=0;
+				RST(memory[I<<8|0xff]);
 			}
-
-			if (IM==0)
+			else
 			{
 				IFF1=0;
 				IFF2=0;
 				RST(0x38);
-				halt=0;
 			}
-			else if (IM==1)
-			{
-				IFF1=0;
-				IFF2=0;
-				RST(0x38);
-				halt=0;
-			}
-			else if (IM==2)
-			{
-				IFF1=0;
-				IFF2=0;
-				vector_nmi=((I*256)+255);
-				vector_nmi=READ_WORD(vector_nmi);
-				RST(vector_nmi);
-				halt=0;
-			}
-		}
 	}
-
-	if (IFF1==1)
-	{
-		IRQ_Z80=1;
-	}
-
-	if (halt==0)
-	{
-
-		opcode=NEXT_BYTE;
-		R++;
-
-		switch(opcode)
-		{
-		case(0xCB):
-				opcode=NEXT_BYTE;
-				(*opcode_cb[opcode])();
-				R++;
-				m_cycle+=4;
-				break;
-		case(0xED):
-				opcode=NEXT_BYTE;
-				(*opcode_ed[opcode])();
-				R++;
-				m_cycle+=4;
-				break;
-		case(0xDD):
-				opcode=NEXT_BYTE;
-				m_cycle+=4;
-				R++;
-				if (opcode==0xCB)
-				{
-					d.u=NEXT_BYTE;
-					opcode=NEXT_BYTE;
-					(*opcode_ddcb[opcode])();
-				}
-				else
-				{
-					(*opcode_dd[opcode])();
-				}
-				break;
-		case(0xFD):
-				opcode=NEXT_BYTE;
-				m_cycle+=4;
-				R++;
-				if (opcode==0xCB)
-				{
-					d.u=NEXT_BYTE;
-					opcode=NEXT_BYTE;
-					(*opcode_fdcb[opcode])();
-				}
-				else
-				{
-					(*opcode_fd[opcode])();
-				}
-				break;
-		default:
-			(*opcode_base[opcode])();
-			break;
-		}
-	}
-	return m_cycle;
+	INT_mask=IFF1;
+	opcode=memory[PC];
+	PC+=1;
+	R++;
+	return (*opcode_base[opcode])();
 }
 
-
-void poke(uint16_t addr, uint8_t value)
-{
-	if (addr<0x4000)
-	{
-	}
-	else
-	{
-		memory[addr]=value;
-	}
-}
-
-uint8_t peek(uint16_t addr)
-{
-	return memory[addr];
-}
-
-void poke16(uint16_t addr, uint16_t value)
-{
-	poke(addr, value);
-	poke(addr+1, value>>8);
-}
-
-uint16_t peek16(uint16_t addr)
-{
-	return ((peek(addr+1)<<8)|peek(addr));
-}
 
 uint8_t in(uint16_t port)
 {
 	uint8_t input;
-	if ((port&0x00FF)==0xFE)//port 0xFE
+	if ((port&0x00ff)==0xfe)//port 0xfe
 	{
-		//GPIOC->ODR&=0x00FF;
-		//GPIOC->ODR|=port&0xFF00;
+		GPIOB->ODR&=0x00ff;
+		GPIOB->ODR|=port&0xff00;
 
-		for (pa=0; pa<20; pa++)
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+
+		input=(GPIOA->IDR&0x1f);
+
+		if ((ADC1->DR)>2)
 		{
-			o++;
+			input|=0x40;//input from rec.
 		}
-		//input=(GPIOA->IDR&0x1F);
-
-		//if ((ADC1->DR)>4)
-		//{
-			//input|=0x40;
-		//}
-			return (input);
+		return (input);
 	}
 	else
 	{
 		return (0xff);
 	}
-
 }
 
 void out(uint16_t port, uint8_t value)
 {
-	if ((port&0xFF)==0x00FE)//port 0xFE
+	if ((port&0xFF)==0x00fe)//port 0xFE
 	{
-		//border=color [value&0x07];//D[0-2]цвет бордюра
+		border=color[value&0x07];//D[0-2] border color
 
-		if (value&0x08)//PC1 выход на магнитофон
+		if (value&0x08)//PA6 out to rec.
 		{
-			//GPIOC->BSRRL=GPIO_BSRR_BS_1;
+			GPIOA->BSRR=GPIO_PIN_7;
 		}
 		else
 		{
-			//GPIOC->BSRRH=GPIO_BSRR_BS_1;
+			GPIOA->BSRR=(uint32_t)GPIO_PIN_7 << 16U;
 		}
 
-		if (value&0x10)//PC0 выход на динамик
+		if (value&0x10)//PA5 out speaker
 		{
-			//GPIOC->BSRRL=GPIO_BSRR_BS_0;
+			GPIOA->BSRR=GPIO_PIN_5;
 		}
 		else
 		{
-			//GPIOC->BSRRH=GPIO_BSRR_BS_0;
+			GPIOA->BSRR=(uint32_t)GPIO_PIN_5 << 16U;
 		}
 	}
 }

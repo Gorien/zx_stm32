@@ -10,718 +10,620 @@
 
 
 /*ADD IX, BC*/
-static void op_DD_0x09(void)
+static uint8_t op_DD_0x09(void)
 {
 	ADD16(IX, BC);
-	T_WAIT_UNTIL(11);
-	return;
+	return(15);
 }
 
 /*ADD IX, DE*/
-static void op_DD_0x19(void)
+static uint8_t op_DD_0x19(void)
 {
 	ADD16(IX, DE);
-	T_WAIT_UNTIL(11);
-	return;
+	return(15);
 }
 
 /*LD IX, @*/
-static void op_DD_0x21(void)
+static uint8_t op_DD_0x21(void)
 {
 	LD_nn_TO_RP(IX);
-	T_WAIT_UNTIL(10);
-	return;
+	return(14);
 }
 
 /*LD (@), IX*/
-static void op_DD_0x22(void)
+static uint8_t op_DD_0x22(void)
 {
 	LD_ADDR_nn_FROM_RP(IX);
-	T_WAIT_UNTIL(16);
-	return;
+	return(20);
 }
 
 /*INC IX*/
-static void op_DD_0x23(void)
+static uint8_t op_DD_0x23(void)
 {
 	INC16(IX);
-	T_WAIT_UNTIL(6);
-	return;
+	return(10);
 }
 
 /*INC IXH*/
-static void op_DD_0x24(void)
+static uint8_t op_DD_0x24(void)
 {
 	INC_R(IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*DEC IXH*/
-static void op_DD_0x25(void)
+static uint8_t op_DD_0x25(void)
 {
 	DEC_R(IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD IXH, #*/
-static void op_DD_0x26(void)
+static uint8_t op_DD_0x26(void)
 {
 	LD_n_TO_R(IXH);
-	T_WAIT_UNTIL(7);
-	return;
+	return(11);
 }
 
 /*ADD IX, IX*/
-static void op_DD_0x29(void)
+static uint8_t op_DD_0x29(void)
 {
 	ADD16(IX, IX);
-	T_WAIT_UNTIL(11);
-	return;
+	return(15);
 }
 
 /*LD IX, (@)*/
-static void op_DD_0x2a(void)
+static uint8_t op_DD_0x2a(void)
 {
 	LD_ADDR_nn_TO_RP(IX);
-	T_WAIT_UNTIL(16);
-	return;
+	return(20);
 }
 
 /*DEC IX*/
-static void op_DD_0x2b(void)
+static uint8_t op_DD_0x2b(void)
 {
 	DEC16(IX);
-	T_WAIT_UNTIL(6);
-	return;
+	return(10);
 }
 
 /*INC IXL*/
-static void op_DD_0x2c(void)
+static uint8_t op_DD_0x2c(void)
 {
 	INC_R(IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*DEC IXL*/
-static void op_DD_0x2d(void)
+static uint8_t op_DD_0x2d(void)
 {
 	DEC_R(IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD IXL, #*/
-static void op_DD_0x2e(void)
+static uint8_t op_DD_0x2e(void)
 {
 	LD_n_TO_R(IXL);
-	T_WAIT_UNTIL(7);
-	return;
+	return(11);
 }
 
 /*INC (IX+$)*/
-static void op_DD_0x34(void)
+static uint8_t op_DD_0x34(void)
 {
 	INC_ADDR_RP_AND_OFSET(IX);
-	T_WAIT_UNTIL(19);
-	return;
+	return(23);
 }
 
 /*DEC (IX+$)*/
-static void op_DD_0x35(void)
+static uint8_t op_DD_0x35(void)
 {
 	DEC_ADDR_RP_AND_OFSET(IX);
-	T_WAIT_UNTIL(19);
-	return;
+	return(23);
 }
 
 /*LD (IX+$), #*/
-static void op_DD_0x36(void)
+static uint8_t op_DD_0x36(void)
 {
 	LD_n_TO_ADDR_RP_AND_OFFSET(IX);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*ADD IX, SP*/
-static void op_DD_0x39(void)
+static uint8_t op_DD_0x39(void)
 {
 	ADD16(IX, SP);
-	T_WAIT_UNTIL(11);
-	return;
+	return(15);
 }
 
 /*LD B, IXH*/
-static void op_DD_0x44(void)
+static uint8_t op_DD_0x44(void)
 {
 	LD_R_TO_R(B, IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD B, IXL*/
-static void op_DD_0x45(void)
+static uint8_t op_DD_0x45(void)
 {
 	LD_R_TO_R(B, IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD B, (IX+$)*/
-static void op_DD_0x46(void)
+static uint8_t op_DD_0x46(void)
 {
 	LD_ADDR_RP_AND_OFFSET_TO_R(B, IX);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*LD C, IXH*/
-static void op_DD_0x4c(void)
+static uint8_t op_DD_0x4c(void)
 {
 	LD_R_TO_R(C, IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD C, IXL*/
-static void op_DD_0x4d(void)
+static uint8_t op_DD_0x4d(void)
 {
 	LD_R_TO_R(C, IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD C, (IX+$)*/
-static void op_DD_0x4e(void)
+static uint8_t op_DD_0x4e(void)
 {
 	LD_ADDR_RP_AND_OFFSET_TO_R(C, IX);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*LD D, IXH*/
-static void op_DD_0x54(void)
+static uint8_t op_DD_0x54(void)
 {
 	LD_R_TO_R(D, IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD D, IXL*/
-static void op_DD_0x55(void)
+static uint8_t op_DD_0x55(void)
 {
 	LD_R_TO_R(D, IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD D, (IX+$)*/
-static void op_DD_0x56(void)
+static uint8_t op_DD_0x56(void)
 {
 	LD_ADDR_RP_AND_OFFSET_TO_R(D, IX);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*LD E, IXH*/
-static void op_DD_0x5c(void)
+static uint8_t op_DD_0x5c(void)
 {
 	LD_R_TO_R(E, IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD E, IXL*/
-static void op_DD_0x5d(void)
+static uint8_t op_DD_0x5d(void)
 {
 	LD_R_TO_R(E, IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD E, (IX+$)*/
-static void op_DD_0x5e(void)
+static uint8_t op_DD_0x5e(void)
 {
 	LD_ADDR_RP_AND_OFFSET_TO_R(E, IX);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*LD IXH, B*/
-static void op_DD_0x60(void)
+static uint8_t op_DD_0x60(void)
 {
 	LD_R_TO_R(IXH, B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD IXH, C*/
-static void op_DD_0x61(void)
+static uint8_t op_DD_0x61(void)
 {
 	LD_R_TO_R(IXH, C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD IXH, D*/
-static void op_DD_0x62(void)
+static uint8_t op_DD_0x62(void)
 {
 	LD_R_TO_R(IXH, D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD IXH, E*/
-static void op_DD_0x63(void)
+static uint8_t op_DD_0x63(void)
 {
 	LD_R_TO_R(IXH, E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD IXH, IXH*/
-static void op_DD_0x64(void)
+static uint8_t op_DD_0x64(void)
 {
 	LD_R_TO_R(IXH, IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD IXH, IXL*/
-static void op_DD_0x65(void)
+static uint8_t op_DD_0x65(void)
 {
 	LD_R_TO_R(IXH, IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD H, (IX+$)*/
-static void op_DD_0x66(void)
+static uint8_t op_DD_0x66(void)
 {
 	LD_ADDR_RP_AND_OFFSET_TO_R(H, IX);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*LD IXH, A*/
-static void op_DD_0x67(void)
+static uint8_t op_DD_0x67(void)
 {
 	LD_R_TO_R(IXH, A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD IXL, B*/
-static void op_DD_0x68(void)
+static uint8_t op_DD_0x68(void)
 {
 	LD_R_TO_R(IXL, B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD IXL, C*/
-static void op_DD_0x69(void)
+static uint8_t op_DD_0x69(void)
 {
 	LD_R_TO_R(IXL, C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD IXL, D*/
-static void op_DD_0x6a(void)
+static uint8_t op_DD_0x6a(void)
 {
 	LD_R_TO_R(IXL, D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD IXL, E*/
-static void op_DD_0x6b(void)
+static uint8_t op_DD_0x6b(void)
 {
 	LD_R_TO_R(IXL, E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD IXL, IXH*/
-static void op_DD_0x6c(void)
+static uint8_t op_DD_0x6c(void)
 {
 	LD_R_TO_R(IXL, IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD IXL, IXL*/
-static void op_DD_0x6d(void)
+static uint8_t op_DD_0x6d(void)
 {
 	LD_R_TO_R(IXL, IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD L, (IX+$)*/
-static void op_DD_0x6e(void)
+static uint8_t op_DD_0x6e(void)
 {
 	LD_ADDR_RP_AND_OFFSET_TO_R(L, IX);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*LD IXL, A*/
-static void op_DD_0x6f(void)
+static uint8_t op_DD_0x6f(void)
 {
 	LD_R_TO_R(IXL, A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD (IX+$), B*/
-static void op_DD_0x70(void)
+static uint8_t op_DD_0x70(void)
 {
 	LD_ADDR_RP_AND_OFFSET_FROM_R(IX, B);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*LD (IX+$), C*/
-static void op_DD_0x71(void)
+static uint8_t op_DD_0x71(void)
 {
 	LD_ADDR_RP_AND_OFFSET_FROM_R(IX, C);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*LD (IX+$), D*/
-static void op_DD_0x72(void)
+static uint8_t op_DD_0x72(void)
 {
 	LD_ADDR_RP_AND_OFFSET_FROM_R(IX, D);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*LD (IX+$), E*/
-static void op_DD_0x73(void)
+static uint8_t op_DD_0x73(void)
 {
 	LD_ADDR_RP_AND_OFFSET_FROM_R(IX, E);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*LD (IX+$), H*/
-static void op_DD_0x74(void)
+static uint8_t op_DD_0x74(void)
 {
 	LD_ADDR_RP_AND_OFFSET_FROM_R(IX, H);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*LD (IX+$), L*/
-static void op_DD_0x75(void)
+static uint8_t op_DD_0x75(void)
 {
 	LD_ADDR_RP_AND_OFFSET_FROM_R(IX, L);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*LD (IX+$), A*/
-static void op_DD_0x77(void)
+static uint8_t op_DD_0x77(void)
 {
 	LD_ADDR_RP_AND_OFFSET_FROM_R(IX, A);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*LD A, IXH*/
-static void op_DD_0x7c(void)
+static uint8_t op_DD_0x7c(void)
 {
 	LD_R_TO_R(A, IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD A, IXL*/
-static void op_DD_0x7d(void)
+static uint8_t op_DD_0x7d(void)
 {
 	LD_R_TO_R(A, IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*LD A, (IX+$)*/
-static void op_DD_0x7e(void)
+static uint8_t op_DD_0x7e(void)
 {
 	LD_ADDR_RP_AND_OFFSET_TO_R(A, IX);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*ADD A, IXH*/
-static void op_DD_0x84(void)
+static uint8_t op_DD_0x84(void)
 {
 	ADD_A_AND_R(IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*ADD A, IXL*/
-static void op_DD_0x85(void)
+static uint8_t op_DD_0x85(void)
 {
 	ADD_A_AND_R(IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*ADD A, (IX+$)*/
-static void op_DD_0x86(void)
+static uint8_t op_DD_0x86(void)
 {
 	ADD_A_AND_RP_AND_OFFSET(IX);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*ADDC A, IXH*/
-static void op_DD_0x8c(void)
+static uint8_t op_DD_0x8c(void)
 {
 	ADDC(A, IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*ADDC A, IXL*/
-static void op_DD_0x8d(void)
+static uint8_t op_DD_0x8d(void)
 {
 	ADDC(A, IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*ADDC A, (IX+$)*/
-static void op_DD_0x8e(void)
+static uint8_t op_DD_0x8e(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IX+d.s);
-	temp8=READ_BYTE(IX+d.s);
-	ADDC(A, temp8);
-	T_WAIT_UNTIL(15);
-	return;
+	ADC_A_AND_ADDR_RP_AND_OFFSET(IX);
+	return(19);
 }
 
 /*SUB IXH*/
-static void op_DD_0x94(void)
+static uint8_t op_DD_0x94(void)
 {
 	SUB_A_AND_R(IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SUB IXL*/
-static void op_DD_0x95(void)
+static uint8_t op_DD_0x95(void)
 {
 	SUB_A_AND_R(IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SUB (IX+$)*/
-static void op_DD_0x96(void)
+static uint8_t op_DD_0x96(void)
 {
 	SUB_A_AND_RP_AND_OFFSET(IX);
-	T_WAIT_UNTIL(15);
-	return;
+	return(19);
 }
 
 /*SUBC A, IXH*/
-static void op_DD_0x9c(void)
+static uint8_t op_DD_0x9c(void)
 {
 	SUBC(A, IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SUBC A, IXL*/
-static void op_DD_0x9d(void)
+static uint8_t op_DD_0x9d(void)
 {
 	SUBC(A, IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SUBC A, (IX+$)*/
-static void op_DD_0x9e(void)
+static uint8_t op_DD_0x9e(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IX+d.s);
-	temp8=READ_BYTE(IX+d.s);
-	SUBC(A, temp8);
-	T_WAIT_UNTIL(15);
-	return;
+	SBC_A_AND_ADDR_RP_AND_OFFSET(IX);
+	return(19);
 }
 
 /*AND IXH*/
-static void op_DD_0xa4(void)
+static uint8_t op_DD_0xa4(void)
 {
 	AND(IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*AND IXL*/
-static void op_DD_0xa5(void)
+static uint8_t op_DD_0xa5(void)
 {
 	AND(IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*AND (IX+$)*/
-static void op_DD_0xa6(void)
+static uint8_t op_DD_0xa6(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IX+d.s);
-	temp8=READ_BYTE(IX+d.s);
-	AND(temp8);
-	T_WAIT_UNTIL(15);
-	return;
+	AND_ADDR_RP_AND_OFFSET(IX);
+	return(19);
 }
 
 /*XOR IXH*/
-static void op_DD_0xac(void)
+static uint8_t op_DD_0xac(void)
 {
 	XOR(IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*XOR IXL*/
-static void op_DD_0xad(void)
+static uint8_t op_DD_0xad(void)
 {
 	XOR(IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*XOR (IX+$)*/
-static void op_DD_0xae(void)
+static uint8_t op_DD_0xae(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IX+d.s);
-	temp8=READ_BYTE(IX+d.s);
-	XOR(temp8);
-	T_WAIT_UNTIL(15);
-	return;
+	XOR_ADDR_RP_AND_OFFSET(IX);
+	return(19);
 }
 
 /*OR IXH*/
-static void op_DD_0xb4(void)
+static uint8_t op_DD_0xb4(void)
 {
 	OR(IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*OR IXL*/
-static void op_DD_0xb5(void)
+static uint8_t op_DD_0xb5(void)
 {
 	OR(IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*OR (IX+$)*/
-static void op_DD_0xb6(void)
+static uint8_t op_DD_0xb6(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IX+d.s);
-	temp8=READ_BYTE(IX+d.s);
-	OR(temp8);
-	T_WAIT_UNTIL(15);
-	return;
+	OR_ADDR_RP_AND_OFFSET(IX);
+	return(19);
 }
 
 /*CP IXH*/
-static void op_DD_0xbc(void)
+static uint8_t op_DD_0xbc(void)
 {
 	CP(IXH);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*CP IXL*/
-static void op_DD_0xbd(void)
+static uint8_t op_DD_0xbd(void)
 {
 	CP(IXL);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*CP (IX+$)*/
-static void op_DD_0xbe(void)
+static uint8_t op_DD_0xbe(void)
 {
-	d.u=NEXT_BYTE
-	MEMPTR=(IX+d.s);
-	temp8=READ_BYTE(IX+d.s);
-	CP(temp8);
-	T_WAIT_UNTIL(15);
-	return;
+	CP_AND_ADDR_RP_AND_OFFSET(IX);
+	return(19);
 }
 
 /*prefix DDCB*/
-static void op_DD_0xcb(void)
+static uint8_t op_DD_0xcb(void)
 {
-	return;
+	d.u=memory[PC];
+	PC+=1;
+	opcode=memory[PC];
+	PC+=1;
+	return(*opcode_ddcb[opcode])();
 }
 
 /*POP IX*/
-static void op_DD_0xe1(void)
+static uint8_t op_DD_0xe1(void)
 {
 	POP(IX);
-	T_WAIT_UNTIL(10);
-	return;
+	return(14);
 }
 
 /*EX (SP), IX*/
-static void op_DD_0xe3(void)
+static uint8_t op_DD_0xe3(void)
 {
 	EX_MPTR(IX);
-	T_WAIT_UNTIL(19);
-	return;
+	return(23);
 }
 
 /*PUSH IX*/
-static void op_DD_0xe5(void)
+static uint8_t op_DD_0xe5(void)
 {
 	PUSH(IX);
-	T_WAIT_UNTIL(11);
-	return;
+	return(15);
 }
 
 /*JP IX*/
-static void op_DD_0xe9(void)
+static uint8_t op_DD_0xe9(void)
 {
-	JP_NO_MPTR(IX);
-	T_WAIT_UNTIL(4);
-	return;
+	JP(IX);
+	return(8);
 }
 
 /*LD SP, IX*/
-static void op_DD_0xf9(void)
+static uint8_t op_DD_0xf9(void)
 {
 	LD_RP_TO_RP(SP, IX);
-	T_WAIT_UNTIL(6);
-	return;
+	return(10);
 }
 
 
 
 /*NONI*/
-static void non_DD (void)
+static uint8_t non_DD (void)
 {
-	return;
+	INT_mask=0;
+	return(8);
 }
 
-static void (*opcode_dd[0x100])(void)={
+static uint8_t (*opcode_dd[0x100])(void)={
 	non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , op_DD_0x09, non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    ,
 	non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , op_DD_0x19, non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    ,
 	non_DD    , op_DD_0x21, op_DD_0x22, op_DD_0x23, op_DD_0x24, op_DD_0x25, op_DD_0x26, non_DD    , non_DD    , op_DD_0x29, op_DD_0x2a, op_DD_0x2b, op_DD_0x2c, op_DD_0x2d, op_DD_0x2e, non_DD    ,

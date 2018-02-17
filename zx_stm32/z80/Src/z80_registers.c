@@ -27,7 +27,7 @@ union
 uint8_t IFF1;
 uint8_t IFF2;
 uint8_t IM;
-uint8_t halt;
+uint8_t halt=ENABLE;
 
 /*временные регистры*/
 uint8_t temp8;
@@ -46,9 +46,6 @@ uint8_t rot_temp;
 
 uint8_t lookup;
 
-uint8_t n;
-uint16_t nn;
-
 /*объединение беззнаковой и знаковой переменной для определения смещения*/
 union
 {
@@ -57,6 +54,3 @@ union
 }d;
 
 uint8_t opcode;
-uint8_t prefix;
-uint8_t no_int;
-uint8_t m_cycle;

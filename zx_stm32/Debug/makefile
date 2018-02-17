@@ -13,6 +13,8 @@ RM := rm -rf
 -include startup/subdir.mk
 -include lcd/Src/subdir.mk
 -include Src/subdir.mk
+-include Middlewares/Third_Party/FatFs/src/option/subdir.mk
+-include Middlewares/Third_Party/FatFs/src/subdir.mk
 -include Drivers/STM32F4xx_HAL_Driver/Src/subdir.mk
 -include subdir.mk
 -include objects.mk

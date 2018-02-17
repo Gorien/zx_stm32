@@ -1,12 +1,14 @@
 /*
  * zx.h
  *
- *  Created on: 24 ÿíâ. 2018 ã.
+ *  Created on: 24 ï¿½ï¿½ï¿½. 2018 ï¿½.
  *      Author: Beloussov
  */
 
 #ifndef INC_ZX_H_
 #define INC_ZX_H_
+
+extern uint16_t border;
 
 void zx_run(void);
 void zx(void);

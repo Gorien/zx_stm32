@@ -10,2366 +10,1406 @@
 
 
 /*LD B, RLC (IY+$)*/
-static void op_FDCB_0x00(void)
+static uint8_t op_FDCB_0x00(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RLC(temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RLC_ADDR_RP_AND_OFFSET_LD_R(IY, B);
+	return(23);
 }
 
 /*LD C, RLC (IY+$)*/
-static void op_FDCB_0x01(void)
+static uint8_t op_FDCB_0x01(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RLC(temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RLC_ADDR_RP_AND_OFFSET_LD_R(IY, C);
+	return(23);
 }
 
 /*LD D, RLC (IY+$)*/
-static void op_FDCB_0x02(void)
+static uint8_t op_FDCB_0x02(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RLC(temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RLC_ADDR_RP_AND_OFFSET_LD_R(IY, D);
+	return(23);
 }
 
 /*LD E, RLC (IY+$)*/
-static void op_FDCB_0x03(void)
+static uint8_t op_FDCB_0x03(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RLC(temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RLC_ADDR_RP_AND_OFFSET_LD_R(IY, E);
+	return(23);
 }
 
 /*LD H, RLC (IY+$)*/
-static void op_FDCB_0x04(void)
+static uint8_t op_FDCB_0x04(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RLC(temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RLC_ADDR_RP_AND_OFFSET_LD_R(IY, H);
+	return(23);
 }
 
 /*LD L, RLC (IY+$)*/
-static void op_FDCB_0x05(void)
+static uint8_t op_FDCB_0x05(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RLC(temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RLC_ADDR_RP_AND_OFFSET_LD_R(IY, L);
+	return(23);
 }
 
 /*RLC (IY+$)*/
-static void op_FDCB_0x06(void)
+static uint8_t op_FDCB_0x06(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RLC(temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RLC_ADDR_RP_AND_OFFSET(IY);
+	return(23);
 }
 
 /*LD A, RLC (IY+$)*/
-static void op_FDCB_0x07(void)
+static uint8_t op_FDCB_0x07(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RLC(temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RLC_ADDR_RP_AND_OFFSET_LD_R(IY, A);
+	return(23);
 }
 
 /*LD B, RRC (IY+$)*/
-static void op_FDCB_0x08(void)
+static uint8_t op_FDCB_0x08(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RRC(temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RRC_ADDR_RP_AND_OFFSET_LD_R(IY, B);
+	return(23);
 }
 
 /*LD C, RRC (IY+$)*/
-static void op_FDCB_0x09(void)
+static uint8_t op_FDCB_0x09(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RRC(temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RRC_ADDR_RP_AND_OFFSET_LD_R(IY, C);
+	return(23);
 }
 
 /*LD D, RRC (IY+$)*/
-static void op_FDCB_0x0a(void)
+static uint8_t op_FDCB_0x0a(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RRC(temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RRC_ADDR_RP_AND_OFFSET_LD_R(IY, D);
+	return(23);
 }
 
 /*LD E, RRC (IY+$)*/
-static void op_FDCB_0x0b(void)
+static uint8_t op_FDCB_0x0b(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RRC(temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RRC_ADDR_RP_AND_OFFSET_LD_R(IY, E);
+	return(23);
 }
 
 /*LD H, RRC (IY+$)*/
-static void op_FDCB_0x0c(void)
+static uint8_t op_FDCB_0x0c(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RRC(temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RRC_ADDR_RP_AND_OFFSET_LD_R(IY, H);
+	return(23);
 }
 
 /*LD L, RRC (IY+$)*/
-static void op_FDCB_0x0d(void)
+static uint8_t op_FDCB_0x0d(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RRC(temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RRC_ADDR_RP_AND_OFFSET_LD_R(IY, L);
+	return(23);
 }
 
 /*RRC (IY+$)*/
-static void op_FDCB_0x0e(void)
+static uint8_t op_FDCB_0x0e(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RRC(temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RRC_ADDR_RP_AND_OFFSET(IY);
+	return(23);
 }
 
 /*LD A, RRC (IY+$)*/
-static void op_FDCB_0x0f(void)
+static uint8_t op_FDCB_0x0f(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RRC(temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RRC_ADDR_RP_AND_OFFSET_LD_R(IY, A);
+	return(23);
 }
 
 /*LD B, RL (IY+$)*/
-static void op_FDCB_0x10(void)
+static uint8_t op_FDCB_0x10(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RL(temp8);
-	LD16(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RL_ADDR_RP_AND_OFFSET_LD_R(IY, B);
+	return(23);
 }
 
 /*LD C, RL (IY+$)*/
-static void op_FDCB_0x11(void)
+static uint8_t op_FDCB_0x11(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RL(temp8);
-	LD16(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RL_ADDR_RP_AND_OFFSET_LD_R(IY, C);
+	return(23);
 }
 
 /*LD D, RL (IY+$)*/
-static void op_FDCB_0x12(void)
+static uint8_t op_FDCB_0x12(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RL(temp8);
-	LD16(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RL_ADDR_RP_AND_OFFSET_LD_R(IY, D);
+	return(23);
 }
 
 /*LD E, RL (IY+$)*/
-static void op_FDCB_0x13(void)
+static uint8_t op_FDCB_0x13(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RL(temp8);
-	LD16(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RL_ADDR_RP_AND_OFFSET_LD_R(IY, E);
+	return(23);
 }
 
 /*LD H, RL (IY+$)*/
-static void op_FDCB_0x14(void)
+static uint8_t op_FDCB_0x14(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RL(temp8);
-	LD16(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RL_ADDR_RP_AND_OFFSET_LD_R(IY, H);
+	return(23);
 }
 
 /*LD L, RL (IY+$)*/
-static void op_FDCB_0x15(void)
+static uint8_t op_FDCB_0x15(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RL(temp8);
-	LD16(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RL_ADDR_RP_AND_OFFSET_LD_R(IY, L);
+	return(23);
 }
 
 /*RL (IY+$)*/
-static void op_FDCB_0x16(void)
+static uint8_t op_FDCB_0x16(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RL(temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RL_ADDR_RP_AND_OFFSET(IY);
+	return(23);
 }
 
 /*LD A, RL (IY+$)*/
-static void op_FDCB_0x17(void)
+static uint8_t op_FDCB_0x17(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RL(temp8);
-	LD16(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RL_ADDR_RP_AND_OFFSET_LD_R(IY, A);
+	return(23);
 }
 
 /*LD B, RR (IY+$)*/
-static void op_FDCB_0x18(void)
+static uint8_t op_FDCB_0x18(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RR(temp8);
-	LD16(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RR_ADDR_RP_AND_OFFSET_LD_R(IY, B);
+	return(23);
 }
 
 /*LD C, RR (IY+$)*/
-static void op_FDCB_0x19(void)
+static uint8_t op_FDCB_0x19(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RR(temp8);
-	LD16(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RR_ADDR_RP_AND_OFFSET_LD_R(IY, C);
+	return(23);
 }
 
 /*LD D, RR (IY+$)*/
-static void op_FDCB_0x1a(void)
+static uint8_t op_FDCB_0x1a(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RR(temp8);
-	LD16(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RR_ADDR_RP_AND_OFFSET_LD_R(IY, D);
+	return(23);
 }
 
 /*LD E, RR (IY+$)*/
-static void op_FDCB_0x1b(void)
+static uint8_t op_FDCB_0x1b(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RR(temp8);
-	LD16(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RR_ADDR_RP_AND_OFFSET_LD_R(IY, E);
+	return(23);
 }
 
 /*LD H, RR (IY+$)*/
-static void op_FDCB_0x1c(void)
+static uint8_t op_FDCB_0x1c(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RR(temp8);
-	LD16(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RR_ADDR_RP_AND_OFFSET_LD_R(IY, H);
+	return(23);
 }
 
 /*LD L, RR (IY+$)*/
-static void op_FDCB_0x1d(void)
+static uint8_t op_FDCB_0x1d(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RR(temp8);
-	LD16(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RR_ADDR_RP_AND_OFFSET_LD_R(IY, L);
+	return(23);
 }
 
 /*RR (IY+$)*/
-static void op_FDCB_0x1e(void)
+static uint8_t op_FDCB_0x1e(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RR(temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RR_ADDR_RP_AND_OFFSET(IY);
+	return(23);
 }
 
 /*LD A, RR (IY+$)*/
-static void op_FDCB_0x1f(void)
+static uint8_t op_FDCB_0x1f(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RR(temp8);
-	LD16(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RR_ADDR_RP_AND_OFFSET_LD_R(IY, A);
+	return(23);
 }
 
 /*LD B, SLA (IY+$)*/
-static void op_FDCB_0x20(void)
+static uint8_t op_FDCB_0x20(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLA(temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLA_ADDR_RP_AND_OFFSET_LD_R(IY, B);
+	return(23);
 }
 
 /*LD C, SLA (IY+$)*/
-static void op_FDCB_0x21(void)
+static uint8_t op_FDCB_0x21(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLA(temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLA_ADDR_RP_AND_OFFSET_LD_R(IY, C);
+	return(23);
 }
 
 /*LD D, SLA (IY+$)*/
-static void op_FDCB_0x22(void)
+static uint8_t op_FDCB_0x22(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLA(temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLA_ADDR_RP_AND_OFFSET_LD_R(IY, D);
+	return(23);
 }
 
 /*LD E, SLA (IY+$)*/
-static void op_FDCB_0x23(void)
+static uint8_t op_FDCB_0x23(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLA(temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLA_ADDR_RP_AND_OFFSET_LD_R(IY, E);
+	return(23);
 }
 
 /*LD H, SLA (IY+$)*/
-static void op_FDCB_0x24(void)
+static uint8_t op_FDCB_0x24(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLA(temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLA_ADDR_RP_AND_OFFSET_LD_R(IY, H);
+	return(23);
 }
 
 /*LD L, SLA (IY+$)*/
-static void op_FDCB_0x25(void)
+static uint8_t op_FDCB_0x25(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLA(temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLA_ADDR_RP_AND_OFFSET_LD_R(IY, L);
+	return(23);
 }
 
 /*SLA (IY+$)*/
-static void op_FDCB_0x26(void)
+static uint8_t op_FDCB_0x26(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLA(temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLA_ADDR_RP_AND_OFFSET(IY);
+	return(23);
 }
 
 /*LD A, SLA (IY+$)*/
-static void op_FDCB_0x27(void)
+static uint8_t op_FDCB_0x27(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLA(temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLA_ADDR_RP_AND_OFFSET_LD_R(IY, A);
+	return(23);
 }
 
 /*LD B, SRA (IY+$)*/
-static void op_FDCB_0x28(void)
+static uint8_t op_FDCB_0x28(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRA(temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRA_ADDR_RP_AND_OFFSET_LD_R(IY, B);
+	return(23);
 }
 
 /*LD C, SRA (IY+$)*/
-static void op_FDCB_0x29(void)
+static uint8_t op_FDCB_0x29(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRA(temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRA_ADDR_RP_AND_OFFSET_LD_R(IY, C);
+	return(23);
 }
 
 /*LD D, SRA (IY+$)*/
-static void op_FDCB_0x2a(void)
+static uint8_t op_FDCB_0x2a(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRA(temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRA_ADDR_RP_AND_OFFSET_LD_R(IY, D);
+	return(23);
 }
 
 /*LD E, SRA (IY+$)*/
-static void op_FDCB_0x2b(void)
+static uint8_t op_FDCB_0x2b(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRA(temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRA_ADDR_RP_AND_OFFSET_LD_R(IY, E);
+	return(23);
 }
 
 /*LD H, SRA (IY+$)*/
-static void op_FDCB_0x2c(void)
+static uint8_t op_FDCB_0x2c(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRA(temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRA_ADDR_RP_AND_OFFSET_LD_R(IY, H);
+	return(23);
 }
 
 /*LD L, SRA (IY+$)*/
-static void op_FDCB_0x2d(void)
+static uint8_t op_FDCB_0x2d(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRA(temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRA_ADDR_RP_AND_OFFSET_LD_R(IY, L);
+	return(23);
 }
 
 /*SRA (IY+$)*/
-static void op_FDCB_0x2e(void)
+static uint8_t op_FDCB_0x2e(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRA(temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRA_ADDR_RP_AND_OFFSET(IY);
+	return(23);
 }
 
 /*LD A, SRA (IY+$)*/
-static void op_FDCB_0x2f(void)
+static uint8_t op_FDCB_0x2f(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRA(temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRA_ADDR_RP_AND_OFFSET_LD_R(IY, A);
+	return(23);
 }
 
 /*LD B, SLL (IY+$)*/
-static void op_FDCB_0x30(void)
+static uint8_t op_FDCB_0x30(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLL(temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLL_ADDR_RP_AND_OFFSET_LD_R(IY, B);
+	return(23);
 }
 
 /*LD C, SLL (IY+$)*/
-static void op_FDCB_0x31(void)
+static uint8_t op_FDCB_0x31(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLL(temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLL_ADDR_RP_AND_OFFSET_LD_R(IY, C);
+	return(23);
 }
 
 /*LD D, SLL (IY+$)*/
-static void op_FDCB_0x32(void)
+static uint8_t op_FDCB_0x32(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLL(temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLL_ADDR_RP_AND_OFFSET_LD_R(IY, D);
+	return(23);
 }
 
 /*LD E, SLL (IY+$)*/
-static void op_FDCB_0x33(void)
+static uint8_t op_FDCB_0x33(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLL(temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLL_ADDR_RP_AND_OFFSET_LD_R(IY, E);
+	return(23);
 }
 
 /*LD H, SLL (IY+$)*/
-static void op_FDCB_0x34(void)
+static uint8_t op_FDCB_0x34(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLL(temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLL_ADDR_RP_AND_OFFSET_LD_R(IY, H);
+	return(23);
 }
 
 /*LD L, SLL (IY+$)*/
-static void op_FDCB_0x35(void)
+static uint8_t op_FDCB_0x35(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLL(temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLL_ADDR_RP_AND_OFFSET_LD_R(IY, L);
+	return(23);
 }
 
 /*SLL (IY+$)*/
-static void op_FDCB_0x36(void)
+static uint8_t op_FDCB_0x36(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLL(temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLL_ADDR_RP_AND_OFFSET(IY);
+	return(23);
 }
 
 /*LD A, SLL (IY+$)*/
-static void op_FDCB_0x37(void)
+static uint8_t op_FDCB_0x37(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SLL(temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SLL_ADDR_RP_AND_OFFSET_LD_R(IY, A);
+	return(23);
 }
 
 /*LD B, SRL (IY+$)*/
-static void op_FDCB_0x38(void)
+static uint8_t op_FDCB_0x38(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRL(temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRL_ADDR_RP_AND_OFFSET_LD_R(IY, B);
+	return(23);
 }
 
 /*LD C, SRL (IY+$)*/
-static void op_FDCB_0x39(void)
+static uint8_t op_FDCB_0x39(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRL(temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRL_ADDR_RP_AND_OFFSET_LD_R(IY, C);
+	return(23);
 }
 
 /*LD D, SRL (IY+$)*/
-static void op_FDCB_0x3a(void)
+static uint8_t op_FDCB_0x3a(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRL(temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRL_ADDR_RP_AND_OFFSET_LD_R(IY, D);
+	return(23);
 }
 
 /*LD E, SRL (IY+$)*/
-static void op_FDCB_0x3b(void)
+static uint8_t op_FDCB_0x3b(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRL(temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRL_ADDR_RP_AND_OFFSET_LD_R(IY, E);
+	return(23);
 }
 
 /*LD H, SRL (IY+$)*/
-static void op_FDCB_0x3c(void)
+static uint8_t op_FDCB_0x3c(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRL(temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRL_ADDR_RP_AND_OFFSET_LD_R(IY, H);
+	return(23);
 }
 
 /*LD L, SRL (IY+$)*/
-static void op_FDCB_0x3d(void)
+static uint8_t op_FDCB_0x3d(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRL(temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRL_ADDR_RP_AND_OFFSET_LD_R(IY, L);
+	return(23);
 }
 
 /*SRL (IY+$)*/
-static void op_FDCB_0x3e(void)
+static uint8_t op_FDCB_0x3e(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRL(temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRL_ADDR_RP_AND_OFFSET(IY);
+	return(23);
 }
 
 /*LD A, SRL (IY+$)*/
-static void op_FDCB_0x3f(void)
+static uint8_t op_FDCB_0x3f(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SRL(temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SRL_ADDR_RP_AND_OFFSET_LD_R(IY, A);
+	return(23);
 }
 
 /*BIT 0, (IY+$)*/
-static void op_FDCB_0x47(void)
+static uint8_t op_FDCB_0x47(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	BIT_MPTR(0, temp8);
-	T_WAIT_UNTIL(16);
-	return;
+	BIT_ADDR_RP_AND_OFFSET(0, IY);
+	return(20);
 }
 
 /*BIT 1, (IY+$)*/
-static void op_FDCB_0x4f(void)
+static uint8_t op_FDCB_0x4f(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	BIT_MPTR(1, temp8);
-	T_WAIT_UNTIL(16);
-	return;
+	BIT_ADDR_RP_AND_OFFSET(1, IY);
+	return(20);
 }
 
 /*BIT 2, (IY+$)*/
-static void op_FDCB_0x57(void)
+static uint8_t op_FDCB_0x57(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	BIT_MPTR(2, temp8);
-	T_WAIT_UNTIL(16);
-	return;
+	BIT_ADDR_RP_AND_OFFSET(2, IY);
+	return(20);
 }
 
 /*BIT 3, (IY+$)*/
-static void op_FDCB_0x5f(void)
+static uint8_t op_FDCB_0x5f(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	BIT_MPTR(3, temp8);
-	T_WAIT_UNTIL(16);
-	return;
+	BIT_ADDR_RP_AND_OFFSET(3, IY);
+	return(20);
 }
 
 /*BIT 4, (IY+$)*/
-static void op_FDCB_0x67(void)
+static uint8_t op_FDCB_0x67(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	BIT_MPTR(4, temp8);
-	T_WAIT_UNTIL(16);
-	return;
+	BIT_ADDR_RP_AND_OFFSET(4, IY);
+	return(20);
 }
 
 /*BIT 5, (IY+$)*/
-static void op_FDCB_0x6f(void)
+static uint8_t op_FDCB_0x6f(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	BIT_MPTR(5, temp8);
-	T_WAIT_UNTIL(16);
-	return;
+	BIT_ADDR_RP_AND_OFFSET(5, IY);
+	return(20);
 }
 
 /*BIT 6, (IY+$)*/
-static void op_FDCB_0x77(void)
+static uint8_t op_FDCB_0x77(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	BIT_MPTR(6, temp8);
-	T_WAIT_UNTIL(16);
-	return;
+	BIT_ADDR_RP_AND_OFFSET(6, IY);
+	return(20);
 }
 
 /*BIT 7, (IY+$)*/
-static void op_FDCB_0x7f(void)
+static uint8_t op_FDCB_0x7f(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	BIT_MPTR(7, temp8);
-	T_WAIT_UNTIL(16);
-	return;
+	BIT_ADDR_RP_AND_OFFSET(7, IY);
+	return(20);
 }
 
 /*LD B, RES 0, (IY+$)*/
-static void op_FDCB_0x80(void)
+static uint8_t op_FDCB_0x80(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(0, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(0, IY, B);
+	return(23);
 }
 
 /*LD C, RES 0, (IY+$)*/
-static void op_FDCB_0x81(void)
+static uint8_t op_FDCB_0x81(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(0, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(0, IY, C);
+	return(23);
 }
 
 /*LD D, RES 0, (IY+$)*/
-static void op_FDCB_0x82(void)
+static uint8_t op_FDCB_0x82(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(0, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(0, IY, D);
+	return(23);
 }
 
 /*LD E, RES 0, (IY+$)*/
-static void op_FDCB_0x83(void)
+static uint8_t op_FDCB_0x83(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(0, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(0, IY, E);
+	return(23);
 }
 
 /*LD H, RES 0, (IY+$)*/
-static void op_FDCB_0x84(void)
+static uint8_t op_FDCB_0x84(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(0, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(0, IY, H);
+	return(23);
 }
 
 /*LD L, RES 0, (IY+$)*/
-static void op_FDCB_0x85(void)
+static uint8_t op_FDCB_0x85(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(0, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(0, IY, L);
+	return(23);
 }
 
 /*RES 0, (IY+$)*/
-static void op_FDCB_0x86(void)
+static uint8_t op_FDCB_0x86(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(0, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET(0, IY);
+	return(23);
 }
 
 /*LD A, RES 0, (IY+$)*/
-static void op_FDCB_0x87(void)
+static uint8_t op_FDCB_0x87(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(0, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(0, IY, A);
+	return(23);
 }
 
 /*LD B, RES 1, (IY+$)*/
-static void op_FDCB_0x88(void)
+static uint8_t op_FDCB_0x88(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(1, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(1, IY, B);
+	return(23);
 }
 
 /*LD C, RES 1, (IY+$)*/
-static void op_FDCB_0x89(void)
+static uint8_t op_FDCB_0x89(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(1, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(1, IY, C);
+	return(23);
 }
 
 /*LD D, RES 1, (IY+$)*/
-static void op_FDCB_0x8a(void)
+static uint8_t op_FDCB_0x8a(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(1, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(1, IY, D);
+	return(23);
 }
 
 /*LD E, RES 1, (IY+$)*/
-static void op_FDCB_0x8b(void)
+static uint8_t op_FDCB_0x8b(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(1, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(1, IY, E);
+	return(23);
 }
 
 /*LD H, RES 1, (IY+$)*/
-static void op_FDCB_0x8c(void)
+static uint8_t op_FDCB_0x8c(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(1, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(1, IY, H);
+	return(23);
 }
 
 /*LD L, RES 1, (IY+$)*/
-static void op_FDCB_0x8d(void)
+static uint8_t op_FDCB_0x8d(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(1, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(1, IY, L);
+	return(23);
 }
 
 /*RES 1, (IY+$)*/
-static void op_FDCB_0x8e(void)
+static uint8_t op_FDCB_0x8e(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(1, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET(1, IY);
+	return(23);
 }
 
 /*LD A, RES 1, (IY+$)*/
-static void op_FDCB_0x8f(void)
+static uint8_t op_FDCB_0x8f(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(1, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(1, IY, A);
+	return(23);
 }
 
 /*LD B, RES 2, (IY+$)*/
-static void op_FDCB_0x90(void)
+static uint8_t op_FDCB_0x90(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(2, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(2, IY, B);
+	return(23);
 }
 
 /*LD C, RES 2, (IY+$)*/
-static void op_FDCB_0x91(void)
+static uint8_t op_FDCB_0x91(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(2, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(2, IY, C);
+	return(23);
 }
 
 /*LD D, RES 2, (IY+$)*/
-static void op_FDCB_0x92(void)
+static uint8_t op_FDCB_0x92(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(2, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(2, IY, D);
+	return(23);
 }
 
 /*LD E, RES 2, (IY+$)*/
-static void op_FDCB_0x93(void)
+static uint8_t op_FDCB_0x93(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(2, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(2, IY, E);
+	return(23);
 }
 
 /*LD H, RES 2, (IY+$)*/
-static void op_FDCB_0x94(void)
+static uint8_t op_FDCB_0x94(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(2, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(2, IY, H);
+	return(23);
 }
 
 /*LD L, RES 2, (IY+$)*/
-static void op_FDCB_0x95(void)
+static uint8_t op_FDCB_0x95(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(2, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(2, IY, L);
+	return(23);
 }
 
 /*RES 2, (IY+$)*/
-static void op_FDCB_0x96(void)
+static uint8_t op_FDCB_0x96(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(2, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET(2, IY);
+	return(23);
 }
 
 /*LD A, RES 2, (IY+$)*/
-static void op_FDCB_0x97(void)
+static uint8_t op_FDCB_0x97(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(2, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(2, IY, A);
+	return(23);
 }
 
 /*LD B, RES 3, (IY+$)*/
-static void op_FDCB_0x98(void)
+static uint8_t op_FDCB_0x98(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(3, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(3, IY, B);
+	return(23);
 }
 
 /*LD C, RES 3, (IY+$)*/
-static void op_FDCB_0x99(void)
+static uint8_t op_FDCB_0x99(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(3, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(3, IY, C);
+	return(23);
 }
 
 /*LD D, RES 3, (IY+$)*/
-static void op_FDCB_0x9a(void)
+static uint8_t op_FDCB_0x9a(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(3, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(3, IY, D);
+	return(23);
 }
 
 /*LD E, RES 3, (IY+$)*/
-static void op_FDCB_0x9b(void)
+static uint8_t op_FDCB_0x9b(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(3, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(3, IY, E);
+	return(23);
 }
 
 /*LD H, RES 3, (IY+$)*/
-static void op_FDCB_0x9c(void)
+static uint8_t op_FDCB_0x9c(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(3, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(3, IY, H);
+	return(23);
 }
 
 /*LD L, RES 3, (IY+$)*/
-static void op_FDCB_0x9d(void)
+static uint8_t op_FDCB_0x9d(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(3, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(3, IY, L);
+	return(23);
 }
 
 /*RES 3, (IY+$)*/
-static void op_FDCB_0x9e(void)
+static uint8_t op_FDCB_0x9e(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(3, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET(3, IY);
+	return(23);
 }
 
 /*LD A, RES 3, (IY+$)*/
-static void op_FDCB_0x9f(void)
+static uint8_t op_FDCB_0x9f(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(3, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(3, IY, A);
+	return(23);
 }
 
 /*LD B, RES 4, (IY+$)*/
-static void op_FDCB_0xa0(void)
+static uint8_t op_FDCB_0xa0(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(4, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(4, IY, B);
+	return(23);
 }
 
 /*LD C, RES 4, (IY+$)*/
-static void op_FDCB_0xa1(void)
+static uint8_t op_FDCB_0xa1(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(4, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(4, IY, C);
+	return(23);
 }
 
 /*LD D, RES 4, (IY+$)*/
-static void op_FDCB_0xa2(void)
+static uint8_t op_FDCB_0xa2(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(4, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(4, IY, D);
+	return(23);
 }
 
 /*LD E, RES 4, (IY+$)*/
-static void op_FDCB_0xa3(void)
+static uint8_t op_FDCB_0xa3(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(4, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(4, IY, E);
+	return(23);
 }
 
 /*LD H, RES 4, (IY+$)*/
-static void op_FDCB_0xa4(void)
+static uint8_t op_FDCB_0xa4(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(4, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(4, IY, H);
+	return(23);
 }
 
 /*LD L, RES 4, (IY+$)*/
-static void op_FDCB_0xa5(void)
+static uint8_t op_FDCB_0xa5(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(4, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(4, IY, L);
+	return(23);
 }
 
 /*RES 4, (IY+$)*/
-static void op_FDCB_0xa6(void)
+static uint8_t op_FDCB_0xa6(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(4, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET(4, IY);
+	return(23);
 }
 
 /*LD A, RES 4, (IY+$)*/
-static void op_FDCB_0xa7(void)
+static uint8_t op_FDCB_0xa7(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(4, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(4, IY, A);
+	return(23);
 }
 
 /*LD B, RES 5, (IY+$)*/
-static void op_FDCB_0xa8(void)
+static uint8_t op_FDCB_0xa8(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(5, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(5, IY, B);
+	return(23);
 }
 
 /*LD C, RES 5, (IY+$)*/
-static void op_FDCB_0xa9(void)
+static uint8_t op_FDCB_0xa9(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(5, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(5, IY, C);
+	return(23);
 }
 
 /*LD D, RES 5, (IY+$)*/
-static void op_FDCB_0xaa(void)
+static uint8_t op_FDCB_0xaa(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(5, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(5, IY, D);
+	return(23);
 }
 
 /*LD E, RES 5, (IY+$)*/
-static void op_FDCB_0xab(void)
+static uint8_t op_FDCB_0xab(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(5, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(5, IY, E);
+	return(23);
 }
 
 /*LD H, RES 5, (IY+$)*/
-static void op_FDCB_0xac(void)
+static uint8_t op_FDCB_0xac(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(5, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(5, IY, H);
+	return(23);
 }
 
 /*LD L, RES 5, (IY+$)*/
-static void op_FDCB_0xad(void)
+static uint8_t op_FDCB_0xad(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(5, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(5, IY, L);
+	return(23);
 }
 
 /*RES 5, (IY+$)*/
-static void op_FDCB_0xae(void)
+static uint8_t op_FDCB_0xae(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(5, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET(5, IY);
+	return(23);
 }
 
 /*LD A, RES 5, (IY+$)*/
-static void op_FDCB_0xaf(void)
+static uint8_t op_FDCB_0xaf(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(5, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(5, IY, A);
+	return(23);
 }
 
 /*LD B, RES 6, (IY+$)*/
-static void op_FDCB_0xb0(void)
+static uint8_t op_FDCB_0xb0(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(6, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(6, IY, B);
+	return(23);
 }
 
 /*LD C, RES 6, (IY+$)*/
-static void op_FDCB_0xb1(void)
+static uint8_t op_FDCB_0xb1(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(6, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(6, IY, C);
+	return(23);
 }
 
 /*LD D, RES 6, (IY+$)*/
-static void op_FDCB_0xb2(void)
+static uint8_t op_FDCB_0xb2(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(6, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(6, IY, D);
+	return(23);
 }
 
 /*LD E, RES 6, (IY+$)*/
-static void op_FDCB_0xb3(void)
+static uint8_t op_FDCB_0xb3(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(6, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(6, IY, E);
+	return(23);
 }
 
 /*LD H, RES 6, (IY+$)*/
-static void op_FDCB_0xb4(void)
+static uint8_t op_FDCB_0xb4(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(6, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(6, IY, H);
+	return(23);
 }
 
 /*LD L, RES 6, (IY+$)*/
-static void op_FDCB_0xb5(void)
+static uint8_t op_FDCB_0xb5(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(6, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(6, IY, L);
+	return(23);
 }
 
 /*RES 6, (IY+$)*/
-static void op_FDCB_0xb6(void)
+static uint8_t op_FDCB_0xb6(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(6, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET(6, IY);
+	return(23);
 }
 
 /*LD A, RES 6, (IY+$)*/
-static void op_FDCB_0xb7(void)
+static uint8_t op_FDCB_0xb7(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(6, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(6, IY, A);
+	return(23);
 }
 
 /*LD B, RES 7, (IY+$)*/
-static void op_FDCB_0xb8(void)
+static uint8_t op_FDCB_0xb8(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(7, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(7, IY, B);
+	return(23);
 }
 
 /*LD C, RES 7, (IY+$)*/
-static void op_FDCB_0xb9(void)
+static uint8_t op_FDCB_0xb9(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(7, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(7, IY, C);
+	return(23);
 }
 
 /*LD D, RES 7, (IY+$)*/
-static void op_FDCB_0xba(void)
+static uint8_t op_FDCB_0xba(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(7, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(7, IY, D);
+	return(23);
 }
 
 /*LD E, RES 7, (IY+$)*/
-static void op_FDCB_0xbb(void)
+static uint8_t op_FDCB_0xbb(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(7, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(7, IY, E);
+	return(23);
 }
 
 /*LD H, RES 7, (IY+$)*/
-static void op_FDCB_0xbc(void)
+static uint8_t op_FDCB_0xbc(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(7, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(7, IY, H);
+	return(23);
 }
 
 /*LD L, RES 7, (IY+$)*/
-static void op_FDCB_0xbd(void)
+static uint8_t op_FDCB_0xbd(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(7, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(7, IY, L);
+	return(23);
 }
 
 /*RES 7, (IY+$)*/
-static void op_FDCB_0xbe(void)
+static uint8_t op_FDCB_0xbe(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(7, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET(7, IY);
+	return(23);
 }
 
 /*LD A, RES 7, (IY+$)*/
-static void op_FDCB_0xbf(void)
+static uint8_t op_FDCB_0xbf(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	RES(7, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	RES_BIT_ADDR_RP_AND_OFFSET_LD_R(7, IY, A);
+	return(23);
 }
 
 /*LD B, SET 0, (IY+$)*/
-static void op_FDCB_0xc0(void)
+static uint8_t op_FDCB_0xc0(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(0, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(0, IY, B);
+	return(23);
 }
 
 /*LD C, SET 0, (IY+$)*/
-static void op_FDCB_0xc1(void)
+static uint8_t op_FDCB_0xc1(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(0, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(0, IY, C);
+	return(23);
 }
 
 /*LD D, SET 0, (IY+$)*/
-static void op_FDCB_0xc2(void)
+static uint8_t op_FDCB_0xc2(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(0, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(0, IY, D);
+	return(23);
 }
 
 /*LD E, SET 0, (IY+$)*/
-static void op_FDCB_0xc3(void)
+static uint8_t op_FDCB_0xc3(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(0, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(0, IY, E);
+	return(23);
 }
 
 /*LD H, SET 0, (IY+$)*/
-static void op_FDCB_0xc4(void)
+static uint8_t op_FDCB_0xc4(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(0, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(0, IY, H);
+	return(23);
 }
 
 /*LD L, SET 0, (IY+$)*/
-static void op_FDCB_0xc5(void)
+static uint8_t op_FDCB_0xc5(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(0, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(0, IY, L);;
+	return(23);
 }
 
 /*SET 0, (IY+$)*/
-static void op_FDCB_0xc6(void)
+static uint8_t op_FDCB_0xc6(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(0, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET(0, IY);
+	return(23);
 }
 
 /*LD A, SET 0, (IY+$)*/
-static void op_FDCB_0xc7(void)
+static uint8_t op_FDCB_0xc7(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(0, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(0, IY, A);
+	return(23);
 }
 
 /*LD B, SET 1, (IY+$)*/
-static void op_FDCB_0xc8(void)
+static uint8_t op_FDCB_0xc8(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(1, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(1, IY, B);
+	return(23);
 }
 
 /*LD C, SET 1, (IY+$)*/
-static void op_FDCB_0xc9(void)
+static uint8_t op_FDCB_0xc9(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(1, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(1, IY, C);
+	return(23);
 }
 
 /*LD D, SET 1, (IY+$)*/
-static void op_FDCB_0xca(void)
+static uint8_t op_FDCB_0xca(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(1, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(1, IY, D);
+	return(23);
 }
 
 /*LD E, SET 1, (IY+$)*/
-static void op_FDCB_0xcb(void)
+static uint8_t op_FDCB_0xcb(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(1, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(1, IY, E);
+	return(23);
 }
 
 /*LD H, SET 1, (IY+$)*/
-static void op_FDCB_0xcc(void)
+static uint8_t op_FDCB_0xcc(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(1, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(1, IY, H);
+	return(23);
 }
 
 /*LD L, SET 1, (IY+$)*/
-static void op_FDCB_0xcd(void)
+static uint8_t op_FDCB_0xcd(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(1, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(1, IY, L);
+	return(23);
 }
 
 /*SET 1, (IY+$)*/
-static void op_FDCB_0xce(void)
+static uint8_t op_FDCB_0xce(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(1, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET(1, IY);
+	return(23);
 }
 
 /*LD A, SET 1, (IY+$)*/
-static void op_FDCB_0xcf(void)
+static uint8_t op_FDCB_0xcf(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(1, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(1, IY, A);
+	return(23);
 }
 
 /*LD B, SET 2, (IY+$)*/
-static void op_FDCB_0xd0(void)
+static uint8_t op_FDCB_0xd0(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(2, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(2, IY, B);
+	return(23);
 }
 
 /*LD C, SET 2, (IY+$)*/
-static void op_FDCB_0xd1(void)
+static uint8_t op_FDCB_0xd1(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(2, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(2, IY, C);
+	return(23);
 }
 
 /*LD D, SET 2, (IY+$)*/
-static void op_FDCB_0xd2(void)
+static uint8_t op_FDCB_0xd2(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(2, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(2, IY, D);
+	return(23);
 }
 
 /*LD E, SET 2, (IY+$)*/
-static void op_FDCB_0xd3(void)
+static uint8_t op_FDCB_0xd3(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(2, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(2, IY, E);
+	return(23);
 }
 
 /*LD H, SET 2, (IY+$)*/
-static void op_FDCB_0xd4(void)
+static uint8_t op_FDCB_0xd4(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(2, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(2, IY, H);
+	return(23);
 }
 
 /*LD L, SET 2, (IY+$)*/
-static void op_FDCB_0xd5(void)
+static uint8_t op_FDCB_0xd5(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(2, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(2, IY, L);
+	return(23);
 }
 
 /*SET 2, (IY+$)*/
-static void op_FDCB_0xd6(void)
+static uint8_t op_FDCB_0xd6(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(2, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET(2, IY);
+	return(23);
 }
 
 /*LD A, SET 2, (IY+$)*/
-static void op_FDCB_0xd7(void)
+static uint8_t op_FDCB_0xd7(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(2, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(2, IY, A);
+	return(23);
 }
 
 /*LD B, SET 3, (IY+$)*/
-static void op_FDCB_0xd8(void)
+static uint8_t op_FDCB_0xd8(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(3, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(3, IY, B);
+	return(23);
 }
 
 /*LD C, SET 3, (IY+$)*/
-static void op_FDCB_0xd9(void)
+static uint8_t op_FDCB_0xd9(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(3, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(3, IY, C);
+	return(23);
 }
 
 /*LD D, SET 3, (IY+$)*/
-static void op_FDCB_0xda(void)
+static uint8_t op_FDCB_0xda(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(3, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(3, IY, D);
+	return(23);
 }
 
 /*LD E, SET 3, (IY+$)*/
-static void op_FDCB_0xdb(void)
+static uint8_t op_FDCB_0xdb(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(3, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(3, IY, E);
+	return(23);
 }
 
 /*LD H, SET 3, (IY+$)*/
-static void op_FDCB_0xdc(void)
+static uint8_t op_FDCB_0xdc(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(3, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(3, IY, H);
+	return(23);
 }
 
 /*LD L, SET 3, (IY+$)*/
-static void op_FDCB_0xdd(void)
+static uint8_t op_FDCB_0xdd(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(3, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(3, IY, L);
+	return(23);
 }
 
 /*SET 3, (IY+$)*/
-static void op_FDCB_0xde(void)
+static uint8_t op_FDCB_0xde(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(3, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET(3, IY);
+	return(23);
 }
 
 /*LD A, SET 3, (IY+$)*/
-static void op_FDCB_0xdf(void)
+static uint8_t op_FDCB_0xdf(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(3, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(3, IY, A);
+	return(23);
 }
 
 /*LD B, SET 4, (IY+$)*/
-static void op_FDCB_0xe0(void)
+static uint8_t op_FDCB_0xe0(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(4, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(4, IY, B);
+	return(23);
 }
 
 /*LD C, SET 4, (IY+$)*/
-static void op_FDCB_0xe1(void)
+static uint8_t op_FDCB_0xe1(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(4, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(4, IY, C);
+	return(23);
 }
 
 /*LD D, SET 4, (IY+$)*/
-static void op_FDCB_0xe2(void)
+static uint8_t op_FDCB_0xe2(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(4, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(4, IY, D);
+	return(23);
 }
 
 /*LD E, SET 4, (IY+$)*/
-static void op_FDCB_0xe3(void)
+static uint8_t op_FDCB_0xe3(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(4, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(4, IY, E);
+	return(23);
 }
 
 /*LD H, SET 4, (IY+$)*/
-static void op_FDCB_0xe4(void)
+static uint8_t op_FDCB_0xe4(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(4, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(4, IY, H);
+	return(23);
 }
 
 /*LD L, SET 4, (IY+$)*/
-static void op_FDCB_0xe5(void)
+static uint8_t op_FDCB_0xe5(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(4, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(4, IY, L);
+	return(23);
 }
 
 /*SET 4, (IY+$)*/
-static void op_FDCB_0xe6(void)
+static uint8_t op_FDCB_0xe6(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(4, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET(4, IY);
+	return(23);
 }
 
 /*LD A, SET 4, (IY+$)*/
-static void op_FDCB_0xe7(void)
+static uint8_t op_FDCB_0xe7(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(4, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(4, IY, A);
+	return(23);
 }
 
 /*LD B, SET 5, (IY+$)*/
-static void op_FDCB_0xe8(void)
+static uint8_t op_FDCB_0xe8(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(5, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(5, IY, B);
+	return(23);
 }
 
 /*LD C, SET 5, (IY+$)*/
-static void op_FDCB_0xe9(void)
+static uint8_t op_FDCB_0xe9(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(5, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(5, IY, C);
+	return(23);
 }
 
 /*LD D, SET 5, (IY+$)*/
-static void op_FDCB_0xea(void)
+static uint8_t op_FDCB_0xea(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(5, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(5, IY, D);
+	return(23);
 }
 
 /*LD E, SET 5, (IY+$)*/
-static void op_FDCB_0xeb(void)
+static uint8_t op_FDCB_0xeb(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(5, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(5, IY, E);
+	return(23);
 }
 
 /*LD H, SET 5, (IY+$)*/
-static void op_FDCB_0xec(void)
+static uint8_t op_FDCB_0xec(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(5, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(5, IY, H);
+	return(23);
 }
 
 /*LD L, SET 5, (IY+$)*/
-static void op_FDCB_0xed(void)
+static uint8_t op_FDCB_0xed(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(5, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(5, IY, L);
+	return(23);
 }
 
 /*SET 5, (IY+$)*/
-static void op_FDCB_0xee(void)
+static uint8_t op_FDCB_0xee(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(5, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET(5, IY);
+	return(23);
 }
 
 /*LD A, SET 5, (IY+$)*/
-static void op_FDCB_0xef(void)
+static uint8_t op_FDCB_0xef(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(5, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(5, IY, A);
+	return(23);
 }
 
 /*LD B, SET 6, (IY+$)*/
-static void op_FDCB_0xf0(void)
+static uint8_t op_FDCB_0xf0(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(6, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(6, IY, B);
+	return(23);
 }
 
 /*LD C, SET 6, (IY+$)*/
-static void op_FDCB_0xf1(void)
+static uint8_t op_FDCB_0xf1(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(6, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(6, IY, C);
+	return(23);
 }
 
 /*LD D, SET 6, (IY+$)*/
-static void op_FDCB_0xf2(void)
+static uint8_t op_FDCB_0xf2(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(6, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(6, IY, D);
+	return(23);
 }
 
 /*LD E, SET 6, (IY+$)*/
-static void op_FDCB_0xf3(void)
+static uint8_t op_FDCB_0xf3(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(6, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(6, IY, E);
+	return(23);
 }
 
 /*LD H, SET 6, (IY+$)*/
-static void op_FDCB_0xf4(void)
+static uint8_t op_FDCB_0xf4(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(6, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(6, IY, H);
+	return(23);
 }
 
 /*LD L, SET 6, (IY+$)*/
-static void op_FDCB_0xf5(void)
+static uint8_t op_FDCB_0xf5(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(6, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(6, IY, L);
+	return(23);
 }
 
 /*SET 6, (IY+$)*/
-static void op_FDCB_0xf6(void)
+static uint8_t op_FDCB_0xf6(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(6, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET(6, IY);
+	return(23);
 }
 
 /*LD A, SET 6, (IY+$)*/
-static void op_FDCB_0xf7(void)
+static uint8_t op_FDCB_0xf7(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(6, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(6, IY, A);
+	return(23);
 }
 
 /*LD B, SET 7, (IY+$)*/
-static void op_FDCB_0xf8(void)
+static uint8_t op_FDCB_0xf8(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(7, temp8);
-	LD(B, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(7, IY, B);
+	return(23);
 }
 
 /*LD C, SET 7, (IY+$)*/
-static void op_FDCB_0xf9(void)
+static uint8_t op_FDCB_0xf9(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(7, temp8);
-	LD(C, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(7, IY, C);
+	return(23);
 }
 
 /*LD D, SET 7, (IY+$)*/
-static void op_FDCB_0xfa(void)
+static uint8_t op_FDCB_0xfa(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(7, temp8);
-	LD(D, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(7, IY, D);
+	return(23);
 }
 
 /*LD E, SET 7, (IY+$)*/
-static void op_FDCB_0xfb(void)
+static uint8_t op_FDCB_0xfb(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(7, temp8);
-	LD(E, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(7, IY, E);
+	return(23);
 }
 
 /*LD H, SET 7, (IY+$)*/
-static void op_FDCB_0xfc(void)
+static uint8_t op_FDCB_0xfc(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(7, temp8);
-	LD(H, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(7, IY, H);
+	return(23);
 }
 
 /*LD L, SET 7, (IY+$)*/
-static void op_FDCB_0xfd(void)
+static uint8_t op_FDCB_0xfd(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(7, temp8);
-	LD(L, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(7, IY, L);
+	return(23);
 }
 
 /*SET 7, (IY+$)*/
-static void op_FDCB_0xfe(void)
+static uint8_t op_FDCB_0xfe(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(7, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET(7, IY);
+	return(23);
 }
 
 /*LD A, SET 7, (IY+$)*/
-static void op_FDCB_0xff(void)
+static uint8_t op_FDCB_0xff(void)
 {
-	MEMPTR=(IY+d.s);
-	temp8=READ_BYTE(IY+d.s);
-	SET(7, temp8);
-	LD(A, temp8);
-	WRITE_BYTE(IY+d.s, temp8);
-	T_WAIT_UNTIL(19);
-	return;
+	SET_BIT_ADDR_RP_AND_OFFSET_LD_R(7, IY, A);
+	return(23);
 }
 
-static void (*opcode_fdcb[0x100])(void)={
+static uint8_t (*opcode_fdcb[0x100])(void)={
 	op_FDCB_0x00, op_FDCB_0x01, op_FDCB_0x02, op_FDCB_0x03, op_FDCB_0x04, op_FDCB_0x05, op_FDCB_0x06, op_FDCB_0x07, op_FDCB_0x08, op_FDCB_0x09, op_FDCB_0x0a, op_FDCB_0x0b, op_FDCB_0x0c, op_FDCB_0x0d, op_FDCB_0x0e, op_FDCB_0x0f,
 	op_FDCB_0x10, op_FDCB_0x11, op_FDCB_0x12, op_FDCB_0x13, op_FDCB_0x14, op_FDCB_0x15, op_FDCB_0x16, op_FDCB_0x17, op_FDCB_0x18, op_FDCB_0x19, op_FDCB_0x1a, op_FDCB_0x1b, op_FDCB_0x1c, op_FDCB_0x1d, op_FDCB_0x1e, op_FDCB_0x1f,
 	op_FDCB_0x20, op_FDCB_0x21, op_FDCB_0x22, op_FDCB_0x23, op_FDCB_0x24, op_FDCB_0x25, op_FDCB_0x26, op_FDCB_0x27, op_FDCB_0x28, op_FDCB_0x29, op_FDCB_0x2a, op_FDCB_0x2b, op_FDCB_0x2c, op_FDCB_0x2d, op_FDCB_0x2e, op_FDCB_0x2f,

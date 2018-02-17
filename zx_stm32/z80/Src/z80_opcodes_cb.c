@@ -10,2110 +10,1799 @@
 
 
 /*RLC B*/
-static void op_CB_0x00(void)
+static uint8_t op_CB_0x00(void)
 {
 	RLC(B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RLC C*/
-static void op_CB_0x01(void)
+static uint8_t op_CB_0x01(void)
 {
 	RLC(C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RLC D*/
-static void op_CB_0x02(void)
+static uint8_t op_CB_0x02(void)
 {
 	RLC(D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RLC E*/
-static void op_CB_0x03(void)
+static uint8_t op_CB_0x03(void)
 {
 	RLC(E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RLC H*/
-static void op_CB_0x04(void)
+static uint8_t op_CB_0x04(void)
 {
 	RLC(H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RLC L*/
-static void op_CB_0x05(void)
+static uint8_t op_CB_0x05(void)
 {
 	RLC(L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RLC (HL)*/
-static void op_CB_0x06(void)
+static uint8_t op_CB_0x06(void)
 {
-	temp8=READ_BYTE(HL);
-	RLC(temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	RLC_ADDR_HL;
+	return(15);
 }
 
 /*RLC A*/
-static void op_CB_0x07(void)
+static uint8_t op_CB_0x07(void)
 {
 	RLC(A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RRC B*/
-static void op_CB_0x08(void)
+static uint8_t op_CB_0x08(void)
 {
 	RRC(B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RRC C*/
-static void op_CB_0x09(void)
+static uint8_t op_CB_0x09(void)
 {
 	RRC(C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RRC D*/
-static void op_CB_0x0a(void)
+static uint8_t op_CB_0x0a(void)
 {
 	RRC(D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RRC E*/
-static void op_CB_0x0b(void)
+static uint8_t op_CB_0x0b(void)
 {
 	RRC(E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RRC H*/
-static void op_CB_0x0c(void)
+static uint8_t op_CB_0x0c(void)
 {
 	RRC(H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RRC L*/
-static void op_CB_0x0d(void)
+static uint8_t op_CB_0x0d(void)
 {
 	RRC(L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RRC (HL)*/
-static void op_CB_0x0e(void)
+static uint8_t op_CB_0x0e(void)
 {
-	temp8=READ_BYTE(HL);
-	RRC(temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	RRC_ADDR_HL;
+	return(15);
 }
 
 /*RRC A*/
-static void op_CB_0x0f(void)
+static uint8_t op_CB_0x0f(void)
 {
 	RRC(A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RL B*/
-static void op_CB_0x10(void)
+static uint8_t op_CB_0x10(void)
 {
 	RL(B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RL C*/
-static void op_CB_0x11(void)
+static uint8_t op_CB_0x11(void)
 {
 	RL(C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RL D*/
-static void op_CB_0x12(void)
+static uint8_t op_CB_0x12(void)
 {
 	RL(D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RL E*/
-static void op_CB_0x13(void)
+static uint8_t op_CB_0x13(void)
 {
 	RL(E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RL H*/
-static void op_CB_0x14(void)
+static uint8_t op_CB_0x14(void)
 {
 	RL(H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RL L*/
-static void op_CB_0x15(void)
+static uint8_t op_CB_0x15(void)
 {
 	RL(L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RL (HL)*/
-static void op_CB_0x16(void)
+static uint8_t op_CB_0x16(void)
 {
-	temp8=READ_BYTE(HL);
-	RL(temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	RL_ADDR_HL;
+	return(15);
 }
 
 /*RL A*/
-static void op_CB_0x17(void)
+static uint8_t op_CB_0x17(void)
 {
 	RL(A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RR B*/
-static void op_CB_0x18(void)
+static uint8_t op_CB_0x18(void)
 {
 	RR(B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RR C*/
-static void op_CB_0x19(void)
+static uint8_t op_CB_0x19(void)
 {
 	RR(C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RR D*/
-static void op_CB_0x1a(void)
+static uint8_t op_CB_0x1a(void)
 {
 	RR(D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RR E*/
-static void op_CB_0x1b(void)
+static uint8_t op_CB_0x1b(void)
 {
 	RR(E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RR H*/
-static void op_CB_0x1c(void)
+static uint8_t op_CB_0x1c(void)
 {
 	RR(H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RR L*/
-static void op_CB_0x1d(void)
+static uint8_t op_CB_0x1d(void)
 {
 	RR(L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RR (HL)*/
-static void op_CB_0x1e(void)
+static uint8_t op_CB_0x1e(void)
 {
-	temp8=READ_BYTE(HL);
-	RR(temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	RR_ADDR_HL;
+	return(15);
 }
 
 /*RR A*/
-static void op_CB_0x1f(void)
+static uint8_t op_CB_0x1f(void)
 {
 	RR(A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SLA B*/
-static void op_CB_0x20(void)
+static uint8_t op_CB_0x20(void)
 {
 	SLA(B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SLA C*/
-static void op_CB_0x21(void)
+static uint8_t op_CB_0x21(void)
 {
 	SLA(C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SLA D*/
-static void op_CB_0x22(void)
+static uint8_t op_CB_0x22(void)
 {
 	SLA(D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SLA E*/
-static void op_CB_0x23(void)
+static uint8_t op_CB_0x23(void)
 {
 	SLA(E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SLA H*/
-static void op_CB_0x24(void)
+static uint8_t op_CB_0x24(void)
 {
 	SLA(H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SLA L*/
-static void op_CB_0x25(void)
+static uint8_t op_CB_0x25(void)
 {
 	SLA(L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SLA (HL)*/
-static void op_CB_0x26(void)
+static uint8_t op_CB_0x26(void)
 {
-	temp8=READ_BYTE(HL);
-	SLA(temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	SLA_ADDR_HL;
+	return(15);
 }
 
 /*SLA A*/
-static void op_CB_0x27(void)
+static uint8_t op_CB_0x27(void)
 {
 	SLA(A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SRA B*/
-static void op_CB_0x28(void)
+static uint8_t op_CB_0x28(void)
 {
 	SRA(B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SRA C*/
-static void op_CB_0x29(void)
+static uint8_t op_CB_0x29(void)
 {
 	SRA(C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SRA D*/
-static void op_CB_0x2a(void)
+static uint8_t op_CB_0x2a(void)
 {
 	SRA(D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SRA E*/
-static void op_CB_0x2b(void)
+static uint8_t op_CB_0x2b(void)
 {
 	SRA(E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SRA H*/
-static void op_CB_0x2c(void)
+static uint8_t op_CB_0x2c(void)
 {
 	SRA(H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SRA L*/
-static void op_CB_0x2d(void)
+static uint8_t op_CB_0x2d(void)
 {
 	SRA(L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SRA (HL)*/
-static void op_CB_0x2e(void)
+static uint8_t op_CB_0x2e(void)
 {
-	temp8=READ_BYTE(HL);
-	SRA(temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	SRA_ADDR_HL;
+	return(15);
 }
 
 /*SRA A*/
-static void op_CB_0x2f(void)
+static uint8_t op_CB_0x2f(void)
 {
 	SRA(A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SLL B*/
-static void op_CB_0x30(void)
+static uint8_t op_CB_0x30(void)
 {
 	SLL(B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SLL C*/
-static void op_CB_0x31(void)
+static uint8_t op_CB_0x31(void)
 {
 	SLL(C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SLL D*/
-static void op_CB_0x32(void)
+static uint8_t op_CB_0x32(void)
 {
 	SLL(D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SLL E*/
-static void op_CB_0x33(void)
+static uint8_t op_CB_0x33(void)
 {
 	SLL(E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SLL H*/
-static void op_CB_0x34(void)
+static uint8_t op_CB_0x34(void)
 {
 	SLL(H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SLL L*/
-static void op_CB_0x35(void)
+static uint8_t op_CB_0x35(void)
 {
 	SLL(L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SLL (HL)*/
-static void op_CB_0x36(void)
+static uint8_t op_CB_0x36(void)
 {
-	temp8=READ_BYTE(HL);
-	SLL(temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	SLL_ADDR_HL;
+	return(15);
 }
 
 /*SLL A*/
-static void op_CB_0x37(void)
+static uint8_t op_CB_0x37(void)
 {
 	SLL(A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SRL B*/
-static void op_CB_0x38(void)
+static uint8_t op_CB_0x38(void)
 {
 	SRL(B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SRL C*/
-static void op_CB_0x39(void)
+static uint8_t op_CB_0x39(void)
 {
 	SRL(C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SRL D*/
-static void op_CB_0x3a(void)
+static uint8_t op_CB_0x3a(void)
 {
 	SRL(D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SRL E*/
-static void op_CB_0x3b(void)
+static uint8_t op_CB_0x3b(void)
 {
 	SRL(E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SRL H*/
-static void op_CB_0x3c(void)
+static uint8_t op_CB_0x3c(void)
 {
 	SRL(H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SRL L*/
-static void op_CB_0x3d(void)
+static uint8_t op_CB_0x3d(void)
 {
 	SRL(L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*SRL (HL)*/
-static void op_CB_0x3e(void)
+static uint8_t op_CB_0x3e(void)
 {
-	temp8=READ_BYTE(HL);
-	SRL(temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	SRL_ADDR_HL;
+	return(15);
 }
 
 /*SRL A*/
-static void op_CB_0x3f(void)
+static uint8_t op_CB_0x3f(void)
 {
 	SRL(A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 0, B*/
-static void op_CB_0x40(void)
+static uint8_t op_CB_0x40(void)
 {
 	BIT(0, B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 0, C*/
-static void op_CB_0x41(void)
+static uint8_t op_CB_0x41(void)
 {
 	BIT(0, C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 0, D*/
-static void op_CB_0x42(void)
+static uint8_t op_CB_0x42(void)
 {
 	BIT(0, D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 0, E*/
-static void op_CB_0x43(void)
+static uint8_t op_CB_0x43(void)
 {
 	BIT(0, E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 0, H*/
-static void op_CB_0x44(void)
+static uint8_t op_CB_0x44(void)
 {
 	BIT(0, H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 0, L*/
-static void op_CB_0x45(void)
+static uint8_t op_CB_0x45(void)
 {
 	BIT(0, L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 0, (HL)*/
-static void op_CB_0x46(void)
+static uint8_t op_CB_0x46(void)
 {
-	temp8=READ_BYTE(HL);
-	BIT_MPTR(0, temp8);
-	T_WAIT_UNTIL(8);
-	return;
+	BIT_ADDR_HL(0);
+	return(12);
 }
 
 /*BIT 0, A*/
-static void op_CB_0x47(void)
+static uint8_t op_CB_0x47(void)
 {
 	BIT(0, A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 1, B*/
-static void op_CB_0x48(void)
+static uint8_t op_CB_0x48(void)
 {
 	BIT(1, B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 1, C*/
-static void op_CB_0x49(void)
+static uint8_t op_CB_0x49(void)
 {
 	BIT(1, C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 1, D*/
-static void op_CB_0x4a(void)
+static uint8_t op_CB_0x4a(void)
 {
 	BIT(1, D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 1, E*/
-static void op_CB_0x4b(void)
+static uint8_t op_CB_0x4b(void)
 {
 	BIT(1, E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 1, H*/
-static void op_CB_0x4c(void)
+static uint8_t op_CB_0x4c(void)
 {
 	BIT(1, H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 1, L*/
-static void op_CB_0x4d(void)
+static uint8_t op_CB_0x4d(void)
 {
 	BIT(1, L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 1, (HL)*/
-static void op_CB_0x4e(void)
+static uint8_t op_CB_0x4e(void)
 {
-	temp8=READ_BYTE(HL);
-	BIT_MPTR(1, temp8);
-	T_WAIT_UNTIL(8);
-	return;
+	BIT_ADDR_HL(1);
+	return(12);
 }
 
 /*BIT 1, A*/
-static void op_CB_0x4f(void)
+static uint8_t op_CB_0x4f(void)
 {
 	BIT(1, A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 2, B*/
-static void op_CB_0x50(void)
+static uint8_t op_CB_0x50(void)
 {
 	BIT(2, B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 2, C*/
-static void op_CB_0x51(void)
+static uint8_t op_CB_0x51(void)
 {
 	BIT(2, C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 2, D*/
-static void op_CB_0x52(void)
+static uint8_t op_CB_0x52(void)
 {
 	BIT(2, D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 2, E*/
-static void op_CB_0x53(void)
+static uint8_t op_CB_0x53(void)
 {
 	BIT(2, E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 2, H*/
-static void op_CB_0x54(void)
+static uint8_t op_CB_0x54(void)
 {
 	BIT(2, H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 2, L*/
-static void op_CB_0x55(void)
+static uint8_t op_CB_0x55(void)
 {
 	BIT(2, L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 2, (HL)*/
-static void op_CB_0x56(void)
+static uint8_t op_CB_0x56(void)
 {
-	temp8=READ_BYTE(HL);
-	BIT_MPTR(2, temp8);
-	T_WAIT_UNTIL(8);
-	return;
+	BIT_ADDR_HL(2);
+	return(12);
 }
 
 /*BIT 2, A*/
-static void op_CB_0x57(void)
+static uint8_t op_CB_0x57(void)
 {
 	BIT(2, A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 3, B*/
-static void op_CB_0x58(void)
+static uint8_t op_CB_0x58(void)
 {
 	BIT(3, B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 3, C*/
-static void op_CB_0x59(void)
+static uint8_t op_CB_0x59(void)
 {
 	BIT(3, C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 3, D*/
-static void op_CB_0x5a(void)
+static uint8_t op_CB_0x5a(void)
 {
 	BIT(3, D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 3, E*/
-static void op_CB_0x5b(void)
+static uint8_t op_CB_0x5b(void)
 {
 	BIT(3, E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 3, H*/
-static void op_CB_0x5c(void)
+static uint8_t op_CB_0x5c(void)
 {
 	BIT(3, H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 3, L*/
-static void op_CB_0x5d(void)
+static uint8_t op_CB_0x5d(void)
 {
 	BIT(3, L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 3, (HL)*/
-static void op_CB_0x5e(void)
+static uint8_t op_CB_0x5e(void)
 {
-	temp8=READ_BYTE(HL);
-	BIT_MPTR(3, temp8);
-	T_WAIT_UNTIL(8);
-	return;
+	BIT_ADDR_HL(3);
+	return(12);
 }
 
 /*BIT 3, A*/
-static void op_CB_0x5f(void)
+static uint8_t op_CB_0x5f(void)
 {
 	BIT(3, A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 4, B*/
-static void op_CB_0x60(void)
+static uint8_t op_CB_0x60(void)
 {
 	BIT(4, B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 4, C*/
-static void op_CB_0x61(void)
+static uint8_t op_CB_0x61(void)
 {
 	BIT(4, C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 4, D*/
-static void op_CB_0x62(void)
+static uint8_t op_CB_0x62(void)
 {
 	BIT(4, D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 4, E*/
-static void op_CB_0x63(void)
+static uint8_t op_CB_0x63(void)
 {
 	BIT(4, E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 4, H*/
-static void op_CB_0x64(void)
+static uint8_t op_CB_0x64(void)
 {
 	BIT(4, H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 4, L*/
-static void op_CB_0x65(void)
+static uint8_t op_CB_0x65(void)
 {
 	BIT(4, L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 4, (HL)*/
-static void op_CB_0x66(void)
+static uint8_t op_CB_0x66(void)
 {
-	temp8=READ_BYTE(HL);
-	BIT_MPTR(4, temp8);
-	T_WAIT_UNTIL(8);
-	return;
+	BIT_ADDR_HL(4);
+	return(12);
 }
 
 /*BIT 4, A*/
-static void op_CB_0x67(void)
+static uint8_t op_CB_0x67(void)
 {
 	BIT(4, A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 5, B*/
-static void op_CB_0x68(void)
+static uint8_t op_CB_0x68(void)
 {
 	BIT(5, B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 5, C*/
-static void op_CB_0x69(void)
+static uint8_t op_CB_0x69(void)
 {
 	BIT(5, C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 5, D*/
-static void op_CB_0x6a(void)
+static uint8_t op_CB_0x6a(void)
 {
 	BIT(5, D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 5, E*/
-static void op_CB_0x6b(void)
+static uint8_t op_CB_0x6b(void)
 {
 	BIT(5, E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 5, H*/
-static void op_CB_0x6c(void)
+static uint8_t op_CB_0x6c(void)
 {
 	BIT(5, H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 5, L*/
-static void op_CB_0x6d(void)
+static uint8_t op_CB_0x6d(void)
 {
 	BIT(5, L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 5, (HL)*/
-static void op_CB_0x6e(void)
+static uint8_t op_CB_0x6e(void)
 {
-	temp8=READ_BYTE(HL);
-	BIT_MPTR(5, temp8);
-	T_WAIT_UNTIL(8);
-	return;
+	BIT_ADDR_HL(5);
+	return(12);
 }
 
 /*BIT 5, A*/
-static void op_CB_0x6f(void)
+static uint8_t op_CB_0x6f(void)
 {
 	BIT(5, A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 6, B*/
-static void op_CB_0x70(void)
+static uint8_t op_CB_0x70(void)
 {
 	BIT(6, B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 6, C*/
-static void op_CB_0x71(void)
+static uint8_t op_CB_0x71(void)
 {
 	BIT(6, C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 6, D*/
-static void op_CB_0x72(void)
+static uint8_t op_CB_0x72(void)
 {
 	BIT(6, D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 6, E*/
-static void op_CB_0x73(void)
+static uint8_t op_CB_0x73(void)
 {
 	BIT(6, E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 6, H*/
-static void op_CB_0x74(void)
+static uint8_t op_CB_0x74(void)
 {
 	BIT(6, H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 6, L*/
-static void op_CB_0x75(void)
+static uint8_t op_CB_0x75(void)
 {
 	BIT(6, L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 6, (HL)*/
-static void op_CB_0x76(void)
+static uint8_t op_CB_0x76(void)
 {
-	temp8=READ_BYTE(HL);
-	BIT_MPTR(6, temp8);
-	T_WAIT_UNTIL(8);
-	return;
+	BIT_ADDR_HL(6);
+	return(12);
 }
 
 /*BIT 6, A*/
-static void op_CB_0x77(void)
+static uint8_t op_CB_0x77(void)
 {
 	BIT(6, A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 7, B*/
-static void op_CB_0x78(void)
+static uint8_t op_CB_0x78(void)
 {
 	BIT(7, B);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 7, C*/
-static void op_CB_0x79(void)
+static uint8_t op_CB_0x79(void)
 {
 	BIT(7, C);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 7, D*/
-static void op_CB_0x7a(void)
+static uint8_t op_CB_0x7a(void)
 {
 	BIT(7, D);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 7, E*/
-static void op_CB_0x7b(void)
+static uint8_t op_CB_0x7b(void)
 {
 	BIT(7, E);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 7, H*/
-static void op_CB_0x7c(void)
+static uint8_t op_CB_0x7c(void)
 {
 	BIT(7, H);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 7, L*/
-static void op_CB_0x7d(void)
+static uint8_t op_CB_0x7d(void)
 {
 	BIT(7, L);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*BIT 7, (HL)*/
-static void op_CB_0x7e(void)
+static uint8_t op_CB_0x7e(void)
 {
-	temp8=READ_BYTE(HL);
-	BIT_MPTR(7, temp8);
-	T_WAIT_UNTIL(8);
-	return;
+	BIT_ADDR_HL(7);
+	return(12);
 }
 
 /*BIT 7, A*/
-static void op_CB_0x7f(void)
+static uint8_t op_CB_0x7f(void)
 {
 	BIT(7, A);
-	T_WAIT_UNTIL(4);
-	return;
+	return(8);
 }
 
 /*RES 0, B*/
-static void op_CB_0x80(void)
+static uint8_t op_CB_0x80(void)
 {
-	RES(0, B);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(0, B);
+	return(8);
 }
 
 /*RES 0, C*/
-static void op_CB_0x81(void)
+static uint8_t op_CB_0x81(void)
 {
-	RES(0, C);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(0, C);
+	return(8);
 }
 
 /*RES 0, D*/
-static void op_CB_0x82(void)
+static uint8_t op_CB_0x82(void)
 {
-	RES(0, D);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(0, D);
+	return(8);
 }
 
 /*RES 0, E*/
-static void op_CB_0x83(void)
+static uint8_t op_CB_0x83(void)
 {
-	RES(0, E);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(0, E);
+	return(8);
 }
 
 /*RES 0, H*/
-static void op_CB_0x84(void)
+static uint8_t op_CB_0x84(void)
 {
-	RES(0, H);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(0, H);
+	return(8);
 }
 
 /*RES 0, L*/
-static void op_CB_0x85(void)
+static uint8_t op_CB_0x85(void)
 {
-	RES(0, L);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(0, L);
+	return(8);
 }
 
 /*RES 0, (HL)*/
-static void op_CB_0x86(void)
+static uint8_t op_CB_0x86(void)
 {
-	temp8=READ_BYTE(HL);
-	RES(0, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	RES_BIT_ADDR_HL(0);
+	return(15);
 }
 
 /*RES 0, A*/
-static void op_CB_0x87(void)
+static uint8_t op_CB_0x87(void)
 {
-	RES(0, A);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(0, A);
+	return(8);
 }
 
 /*RES 1, B*/
-static void op_CB_0x88(void)
+static uint8_t op_CB_0x88(void)
 {
-	RES(1, B);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(1, B);
+	return(8);
 }
 
 /*RES 1, C*/
-static void op_CB_0x89(void)
+static uint8_t op_CB_0x89(void)
 {
-	RES(1, C);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(1, C);
+	return(8);
 }
 
 /*RES 1, D*/
-static void op_CB_0x8a(void)
+static uint8_t op_CB_0x8a(void)
 {
-	RES(1, D);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(1, D);
+	return(8);
 }
 
 /*RES 1, E*/
-static void op_CB_0x8b(void)
+static uint8_t op_CB_0x8b(void)
 {
-	RES(1, E);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(1, E);
+	return(8);
 }
 
 /*RES 1, H*/
-static void op_CB_0x8c(void)
+static uint8_t op_CB_0x8c(void)
 {
-	RES(1, H);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(1, H);
+	return(8);
 }
 
 /*RES 1, L*/
-static void op_CB_0x8d(void)
+static uint8_t op_CB_0x8d(void)
 {
-	RES(1, L);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(1, L);
+	return(8);
 }
 
 /*RES 1, (HL)*/
-static void op_CB_0x8e(void)
+static uint8_t op_CB_0x8e(void)
 {
-	temp8=READ_BYTE(HL);
-	RES(1, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	RES_BIT_ADDR_HL(1);
+	return(15);
 }
 
 /*RES 1, A*/
-static void op_CB_0x8f(void)
+static uint8_t op_CB_0x8f(void)
 {
-	RES(1, A);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(1, A);
+	return(8);
 }
 
 /*RES 2, B*/
-static void op_CB_0x90(void)
+static uint8_t op_CB_0x90(void)
 {
-	RES(2, B);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(2, B);
+	return(8);
 }
 
 /*RES 2, C*/
-static void op_CB_0x91(void)
+static uint8_t op_CB_0x91(void)
 {
-	RES(2, C);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(2, C);
+	return(8);
 }
 
 /*RES 2, D*/
-static void op_CB_0x92(void)
+static uint8_t op_CB_0x92(void)
 {
-	RES(2, D);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(2, D);
+	return(8);
 }
 
 /*RES 2, E*/
-static void op_CB_0x93(void)
+static uint8_t op_CB_0x93(void)
 {
-	RES(2, E);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(2, E);
+	return(8);
 }
 
 /*RES 2, H*/
-static void op_CB_0x94(void)
+static uint8_t op_CB_0x94(void)
 {
-	RES(2, H);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(2, H);
+	return(8);
 }
 
 /*RES 2, L*/
-static void op_CB_0x95(void)
+static uint8_t op_CB_0x95(void)
 {
-	RES(2, L);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(2, L);
+	return(8);
 }
 
 /*RES 2, (HL)*/
-static void op_CB_0x96(void)
+static uint8_t op_CB_0x96(void)
 {
-	temp8=READ_BYTE(HL);
-	RES(2, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	RES_BIT_ADDR_HL(2);
+	return(15);
 }
 
 /*RES 2, A*/
-static void op_CB_0x97(void)
+static uint8_t op_CB_0x97(void)
 {
-	RES(2, A);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(2, A);
+	return(8);
 }
 
 /*RES 3, B*/
-static void op_CB_0x98(void)
+static uint8_t op_CB_0x98(void)
 {
-	RES(3, B);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(3, B);
+	return(8);
 }
 
 /*RES 3, C*/
-static void op_CB_0x99(void)
+static uint8_t op_CB_0x99(void)
 {
-	RES(3, C);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(3, C);
+	return(8);
 }
 
 /*RES 3, D*/
-static void op_CB_0x9a(void)
+static uint8_t op_CB_0x9a(void)
 {
-	RES(3, D);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(3, D);
+	return(8);
 }
 
 /*RES 3, E*/
-static void op_CB_0x9b(void)
+static uint8_t op_CB_0x9b(void)
 {
-	RES(3, E);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(3, E);
+	return(8);
 }
 
 /*RES 3, H*/
-static void op_CB_0x9c(void)
+static uint8_t op_CB_0x9c(void)
 {
-	RES(3, H);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(3, H);
+	return(8);
 }
 
 /*RES 3, L*/
-static void op_CB_0x9d(void)
+static uint8_t op_CB_0x9d(void)
 {
-	RES(3, L);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(3, L);
+	return(8);
 }
 
 /*RES 3, (HL)*/
-static void op_CB_0x9e(void)
+static uint8_t op_CB_0x9e(void)
 {
-	temp8=READ_BYTE(HL);
-	RES(3, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	RES_BIT_ADDR_HL(3);
+	return(15);
 }
 
 /*RES 3, A*/
-static void op_CB_0x9f(void)
+static uint8_t op_CB_0x9f(void)
 {
-	RES(3, A);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(3, A);
+	return(8);
 }
 
 /*RES 4, B*/
-static void op_CB_0xa0(void)
+static uint8_t op_CB_0xa0(void)
 {
-	RES(4, B);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(4, B);
+	return(8);
 }
 
 /*RES 4, C*/
-static void op_CB_0xa1(void)
+static uint8_t op_CB_0xa1(void)
 {
-	RES(4, C);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(4, C);
+	return(8);
 }
 
 /*RES 4, D*/
-static void op_CB_0xa2(void)
+static uint8_t op_CB_0xa2(void)
 {
-	RES(4, D);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(4, D);
+	return(8);
 }
 
 /*RES 4, E*/
-static void op_CB_0xa3(void)
+static uint8_t op_CB_0xa3(void)
 {
-	RES(4, E);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(4, E);
+	return(8);
 }
 
 /*RES 4, H*/
-static void op_CB_0xa4(void)
+static uint8_t op_CB_0xa4(void)
 {
-	RES(4, H);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(4, H);
+	return(8);
 }
 
 /*RES 4, L*/
-static void op_CB_0xa5(void)
+static uint8_t op_CB_0xa5(void)
 {
-	RES(4, L);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(4, L);
+	return(8);
 }
 
 /*RES 4, (HL)*/
-static void op_CB_0xa6(void)
+static uint8_t op_CB_0xa6(void)
 {
-	temp8=READ_BYTE(HL);
-	RES(4, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	RES_BIT_ADDR_HL(4);
+	return(15);
 }
 
 /*RES 4, A*/
-static void op_CB_0xa7(void)
+static uint8_t op_CB_0xa7(void)
 {
-	RES(4, A);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(4, A);
+	return(8);
 }
 
 /*RES 5, B*/
-static void op_CB_0xa8(void)
+static uint8_t op_CB_0xa8(void)
 {
-	RES(5, B);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(5, B);
+	return(8);
 }
 
 /*RES 5, C*/
-static void op_CB_0xa9(void)
+static uint8_t op_CB_0xa9(void)
 {
-	RES(5, C);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(5, C);
+	return(8);
 }
 
 /*RES 5, D*/
-static void op_CB_0xaa(void)
+static uint8_t op_CB_0xaa(void)
 {
-	RES(5, D);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(5, D);
+	return(8);
 }
 
 /*RES 5, E*/
-static void op_CB_0xab(void)
+static uint8_t op_CB_0xab(void)
 {
-	RES(5, E);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(5, E);
+	return(8);
 }
 
 /*RES 5, H*/
-static void op_CB_0xac(void)
+static uint8_t op_CB_0xac(void)
 {
-	RES(5, H);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(5, H);
+	return(8);
 }
 
 /*RES 5, L*/
-static void op_CB_0xad(void)
+static uint8_t op_CB_0xad(void)
 {
-	RES(5, L);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(5, L);
+	return(8);
 }
 
 /*RES 5, (HL)*/
-static void op_CB_0xae(void)
+static uint8_t op_CB_0xae(void)
 {
-	temp8=READ_BYTE(HL);
-	RES(5, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	RES_BIT_ADDR_HL(5);
+	return(15);
 }
 
 /*RES 5, A*/
-static void op_CB_0xaf(void)
+static uint8_t op_CB_0xaf(void)
 {
-	RES(5, A);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(5, A);
+	return(8);
 }
 
 /*RES 6, B*/
-static void op_CB_0xb0(void)
+static uint8_t op_CB_0xb0(void)
 {
-	RES(6, B);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(6, B);
+	return(8);
 }
 
 /*RES 6, C*/
-static void op_CB_0xb1(void)
+static uint8_t op_CB_0xb1(void)
 {
-	RES(6, C);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(6, C);
+	return(8);
 }
 
 /*RES 6, D*/
-static void op_CB_0xb2(void)
+static uint8_t op_CB_0xb2(void)
 {
-	RES(6, D);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(6, D);
+	return(8);
 }
 
 /*RES 6, E*/
-static void op_CB_0xb3(void)
+static uint8_t op_CB_0xb3(void)
 {
-	RES(6, E);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(6, E);
+	return(8);
 }
 
 /*RES 6, H*/
-static void op_CB_0xb4(void)
+static uint8_t op_CB_0xb4(void)
 {
-	RES(6, H);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(6, H);
+	return(8);
 }
 
 /*RES 6, L*/
-static void op_CB_0xb5(void)
+static uint8_t op_CB_0xb5(void)
 {
-	RES(6, L);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(6, L);
+	return(8);
 }
 
 /*RES 6, (HL)*/
-static void op_CB_0xb6(void)
+static uint8_t op_CB_0xb6(void)
 {
-	temp8=READ_BYTE(HL);
-	RES(6, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	RES_BIT_ADDR_HL(6);
+	return(15);
 }
 
 /*RES 6, A*/
-static void op_CB_0xb7(void)
+static uint8_t op_CB_0xb7(void)
 {
-	RES(6, A);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(6, A);
+	return(8);
 }
 
 /*RES 7, B*/
-static void op_CB_0xb8(void)
+static uint8_t op_CB_0xb8(void)
 {
-	RES(7, B);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(7, B);
+	return(8);
 }
 
 /*RES 7, C*/
-static void op_CB_0xb9(void)
+static uint8_t op_CB_0xb9(void)
 {
-	RES(7, C);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(7, C);
+	return(8);
 }
 
 /*RES 7, D*/
-static void op_CB_0xba(void)
+static uint8_t op_CB_0xba(void)
 {
-	RES(7, D);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(7, D);
+	return(8);
 }
 
 /*RES 7, E*/
-static void op_CB_0xbb(void)
+static uint8_t op_CB_0xbb(void)
 {
-	RES(7, E);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(7, E);
+	return(8);
 }
 
 /*RES 7, H*/
-static void op_CB_0xbc(void)
+static uint8_t op_CB_0xbc(void)
 {
-	RES(7, H);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(7, H);
+	return(8);
 }
 
 /*RES 7, L*/
-static void op_CB_0xbd(void)
+static uint8_t op_CB_0xbd(void)
 {
-	RES(7, L);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(7, L);
+	return(8);
 }
 
 /*RES 7, (HL)*/
-static void op_CB_0xbe(void)
+static uint8_t op_CB_0xbe(void)
 {
-	temp8=READ_BYTE(HL);
-	RES(7, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	RES_BIT_ADDR_HL(7);
+	return(15);
 }
 
 /*RES 7, A*/
-static void op_CB_0xbf(void)
+static uint8_t op_CB_0xbf(void)
 {
-	RES(7, A);
-	T_WAIT_UNTIL(4);
-	return;
+	RES_BIT_IN_R(7, A);
+	return(8);
 }
 
 /*SET 0, B*/
-static void op_CB_0xc0(void)
+static uint8_t op_CB_0xc0(void)
 {
-	SET(0, B);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(0, B);
+	return(8);
 }
 
 /*SET 0, C*/
-static void op_CB_0xc1(void)
+static uint8_t op_CB_0xc1(void)
 {
-	SET(0, C);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(0, C);
+	return(8);
 }
 
 /*SET 0, D*/
-static void op_CB_0xc2(void)
+static uint8_t op_CB_0xc2(void)
 {
-	SET(0, D);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(0, D);
+	return(8);
 }
 
 /*SET 0, E*/
-static void op_CB_0xc3(void)
+static uint8_t op_CB_0xc3(void)
 {
-	SET(0, E);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(0, E);
+	return(8);
 }
 
 /*SET 0, H*/
-static void op_CB_0xc4(void)
+static uint8_t op_CB_0xc4(void)
 {
-	SET(0, H);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(0, H);
+	return(8);
 }
 
 /*SET 0, L*/
-static void op_CB_0xc5(void)
+static uint8_t op_CB_0xc5(void)
 {
-	SET(0, L);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(0, L);
+	return(8);
 }
 
 /*SET 0, (HL)*/
-static void op_CB_0xc6(void)
+static uint8_t op_CB_0xc6(void)
 {
-	temp8=READ_BYTE(HL);
-	SET(0, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+
+	SET_BIT_ADDR_HL(0);
+	return(15);
 }
 
 /*SET 0, A*/
-static void op_CB_0xc7(void)
+static uint8_t op_CB_0xc7(void)
 {
-	SET(0, A);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(0, A);
+	return(8);
 }
 
 /*SET 1, B*/
-static void op_CB_0xc8(void)
+static uint8_t op_CB_0xc8(void)
 {
-	SET(1, B);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(1, B);
+	return(8);
 }
 
 /*SET 1, C*/
-static void op_CB_0xc9(void)
+static uint8_t op_CB_0xc9(void)
 {
-	SET(1, C);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(1, C);
+	return(8);
 }
 
 /*SET 1, D*/
-static void op_CB_0xca(void)
+static uint8_t op_CB_0xca(void)
 {
-	SET(1, D);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(1, D);
+	return(8);
 }
 
 /*SET 1, E*/
-static void op_CB_0xcb(void)
+static uint8_t op_CB_0xcb(void)
 {
-	SET(1, E);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(1, E);
+	return(8);
 }
 
 /*SET 1, H*/
-static void op_CB_0xcc(void)
+static uint8_t op_CB_0xcc(void)
 {
-	SET(1, H);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(1, H);
+	return(8);
 }
 
 /*SET 1, L*/
-static void op_CB_0xcd(void)
+static uint8_t op_CB_0xcd(void)
 {
-	SET(1, L);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(1, L);
+	return(8);
 }
 
 /*SET 1, (HL)*/
-static void op_CB_0xce(void)
+static uint8_t op_CB_0xce(void)
 {
-	temp8=READ_BYTE(HL);
-	SET(1, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	SET_BIT_ADDR_HL(1);
+	return(15);
 }
 
 /*SET 1, A*/
-static void op_CB_0xcf(void)
+static uint8_t op_CB_0xcf(void)
 {
-	SET(1, A);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(1, A);
+	return(8);
 }
 
 /*SET 2, B*/
-static void op_CB_0xd0(void)
+static uint8_t op_CB_0xd0(void)
 {
-	SET(2, B);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(2, B);
+	return(8);
 }
 
 /*SET 2, C*/
-static void op_CB_0xd1(void)
+static uint8_t op_CB_0xd1(void)
 {
-	SET(2, C);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(2, C);
+	return(8);
 }
 
 /*SET 2, D*/
-static void op_CB_0xd2(void)
+static uint8_t op_CB_0xd2(void)
 {
-	SET(2, D);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(2, D);
+	return(8);
 }
 
 /*SET 2, E*/
-static void op_CB_0xd3(void)
+static uint8_t op_CB_0xd3(void)
 {
-	SET(2, E);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(2, E);
+	return(8);
 }
 
 /*SET 2, H*/
-static void op_CB_0xd4(void)
+static uint8_t op_CB_0xd4(void)
 {
-	SET(2, H);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(2, H);
+	return(8);
 }
 
 /*SET 2, L*/
-static void op_CB_0xd5(void)
+static uint8_t op_CB_0xd5(void)
 {
-	SET(2, L);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(2, L);
+	return(8);
 }
 
 /*SET 2, (HL)*/
-static void op_CB_0xd6(void)
+static uint8_t op_CB_0xd6(void)
 {
-	temp8=READ_BYTE(HL);
-	SET(2, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	SET_BIT_ADDR_HL(2);
+	return(15);
 }
 
 /*SET 2, A*/
-static void op_CB_0xd7(void)
+static uint8_t op_CB_0xd7(void)
 {
-	SET(2, A);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(2, A);
+	return(8);
 }
 
 /*SET 3, B*/
-static void op_CB_0xd8(void)
+static uint8_t op_CB_0xd8(void)
 {
-	SET(3, B);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(3, B);
+	return(8);
 }
 
 /*SET 3, C*/
-static void op_CB_0xd9(void)
+static uint8_t op_CB_0xd9(void)
 {
-	SET(3, C);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(3, C);
+	return(8);
 }
 
 /*SET 3, D*/
-static void op_CB_0xda(void)
+static uint8_t op_CB_0xda(void)
 {
-	SET(3, D);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(3, D);
+	return(8);
 }
 
 /*SET 3, E*/
-static void op_CB_0xdb(void)
+static uint8_t op_CB_0xdb(void)
 {
-	SET(3, E);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(3, E);
+	return(8);
 }
 
 /*SET 3, H*/
-static void op_CB_0xdc(void)
+static uint8_t op_CB_0xdc(void)
 {
-	SET(3, H);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(3, H);
+	return(8);
 }
 
 /*SET 3, L*/
-static void op_CB_0xdd(void)
+static uint8_t op_CB_0xdd(void)
 {
-	SET(3, L);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(3, L);
+	return(8);
 }
 
 /*SET 3, (HL)*/
-static void op_CB_0xde(void)
+static uint8_t op_CB_0xde(void)
 {
-	temp8=READ_BYTE(HL);
-	SET(3, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	SET_BIT_ADDR_HL(3);
+	return(15);
 }
 
 /*SET 3, A*/
-static void op_CB_0xdf(void)
+static uint8_t op_CB_0xdf(void)
 {
-	SET(3, A);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(3, A);
+	return(8);
 }
 
 /*SET 4, B*/
-static void op_CB_0xe0(void)
+static uint8_t op_CB_0xe0(void)
 {
-	SET(4, B);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(4, B);
+	return(8);
 }
 
 /*SET 4, C*/
-static void op_CB_0xe1(void)
+static uint8_t op_CB_0xe1(void)
 {
-	SET(4, C);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(4, C);
+	return(8);
 }
 
 /*SET 4, D*/
-static void op_CB_0xe2(void)
+static uint8_t op_CB_0xe2(void)
 {
-	SET(4, D);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(4, D);
+	return(8);
 }
 
 /*SET 4, E*/
-static void op_CB_0xe3(void)
+static uint8_t op_CB_0xe3(void)
 {
-	SET(4, E);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(4, E);
+	return(8);
 }
 
 /*SET 4, H*/
-static void op_CB_0xe4(void)
+static uint8_t op_CB_0xe4(void)
 {
-	SET(4, H);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(4, H);
+	return(8);
 }
 
 /*SET 4, L*/
-static void op_CB_0xe5(void)
+static uint8_t op_CB_0xe5(void)
 {
-	SET(4, L);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(4, L);
+	return(8);
 }
 
 /*SET 4, (HL)*/
-static void op_CB_0xe6(void)
+static uint8_t op_CB_0xe6(void)
 {
-	temp8=READ_BYTE(HL);
-	SET(4, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	SET_BIT_ADDR_HL(4);
+	return(15);
 }
 
 /*SET 4, A*/
-static void op_CB_0xe7(void)
+static uint8_t op_CB_0xe7(void)
 {
-	SET(4, A);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(4, A);
+	return(8);
 }
 
 /*SET 5, B*/
-static void op_CB_0xe8(void)
+static uint8_t op_CB_0xe8(void)
 {
-	SET(5, B);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(5, B);
+	return(8);
 }
 
 /*SET 5, C*/
-static void op_CB_0xe9(void)
+static uint8_t op_CB_0xe9(void)
 {
-	SET(5, C);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(5, C);
+	return(8);
 }
 
 /*SET 5, D*/
-static void op_CB_0xea(void)
+static uint8_t op_CB_0xea(void)
 {
-	SET(5, D);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(5, D);
+	return(8);
 }
 
 /*SET 5, E*/
-static void op_CB_0xeb(void)
+static uint8_t op_CB_0xeb(void)
 {
-	SET(5, E);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(5, E);
+	return(8);
 }
 
 /*SET 5, H*/
-static void op_CB_0xec(void)
+static uint8_t op_CB_0xec(void)
 {
-	SET(5, H);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(5, H);
+	return(8);
 }
 
 /*SET 5, L*/
-static void op_CB_0xed(void)
+static uint8_t op_CB_0xed(void)
 {
-	SET(5, L);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(5, L);
+	return(8);
 }
 
 /*SET 5, (HL)*/
-static void op_CB_0xee(void)
+static uint8_t op_CB_0xee(void)
 {
-	temp8=READ_BYTE(HL);
-	SET(5, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	SET_BIT_ADDR_HL(5);
+	return(15);
 }
 
 /*SET 5, A*/
-static void op_CB_0xef(void)
+static uint8_t op_CB_0xef(void)
 {
-	SET(5, A);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(5, A);
+	return(8);
 }
 
 /*SET 6, B*/
-static void op_CB_0xf0(void)
+static uint8_t op_CB_0xf0(void)
 {
-	SET(6, B);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(6, B);
+	return(8);
 }
 
 /*SET 6, C*/
-static void op_CB_0xf1(void)
+static uint8_t op_CB_0xf1(void)
 {
-	SET(6, C);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(6, C);
+	return(8);
 }
 
 /*SET 6, D*/
-static void op_CB_0xf2(void)
+static uint8_t op_CB_0xf2(void)
 {
-	SET(6, D);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(6, D);
+	return(8);
 }
 
 /*SET 6, E*/
-static void op_CB_0xf3(void)
+static uint8_t op_CB_0xf3(void)
 {
-	SET(6, E);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(6, E);
+	return(8);
 }
 
 /*SET 6, H*/
-static void op_CB_0xf4(void)
+static uint8_t op_CB_0xf4(void)
 {
-	SET(6, H);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(6, H);
+	return(8);
 }
 
 /*SET 6, L*/
-static void op_CB_0xf5(void)
+static uint8_t op_CB_0xf5(void)
 {
-	SET(6, L);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(6, L);
+	return(8);
 }
 
 /*SET 6, (HL)*/
-static void op_CB_0xf6(void)
+static uint8_t op_CB_0xf6(void)
 {
-	temp8=READ_BYTE(HL);
-	SET(6, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	SET_BIT_ADDR_HL(6);
+	return(15);
 }
 
 /*SET 6, A*/
-static void op_CB_0xf7(void)
+static uint8_t op_CB_0xf7(void)
 {
-	SET(6, A);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(6, A);
+	return(8);
 }
 
 /*SET 7, B*/
-static void op_CB_0xf8(void)
+static uint8_t op_CB_0xf8(void)
 {
-	SET(7, B);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(7, B);
+	return(8);
 }
 
 /*SET 7, C*/
-static void op_CB_0xf9(void)
+static uint8_t op_CB_0xf9(void)
 {
-	SET(7, C);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(7, C);
+	return(8);
 }
 
 /*SET 7, D*/
-static void op_CB_0xfa(void)
+static uint8_t op_CB_0xfa(void)
 {
-	SET(7, D);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(7, D);
+	return(8);
 }
 
 /*SET 7, E*/
-static void op_CB_0xfb(void)
+static uint8_t op_CB_0xfb(void)
 {
-	SET(7, E);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(7, E);
+	return(8);
 }
 
 /*SET 7, H*/
-static void op_CB_0xfc(void)
+static uint8_t op_CB_0xfc(void)
 {
-	SET(7, H);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(7, H);
+	return(8);
 }
 
 /*SET 7, L*/
-static void op_CB_0xfd(void)
+static uint8_t op_CB_0xfd(void)
 {
-	SET(7, L);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(7, L);
+	return(8);
 }
 
 /*SET 7, (HL)*/
-static void op_CB_0xfe(void)
+static uint8_t op_CB_0xfe(void)
 {
-	temp8=READ_BYTE(HL);
-	SET(7, temp8);
-	WRITE_BYTE(HL, temp8);
-	T_WAIT_UNTIL(11);
-	return;
+	SET_BIT_ADDR_HL(7);
+	return(15);
 }
 
 /*SET 7, A*/
-static void op_CB_0xff(void)
+static uint8_t op_CB_0xff(void)
 {
-	SET(7, A);
-	T_WAIT_UNTIL(4);
-	return;
+	SET_BIT_IN_R(7, A);
+	return(8);
 }
 
-static void (*opcode_cb[0x100])(void)={
+static uint8_t (*opcode_cb[0x100])(void)={
 	op_CB_0x00, op_CB_0x01, op_CB_0x02, op_CB_0x03, op_CB_0x04, op_CB_0x05, op_CB_0x06, op_CB_0x07, op_CB_0x08, op_CB_0x09, op_CB_0x0a, op_CB_0x0b, op_CB_0x0c, op_CB_0x0d, op_CB_0x0e, op_CB_0x0f,
 	op_CB_0x10, op_CB_0x11, op_CB_0x12, op_CB_0x13, op_CB_0x14, op_CB_0x15, op_CB_0x16, op_CB_0x17, op_CB_0x18, op_CB_0x19, op_CB_0x1a, op_CB_0x1b, op_CB_0x1c, op_CB_0x1d, op_CB_0x1e, op_CB_0x1f,
 	op_CB_0x20, op_CB_0x21, op_CB_0x22, op_CB_0x23, op_CB_0x24, op_CB_0x25, op_CB_0x26, op_CB_0x27, op_CB_0x28, op_CB_0x29, op_CB_0x2a, op_CB_0x2b, op_CB_0x2c, op_CB_0x2d, op_CB_0x2e, op_CB_0x2f,
