@@ -224,7 +224,7 @@
 	PC+=1; \
 	MEMPTRH=memory[PC]; \
 	PC+=1; \
-	dst=(memory[MEMPTR+1]<<8)|memory[MEMPTR]; \
+	dst=memory[MEMPTR+1]<<8|memory[MEMPTR]; \
 	MEMPTR+=1; \
 }
 

@@ -27,6 +27,9 @@ uint16_t line_count=0;
 uint16_t byte_count=0;
 uint8_t flash;
 uint8_t flash_count;
+uint8_t b;
+uint8_t pixel;
+uint8_t attribute;
 
 #include "scr_table.c"
 #include "scr_routine.c"
@@ -79,8 +82,8 @@ void zx_run(void)
 		{
 
 		}
-
-		(*scr_out[byte_count>>3])(byte_count&0x7);
+		b=byte_count&0x7;
+		(*scr_out[byte_count>>3])();
 
 		TIM11->SR=0;
 		byte_count++;
@@ -100,7 +103,8 @@ void zx_run(void)
 void zx(void)
 {
 	DMA2->LIFCR=~(0);
-	(*scr_out[byte_count&0xfff8])(byte_count&0x7);
+	b=byte_count&0x7;
+	(*scr_out[byte_count>>3])();
 	byte_count++;
 	if (byte_count==9600)
 	{

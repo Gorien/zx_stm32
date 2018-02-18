@@ -59,7 +59,9 @@ uint8_t z80_run(void)
 			{
 				IFF1=0;
 				IFF2=0;
-				RST(memory[I<<8|0xff]);
+				vector_nmi=(I*256)+255;
+				vector_nmi=(memory[vector_nmi+1]<<8)|memory[vector_nmi];
+				RST(vector_nmi);
 			}
 			else
 			{
