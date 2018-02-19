@@ -270,7 +270,7 @@ static uint8_t op_0x21(void)
 /*LD (@), HL*/
 static uint8_t op_0x22(void)
 {
-	LD_ADDR_nn_FROM_RP(HL);
+	LD_ADDR_FROM_RP(HL);
 	return(16);
 }
 
@@ -335,7 +335,7 @@ static uint8_t op_0x29(void)
 /*LD HL, (@)*/
 static uint8_t op_0x2a(void)
 {
-	LD_ADDR_nn_TO_RP(HL);
+	LD_ADDR_TO_RP(HL);
 	return(16);
 }
 
@@ -997,7 +997,7 @@ static uint8_t op_0x85(void)
 /*ADD A, (HL)*/
 static uint8_t op_0x86(void)
 {
-	ADD_A_AND_HL;
+	ADD_A_AND_ADDR_HL;
 	return(7);
 }
 
@@ -1011,42 +1011,42 @@ static uint8_t op_0x87(void)
 /*ADDC A, B*/
 static uint8_t op_0x88(void)
 {
-	ADDC(A, B);
+	ADC_A_AND_R(B);
 	return(4);
 }
 
 /*ADDC A, C*/
 static uint8_t op_0x89(void)
 {
-	ADDC(A, C);
+	ADC_A_AND_R(C);
 	return(4);
 }
 
 /*ADDC A, D*/
 static uint8_t op_0x8a(void)
 {
-	ADDC(A, D);
+	ADC_A_AND_R(D);
 	return(4);
 }
 
 /*ADDC A, E*/
 static uint8_t op_0x8b(void)
 {
-	ADDC(A, E);
+	ADC_A_AND_R(E);
 	return(4);
 }
 
 /*ADDC A, H*/
 static uint8_t op_0x8c(void)
 {
-	ADDC(A, H);
+	ADC_A_AND_R(H);
 	return(4);
 }
 
 /*ADDC A, L*/
 static uint8_t op_0x8d(void)
 {
-	ADDC(A, L);
+	ADC_A_AND_R(L);
 	return(4);
 }
 
@@ -1060,7 +1060,7 @@ static uint8_t op_0x8e(void)
 /*ADDC A, A*/
 static uint8_t op_0x8f(void)
 {
-	ADDC(A, A);
+	ADC_A_AND_R(A);
 	return(4);
 }
 
@@ -1109,7 +1109,7 @@ static uint8_t op_0x95(void)
 /*SUB (HL)*/
 static uint8_t op_0x96(void)
 {
-	SUB_A_AND_HL;
+	SUB_A_AND_ADDR_HL;
 	return(7);
 }
 
@@ -1123,42 +1123,42 @@ static uint8_t op_0x97(void)
 /*SUBC A, B*/
 static uint8_t op_0x98(void)
 {
-	SUBC(A, B);
+	SBC_A_AND_R(B);
 	return(4);
 }
 
 /*SUBC A, C*/
 static uint8_t op_0x99(void)
 {
-	SUBC(A, C);
+	SBC_A_AND_R(C);
 	return(4);
 }
 
 /*SUBC A, D*/
 static uint8_t op_0x9a(void)
 {
-	SUBC(A, D);
+	SBC_A_AND_R(D);
 	return(4);
 }
 
 /*SUBC A, E*/
 static uint8_t op_0x9b(void)
 {
-	SUBC(A, E);
+	SBC_A_AND_R(E);
 	return(4);
 }
 
 /*SUBC A, H*/
 static uint8_t op_0x9c(void)
 {
-	SUBC(A, H);
+	SBC_A_AND_R(H);
 	return(4);
 }
 
 /*SUBC A, L*/
 static uint8_t op_0x9d(void)
 {
-	SUBC(A, L);
+	SBC_A_AND_R(L);
 	return(4);
 }
 
@@ -1172,7 +1172,7 @@ static uint8_t op_0x9e(void)
 /*SUBC A, A*/
 static uint8_t op_0x9f(void)
 {
-	SUBC(A, A);
+	SBC_A_AND_R(A);
 	return(4);
 }
 
@@ -1622,10 +1622,7 @@ static uint8_t op_0xd2(void)
 /*OUT (#), A*/
 static uint8_t op_0xd3(void)
 {
-	temp8=memory[PC];
-	PC+=1;
-	temp16=(temp8+(A<<8));
-	OUT_A(temp16, A);
+	OUT_PORT_An_FROM_A;
 	return(11);
 }
 
@@ -1710,10 +1707,7 @@ static uint8_t op_0xda(void)
 /*IN A,(#)*/
 static uint8_t op_0xdb(void)
 {
-	temp8=memory[PC];
-	PC+=1;
-	temp16=(temp8+(A<<8));
-	IN_A(A, temp16);
+	IN_PORT_An_TO_A;
 	return(11);
 }
 

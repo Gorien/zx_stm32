@@ -87,16 +87,12 @@
 		memory[addr]=value; \
 	} \
 
-#define READ_BYTE(addr) \
-	memory[addr]; \
+#define READ_BYTE(addr, value) \
+	value=memory[addr]; \
 
 /*macros R/W port*/
 #define READ_PORT(port) in(port);
 #define WRITE_PORT(port, value) out(port, value);
-
-
-
-
 
 /*Instructions Table 8-Bit Load Group*/
 #define LD_R_TO_R(dst, src) \
@@ -218,7 +214,7 @@
 	PC+=2; \
 }
 
-#define LD_ADDR_nn_TO_RP(dst) \
+#define LD_ADDR_TO_RP(dst) \
 { \
 	MEMPTRL=memory[PC]; \
 	PC+=1; \
@@ -228,7 +224,7 @@
 	MEMPTR+=1; \
 }
 
-#define LD_ADDR_nn_FROM_RP(src) \
+#define LD_ADDR_FROM_RP(src) \
 { \
 	MEMPTRL=memory[PC]; \
 	PC+=1; \
@@ -341,7 +337,7 @@
 	} \
 }
 
-#define CPI(rd) \
+#define CPI() \
 { \
 	bo_temp=memory[HL]; \
 	cp_temp=A-bo_temp; \
@@ -357,7 +353,7 @@
 	MEMPTR=MEMPTR+1; \
 }
 
-#define CPD(rd) \
+#define CPD() \
 { \
 	bo_temp=memory[HL]; \
 	cp_temp=A-bo_temp; \
@@ -444,7 +440,7 @@
 	F=(add_temp&0x100?FLAG_C:0)|halfcarry_add_table[lookup&0x07]|overflow_add_table[lookup>>4]|sz53_table[A]; \
 }
 
-#define ADD_A_AND_HL \
+#define ADD_A_AND_ADDR_HL \
 { \
 	temp8=memory[HL]; \
 	add_temp=A+(temp8); \
@@ -484,7 +480,7 @@
 	F=(sub_temp&0x100?FLAG_C:0)|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|sz53_table[A]; \
 }
 
-#define SUB_A_AND_HL \
+#define SUB_A_AND_ADDR_HL \
 { \
 	temp8=memory[HL]; \
 	sub_temp=A-(temp8); \
@@ -493,11 +489,11 @@
 	F=(sub_temp&0x100?FLAG_C:0)|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|sz53_table[A]; \
 }
 
-#define SUB_A_AND_RP_AND_OFFSET(dst) \
+#define SUB_A_AND_RP_AND_OFFSET(src) \
 { \
 	d.u=memory[PC]; \
 	PC+=1; \
-	MEMPTR=(dst+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	sub_temp=A-(temp8); \
 	lookup=((A&0x88)>>3)|(((temp8)&0x88)>>2)|((sub_temp&0x88)>>1); \
@@ -505,10 +501,10 @@
 	F=(sub_temp&0x100?FLAG_C:0)|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|sz53_table[A]; \
 }
 
-#define INC_R(value) \
+#define INC_R(src) \
 { \
-	(value)++; \
-	F=(F&FLAG_C)|((value)==0x80?FLAG_V:0)|((value)&0x0f?0:FLAG_H)|sz53_table[(value)]; \
+	(src)++; \
+	F=(F&FLAG_C)|((src)==0x80?FLAG_V:0)|((src)&0x0f?0:FLAG_H)|sz53_table[(src)]; \
 }
 
 #define INC_ADDR_HL \
@@ -519,22 +515,22 @@
 	WRITE_BYTE(HL, temp8); \
 }
 
-#define INC_ADDR_RP_AND_OFSET(dst) \
+#define INC_ADDR_RP_AND_OFSET(src) \
 { \
 	d.u=memory[PC]; \
 	PC+=1; \
-	MEMPTR=(dst+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	temp8++; \
 	F=(F&FLAG_C)|((temp8)==0x80?FLAG_V:0)|((temp8)&0x0f?0:FLAG_H)|sz53_table[(temp8)]; \
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define DEC_R(value) \
+#define DEC_R(src) \
 { \
-	F=(F&FLAG_C)|((value)&0x0f?0:FLAG_H)|FLAG_N; \
-	(value)--; \
-	F|=((value)==0x7f?FLAG_V:0)|sz53_table[(value)]; \
+	F=(F&FLAG_C)|((src)&0x0f?0:FLAG_H)|FLAG_N; \
+	(src)--; \
+	F|=((src)==0x7f?FLAG_V:0)|sz53_table[(src)]; \
 }
 
 #define DEC_ADDR_HL \
@@ -546,11 +542,11 @@
 	WRITE_BYTE(HL, temp8); \
 }
 
-#define DEC_ADDR_RP_AND_OFSET(des) \
+#define DEC_ADDR_RP_AND_OFSET(src) \
 { \
 	d.u=memory[PC]; \
 	PC+=1; \
-	MEMPTR=(des+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	F=(F&FLAG_C)|((temp8)&0x0f?0:FLAG_H)|FLAG_N; \
 	temp8--; \
@@ -558,10 +554,10 @@
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define ADDC(a, value) \
+#define ADC_A_AND_R(src) \
 { \
-	add_temp=A+(value)+(F&FLAG_C); \
-	lookup=((A&0x88)>>3)|(((value)&0x88)>>2 )|((add_temp&0x88)>>1); \
+	add_temp=A+(src)+(F&FLAG_C); \
+	lookup=((A&0x88)>>3)|(((src)&0x88)>>2 )|((add_temp&0x88)>>1); \
 	A=add_temp; \
 	F=(add_temp&0x100?FLAG_C:0)|halfcarry_add_table[lookup & 0x07]|overflow_add_table[lookup>>4]|sz53_table[A]; \
 }
@@ -597,10 +593,10 @@
 	F=(add_temp&0x100?FLAG_C:0)|halfcarry_add_table[lookup & 0x07]|overflow_add_table[lookup>>4]|sz53_table[A]; \
 }
 
-#define SUBC(a, value) \
+#define SBC_A_AND_R(src) \
 { \
-	sub_temp=A-(value)-(F&FLAG_C); \
-	lookup=((A&0x88)>>3)|(((value)&0x88)>>2)|((sub_temp&0x88)>>1); \
+	sub_temp=A-(src)-(F&FLAG_C); \
+	lookup=((A&0x88)>>3)|(((src)&0x88)>>2)|((sub_temp&0x88)>>1); \
 	A=sub_temp;\
 	F=(sub_temp&0x100?FLAG_C:0)|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|sz53_table[A]; \
 }
@@ -624,11 +620,11 @@
 	F=(sub_temp&0x100?FLAG_C:0)|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|sz53_table[A]; \
 }
 
-#define SBC_A_AND_ADDR_RP_AND_OFFSET(dst) \
+#define SBC_A_AND_ADDR_RP_AND_OFFSET(src) \
 { \
 	d.u=memory[PC]; \
 	PC+=1; \
-	MEMPTR=(dst+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	sub_temp=A-(temp8)-(F&FLAG_C); \
 	lookup=((A&0x88)>>3)|(((temp8)&0x88)>>2)|((sub_temp&0x88)>>1); \
@@ -636,11 +632,11 @@
 	F=(sub_temp&0x100?FLAG_C:0)|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|sz53_table[A]; \
 }
 
-#define CP(value) \
+#define CP(src) \
 { \
-	cp_temp=A-(value); \
-	lookup=((A&0x88)>>3)|(((value)&0x88)>>2)|((cp_temp&0x88)>>1); \
-	F=(cp_temp&0x100?FLAG_C:(cp_temp?0:FLAG_Z))|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|((value)&(FLAG_3|FLAG_5))|(cp_temp&FLAG_S); \
+	cp_temp=A-(src); \
+	lookup=((A&0x88)>>3)|(((src)&0x88)>>2)|((cp_temp&0x88)>>1); \
+	F=(cp_temp&0x100?FLAG_C:(cp_temp?0:FLAG_Z))|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|((src)&(FLAG_3|FLAG_5))|(cp_temp&FLAG_S); \
 }
 
 #define CP_AND_n \
@@ -660,20 +656,20 @@
 	F=(cp_temp&0x100?FLAG_C:(cp_temp?0:FLAG_Z))|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|((temp8)&(FLAG_3|FLAG_5))|(cp_temp&FLAG_S); \
 }
 
-#define CP_AND_ADDR_RP_AND_OFFSET(dst) \
+#define CP_AND_ADDR_RP_AND_OFFSET(src) \
 { \
 	d.u=memory[PC]; \
 	PC+=1; \
-	MEMPTR=(dst+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	cp_temp=A-(temp8); \
 	lookup=((A&0x88)>>3)|(((temp8)&0x88)>>2)|((cp_temp&0x88)>>1); \
 	F=(cp_temp&0x100?FLAG_C:(cp_temp?0:FLAG_Z))|FLAG_N|halfcarry_sub_table[lookup&0x07]|overflow_sub_table[lookup>>4]|((temp8)&(FLAG_3|FLAG_5))|(cp_temp&FLAG_S); \
 }
 
-#define AND(value) \
+#define AND(src) \
 { \
-	A&=(value); \
+	A&=(src); \
 	F=FLAG_H|sz53p_table[A]; \
 }
 
@@ -691,18 +687,18 @@
 	F=FLAG_H|sz53p_table[A]; \
 }
 
-#define AND_ADDR_RP_AND_OFFSET(dst) \
+#define AND_ADDR_RP_AND_OFFSET(src) \
 { \
 	d.u=memory[PC]; \
 	PC+=1; \
-	MEMPTR=(dst+d.s); \
+	MEMPTR=(src+d.s); \
 	A&=memory[MEMPTR]; \
 	F=FLAG_H|sz53p_table[A]; \
 }
 
-#define OR(value) \
+#define OR(src) \
 { \
-	A|=(value); \
+	A|=(src); \
 	F=sz53p_table[A]; \
 }
 
@@ -720,18 +716,18 @@
 	F=sz53p_table[A]; \
 }
 
-#define OR_ADDR_RP_AND_OFFSET(dst) \
+#define OR_ADDR_RP_AND_OFFSET(src) \
 { \
 	d.u=memory[PC]; \
 	PC+=1; \
-	MEMPTR=(dst+d.s); \
+	MEMPTR=(src+d.s); \
 	A|=memory[MEMPTR]; \
 	F=sz53p_table[A]; \
 }
 
-#define XOR(value) \
+#define XOR(src) \
 { \
-	A^=(value); \
+	A^=(src); \
 	F=sz53p_table[A]; \
 }
 
@@ -749,11 +745,11 @@
 	F=sz53p_table[A]; \
 }
 
-#define XOR_ADDR_RP_AND_OFFSET(dst) \
+#define XOR_ADDR_RP_AND_OFFSET(src) \
 { \
 	d.u=memory[PC]; \
 	PC+=1; \
-	MEMPTR=(dst+d.s); \
+	MEMPTR=(src+d.s); \
 	A^=memory[MEMPTR]; \
 	F=sz53p_table[A]; \
 }
@@ -790,7 +786,6 @@
 #define SCF() \
 { \
 	F=(F&(FLAG_P|FLAG_Z|FLAG_S))|(A&(FLAG_3|FLAG_5))|FLAG_C; \
-	/*F=F&scf_table[A];*/ \
 }
 
 #define CCF() \
@@ -818,49 +813,49 @@
 }
 
 /*Instructions Table 16-Bit Arithmetic Group*/
-#define ADD16(value1, value2) \
+#define ADD16(dst, src) \
 { \
-	add_temp=(value1)+(value2); \
-	lookup=(((value1)&0x0800)>>11)|(((value2)&0x0800)>>10)|((add_temp&0x0800)>>9 );  \
-	MEMPTR=value1+1; \
-	(value1)=add_temp; \
+	add_temp=(dst)+(src); \
+	lookup=(((dst)&0x0800)>>11)|(((src)&0x0800)>>10)|((add_temp&0x0800)>>9 );  \
+	MEMPTR=dst+1; \
+	(dst)=add_temp; \
 	F=(F&(FLAG_V|FLAG_Z|FLAG_S))|(add_temp&0x10000?FLAG_C:0)|((add_temp>>8)&(FLAG_3|FLAG_5))|halfcarry_add_table[lookup]; \
 }
 
-#define INC16(value) \
+#define INC16(src) \
 { \
-	(value)++; \
+	(src)++; \
 }
 
-#define DEC16(value) \
+#define DEC16(src) \
 { \
-	(value)--; \
+	(src)--; \
 }
 
-#define ADDC16(hl, value) \
+#define ADDC16(hl, src) \
 { \
-	add_temp=HL+(value)+(F&FLAG_C); \
-	lookup=((HL&0x8800)>>11)|(((value)&0x8800)>>10)|((add_temp&0x8800)>>9); \
+	add_temp=HL+(src)+(F&FLAG_C); \
+	lookup=((HL&0x8800)>>11)|(((src)&0x8800)>>10)|((add_temp&0x8800)>>9); \
 	MEMPTR=hl+1; \
 	HL=add_temp; \
 	F=(add_temp&0x10000?FLAG_C:0)|overflow_add_table[lookup>>4]|(H&(FLAG_3|FLAG_5|FLAG_S))|halfcarry_add_table[lookup&0x07]|(HL?0:FLAG_Z); \
 }
 
-#define SUBC16(hl, value) \
+#define SUBC16(hl, src) \
 { \
-	sub_temp=HL-(value)-(F&FLAG_C); \
-	lookup=((HL&0x8800)>>11)|(((value)&0x8800)>>10)|((sub_temp&0x8800)>>9); \
+	sub_temp=HL-(src)-(F&FLAG_C); \
+	lookup=((HL&0x8800)>>11)|(((src)&0x8800)>>10)|((sub_temp&0x8800)>>9); \
 	MEMPTR=hl+1; \
 	HL=sub_temp; \
 	F=(sub_temp&0x10000?FLAG_C:0)|FLAG_N|overflow_sub_table[lookup>>4]|(H&(FLAG_3|FLAG_5|FLAG_S))|halfcarry_sub_table[lookup&0x07]|(HL?0:FLAG_Z); \
 }
 
 /*Instructions Rotate and Shift Group*/
-#define SRL(value) \
+#define SRL(src) \
 { \
-	F=(value)&FLAG_C; \
-	(value)>>=1; \
-	F|=sz53p_table[(value)]; \
+	F=(src)&FLAG_C; \
+	(src)>>=1; \
+	F|=sz53p_table[(src)]; \
 }
 
 #define SRL_ADDR_HL \
@@ -872,9 +867,9 @@
 	WRITE_BYTE(HL, temp8); \
 }
 
-#define SRL_ADDR_RP_AND_OFFSET(addr) \
+#define SRL_ADDR_RP_AND_OFFSET(src) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	F=(temp8)&FLAG_C; \
 	(temp8)>>=1; \
@@ -882,9 +877,9 @@
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define SRL_ADDR_RP_AND_OFFSET_LD_R(addr, dst) \
+#define SRL_ADDR_RP_AND_OFFSET_LD_R(src, dst) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	F=(temp8)&FLAG_C; \
 	(temp8)>>=1; \
@@ -893,11 +888,11 @@
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define SRA(value) \
+#define SRA(src) \
 { \
-	F=(value)&FLAG_C; \
-	(value)=((value)&0x80)|((value)>>1); \
-	F|=sz53p_table[(value)]; \
+	F=(src)&FLAG_C; \
+	(src)=((src)&0x80)|((src)>>1); \
+	F|=sz53p_table[(src)]; \
 }
 
 #define SRA_ADDR_HL \
@@ -909,9 +904,9 @@
 	WRITE_BYTE(HL, temp8); \
 }
 
-#define SRA_ADDR_RP_AND_OFFSET(addr) \
+#define SRA_ADDR_RP_AND_OFFSET(src) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	F=(temp8)&FLAG_C; \
 	(temp8)=((temp8)&0x80)|((temp8)>>1); \
@@ -919,9 +914,9 @@
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define SRA_ADDR_RP_AND_OFFSET_LD_R(addr, dst) \
+#define SRA_ADDR_RP_AND_OFFSET_LD_R(src, dst) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	F=(temp8)&FLAG_C; \
 	(temp8)=((temp8)&0x80)|((temp8)>>1); \
@@ -930,12 +925,11 @@
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-
-#define SLA(value) \
+#define SLA(src) \
 { \
-	F=(value)>>7; \
-	(value)<<=1; \
-	F|=sz53p_table[(value)]; \
+	F=(src)>>7; \
+	(src)<<=1; \
+	F|=sz53p_table[(src)]; \
 }
 
 #define SLA_ADDR_HL \
@@ -947,9 +941,9 @@
 	WRITE_BYTE(HL, temp8); \
 }
 
-#define SLA_ADDR_RP_AND_OFFSET(addr) \
+#define SLA_ADDR_RP_AND_OFFSET(src) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	F=(temp8)>>7; \
 	(temp8)<<=1; \
@@ -957,9 +951,9 @@
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define SLA_ADDR_RP_AND_OFFSET_LD_R(addr, dst) \
+#define SLA_ADDR_RP_AND_OFFSET_LD_R(src, dst) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	F=(temp8)>>7; \
 	(temp8)<<=1; \
@@ -968,11 +962,11 @@
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define SLL(value) \
+#define SLL(src) \
 { \
-	F=(value)>>7; \
-	(value)=((value)<<1)|0x01; \
-	F|=sz53p_table[(value)]; \
+	F=(src)>>7; \
+	(src)=((src)<<1)|0x01; \
+	F|=sz53p_table[(src)]; \
 }
 
 #define SLL_ADDR_HL \
@@ -984,9 +978,9 @@
 	WRITE_BYTE(HL, temp8); \
 }
 
-#define SLL_ADDR_RP_AND_OFFSET(addr) \
+#define SLL_ADDR_RP_AND_OFFSET(src) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	F=(temp8)>>7; \
 	(temp8)=((temp8)<<1)|0x01; \
@@ -994,9 +988,9 @@
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define SLL_ADDR_RP_AND_OFFSET_LD_R(addr, dst) \
+#define SLL_ADDR_RP_AND_OFFSET_LD_R(src, dst) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	F=(temp8)>>7; \
 	(temp8)=((temp8)<<1)|0x01; \
@@ -1005,11 +999,11 @@
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define RL(value) \
+#define RL(src) \
 { \
-	rot_temp=(value); \
-	(value)=((value)<<1)|( F & FLAG_C ); \
-	F=(rot_temp>>7)|sz53p_table[(value)]; \
+	rot_temp=(src); \
+	(src)=((src)<<1)|( F & FLAG_C ); \
+	F=(rot_temp>>7)|sz53p_table[(src)]; \
 }
 
 #define RL_ADDR_HL \
@@ -1021,9 +1015,9 @@
 	WRITE_BYTE(HL, temp8); \
 }
 
-#define RL_ADDR_RP_AND_OFFSET(addr) \
+#define RL_ADDR_RP_AND_OFFSET(src) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	rot_temp=(temp8); \
 	(temp8)=((temp8)<<1)|( F & FLAG_C ); \
@@ -1031,9 +1025,9 @@
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define RL_ADDR_RP_AND_OFFSET_LD_R(addr, dst) \
+#define RL_ADDR_RP_AND_OFFSET_LD_R(src, dst) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	rot_temp=(temp8); \
 	(temp8)=((temp8)<<1)|( F & FLAG_C ); \
@@ -1042,11 +1036,11 @@
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define RR(value) \
+#define RR(src) \
 { \
-	rot_temp=(value); \
-	(value)=((value)>>1)|(F<<7); \
-	F=(rot_temp&FLAG_C)|sz53p_table[(value)]; \
+	rot_temp=(src); \
+	(src)=((src)>>1)|(F<<7); \
+	F=(rot_temp&FLAG_C)|sz53p_table[(src)]; \
 }
 
 #define RR_ADDR_HL \
@@ -1058,9 +1052,9 @@
 	WRITE_BYTE(HL, temp8); \
 }
 
-#define RR_ADDR_RP_AND_OFFSET(addr) \
+#define RR_ADDR_RP_AND_OFFSET(src) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	rot_temp=(temp8); \
 	(temp8)=((temp8)>>1)|(F<<7); \
@@ -1068,9 +1062,9 @@
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define RR_ADDR_RP_AND_OFFSET_LD_R(addr, dst) \
+#define RR_ADDR_RP_AND_OFFSET_LD_R(src, dst) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	rot_temp=(temp8); \
 	(temp8)=((temp8)>>1)|(F<<7); \
@@ -1079,11 +1073,10 @@
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-
-#define RLC(value) \
+#define RLC(src) \
 { \
-	(value)=((value)<<1)|((value)>>7); \
-	F=((value)&FLAG_C)|sz53p_table[(value)]; \
+	(src)=((src)<<1)|((src)>>7); \
+	F=((src)&FLAG_C)|sz53p_table[(src)]; \
 }
 
 #define RLC_ADDR_HL \
@@ -1094,18 +1087,18 @@
 	WRITE_BYTE(HL, temp8); \
 }
 
-#define RLC_ADDR_RP_AND_OFFSET(addr) \
+#define RLC_ADDR_RP_AND_OFFSET(src) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	(temp8)=((temp8)<<1)|((temp8)>>7); \
 	F=((temp8)&FLAG_C)|sz53p_table[(temp8)]; \
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define RLC_ADDR_RP_AND_OFFSET_LD_R(addr, dst) \
+#define RLC_ADDR_RP_AND_OFFSET_LD_R(src, dst) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	(temp8)=((temp8)<<1)|((temp8)>>7); \
 	F=((temp8)&FLAG_C)|sz53p_table[(temp8)]; \
@@ -1113,11 +1106,11 @@
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define RRC(value) \
+#define RRC(src) \
 { \
-	F=(value)&FLAG_C; \
-	(value)=((value)>>1)|((value)<<7); \
-	F|=sz53p_table[(value)]; \
+	F=(src)&FLAG_C; \
+	(src)=((src)>>1)|((src)<<7); \
+	F|=sz53p_table[(src)]; \
 }
 
 #define RRC_ADDR_HL \
@@ -1129,9 +1122,9 @@
 	WRITE_BYTE(HL, temp8); \
 }
 
-#define RRC_ADDR_RP_AND_OFFSET(addr) \
+#define RRC_ADDR_RP_AND_OFFSET(src) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	F=(temp8)&FLAG_C; \
 	(temp8)=((temp8)>>1)|((temp8)<<7); \
@@ -1139,9 +1132,9 @@
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define RRC_ADDR_RP_AND_OFFSET_LD_R(addr, dst) \
+#define RRC_ADDR_RP_AND_OFFSET_LD_R(src, dst) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	F=(temp8)&FLAG_C; \
 	(temp8)=((temp8)>>1)|((temp8)<<7); \
@@ -1198,12 +1191,11 @@
 }
 
 /*Instructions Bit Set, Reset and Test Group*/
-#define BIT(bit, value) \
+#define BIT(bit, src) \
 { \
-	 F=(F&FLAG_C)|FLAG_H|(value&(FLAG_3|FLAG_5)); \
-	 if(!((value)&(0x01<<(bit))))F|=FLAG_P|FLAG_Z; \
-	 if((bit)==7&&(value)&0x80)F|=FLAG_S; \
-	/*F=(F&FLAG_C)|FLAG_H|sz53p_table[(value)&(0x01<<(bit))]|((value)&0x28);*/ \
+	 F=(F&FLAG_C)|FLAG_H|(src&(FLAG_3|FLAG_5)); \
+	 if(!((src)&(0x01<<(bit))))F|=FLAG_P|FLAG_Z; \
+	 if((bit)==7&&(src)&0x80)F|=FLAG_S; \
 }
 
 #define BIT_ADDR_HL(bit) \
@@ -1212,17 +1204,15 @@
 	F=(F&FLAG_C)|FLAG_H|(MEMPTRH&(FLAG_3|FLAG_5)); \
 	if(!((temp8)&(0x01<<(bit))))F|=FLAG_P|FLAG_Z; \
 	if((bit)==7&&(temp8)& 0x80)F|=FLAG_S; \
-	/*F=(F&FLAG_C)|FLAG_H|sz53p_table[(temp8)&(0x01<<(bit))]|((MEMPTRH)&0x28);*/ \
 }
 
-#define BIT_ADDR_RP_AND_OFFSET(bit, addr) \
+#define BIT_ADDR_RP_AND_OFFSET(bit, src) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]; \
 	F=(F&FLAG_C)|FLAG_H|(MEMPTRH&(FLAG_3|FLAG_5)); \
 	if(!((temp8)&(0x01<<(bit))))F|=FLAG_P|FLAG_Z; \
 	if((bit)==7&&(temp8)& 0x80)F|=FLAG_S; \
-	/*F=(F&FLAG_C)|FLAG_H|sz53p_table[(temp8)&(0x01<<(bit))]|((MEMPTRH)&0x28);*/ \
 }
 
 #define RES_BIT_IN_R(bit, src) \
@@ -1236,20 +1226,19 @@
 	WRITE_BYTE(HL, temp8); \
 }
 
-#define RES_BIT_ADDR_RP_AND_OFFSET(bit, addr) \
+#define RES_BIT_ADDR_RP_AND_OFFSET(bit, src) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]&(~(1<<bit)); \
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define RES_BIT_ADDR_RP_AND_OFFSET_LD_R(bit, addr, dst) \
+#define RES_BIT_ADDR_RP_AND_OFFSET_LD_R(bit, src, dst) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	dst=memory[MEMPTR]&(~(1<<bit)); \
 	WRITE_BYTE(MEMPTR, dst); \
 }
-
 
 #define SET_BIT_IN_R(bit, src) \
 { \
@@ -1262,16 +1251,16 @@
 	WRITE_BYTE(HL, temp8); \
 }
 
-#define SET_BIT_ADDR_RP_AND_OFFSET(bit, addr) \
+#define SET_BIT_ADDR_RP_AND_OFFSET(bit, src) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	temp8=memory[MEMPTR]|(1<<bit); \
 	WRITE_BYTE(MEMPTR, temp8); \
 }
 
-#define SET_BIT_ADDR_RP_AND_OFFSET_LD_R(bit, addr, dst) \
+#define SET_BIT_ADDR_RP_AND_OFFSET_LD_R(bit, src, dst) \
 { \
-	MEMPTR=(addr+d.s); \
+	MEMPTR=(src+d.s); \
 	dst=memory[MEMPTR]|(1<<bit); \
 	WRITE_BYTE(MEMPTR, dst); \
 }
@@ -1321,16 +1310,18 @@
 	RET(); \
 }
 /*Instructions Input and Output Group*/
-#define IN_A(reg, port) \
+#define IN_PORT_An_TO_A \
 { \
-	reg=READ_PORT(port); \
-	MEMPTR=port+1; \
+	MEMPTR=(memory[PC]|(A<<8)); \
+	PC+=1; \
+	A=READ_PORT(MEMPTR); \
+	MEMPTR+=1; \
 }
 
-#define IN(reg, port) \
+#define IN_PORT_TO_R(dst, port) \
 { \
-	reg=READ_PORT(port); \
-	F=(F&FLAG_C)|sz53p_table[(reg)]; \
+	dst=READ_PORT(port); \
+	F=(F&FLAG_C)|sz53p_table[(dst)]; \
 	MEMPTR=port+1; \
 }
 
@@ -1348,12 +1339,8 @@
 	WRITE_BYTE(HL, bo_temp); \
 	B--; \
 	HL++; \
-	temp8 = bo_temp + C + 1; \
-	F=(bo_temp&0x80?FLAG_N:0)| \
-    ((temp8<bo_temp)?FLAG_H|FLAG_C:0)| \
-    (parity_table[(temp8&0x07)^B]?FLAG_P:0)|sz53_table[B]; \
-	/*F=(bo_temp&0x80?FLAG_N:0)|sz53_table[B]; \
-	IN_BL(bo_temp, 1);*/ \
+	F=(bo_temp&0x80?FLAG_N:0)|sz53_table[B]; \
+	IN_BL(bo_temp, 1); \
 }
 
 #define IND() \
@@ -1363,12 +1350,8 @@
 	WRITE_BYTE(HL, bo_temp); \
 	B--; \
 	HL--; \
-	temp8=bo_temp+C-1; \
-	F=(bo_temp&0x80?FLAG_N:0)| \
-	((temp8<bo_temp)?FLAG_H|FLAG_C:0)| \
-	(parity_table[(temp8&0x07)^B]?FLAG_P:0)|sz53_table[B]; \
-	/*F=(bo_temp&0x80?FLAG_N:0 )|sz53_table[B]; \
-	IN_BL(bo_temp, -1);*/ \
+	F = (bo_temp&0x80?FLAG_N:0)|sz53_table[B]; \
+	IN_BL(bo_temp, -1)\
 }
 
 #define INIR() \
@@ -1418,14 +1401,16 @@
 	F|=parity_table[(((pbyte+((C+(c_add))&0xff))&7)^B)]; \
 }
 
-#define OUT_A(port, reg) \
+#define OUT_PORT_An_FROM_A \
 { \
-	WRITE_PORT(port, reg); \
-	MEMPTRL=((port+1)&0xFF); \
+	MEMPTR=(memory[PC]|(A<<8)); \
+	PC+=1; \
+	WRITE_PORT(MEMPTR, A); \
+	MEMPTR+=1; \
 	MEMPTRH=A; \
 }
 
-#define OUT(port, reg) \
+#define OUT_PORT_FROM_R(port, reg) \
 { \
 	WRITE_PORT(port, reg); \
 	MEMPTR=port+1; \
@@ -1436,7 +1421,7 @@
 	bo_temp=memory[HL]; \
 	B--; \
 	MEMPTR=BC+1; \
-	WRITE_BYTE(BC, bo_temp); \
+	WRITE_PORT(BC, bo_temp); \
 	HL++; \
 	F=(bo_temp&0x80?FLAG_N:0)|sz53_table[B]; \
 	OUT_BL(bo_temp); \
@@ -1447,7 +1432,7 @@
 	bo_temp=memory[HL]; \
 	B--; \
 	MEMPTR=BC-1; \
-	WRITE_BYTE(BC, bo_temp); \
+	WRITE_PORT(BC, bo_temp); \
 	HL--; \
 	F= (bo_temp&0x80?FLAG_N:0 )|sz53_table[B]; \
 	OUT_BL(bo_temp); \
@@ -1458,7 +1443,7 @@
 	bo_temp=memory[HL]; \
 	B--; \
 	MEMPTR=BC+1; \
-	WRITE_BYTE(BC, bo_temp); \
+	WRITE_PORT(BC, bo_temp); \
 	HL++; \
 	F=(bo_temp&0x80?FLAG_N:0)|sz53_table[B]; \
 	if(B) \
@@ -1478,7 +1463,7 @@
 	bo_temp=memory[HL]; \
 	B--; \
 	MEMPTR=BC-1; \
-	WRITE_BYTE(BC, bo_temp); \
+	WRITE_PORT(BC, bo_temp); \
 	HL--; \
 	F=(bo_temp&0x80?FLAG_N:0)|sz53_table[B]; \
 	if(B) \

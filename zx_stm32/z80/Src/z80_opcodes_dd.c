@@ -33,7 +33,7 @@ static uint8_t op_DD_0x21(void)
 /*LD (@), IX*/
 static uint8_t op_DD_0x22(void)
 {
-	LD_ADDR_nn_FROM_RP(IX);
+	LD_ADDR_FROM_RP(IX);
 	return(20);
 }
 
@@ -75,7 +75,7 @@ static uint8_t op_DD_0x29(void)
 /*LD IX, (@)*/
 static uint8_t op_DD_0x2a(void)
 {
-	LD_ADDR_nn_TO_RP(IX);
+	LD_ADDR_TO_RP(IX);
 	return(20);
 }
 
@@ -425,14 +425,14 @@ static uint8_t op_DD_0x86(void)
 /*ADDC A, IXH*/
 static uint8_t op_DD_0x8c(void)
 {
-	ADDC(A, IXH);
+	ADC_A_AND_R(IXH);
 	return(8);
 }
 
 /*ADDC A, IXL*/
 static uint8_t op_DD_0x8d(void)
 {
-	ADDC(A, IXL);
+	ADC_A_AND_R(IXL);
 	return(8);
 }
 
@@ -467,14 +467,14 @@ static uint8_t op_DD_0x96(void)
 /*SUBC A, IXH*/
 static uint8_t op_DD_0x9c(void)
 {
-	SUBC(A, IXH);
+	SBC_A_AND_R(IXH);
 	return(8);
 }
 
 /*SUBC A, IXL*/
 static uint8_t op_DD_0x9d(void)
 {
-	SUBC(A, IXL);
+	SBC_A_AND_R(IXL);
 	return(8);
 }
 

@@ -12,14 +12,14 @@
 /*IN B, (C)*/
 static uint8_t op_ED_0x40(void)
 {
-	IN(B, BC);
+	IN_PORT_TO_R(B, BC);
 	return(12);
 }
 
 /*OUT (C), B*/
 static uint8_t op_ED_0x41(void)
 {
-	OUT(BC, B);
+	OUT_PORT_FROM_R(BC, B);
 	return(12);
 }
 
@@ -33,7 +33,7 @@ static uint8_t op_ED_0x42(void)
 /*LD (@), BC*/
 static uint8_t op_ED_0x43(void)
 {
-	LD_ADDR_nn_FROM_RP(BC);
+	LD_ADDR_FROM_RP(BC);
 	return(20);
 }
 
@@ -68,14 +68,14 @@ static uint8_t op_ED_0x47(void)
 /*IN C, (C)*/
 static uint8_t op_ED_0x48(void)
 {
-	IN(C, BC);
+	IN_PORT_TO_R(C, BC);
 	return(12);
 }
 
 /*OUT (C), C*/
 static uint8_t op_ED_0x49(void)
 {
-	OUT(BC, C);
+	OUT_PORT_FROM_R(BC, C);
 	return(12);
 }
 
@@ -89,7 +89,7 @@ static uint8_t op_ED_0x4a(void)
 /*LD BC, (@)*/
 static uint8_t op_ED_0x4b(void)
 {
-	LD_ADDR_nn_TO_RP(BC);
+	LD_ADDR_TO_RP(BC);
 	return(20);
 }
 
@@ -117,14 +117,14 @@ static uint8_t op_ED_0x4f(void)
 /*IN D, (C)*/
 static uint8_t op_ED_0x50(void)
 {
-	IN(D, BC);
+	IN_PORT_TO_R(D, BC);
 	return(12);
 }
 
 /*OUT (C), D*/
 static uint8_t op_ED_0x51(void)
 {
-	OUT(BC, D);
+	OUT_PORT_FROM_R(BC, D);
 	return(12);
 }
 
@@ -138,7 +138,7 @@ static uint8_t op_ED_0x52(void)
 /*LD (@), DE*/
 static uint8_t op_ED_0x53(void)
 {
-	LD_ADDR_nn_FROM_RP(DE);
+	LD_ADDR_FROM_RP(DE);
 	return(20);
 }
 
@@ -173,14 +173,14 @@ static uint8_t op_ED_0x57(void)
 /*IN E, (C)*/
 static uint8_t op_ED_0x58(void)
 {
-	IN(E, BC);
+	IN_PORT_TO_R(E, BC);
 	return(12);
 }
 
 /*OUT (C), E*/
 static uint8_t op_ED_0x59(void)
 {
-	OUT(BC, E);
+	OUT_PORT_FROM_R(BC, E);
 	return(12);
 }
 
@@ -194,7 +194,7 @@ static uint8_t op_ED_0x5a(void)
 /*LD DE, (@)*/
 static uint8_t op_ED_0x5b(void)
 {
-	LD_ADDR_nn_TO_RP(DE);
+	LD_ADDR_TO_RP(DE);
 	return(20);
 }
 
@@ -229,14 +229,14 @@ static uint8_t op_ED_0x5f(void)
 /*IN H, (C)*/
 static uint8_t op_ED_0x60(void)
 {
-	IN(H, BC);
+	IN_PORT_TO_R(H, BC);
 	return(12);
 }
 
 /*OUT (C), H*/
 static uint8_t op_ED_0x61(void)
 {
-	OUT(BC, H);
+	OUT_PORT_FROM_R(BC, H);
 	return(12);
 }
 
@@ -250,7 +250,7 @@ static uint8_t op_ED_0x62(void)
 /*LD (@), HL*/
 static uint8_t op_ED_0x63(void)
 {
-	LD_ADDR_nn_FROM_RP(HL);
+	LD_ADDR_FROM_RP(HL);
 	return(20);
 }
 
@@ -278,14 +278,14 @@ static uint8_t op_ED_0x67(void)
 /*IN L, (C)*/
 static uint8_t op_ED_0x68(void)
 {
-	IN(L, BC);
+	IN_PORT_TO_R(L, BC);
 	return(12);
 }
 
 /*OUT (C), L*/
 static uint8_t op_ED_0x69(void)
 {
-	OUT(BC, L);
+	OUT_PORT_FROM_R(BC, L);
 	return(12);
 }
 
@@ -299,7 +299,7 @@ static uint8_t op_ED_0x6a(void)
 /*LD HL, (@)*/
 static uint8_t op_ED_0x6b(void)
 {
-	LD_ADDR_nn_TO_RP(HL);
+	LD_ADDR_TO_RP(HL);
 	return(20);
 }
 
@@ -334,7 +334,7 @@ static uint8_t op_ED_0x70(void)
 /*OUT (C), 0*/
 static uint8_t op_ED_0x71(void)
 {
-	OUT(BC, 0);
+	OUT_PORT_FROM_R(BC, 0);
 	return(12);
 }
 
@@ -348,7 +348,7 @@ static uint8_t op_ED_0x72(void)
 /*LD (@), SP*/
 static uint8_t op_ED_0x73(void)
 {
-	LD_ADDR_nn_FROM_RP(SP);
+	LD_ADDR_FROM_RP(SP);
 	return(20);
 }
 
@@ -369,14 +369,14 @@ static uint8_t op_ED_0x75(void)
 /*IN A, (C)*/
 static uint8_t op_ED_0x78(void)
 {
-	IN(A, BC);
+	IN_PORT_TO_R(A, BC);
 	return(12);
 }
 
 /*OUT (C), A*/
 static uint8_t op_ED_0x79(void)
 {
-	OUT(BC, A);
+	OUT_PORT_FROM_R(BC, A);
 	return(12);
 }
 
@@ -390,7 +390,7 @@ static uint8_t op_ED_0x7a(void)
 /*LD SP, (@)*/
 static uint8_t op_ED_0x7b(void)
 {
-	LD_ADDR_nn_TO_RP(SP);
+	LD_ADDR_TO_RP(SP);
 	return(20);
 }
 

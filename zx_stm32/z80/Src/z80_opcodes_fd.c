@@ -33,7 +33,7 @@ static uint8_t op_FD_0x21(void)
 /*LD (@), IY*/
 static uint8_t op_FD_0x22(void)
 {
-	LD_ADDR_nn_FROM_RP(IY);
+	LD_ADDR_FROM_RP(IY);
 	return(20);
 }
 
@@ -75,7 +75,7 @@ static uint8_t op_FD_0x29(void)
 /*LD IY, (@)*/
 static uint8_t op_FD_0x2a(void)
 {
-	LD_ADDR_nn_TO_RP(IY);
+	LD_ADDR_TO_RP(IY);
 	return(20);
 }
 
@@ -425,14 +425,14 @@ static uint8_t op_FD_0x86(void)
 /*ADDC A, IYH*/
 static uint8_t op_FD_0x8c(void)
 {
-	ADDC(A, IYH);
+	ADC_A_AND_R(IYH);
 	return(8);
 }
 
 /*ADDC A, IYL*/
 static uint8_t op_FD_0x8d(void)
 {
-	ADDC(A, IYL);
+	ADC_A_AND_R(IYL);
 	return(8);
 }
 
@@ -467,14 +467,14 @@ static uint8_t op_FD_0x96(void)
 /*SUBC A, IYH*/
 static uint8_t op_FD_0x9c(void)
 {
-	SUBC(A, IYH);
+	SBC_A_AND_R(IYH);
 	return(8);
 }
 
 /*SUBC A, IYL*/
 static uint8_t op_FD_0x9d(void)
 {
-	SUBC(A, IYL);
+	SBC_A_AND_R(IYL);
 	return(8);
 }
 
