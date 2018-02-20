@@ -30,8 +30,6 @@ uint16_t color [8]={0x0000,0x000F,0x7800,0x780F,0x03E0,0x03EF,0x7BE0,0x7BEF};
 #include "z80_opcodes_fd.c"
 #include "z80_opcodes_base.c"
 
-
-
 void z80_reset(void)
 {
 	AF=0;
@@ -47,8 +45,6 @@ void z80_reset(void)
 	MEMPTR=0;
 	return;
 }
-
-
 
 uint8_t z80_run(void)
 {
@@ -105,7 +101,7 @@ uint8_t in(uint16_t port)
 
 		input=(GPIOA->IDR&0x1f);
 
-		if ((ADC1->DR)>2)
+		if (GPIOB->IDR&0x01)
 		{
 			input|=0x40;//input from rec.
 		}

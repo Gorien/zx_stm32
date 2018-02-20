@@ -13,7 +13,7 @@
 #include "lcd.h"
 #include "dma.h"
 #include "tim.h"
-#include "adc.h"
+//#include "adc.h"
 
 
 uint16_t count;
@@ -34,9 +34,6 @@ uint8_t attribute;
 #include "scr_table.c"
 #include "scr_routine.c"
 
-
-
-
 void zx_run(void)
 {
 	LCD_Init();
@@ -51,10 +48,10 @@ void zx_run(void)
 
 	LCD_SetCursor(31, 23);
 
-	ADC1->CR2=0;
-	ADC1->CR2|=ADC_CR2_CONT;
-	ADC1->CR2|=ADC_CR2_ADON;
-	ADC1->CR2|=ADC_CR2_SWSTART;
+	//ADC1->CR2=0;
+	//ADC1->CR2|=ADC_CR2_CONT;
+	//ADC1->CR2|=ADC_CR2_ADON;
+	//ADC1->CR2|=ADC_CR2_SWSTART;
 
 
 	//DMA2->LIFCR=~(0);
@@ -100,7 +97,7 @@ void zx_run(void)
 }
 
 
-void zx(void)
+/*void zx(void)
 {
 	DMA2->LIFCR=~(0);
 	b=byte_count&0x7;
@@ -110,7 +107,7 @@ void zx(void)
 	{
 		byte_count=0;
 	}
-}
+}*/
 
 
 

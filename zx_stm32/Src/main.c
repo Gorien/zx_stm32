@@ -49,7 +49,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
-#include "adc.h"
 #include "dma.h"
 #include "fatfs.h"
 #include "sdio.h"
@@ -108,7 +107,6 @@ int main(void)
   MX_DMA_Init();
   MX_FSMC_Init();
   MX_TIM10_Init();
-  MX_ADC1_Init();
   MX_SDIO_SD_Init();
   MX_FATFS_Init();
   MX_TIM11_Init();
