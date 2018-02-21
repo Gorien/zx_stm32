@@ -1195,7 +1195,7 @@
 { \
 	 F=(F&FLAG_C)|FLAG_H|(src&(FLAG_3|FLAG_5)); \
 	 if(!((src)&(0x01<<(bit))))F|=FLAG_P|FLAG_Z; \
-	 if((bit)==7&&(src)&0x80)F|=FLAG_S; \
+	 if(((bit)==7)&&((src)&0x80))F|=FLAG_S; \
 }
 
 #define BIT_ADDR_HL(bit) \
@@ -1203,7 +1203,7 @@
 	temp8=memory[HL]; \
 	F=(F&FLAG_C)|FLAG_H|(MEMPTRH&(FLAG_3|FLAG_5)); \
 	if(!((temp8)&(0x01<<(bit))))F|=FLAG_P|FLAG_Z; \
-	if((bit)==7&&(temp8)& 0x80)F|=FLAG_S; \
+	if(((bit)==7)&&((temp8)& 0x80))F|=FLAG_S; \
 }
 
 #define BIT_ADDR_RP_AND_OFFSET(bit, src) \
@@ -1212,7 +1212,7 @@
 	temp8=memory[MEMPTR]; \
 	F=(F&FLAG_C)|FLAG_H|(MEMPTRH&(FLAG_3|FLAG_5)); \
 	if(!((temp8)&(0x01<<(bit))))F|=FLAG_P|FLAG_Z; \
-	if((bit)==7&&(temp8)& 0x80)F|=FLAG_S; \
+	if(((bit)==7)&&((temp8)& 0x80))F|=FLAG_S; \
 }
 
 #define RES_BIT_IN_R(bit, src) \

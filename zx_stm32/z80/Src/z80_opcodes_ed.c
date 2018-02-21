@@ -519,7 +519,7 @@ static uint8_t noni_ED(void)
 	return(8);
 }
 
-static uint8_t (*opcode_ed [0x100])(void)={
+static uint8_t (*const opcode_ed [0x100])(void)={
 	noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   ,
 	noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   ,
 	noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   , noni_ED   ,

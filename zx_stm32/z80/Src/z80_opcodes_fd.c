@@ -621,7 +621,7 @@ static uint8_t non_FD (void)
 	return(8);
 }
 
-static uint8_t (*opcode_fd[0x100])(void)={
+static uint8_t (*const opcode_fd[0x100])(void)={
 	non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , op_FD_0x09, non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    ,
 	non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , op_FD_0x19, non_FD    , non_FD    , non_FD    , non_FD    , non_FD    , non_FD    ,
 	non_FD    , op_FD_0x21, op_FD_0x22, op_FD_0x23, op_FD_0x24, op_FD_0x25, op_FD_0x26, non_FD    , non_FD    , op_FD_0x29, op_FD_0x2a, op_FD_0x2b, op_FD_0x2c, op_FD_0x2d, op_FD_0x2e, non_FD    ,

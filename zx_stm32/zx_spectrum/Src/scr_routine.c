@@ -28,7 +28,7 @@ static void sc_BORDER (uint8_t b)
 static void sc_BRINTH (void)
 {
 	DMA2_Stream0->CR|=DMA_SxCR_EN;
-	INT=1;
+	INT_SCR=1;
 	flash_count++;
 	if (flash_count==0)
 	{
@@ -39,7 +39,7 @@ static void sc_BRINTH (void)
 static void sc_BRINTL (void)
 {
 	DMA2_Stream0->CR|=DMA_SxCR_EN;
-	INT=0;
+	INT_SCR=0;
 }
 
 static void sc_0x4000 (void) {out_scr (0x4000, 0x5800);}
@@ -813,7 +813,7 @@ static void sc_0x57F8 (void) {out_scr (0x57F8, 0x5AF8);}
 
 
 
-static void (*scr_out[0x4b0])(void)={
+static void (*const scr_out[0x4b0])(void)={
 	sc_0x4000, sc_0x4008, sc_0x4010, sc_0x4018, sc_BORDER,
 	sc_0x4100, sc_0x4108, sc_0x4110, sc_0x4118, sc_BORDER,
 	sc_0x4200, sc_0x4208, sc_0x4210, sc_0x4218, sc_BORDER,

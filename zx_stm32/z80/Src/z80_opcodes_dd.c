@@ -623,7 +623,7 @@ static uint8_t non_DD (void)
 	return(8);
 }
 
-static uint8_t (*opcode_dd[0x100])(void)={
+static uint8_t (*const opcode_dd[0x100])(void)={
 	non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , op_DD_0x09, non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    ,
 	non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , op_DD_0x19, non_DD    , non_DD    , non_DD    , non_DD    , non_DD    , non_DD    ,
 	non_DD    , op_DD_0x21, op_DD_0x22, op_DD_0x23, op_DD_0x24, op_DD_0x25, op_DD_0x26, non_DD    , non_DD    , op_DD_0x29, op_DD_0x2a, op_DD_0x2b, op_DD_0x2c, op_DD_0x2d, op_DD_0x2e, non_DD    ,

@@ -15,7 +15,7 @@
 #include "ay_3_891x.h"
 
 uint16_t vector_nmi;
-uint8_t INT;
+uint8_t INT_SCR;
 uint8_t INT_mask;
 uint16_t color [8]={0x0000,0x000F,0x7800,0x780F,0x03E0,0x03EF,0x7BE0,0x7BEF};
 
@@ -49,7 +49,7 @@ void z80_reset(void)
 
 uint8_t z80_run(void)
 {
-	if(INT&&INT_mask)
+	if(INT_SCR&&INT_mask)
 	{
 			halt=DISABLE;
 			if(IM)
@@ -122,11 +122,11 @@ void out(uint16_t port, uint8_t value)
 	switch (port)
 	{
 		case 0xbffd:
-			ay_3_891x_reg=value&0xf;
-			break;
-		case 0xfffd:
 			ay_3_891x[ay_3_891x_reg]=value;
 			(*ay_3_891x_fc [ay_3_891x_reg])(value);
+			break;
+		case 0xfffd:
+			ay_3_891x_reg=value&0xf;
 			break;
 		default:
 			if ((port&0xff)==0x00fe)

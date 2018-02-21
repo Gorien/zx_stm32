@@ -1,7 +1,7 @@
 /*
  * ay_3_891x.h
  *
- *  Created on: 21 февр. 2018 г.
+ *  Created on: 21 пїЅпїЅпїЅпїЅ. 2018 пїЅ.
  *      Author: Beloussov
  */
 
@@ -11,6 +11,6 @@
 extern uint8_t ay_3_891x[16];
 extern uint8_t ay_3_891x_reg;
 
-extern static void (*ay_3_891x_fc [0x16])(uint8_t value);
+void (*const ay_3_891x_fc [0x16])(uint8_t value);
 
 #endif /* INC_AY_3_891X_H_ */

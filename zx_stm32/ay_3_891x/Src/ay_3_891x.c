@@ -1,14 +1,14 @@
 /*
  * ay_3_891x.c
  *
- *  Created on: 21 февр. 2018 г.
+ *  Created on: 21 пїЅпїЅпїЅпїЅ. 2018 пїЅ.
  *      Author: Beloussov
  */
 
 #include "stm32f4xx_hal.h"
 #include "ay_3_891x.h"
 
-uint8_t ay_3_891x[16]={0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+uint8_t ay_3_891x[16]={0, 0, 0, 0, 0, 0, 0, 0x3f, 0, 0, 0, 0, 0, 0, 0, 0};
 uint8_t ay_3_891x_reg=0;
 
 static void ay_3_891x_reg_0x00(uint8_t value)
@@ -50,29 +50,30 @@ static void ay_3_891x_reg_0x07(uint8_t value)
 {
 	if (value&1)
 	{
-		TIM2->CCER|=TIM_CCER_CC2E;
+		TIM2->CCER&=~(TIM_CCER_CC2E);
+
 	}
 	else
 	{
-		TIM2->CCER&=~(TIM_CCER_CC2E);
+		TIM2->CCER|=TIM_CCER_CC2E;
 	}
 
 	if (value&2)
 	{
-		TIM3->CCER|=TIM_CCER_CC2E;
-	}
-	else
-	{
 		TIM3->CCER&=~(TIM_CCER_CC2E);
 	}
-
-	if (value&3)
+	else
 	{
-		TIM4->CCER|=TIM_CCER_CC1E;
+		TIM3->CCER|=TIM_CCER_CC2E;
+	}
+
+	if (value&4)
+	{
+		TIM4->CCER&=~(TIM_CCER_CC1E);
 	}
 	else
 	{
-		TIM4->CCER&=~(TIM_CCER_CC1E);
+		TIM4->CCER|=TIM_CCER_CC1E;
 	}
 }
 
@@ -116,7 +117,7 @@ static void ay_3_891x_reg_0x0f(uint8_t value)
 
 }
 
-static void (*ay_3_891x_fc [0x16])(uint8_t value)={
+void (*const ay_3_891x_fc [0x16])(uint8_t value)={
 		ay_3_891x_reg_0x00, ay_3_891x_reg_0x01, ay_3_891x_reg_0x02, ay_3_891x_reg_0x03,
 		ay_3_891x_reg_0x04, ay_3_891x_reg_0x05, ay_3_891x_reg_0x06, ay_3_891x_reg_0x07,
 		ay_3_891x_reg_0x08, ay_3_891x_reg_0x09, ay_3_891x_reg_0x0a, ay_3_891x_reg_0x0b,

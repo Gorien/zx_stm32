@@ -16,7 +16,7 @@
 extern uint8_t screen_RAM [6144];
 extern uint8_t memory[0x10000];
 extern uint8_t const ROM[16384];
-extern uint8_t INT;
+extern uint8_t INT_SCR;
 extern uint8_t port_rf;
 
 void z80_reset(void);
