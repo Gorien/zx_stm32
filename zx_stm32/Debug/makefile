@@ -12,6 +12,7 @@ RM := rm -rf
 -include z80/Src/subdir.mk
 -include startup/subdir.mk
 -include lcd/Src/subdir.mk
+-include ay_3_891x/Src/subdir.mk
 -include Src/subdir.mk
 -include Middlewares/Third_Party/FatFs/src/option/subdir.mk
 -include Middlewares/Third_Party/FatFs/src/subdir.mk

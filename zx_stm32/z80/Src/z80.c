@@ -12,6 +12,7 @@
 #include "z80.h"
 #include "z80_macros.h"
 #include "zx.h"
+#include "ay_3_891x.h"
 
 uint16_t vector_nmi;
 uint8_t INT;
@@ -73,68 +74,82 @@ uint8_t z80_run(void)
 	return (*opcode_base[opcode])();
 }
 
-
 uint8_t in(uint16_t port)
 {
 	uint8_t input;
-	if ((port&0x00ff)==0xfe)//port 0xfe
+	switch (port)
 	{
-		GPIOB->ODR&=0x00ff;
-		GPIOB->ODR|=port&0xff00;
-
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-		HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
-
-		input=(GPIOA->IDR&0x1f);
-
-		if (GPIOB->IDR&0x01)
-		{
-			input|=0x40;//input from rec.
-		}
-		return (input);
+		case 0x7ffe:
+		case 0xbffe:
+		case 0xdffe:
+		case 0xeffe:
+		case 0xf7fe:
+		case 0xfbfe:
+		case 0xfdfe:
+		case 0xfefe:
+			GPIOB->ODR&=0x00ff;
+			GPIOB->ODR|=port&0xff00;
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
+			input=(GPIOA->IDR&0x1f)|((GPIOB->IDR&0x01)<<6);
+			break;
+		case 0xbffd:
+			input=ay_3_891x[ay_3_891x_reg];
+			break;
+		default:
+			input=0xff;
+			break;
 	}
-	else
-	{
-		return (0xff);
-	}
+	return input;
 }
 
 void out(uint16_t port, uint8_t value)
 {
-	if ((port&0xFF)==0x00fe)//port 0xFE
+	switch (port)
 	{
-		border=color[value&0x07];//D[0-2] border color
+		case 0xbffd:
+			ay_3_891x_reg=value&0xf;
+			break;
+		case 0xfffd:
+			ay_3_891x[ay_3_891x_reg]=value;
+			(*ay_3_891x_fc [ay_3_891x_reg])(value);
+			break;
+		default:
+			if ((port&0xff)==0x00fe)
+			{
+				border=color[value&0x07];//D[0-2] border color
+				if (value&0x08)//PA7 out to rec.
+				{
+					GPIOA->BSRR=GPIO_PIN_7;
+				}
+				else
+				{
+					GPIOA->BSRR=(uint32_t)GPIO_PIN_7 << 16U;
+				}
 
-		if (value&0x08)//PA6 out to rec.
-		{
-			GPIOA->BSRR=GPIO_PIN_7;
-		}
-		else
-		{
-			GPIOA->BSRR=(uint32_t)GPIO_PIN_7 << 16U;
-		}
-
-		if (value&0x10)//PA5 out speaker
-		{
-			GPIOA->BSRR=GPIO_PIN_5;
-		}
-		else
-		{
-			GPIOA->BSRR=(uint32_t)GPIO_PIN_5 << 16U;
-		}
+				if (value&0x10)//PA5 out speaker
+				{
+					GPIOA->BSRR=GPIO_PIN_5;
+				}
+				else
+				{
+					GPIOA->BSRR=(uint32_t)GPIO_PIN_5 << 16U;
+				}
+			}
+			break;
 	}
 }

@@ -32,6 +32,7 @@
 "Src/stm32f4xx_it.o"
 "Src/system_stm32f4xx.o"
 "Src/tim.o"
+"ay_3_891x/Src/ay_3_891x.o"
 "lcd/Src/lcd.o"
 "startup/startup_stm32f407xx.o"
 "z80/Src/z80.o"

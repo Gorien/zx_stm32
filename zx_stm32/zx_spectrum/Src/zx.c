@@ -67,6 +67,14 @@ void zx_run(void)
 
 	HAL_SuspendTick();//Disable SysTick Interrupt
 
+
+	HAL_TIM_PWM_Start(&htim2, 2);
+	HAL_TIM_PWM_Start(&htim3, 2);
+	HAL_TIM_PWM_Start(&htim4, 1);
+	TIM2->CCER&=~(TIM_CCER_CC2E);
+	TIM3->CCER&=~(TIM_CCER_CC2E);
+	TIM4->CCER&=~(TIM_CCER_CC1E);
+
 	//HAL_TIM_Base_Start_IT(&htim11);
 	HAL_TIM_Base_Start(&htim11);
 

@@ -4,50 +4,17 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Src/bsp_driver_sd.c \
-../Src/dma.c \
-../Src/fatfs.c \
-../Src/fsmc.c \
-../Src/gpio.c \
-../Src/main.c \
-../Src/sd_diskio.c \
-../Src/sdio.c \
-../Src/stm32f4xx_hal_msp.c \
-../Src/stm32f4xx_it.c \
-../Src/system_stm32f4xx.c \
-../Src/tim.c 
+../ay_3_891x/Src/ay_3_891x.c 
 
 OBJS += \
-./Src/bsp_driver_sd.o \
-./Src/dma.o \
-./Src/fatfs.o \
-./Src/fsmc.o \
-./Src/gpio.o \
-./Src/main.o \
-./Src/sd_diskio.o \
-./Src/sdio.o \
-./Src/stm32f4xx_hal_msp.o \
-./Src/stm32f4xx_it.o \
-./Src/system_stm32f4xx.o \
-./Src/tim.o 
+./ay_3_891x/Src/ay_3_891x.o 
 
 C_DEPS += \
-./Src/bsp_driver_sd.d \
-./Src/dma.d \
-./Src/fatfs.d \
-./Src/fsmc.d \
-./Src/gpio.d \
-./Src/main.d \
-./Src/sd_diskio.d \
-./Src/sdio.d \
-./Src/stm32f4xx_hal_msp.d \
-./Src/stm32f4xx_it.d \
-./Src/system_stm32f4xx.d \
-./Src/tim.d 
+./ay_3_891x/Src/ay_3_891x.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-Src/%.o: ../Src/%.c
+ay_3_891x/Src/%.o: ../ay_3_891x/Src/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU GCC Compiler'
 	@echo $(PWD)
