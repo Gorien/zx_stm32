@@ -51,6 +51,7 @@ uint8_t z80_run(void)
 {
 	if(INT_SCR&&INT_mask)
 	{
+			HAL_GPIO_TogglePin(green_LED_GPIO_Port, green_LED_Pin);
 			halt=DISABLE;
 			if(IM)
 			{
@@ -107,7 +108,7 @@ uint8_t in(uint16_t port)
 			HAL_GPIO_TogglePin(orange_LED_GPIO_Port, orange_LED_Pin);
 			input=(GPIOA->IDR&0x1f)|((GPIOB->IDR&0x01)<<6);
 			break;
-		case 0xbffd:
+		case 0xfffd:
 			input=ay_3_891x[ay_3_891x_reg];
 			break;
 		default:

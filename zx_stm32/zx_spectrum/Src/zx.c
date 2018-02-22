@@ -31,6 +31,9 @@ uint8_t b;
 uint8_t pixel;
 uint8_t attribute;
 
+
+uint16_t nois[10]={4000, 2000, 1300, 2900, 2100, 500, 3200, 1400, 2300, 1900};
+
 #include "scr_table.c"
 #include "scr_routine.c"
 
@@ -65,6 +68,11 @@ void zx_run(void)
 	DMA2_Stream1->NDTR=0x0008;
 	//DMA2_Stream1->CR|=DMA_SxCR_EN;
 
+
+	DMA1_Stream2->PAR=&TIM2->PSC;
+	DMA1_Stream2->M0AR=(uint32_t)&nois[0];
+	DMA1_Stream2->NDTR=0x000a;
+
 	HAL_SuspendTick();//Disable SysTick Interrupt
 
 
@@ -83,10 +91,10 @@ void zx_run(void)
 
 	while (1)
 	{
-		while ((TIM11->SR&TIM_SR_UIF)==0)
-		{
+		//while ((TIM11->SR&TIM_SR_UIF)==0)
+		//{
 
-		}
+		//}
 		b=byte_count&0x7;
 		(*scr_out[byte_count>>3])();
 
