@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * File Name          : TIM.h
+  * File Name          : RNG.h
   * Description        : This file provides code for the configuration
-  *                      of the TIM instances.
+  *                      of the RNG instances.
   ******************************************************************************
   * This notice applies to any and all portions of this file
   * that are not between comment pairs USER CODE BEGIN and
@@ -47,8 +47,8 @@
   ******************************************************************************
   */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __tim_H
-#define __tim_H
+#ifndef __rng_H
+#define __rng_H
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -61,28 +61,15 @@
 
 /* USER CODE END Includes */
 
-extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim2;
-extern TIM_HandleTypeDef htim3;
-extern TIM_HandleTypeDef htim4;
-extern TIM_HandleTypeDef htim10;
-extern TIM_HandleTypeDef htim11;
+extern RNG_HandleTypeDef hrng;
 
 /* USER CODE BEGIN Private defines */
-extern DMA_HandleTypeDef hdma_tim1_ch3;
+
 /* USER CODE END Private defines */
 
 extern void _Error_Handler(char *, int);
 
-void MX_TIM1_Init(void);
-void MX_TIM2_Init(void);
-void MX_TIM3_Init(void);
-void MX_TIM4_Init(void);
-void MX_TIM10_Init(void);
-void MX_TIM11_Init(void);
-                    
-void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
-                                                                
+void MX_RNG_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 
@@ -91,7 +78,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 #ifdef __cplusplus
 }
 #endif
-#endif /*__ tim_H */
+#endif /*__ rng_H */
 
 /**
   * @}

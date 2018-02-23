@@ -26,6 +26,7 @@ ay_3_891x/Src/ay_3_891x.o: ../ay_3_891x/Src/ay_3_891x.c \
  C:/Users/Beloussov/Documents/GitHub/zx_stm32/zx_stm32/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_fsmc.h \
  C:/Users/Beloussov/Documents/GitHub/zx_stm32/zx_stm32/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  C:/Users/Beloussov/Documents/GitHub/zx_stm32/zx_stm32/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
+ C:/Users/Beloussov/Documents/GitHub/zx_stm32/zx_stm32/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rng.h \
  C:/Users/Beloussov/Documents/GitHub/zx_stm32/zx_stm32/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_sd.h \
  C:/Users/Beloussov/Documents/GitHub/zx_stm32/zx_stm32/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_sdmmc.h \
  C:/Users/Beloussov/Documents/GitHub/zx_stm32/zx_stm32/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
@@ -85,6 +86,8 @@ C:/Users/Beloussov/Documents/GitHub/zx_stm32/zx_stm32/Drivers/STM32F4xx_HAL_Driv
 C:/Users/Beloussov/Documents/GitHub/zx_stm32/zx_stm32/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h:
 
 C:/Users/Beloussov/Documents/GitHub/zx_stm32/zx_stm32/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
+
+C:/Users/Beloussov/Documents/GitHub/zx_stm32/zx_stm32/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rng.h:
 
 C:/Users/Beloussov/Documents/GitHub/zx_stm32/zx_stm32/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_sd.h:
 

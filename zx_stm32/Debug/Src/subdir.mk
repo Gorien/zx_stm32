@@ -10,6 +10,7 @@ C_SRCS += \
 ../Src/fsmc.c \
 ../Src/gpio.c \
 ../Src/main.c \
+../Src/rng.c \
 ../Src/sd_diskio.c \
 ../Src/sdio.c \
 ../Src/stm32f4xx_hal_msp.c \
@@ -24,6 +25,7 @@ OBJS += \
 ./Src/fsmc.o \
 ./Src/gpio.o \
 ./Src/main.o \
+./Src/rng.o \
 ./Src/sd_diskio.o \
 ./Src/sdio.o \
 ./Src/stm32f4xx_hal_msp.o \
@@ -38,6 +40,7 @@ C_DEPS += \
 ./Src/fsmc.d \
 ./Src/gpio.d \
 ./Src/main.d \
+./Src/rng.d \
 ./Src/sd_diskio.d \
 ./Src/sdio.d \
 ./Src/stm32f4xx_hal_msp.d \

@@ -32,10 +32,11 @@ uint8_t pixel;
 uint8_t attribute;
 
 
-uint16_t nois[10]={4000, 2000, 1300, 2900, 2100, 500, 3200, 1400, 2300, 1900};
+uint16_t nois;
+uint8_t shaft;
 
-#include "scr_table.c"
-#include "scr_routine.c"
+//#include "scr_table.c"
+//#include "scr_routine.c"
 
 void zx_run(void)
 {
@@ -69,9 +70,18 @@ void zx_run(void)
 	//DMA2_Stream1->CR|=DMA_SxCR_EN;
 
 
-	DMA1_Stream2->PAR=&TIM2->PSC;
-	DMA1_Stream2->M0AR=(uint32_t)&nois[0];
-	DMA1_Stream2->NDTR=0x000a;
+	RNG->CR=RNG_CR_RNGEN;
+
+	NVIC_DisableIRQ(DMA2_Stream6_IRQn);
+	HAL_DMA_Start(&hdma_tim1_ch3, (uint32_t)&nois, (uint32_t)&(TIM1->PSC), 0x1);
+	HAL_TIM_OC_Start(&htim1, 3);
+
+	//DMA1_Stream2->PAR=(uint32_t)&(TIM2->PSC);
+	//DMA1_Stream2->M0AR=(uint32_t)&nois[0];
+	//DMA1_Stream2->NDTR=0x000a;
+
+
+
 
 	HAL_SuspendTick();//Disable SysTick Interrupt
 
@@ -91,11 +101,13 @@ void zx_run(void)
 
 	while (1)
 	{
+		nois=((RNG->DR)&0xff)*shaft;
+
 		//while ((TIM11->SR&TIM_SR_UIF)==0)
 		//{
 
 		//}
-		b=byte_count&0x7;
+		/*b=byte_count&0x7;
 		(*scr_out[byte_count>>3])();
 
 		TIM11->SR=0;
@@ -108,7 +120,7 @@ void zx_run(void)
 		{
 
 		}
-		DMA2->LIFCR=~(0);
+		DMA2->LIFCR=~(0);*/
 	}
 }
 

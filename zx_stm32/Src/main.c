@@ -51,6 +51,7 @@
 #include "stm32f4xx_hal.h"
 #include "dma.h"
 #include "fatfs.h"
+#include "rng.h"
 #include "sdio.h"
 #include "tim.h"
 #include "gpio.h"
@@ -113,7 +114,8 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
-  MX_TIM5_Init();
+  MX_TIM1_Init();
+  MX_RNG_Init();
 
   /* USER CODE BEGIN 2 */
 
