@@ -13,4 +13,6 @@ extern uint16_t border;
 void zx_run(void);
 void zx(void);
 
+void sub2(uint16_t a, uint16_t b);
+
 #endif /* INC_ZX_H_ */

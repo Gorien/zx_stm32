@@ -16,6 +16,7 @@
 //#include "adc.h"
 
 
+
 uint16_t count;
 uint16_t pi_x_count=0;
 uint16_t pi_y_count=0;
@@ -31,15 +32,20 @@ uint8_t b;
 uint8_t pixel;
 uint8_t attribute;
 
-
+uint32_t random;
 uint16_t nois;
-uint8_t shaft;
+
 
 //#include "scr_table.c"
 //#include "scr_routine.c"
 
+volatile char global_var=10;
+
 void zx_run(void)
 {
+
+
+
 	LCD_Init();
 	LCD_Clear(Red);
 
@@ -72,9 +78,20 @@ void zx_run(void)
 
 	RNG->CR=RNG_CR_RNGEN;
 
-	NVIC_DisableIRQ(DMA2_Stream6_IRQn);
+
 	HAL_DMA_Start(&hdma_tim1_ch3, (uint32_t)&nois, (uint32_t)&(TIM1->PSC), 0x1);
-	HAL_TIM_OC_Start(&htim1, 3);
+	HAL_TIM_Base_Start(&htim1);
+
+	TIM1->BDTR|=TIM_BDTR_MOE;
+	TIM1->CCMR2|=TIM_CCMR2_OC3M_1|TIM_CCMR2_OC3M_2;
+	TIM1->CCMR1|=TIM_CCMR1_OC2M_1|TIM_CCMR1_OC2M_2;
+	TIM1->CCMR1|=TIM_CCMR1_OC1M_1|TIM_CCMR1_OC1M_2;
+
+	TIM1->CCER&=~(TIM_CCER_CC1E);
+	TIM1->CCER&=~(TIM_CCER_CC2E);
+	TIM1->CCER&=~(TIM_CCER_CC3E);
+
+	TIM1->DIER|=TIM_DIER_CC3DE;
 
 	//DMA1_Stream2->PAR=(uint32_t)&(TIM2->PSC);
 	//DMA1_Stream2->M0AR=(uint32_t)&nois[0];
@@ -101,13 +118,18 @@ void zx_run(void)
 
 	while (1)
 	{
-		nois=((RNG->DR)&0xff)*shaft;
+		sub2(pi_x_count, pi_y_count);
+		pi_x_count++;
+		pi_y_count--;
 
-		//while ((TIM11->SR&TIM_SR_UIF)==0)
-		//{
 
-		//}
-		/*b=byte_count&0x7;
+		/*nois=((RNG->DR)&0xff);
+
+		while ((TIM11->SR&TIM_SR_UIF)==0)
+		{
+
+		}
+		b=byte_count&0x7;
 		(*scr_out[byte_count>>3])();
 
 		TIM11->SR=0;

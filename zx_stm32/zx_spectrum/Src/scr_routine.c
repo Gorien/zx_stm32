@@ -16,11 +16,11 @@ void out_scr (uint16_t addr_pixel, uint16_t addr_attribute)
 		pixel^=flash;
 		attribute&=0x7f;
 	}
-	DMA2_Stream1->PAR=(uint32_t)&screen_data[pixel][attribute][0];
+	DMA2_Stream1->PAR=(uint32_t)&screen_data[attribute][pixel][0];
 	DMA2_Stream1->CR|=DMA_SxCR_EN;
 }
 
-static void sc_BORDER (uint8_t b)
+static void sc_BORDER (void)
 {
 	DMA2_Stream0->CR|=DMA_SxCR_EN;
 }
