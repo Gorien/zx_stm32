@@ -32,14 +32,13 @@ uint8_t b;
 uint8_t pixel;
 uint8_t attribute;
 
-uint32_t random;
-uint16_t nois;
+
+volatile uint8_t nois;
 
 
 //#include "scr_table.c"
 //#include "scr_routine.c"
 
-volatile char global_var=10;
 
 void zx_run(void)
 {
@@ -118,12 +117,10 @@ void zx_run(void)
 
 	while (1)
 	{
-		sub2(pi_x_count, pi_y_count);
-		pi_x_count++;
-		pi_y_count--;
+		nois_f();
 
 
-		/*nois=((RNG->DR)&0xff);
+		/*nois=(RNG->DR);
 
 		while ((TIM11->SR&TIM_SR_UIF)==0)
 		{
@@ -200,7 +197,7 @@ void zx_run(void)
 		}
 	}
 	pix_count++;
-}/*
+}
 
 
 
@@ -211,7 +208,7 @@ void zx_run(void)
 
 
 
-/*
+
  		if ((pi_x_count<256)&&(pi_y_count<192))
 		{
 			addr=(pix>>3)+16384;
