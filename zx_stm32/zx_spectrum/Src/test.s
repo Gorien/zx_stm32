@@ -21,17 +21,36 @@
 .equ DMA_S1CR, 0x0028
 
 
+.equ DMA_BB_LISR_TCIF0, 0x424c8014
+.equ DMA_BB_LIFCR_TCIF0, 0x424c8114
+.equ DMA_BB_S0CR_EN, 0x424c8200
+
+.equ DMA_BB_LISR_TCIF1, 0x424c802c
+.equ DMA_BB_LIFCR_TCIF1, 0x424c812c
+.equ DMA_BB_S1CR_EN, 0x424c8500
+
+.equ TIM11_BB_SR_UIF, 0x42290200
+
+
+
 
 
 .global noise_f
 .extern noise
+.extern INT_SCR
 
 noise_f:
 			b init
 loop:
 			ldr r2, [r0]
-			strb r2, [r1]
+			uxtb r2, r2
+			strh r2, [r1]
 
+			ldr r7, [r10]
+			cmp r7, #1
+			bne loop
+			mov r7, #0
+			str r7, [r10]
 
 			tbh [pc, r3]
 table:
@@ -7707,14 +7726,14 @@ table:
 			.short ((sc_0x57FD-table)/2)
 			.short ((sc_0x57FE-table)/2)
 			.short ((sc_0x57FF-table)/2)
+			.short ((sc_border_int_hi-table)/2)
 			.short ((sc_border-table)/2)
 			.short ((sc_border-table)/2)
 			.short ((sc_border-table)/2)
 			.short ((sc_border-table)/2)
 			.short ((sc_border-table)/2)
 			.short ((sc_border-table)/2)
-			.short ((sc_border-table)/2)
-			.short ((sc_border-table)/2)
+			.short ((sc_border_int_lo-table)/2)
 			.short ((sc_border-table)/2)
 			.short ((sc_border-table)/2)
 			.short ((sc_border-table)/2)
@@ -34214,21 +34233,86 @@ sc_0x57FF:
 			b sc_out
 
 
+sc_border_int_hi:
+			ldr r7, [r8]
+			cmp r7, #1
+			beq sc_border
+sc_border2:
+			ldr r7, [r11]
+			cmp r7, #1
+			beq sc_border2
+
+			mov r7, #1
+			str r7, [r9]
+			str r7, [r8]
+			mov r7, #1
+			strb r7, [r6]
+			b count
+
+
+sc_border_int_lo:
+			ldr r7, [r8]
+			cmp r7, #1
+			beq sc_border
+sc_border3:
+			ldr r7, [r11]
+			cmp r7, #1
+			beq sc_border3
+
+			mov r7, #1
+			str r7, [r9]
+			str r7, [r8]
+			mov r7, #0
+			strb r7, [r6]
+			b count
 
 
 
 sc_border:
+			ldr r7, [r8]
+			cmp r7, #1
+			beq sc_border
+sc_border1:
+			ldr r7, [r11]
+			cmp r7, #1
+			beq sc_border1
+
+			mov r7, #1
+			str r7, [r9]
+			str r7, [r8]
+			b count
 
 sc_out:
-
+			ldr r7, [r11]
+			cmp r7, #1
+			beq sc_out
+sc_out1:
+			ldr r7, [r8]
+			cmp r7, #1
+			beq sc_out1
+			mov r7, #1
+			str r7, [r12]
+			str r7, [r11]
+count:
 			add r3, #1
 			cmp r3, #9600
 			bne loop
 			movw r3, #0
 			b loop
-
 init:
 			movw r3, #0
 			ldr r0, =RNG_BASE+RNG_DR
 			ldr r1, =noise
+
+			ldr r6, =INT_SCR
+			ldr r10, =TIM11_BB_SR_UIF
+
+			//ldr r6, =DMA_BB_LISR_TCIF0
+			ldr r8, =DMA_BB_S0CR_EN
+			ldr r9, =DMA_BB_LIFCR_TCIF0
+
+			//ldr r10, =DMA_BB_LISR_TCIF1
+			ldr r11, =DMA_BB_S1CR_EN
+			ldr r12, =DMA_BB_LIFCR_TCIF1
+
 			b loop
