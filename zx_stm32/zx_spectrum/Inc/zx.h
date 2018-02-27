@@ -13,6 +13,6 @@ extern uint16_t border;
 void zx_run(void);
 void zx(void);
 
-void nois_f(void);
+void noise_f(void);
 
 #endif /* INC_ZX_H_ */

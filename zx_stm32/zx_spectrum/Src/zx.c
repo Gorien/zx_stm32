@@ -33,10 +33,10 @@ uint8_t pixel;
 uint8_t attribute;
 
 
-volatile uint8_t nois;
+volatile uint8_t noise;
 
 
-//#include "scr_table.c"
+#include "scr_table.c"
 //#include "scr_routine.c"
 
 
@@ -69,7 +69,7 @@ void zx_run(void)
 	DMA2_Stream0->NDTR=0x0008;
 	//DMA2_Stream0->CR|=DMA_SxCR_EN;
 
-	//DMA2_Stream1->PAR=(uint32_t)&screen_data[pixel][attribute][0];
+	DMA2_Stream1->PAR=(uint32_t)&screen_data[0][0][0];
 	DMA2_Stream1->M0AR=(uint32_t)&LCD_data;
 	DMA2_Stream1->NDTR=0x0008;
 	//DMA2_Stream1->CR|=DMA_SxCR_EN;
@@ -78,7 +78,7 @@ void zx_run(void)
 	RNG->CR=RNG_CR_RNGEN;
 
 
-	HAL_DMA_Start(&hdma_tim1_ch3, (uint32_t)&nois, (uint32_t)&(TIM1->PSC), 0x1);
+	HAL_DMA_Start(&hdma_tim1_ch3, (uint32_t)&noise, (uint32_t)&(TIM1->PSC), 0x1);
 	HAL_TIM_Base_Start(&htim1);
 
 	TIM1->BDTR|=TIM_BDTR_MOE;
@@ -117,10 +117,10 @@ void zx_run(void)
 
 	while (1)
 	{
-		nois_f();
+		noise_f();
 
 
-		/*nois=(RNG->DR);
+		/*noise=(RNG->DR);
 
 		while ((TIM11->SR&TIM_SR_UIF)==0)
 		{
