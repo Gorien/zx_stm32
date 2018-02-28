@@ -34,10 +34,10 @@ uint8_t attribute;
 uint16_t buf_c[8]={0x03E0, 0x03E0, 0x03E0, 0x03E0, 0xF81F, 0xF81F, 0xF81F, 0xF81F};
 
 
-volatile uint16_t noise;
+uint16_t noise;
 
 
-//#include "scr_table.c"
+#include "scr_table.c"
 //#include "scr_routine.c"
 
 
@@ -119,12 +119,12 @@ void zx_run(void)
 
 	while (1)
 	{
-		noise_f();
+		z80_screen();
 
 
-		//noise=(RNG->DR)&0x00ff;
+		/*noise=(RNG->DR)&0x00ff;
 
-		/*while ((TIM11->SR&TIM_SR_UIF)==0)
+		while ((TIM11->SR&TIM_SR_UIF)==0)
 		{
 
 		}

@@ -49,6 +49,7 @@ void z80_reset(void)
 
 uint8_t z80_run(void)
 {
+	noise=(RNG->DR)&0x00ff;
 	if(INT_SCR&&INT_mask)
 	{
 			HAL_GPIO_TogglePin(green_LED_GPIO_Port, green_LED_Pin);

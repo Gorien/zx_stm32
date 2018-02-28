@@ -6,53 +6,55 @@
 
 
 
-.equ RNG_BASE, 0x50060800
-.equ RNG_DR, 0x0008
+//.equ RNG_BASE, 0x50060800
+//.equ RNG_DR, 0x0008
+
+.equ counter_start, 0x0000
 
 .equ DMA2_BASE, 0x40026400
-
-.equ DMA_LISR, 0x0000
-.equ DMA_LISR_TCIF0, 0x0020
-.equ DMA_LISR_TCIF1, 0x0800
-
+.equ DMA_S1PAR, 0x0030
 .equ DMA_LIFCR, 0x0008
-
-.equ DMA_S0CR, 0x0010
-.equ DMA_S1CR, 0x0028
-
-
-.equ DMA_BB_LISR_TCIF0, 0x424c8014
-.equ DMA_BB_LIFCR_TCIF0, 0x424c8114
 .equ DMA_BB_S0CR_EN, 0x424c8200
-
-.equ DMA_BB_LISR_TCIF1, 0x424c802c
-.equ DMA_BB_LIFCR_TCIF1, 0x424c812c
 .equ DMA_BB_S1CR_EN, 0x424c8500
 
 .equ TIM11_BB_SR_UIF, 0x42290200
 
+//.equ DMA_LISR, 0x0000
+
+
+//.equ DMA_LISR_TCIF0, 0x0020
+//.equ DMA_LISR_TCIF1, 0x0800
 
 
 
+//.equ DMA_S0CR, 0x0010
+//.equ DMA_S1CR, 0x0028
 
-.global noise_f
-.extern noise
-.extern INT_SCR
 
-noise_f:
-			b init
+//.equ DMA_BB_LISR_TCIF0, 0x424c8014
+//.equ DMA_BB_LIFCR_TCIF0, 0x424c8114
+
+
+//.equ DMA_BB_LISR_TCIF1, 0x424c802c
+//.equ DMA_BB_LIFCR_TCIF1, 0x424c812c
+
+.global z80_screen
+
+.extern memory //pointer to memory and data array
+.extern screenn_data
+.extern INT_SCR //interrupt for z80, 50Hz
+
+
+z80_screen:
+			b reg_init
 loop:
-			ldr r2, [r0]
-			uxtb r2, r2
-			strh r2, [r1]
-
-			ldr r7, [r10]
-			cmp r7, #1
+			ldr r0, [r12] //polling tim11 up
+			cmp r0, #1
 			bne loop
-			mov r7, #0
-			str r7, [r10]
+			mov r0, #0
+			str r0, [r12]
 
-			tbh [pc, r3]
+			tbh [pc, r4]
 table:
 			.short ((sc_0x4000-table)/2)
 			.short ((sc_0x4001-table)/2)
@@ -9656,24663 +9658,24676 @@ table:
 			.short ((sc_border-table)/2)
 
 sc_0x4000:
-			mov r4, #0x4000
-			mov r5, #0x5800
+			mov r1, #0x4000
+			mov r2, #0x5800
 			b sc_out
 sc_0x4001:
-			mov r4, #0x4001
-			mov r5, #0x5801
+			mov r1, #0x4001
+			mov r2, #0x5801
 			b sc_out
 sc_0x4002:
-			mov r4, #0x4002
-			mov r5, #0x5802
+			mov r1, #0x4002
+			mov r2, #0x5802
 			b sc_out
 sc_0x4003:
-			mov r4, #0x4003
-			mov r5, #0x5803
+			mov r1, #0x4003
+			mov r2, #0x5803
 			b sc_out
 sc_0x4004:
-			mov r4, #0x4004
-			mov r5, #0x5804
+			mov r1, #0x4004
+			mov r2, #0x5804
 			b sc_out
 sc_0x4005:
-			mov r4, #0x4005
-			mov r5, #0x5805
+			mov r1, #0x4005
+			mov r2, #0x5805
 			b sc_out
 sc_0x4006:
-			mov r4, #0x4006
-			mov r5, #0x5806
+			mov r1, #0x4006
+			mov r2, #0x5806
 			b sc_out
 sc_0x4007:
-			mov r4, #0x4007
-			mov r5, #0x5807
+			mov r1, #0x4007
+			mov r2, #0x5807
 			b sc_out
 sc_0x4008:
-			mov r4, #0x4008
-			mov r5, #0x5808
+			mov r1, #0x4008
+			mov r2, #0x5808
 			b sc_out
 sc_0x4009:
-			mov r4, #0x4009
-			mov r5, #0x5809
+			mov r1, #0x4009
+			mov r2, #0x5809
 			b sc_out
 sc_0x400A:
-			mov r4, #0x400A
-			mov r5, #0x580A
+			mov r1, #0x400A
+			mov r2, #0x580A
 			b sc_out
 sc_0x400B:
-			mov r4, #0x400B
-			mov r5, #0x580B
+			mov r1, #0x400B
+			mov r2, #0x580B
 			b sc_out
 sc_0x400C:
-			mov r4, #0x400C
-			mov r5, #0x580C
+			mov r1, #0x400C
+			mov r2, #0x580C
 			b sc_out
 sc_0x400D:
-			mov r4, #0x400D
-			mov r5, #0x580D
+			mov r1, #0x400D
+			mov r2, #0x580D
 			b sc_out
 sc_0x400E:
-			mov r4, #0x400E
-			mov r5, #0x580E
+			mov r1, #0x400E
+			mov r2, #0x580E
 			b sc_out
 sc_0x400F:
-			mov r4, #0x400F
-			mov r5, #0x580F
+			mov r1, #0x400F
+			mov r2, #0x580F
 			b sc_out
 sc_0x4010:
-			mov r4, #0x4010
-			mov r5, #0x5810
+			mov r1, #0x4010
+			mov r2, #0x5810
 			b sc_out
 sc_0x4011:
-			mov r4, #0x4011
-			mov r5, #0x5811
+			mov r1, #0x4011
+			mov r2, #0x5811
 			b sc_out
 sc_0x4012:
-			mov r4, #0x4012
-			mov r5, #0x5812
+			mov r1, #0x4012
+			mov r2, #0x5812
 			b sc_out
 sc_0x4013:
-			mov r4, #0x4013
-			mov r5, #0x5813
+			mov r1, #0x4013
+			mov r2, #0x5813
 			b sc_out
 sc_0x4014:
-			mov r4, #0x4014
-			mov r5, #0x5814
+			mov r1, #0x4014
+			mov r2, #0x5814
 			b sc_out
 sc_0x4015:
-			mov r4, #0x4015
-			mov r5, #0x5815
+			mov r1, #0x4015
+			mov r2, #0x5815
 			b sc_out
 sc_0x4016:
-			mov r4, #0x4016
-			mov r5, #0x5816
+			mov r1, #0x4016
+			mov r2, #0x5816
 			b sc_out
 sc_0x4017:
-			mov r4, #0x4017
-			mov r5, #0x5817
+			mov r1, #0x4017
+			mov r2, #0x5817
 			b sc_out
 sc_0x4018:
-			mov r4, #0x4018
-			mov r5, #0x5818
+			mov r1, #0x4018
+			mov r2, #0x5818
 			b sc_out
 sc_0x4019:
-			mov r4, #0x4019
-			mov r5, #0x5819
+			mov r1, #0x4019
+			mov r2, #0x5819
 			b sc_out
 sc_0x401A:
-			mov r4, #0x401A
-			mov r5, #0x581A
+			mov r1, #0x401A
+			mov r2, #0x581A
 			b sc_out
 sc_0x401B:
-			mov r4, #0x401B
-			mov r5, #0x581B
+			mov r1, #0x401B
+			mov r2, #0x581B
 			b sc_out
 sc_0x401C:
-			mov r4, #0x401C
-			mov r5, #0x581C
+			mov r1, #0x401C
+			mov r2, #0x581C
 			b sc_out
 sc_0x401D:
-			mov r4, #0x401D
-			mov r5, #0x581D
+			mov r1, #0x401D
+			mov r2, #0x581D
 			b sc_out
 sc_0x401E:
-			mov r4, #0x401E
-			mov r5, #0x581E
+			mov r1, #0x401E
+			mov r2, #0x581E
 			b sc_out
 sc_0x401F:
-			mov r4, #0x401F
-			mov r5, #0x581F
+			mov r1, #0x401F
+			mov r2, #0x581F
 			b sc_out
 sc_0x4100:
-			mov r4, #0x4100
-			mov r5, #0x5800
+			mov r1, #0x4100
+			mov r2, #0x5800
 			b sc_out
 sc_0x4101:
-			mov r4, #0x4101
-			mov r5, #0x5801
+			mov r1, #0x4101
+			mov r2, #0x5801
 			b sc_out
 sc_0x4102:
-			mov r4, #0x4102
-			mov r5, #0x5802
+			mov r1, #0x4102
+			mov r2, #0x5802
 			b sc_out
 sc_0x4103:
-			mov r4, #0x4103
-			mov r5, #0x5803
+			mov r1, #0x4103
+			mov r2, #0x5803
 			b sc_out
 sc_0x4104:
-			mov r4, #0x4104
-			mov r5, #0x5804
+			mov r1, #0x4104
+			mov r2, #0x5804
 			b sc_out
 sc_0x4105:
-			mov r4, #0x4105
-			mov r5, #0x5805
+			mov r1, #0x4105
+			mov r2, #0x5805
 			b sc_out
 sc_0x4106:
-			mov r4, #0x4106
-			mov r5, #0x5806
+			mov r1, #0x4106
+			mov r2, #0x5806
 			b sc_out
 sc_0x4107:
-			mov r4, #0x4107
-			mov r5, #0x5807
+			mov r1, #0x4107
+			mov r2, #0x5807
 			b sc_out
 sc_0x4108:
-			mov r4, #0x4108
-			mov r5, #0x5808
+			mov r1, #0x4108
+			mov r2, #0x5808
 			b sc_out
 sc_0x4109:
-			mov r4, #0x4109
-			mov r5, #0x5809
+			mov r1, #0x4109
+			mov r2, #0x5809
 			b sc_out
 sc_0x410A:
-			mov r4, #0x410A
-			mov r5, #0x580A
+			mov r1, #0x410A
+			mov r2, #0x580A
 			b sc_out
 sc_0x410B:
-			mov r4, #0x410B
-			mov r5, #0x580B
+			mov r1, #0x410B
+			mov r2, #0x580B
 			b sc_out
 sc_0x410C:
-			mov r4, #0x410C
-			mov r5, #0x580C
+			mov r1, #0x410C
+			mov r2, #0x580C
 			b sc_out
 sc_0x410D:
-			mov r4, #0x410D
-			mov r5, #0x580D
+			mov r1, #0x410D
+			mov r2, #0x580D
 			b sc_out
 sc_0x410E:
-			mov r4, #0x410E
-			mov r5, #0x580E
+			mov r1, #0x410E
+			mov r2, #0x580E
 			b sc_out
 sc_0x410F:
-			mov r4, #0x410F
-			mov r5, #0x580F
+			mov r1, #0x410F
+			mov r2, #0x580F
 			b sc_out
 sc_0x4110:
-			mov r4, #0x4110
-			mov r5, #0x5810
+			mov r1, #0x4110
+			mov r2, #0x5810
 			b sc_out
 sc_0x4111:
-			mov r4, #0x4111
-			mov r5, #0x5811
+			mov r1, #0x4111
+			mov r2, #0x5811
 			b sc_out
 sc_0x4112:
-			mov r4, #0x4112
-			mov r5, #0x5812
+			mov r1, #0x4112
+			mov r2, #0x5812
 			b sc_out
 sc_0x4113:
-			mov r4, #0x4113
-			mov r5, #0x5813
+			mov r1, #0x4113
+			mov r2, #0x5813
 			b sc_out
 sc_0x4114:
-			mov r4, #0x4114
-			mov r5, #0x5814
+			mov r1, #0x4114
+			mov r2, #0x5814
 			b sc_out
 sc_0x4115:
-			mov r4, #0x4115
-			mov r5, #0x5815
+			mov r1, #0x4115
+			mov r2, #0x5815
 			b sc_out
 sc_0x4116:
-			mov r4, #0x4116
-			mov r5, #0x5816
+			mov r1, #0x4116
+			mov r2, #0x5816
 			b sc_out
 sc_0x4117:
-			mov r4, #0x4117
-			mov r5, #0x5817
+			mov r1, #0x4117
+			mov r2, #0x5817
 			b sc_out
 sc_0x4118:
-			mov r4, #0x4118
-			mov r5, #0x5818
+			mov r1, #0x4118
+			mov r2, #0x5818
 			b sc_out
 sc_0x4119:
-			mov r4, #0x4119
-			mov r5, #0x5819
+			mov r1, #0x4119
+			mov r2, #0x5819
 			b sc_out
 sc_0x411A:
-			mov r4, #0x411A
-			mov r5, #0x581A
+			mov r1, #0x411A
+			mov r2, #0x581A
 			b sc_out
 sc_0x411B:
-			mov r4, #0x411B
-			mov r5, #0x581B
+			mov r1, #0x411B
+			mov r2, #0x581B
 			b sc_out
 sc_0x411C:
-			mov r4, #0x411C
-			mov r5, #0x581C
+			mov r1, #0x411C
+			mov r2, #0x581C
 			b sc_out
 sc_0x411D:
-			mov r4, #0x411D
-			mov r5, #0x581D
+			mov r1, #0x411D
+			mov r2, #0x581D
 			b sc_out
 sc_0x411E:
-			mov r4, #0x411E
-			mov r5, #0x581E
+			mov r1, #0x411E
+			mov r2, #0x581E
 			b sc_out
 sc_0x411F:
-			mov r4, #0x411F
-			mov r5, #0x581F
+			mov r1, #0x411F
+			mov r2, #0x581F
 			b sc_out
 sc_0x4200:
-			mov r4, #0x4200
-			mov r5, #0x5800
+			mov r1, #0x4200
+			mov r2, #0x5800
 			b sc_out
 sc_0x4201:
-			mov r4, #0x4201
-			mov r5, #0x5801
+			mov r1, #0x4201
+			mov r2, #0x5801
 			b sc_out
 sc_0x4202:
-			mov r4, #0x4202
-			mov r5, #0x5802
+			mov r1, #0x4202
+			mov r2, #0x5802
 			b sc_out
 sc_0x4203:
-			mov r4, #0x4203
-			mov r5, #0x5803
+			mov r1, #0x4203
+			mov r2, #0x5803
 			b sc_out
 sc_0x4204:
-			mov r4, #0x4204
-			mov r5, #0x5804
+			mov r1, #0x4204
+			mov r2, #0x5804
 			b sc_out
 sc_0x4205:
-			mov r4, #0x4205
-			mov r5, #0x5805
+			mov r1, #0x4205
+			mov r2, #0x5805
 			b sc_out
 sc_0x4206:
-			mov r4, #0x4206
-			mov r5, #0x5806
+			mov r1, #0x4206
+			mov r2, #0x5806
 			b sc_out
 sc_0x4207:
-			mov r4, #0x4207
-			mov r5, #0x5807
+			mov r1, #0x4207
+			mov r2, #0x5807
 			b sc_out
 sc_0x4208:
-			mov r4, #0x4208
-			mov r5, #0x5808
+			mov r1, #0x4208
+			mov r2, #0x5808
 			b sc_out
 sc_0x4209:
-			mov r4, #0x4209
-			mov r5, #0x5809
+			mov r1, #0x4209
+			mov r2, #0x5809
 			b sc_out
 sc_0x420A:
-			mov r4, #0x420A
-			mov r5, #0x580A
+			mov r1, #0x420A
+			mov r2, #0x580A
 			b sc_out
 sc_0x420B:
-			mov r4, #0x420B
-			mov r5, #0x580B
+			mov r1, #0x420B
+			mov r2, #0x580B
 			b sc_out
 sc_0x420C:
-			mov r4, #0x420C
-			mov r5, #0x580C
+			mov r1, #0x420C
+			mov r2, #0x580C
 			b sc_out
 sc_0x420D:
-			mov r4, #0x420D
-			mov r5, #0x580D
+			mov r1, #0x420D
+			mov r2, #0x580D
 			b sc_out
 sc_0x420E:
-			mov r4, #0x420E
-			mov r5, #0x580E
+			mov r1, #0x420E
+			mov r2, #0x580E
 			b sc_out
 sc_0x420F:
-			mov r4, #0x420F
-			mov r5, #0x580F
+			mov r1, #0x420F
+			mov r2, #0x580F
 			b sc_out
 sc_0x4210:
-			mov r4, #0x4210
-			mov r5, #0x5810
+			mov r1, #0x4210
+			mov r2, #0x5810
 			b sc_out
 sc_0x4211:
-			mov r4, #0x4211
-			mov r5, #0x5811
+			mov r1, #0x4211
+			mov r2, #0x5811
 			b sc_out
 sc_0x4212:
-			mov r4, #0x4212
-			mov r5, #0x5812
+			mov r1, #0x4212
+			mov r2, #0x5812
 			b sc_out
 sc_0x4213:
-			mov r4, #0x4213
-			mov r5, #0x5813
+			mov r1, #0x4213
+			mov r2, #0x5813
 			b sc_out
 sc_0x4214:
-			mov r4, #0x4214
-			mov r5, #0x5814
+			mov r1, #0x4214
+			mov r2, #0x5814
 			b sc_out
 sc_0x4215:
-			mov r4, #0x4215
-			mov r5, #0x5815
+			mov r1, #0x4215
+			mov r2, #0x5815
 			b sc_out
 sc_0x4216:
-			mov r4, #0x4216
-			mov r5, #0x5816
+			mov r1, #0x4216
+			mov r2, #0x5816
 			b sc_out
 sc_0x4217:
-			mov r4, #0x4217
-			mov r5, #0x5817
+			mov r1, #0x4217
+			mov r2, #0x5817
 			b sc_out
 sc_0x4218:
-			mov r4, #0x4218
-			mov r5, #0x5818
+			mov r1, #0x4218
+			mov r2, #0x5818
 			b sc_out
 sc_0x4219:
-			mov r4, #0x4219
-			mov r5, #0x5819
+			mov r1, #0x4219
+			mov r2, #0x5819
 			b sc_out
 sc_0x421A:
-			mov r4, #0x421A
-			mov r5, #0x581A
+			mov r1, #0x421A
+			mov r2, #0x581A
 			b sc_out
 sc_0x421B:
-			mov r4, #0x421B
-			mov r5, #0x581B
+			mov r1, #0x421B
+			mov r2, #0x581B
 			b sc_out
 sc_0x421C:
-			mov r4, #0x421C
-			mov r5, #0x581C
+			mov r1, #0x421C
+			mov r2, #0x581C
 			b sc_out
 sc_0x421D:
-			mov r4, #0x421D
-			mov r5, #0x581D
+			mov r1, #0x421D
+			mov r2, #0x581D
 			b sc_out
 sc_0x421E:
-			mov r4, #0x421E
-			mov r5, #0x581E
+			mov r1, #0x421E
+			mov r2, #0x581E
 			b sc_out
 sc_0x421F:
-			mov r4, #0x421F
-			mov r5, #0x581F
+			mov r1, #0x421F
+			mov r2, #0x581F
 			b sc_out
 sc_0x4300:
-			mov r4, #0x4300
-			mov r5, #0x5800
+			mov r1, #0x4300
+			mov r2, #0x5800
 			b sc_out
 sc_0x4301:
-			mov r4, #0x4301
-			mov r5, #0x5801
+			mov r1, #0x4301
+			mov r2, #0x5801
 			b sc_out
 sc_0x4302:
-			mov r4, #0x4302
-			mov r5, #0x5802
+			mov r1, #0x4302
+			mov r2, #0x5802
 			b sc_out
 sc_0x4303:
-			mov r4, #0x4303
-			mov r5, #0x5803
+			mov r1, #0x4303
+			mov r2, #0x5803
 			b sc_out
 sc_0x4304:
-			mov r4, #0x4304
-			mov r5, #0x5804
+			mov r1, #0x4304
+			mov r2, #0x5804
 			b sc_out
 sc_0x4305:
-			mov r4, #0x4305
-			mov r5, #0x5805
+			mov r1, #0x4305
+			mov r2, #0x5805
 			b sc_out
 sc_0x4306:
-			mov r4, #0x4306
-			mov r5, #0x5806
+			mov r1, #0x4306
+			mov r2, #0x5806
 			b sc_out
 sc_0x4307:
-			mov r4, #0x4307
-			mov r5, #0x5807
+			mov r1, #0x4307
+			mov r2, #0x5807
 			b sc_out
 sc_0x4308:
-			mov r4, #0x4308
-			mov r5, #0x5808
+			mov r1, #0x4308
+			mov r2, #0x5808
 			b sc_out
 sc_0x4309:
-			mov r4, #0x4309
-			mov r5, #0x5809
+			mov r1, #0x4309
+			mov r2, #0x5809
 			b sc_out
 sc_0x430A:
-			mov r4, #0x430A
-			mov r5, #0x580A
+			mov r1, #0x430A
+			mov r2, #0x580A
 			b sc_out
 sc_0x430B:
-			mov r4, #0x430B
-			mov r5, #0x580B
+			mov r1, #0x430B
+			mov r2, #0x580B
 			b sc_out
 sc_0x430C:
-			mov r4, #0x430C
-			mov r5, #0x580C
+			mov r1, #0x430C
+			mov r2, #0x580C
 			b sc_out
 sc_0x430D:
-			mov r4, #0x430D
-			mov r5, #0x580D
+			mov r1, #0x430D
+			mov r2, #0x580D
 			b sc_out
 sc_0x430E:
-			mov r4, #0x430E
-			mov r5, #0x580E
+			mov r1, #0x430E
+			mov r2, #0x580E
 			b sc_out
 sc_0x430F:
-			mov r4, #0x430F
-			mov r5, #0x580F
+			mov r1, #0x430F
+			mov r2, #0x580F
 			b sc_out
 sc_0x4310:
-			mov r4, #0x4310
-			mov r5, #0x5810
+			mov r1, #0x4310
+			mov r2, #0x5810
 			b sc_out
 sc_0x4311:
-			mov r4, #0x4311
-			mov r5, #0x5811
+			mov r1, #0x4311
+			mov r2, #0x5811
 			b sc_out
 sc_0x4312:
-			mov r4, #0x4312
-			mov r5, #0x5812
+			mov r1, #0x4312
+			mov r2, #0x5812
 			b sc_out
 sc_0x4313:
-			mov r4, #0x4313
-			mov r5, #0x5813
+			mov r1, #0x4313
+			mov r2, #0x5813
 			b sc_out
 sc_0x4314:
-			mov r4, #0x4314
-			mov r5, #0x5814
+			mov r1, #0x4314
+			mov r2, #0x5814
 			b sc_out
 sc_0x4315:
-			mov r4, #0x4315
-			mov r5, #0x5815
+			mov r1, #0x4315
+			mov r2, #0x5815
 			b sc_out
 sc_0x4316:
-			mov r4, #0x4316
-			mov r5, #0x5816
+			mov r1, #0x4316
+			mov r2, #0x5816
 			b sc_out
 sc_0x4317:
-			mov r4, #0x4317
-			mov r5, #0x5817
+			mov r1, #0x4317
+			mov r2, #0x5817
 			b sc_out
 sc_0x4318:
-			mov r4, #0x4318
-			mov r5, #0x5818
+			mov r1, #0x4318
+			mov r2, #0x5818
 			b sc_out
 sc_0x4319:
-			mov r4, #0x4319
-			mov r5, #0x5819
+			mov r1, #0x4319
+			mov r2, #0x5819
 			b sc_out
 sc_0x431A:
-			mov r4, #0x431A
-			mov r5, #0x581A
+			mov r1, #0x431A
+			mov r2, #0x581A
 			b sc_out
 sc_0x431B:
-			mov r4, #0x431B
-			mov r5, #0x581B
+			mov r1, #0x431B
+			mov r2, #0x581B
 			b sc_out
 sc_0x431C:
-			mov r4, #0x431C
-			mov r5, #0x581C
+			mov r1, #0x431C
+			mov r2, #0x581C
 			b sc_out
 sc_0x431D:
-			mov r4, #0x431D
-			mov r5, #0x581D
+			mov r1, #0x431D
+			mov r2, #0x581D
 			b sc_out
 sc_0x431E:
-			mov r4, #0x431E
-			mov r5, #0x581E
+			mov r1, #0x431E
+			mov r2, #0x581E
 			b sc_out
 sc_0x431F:
-			mov r4, #0x431F
-			mov r5, #0x581F
+			mov r1, #0x431F
+			mov r2, #0x581F
 			b sc_out
 sc_0x4400:
-			mov r4, #0x4400
-			mov r5, #0x5800
+			mov r1, #0x4400
+			mov r2, #0x5800
 			b sc_out
 sc_0x4401:
-			mov r4, #0x4401
-			mov r5, #0x5801
+			mov r1, #0x4401
+			mov r2, #0x5801
 			b sc_out
 sc_0x4402:
-			mov r4, #0x4402
-			mov r5, #0x5802
+			mov r1, #0x4402
+			mov r2, #0x5802
 			b sc_out
 sc_0x4403:
-			mov r4, #0x4403
-			mov r5, #0x5803
+			mov r1, #0x4403
+			mov r2, #0x5803
 			b sc_out
 sc_0x4404:
-			mov r4, #0x4404
-			mov r5, #0x5804
+			mov r1, #0x4404
+			mov r2, #0x5804
 			b sc_out
 sc_0x4405:
-			mov r4, #0x4405
-			mov r5, #0x5805
+			mov r1, #0x4405
+			mov r2, #0x5805
 			b sc_out
 sc_0x4406:
-			mov r4, #0x4406
-			mov r5, #0x5806
+			mov r1, #0x4406
+			mov r2, #0x5806
 			b sc_out
 sc_0x4407:
-			mov r4, #0x4407
-			mov r5, #0x5807
+			mov r1, #0x4407
+			mov r2, #0x5807
 			b sc_out
 sc_0x4408:
-			mov r4, #0x4408
-			mov r5, #0x5808
+			mov r1, #0x4408
+			mov r2, #0x5808
 			b sc_out
 sc_0x4409:
-			mov r4, #0x4409
-			mov r5, #0x5809
+			mov r1, #0x4409
+			mov r2, #0x5809
 			b sc_out
 sc_0x440A:
-			mov r4, #0x440A
-			mov r5, #0x580A
+			mov r1, #0x440A
+			mov r2, #0x580A
 			b sc_out
 sc_0x440B:
-			mov r4, #0x440B
-			mov r5, #0x580B
+			mov r1, #0x440B
+			mov r2, #0x580B
 			b sc_out
 sc_0x440C:
-			mov r4, #0x440C
-			mov r5, #0x580C
+			mov r1, #0x440C
+			mov r2, #0x580C
 			b sc_out
 sc_0x440D:
-			mov r4, #0x440D
-			mov r5, #0x580D
+			mov r1, #0x440D
+			mov r2, #0x580D
 			b sc_out
 sc_0x440E:
-			mov r4, #0x440E
-			mov r5, #0x580E
+			mov r1, #0x440E
+			mov r2, #0x580E
 			b sc_out
 sc_0x440F:
-			mov r4, #0x440F
-			mov r5, #0x580F
+			mov r1, #0x440F
+			mov r2, #0x580F
 			b sc_out
 sc_0x4410:
-			mov r4, #0x4410
-			mov r5, #0x5810
+			mov r1, #0x4410
+			mov r2, #0x5810
 			b sc_out
 sc_0x4411:
-			mov r4, #0x4411
-			mov r5, #0x5811
+			mov r1, #0x4411
+			mov r2, #0x5811
 			b sc_out
 sc_0x4412:
-			mov r4, #0x4412
-			mov r5, #0x5812
+			mov r1, #0x4412
+			mov r2, #0x5812
 			b sc_out
 sc_0x4413:
-			mov r4, #0x4413
-			mov r5, #0x5813
+			mov r1, #0x4413
+			mov r2, #0x5813
 			b sc_out
 sc_0x4414:
-			mov r4, #0x4414
-			mov r5, #0x5814
+			mov r1, #0x4414
+			mov r2, #0x5814
 			b sc_out
 sc_0x4415:
-			mov r4, #0x4415
-			mov r5, #0x5815
+			mov r1, #0x4415
+			mov r2, #0x5815
 			b sc_out
 sc_0x4416:
-			mov r4, #0x4416
-			mov r5, #0x5816
+			mov r1, #0x4416
+			mov r2, #0x5816
 			b sc_out
 sc_0x4417:
-			mov r4, #0x4417
-			mov r5, #0x5817
+			mov r1, #0x4417
+			mov r2, #0x5817
 			b sc_out
 sc_0x4418:
-			mov r4, #0x4418
-			mov r5, #0x5818
+			mov r1, #0x4418
+			mov r2, #0x5818
 			b sc_out
 sc_0x4419:
-			mov r4, #0x4419
-			mov r5, #0x5819
+			mov r1, #0x4419
+			mov r2, #0x5819
 			b sc_out
 sc_0x441A:
-			mov r4, #0x441A
-			mov r5, #0x581A
+			mov r1, #0x441A
+			mov r2, #0x581A
 			b sc_out
 sc_0x441B:
-			mov r4, #0x441B
-			mov r5, #0x581B
+			mov r1, #0x441B
+			mov r2, #0x581B
 			b sc_out
 sc_0x441C:
-			mov r4, #0x441C
-			mov r5, #0x581C
+			mov r1, #0x441C
+			mov r2, #0x581C
 			b sc_out
 sc_0x441D:
-			mov r4, #0x441D
-			mov r5, #0x581D
+			mov r1, #0x441D
+			mov r2, #0x581D
 			b sc_out
 sc_0x441E:
-			mov r4, #0x441E
-			mov r5, #0x581E
+			mov r1, #0x441E
+			mov r2, #0x581E
 			b sc_out
 sc_0x441F:
-			mov r4, #0x441F
-			mov r5, #0x581F
+			mov r1, #0x441F
+			mov r2, #0x581F
 			b sc_out
 sc_0x4500:
-			mov r4, #0x4500
-			mov r5, #0x5800
+			mov r1, #0x4500
+			mov r2, #0x5800
 			b sc_out
 sc_0x4501:
-			mov r4, #0x4501
-			mov r5, #0x5801
+			mov r1, #0x4501
+			mov r2, #0x5801
 			b sc_out
 sc_0x4502:
-			mov r4, #0x4502
-			mov r5, #0x5802
+			mov r1, #0x4502
+			mov r2, #0x5802
 			b sc_out
 sc_0x4503:
-			mov r4, #0x4503
-			mov r5, #0x5803
+			mov r1, #0x4503
+			mov r2, #0x5803
 			b sc_out
 sc_0x4504:
-			mov r4, #0x4504
-			mov r5, #0x5804
+			mov r1, #0x4504
+			mov r2, #0x5804
 			b sc_out
 sc_0x4505:
-			mov r4, #0x4505
-			mov r5, #0x5805
+			mov r1, #0x4505
+			mov r2, #0x5805
 			b sc_out
 sc_0x4506:
-			mov r4, #0x4506
-			mov r5, #0x5806
+			mov r1, #0x4506
+			mov r2, #0x5806
 			b sc_out
 sc_0x4507:
-			mov r4, #0x4507
-			mov r5, #0x5807
+			mov r1, #0x4507
+			mov r2, #0x5807
 			b sc_out
 sc_0x4508:
-			mov r4, #0x4508
-			mov r5, #0x5808
+			mov r1, #0x4508
+			mov r2, #0x5808
 			b sc_out
 sc_0x4509:
-			mov r4, #0x4509
-			mov r5, #0x5809
+			mov r1, #0x4509
+			mov r2, #0x5809
 			b sc_out
 sc_0x450A:
-			mov r4, #0x450A
-			mov r5, #0x580A
+			mov r1, #0x450A
+			mov r2, #0x580A
 			b sc_out
 sc_0x450B:
-			mov r4, #0x450B
-			mov r5, #0x580B
+			mov r1, #0x450B
+			mov r2, #0x580B
 			b sc_out
 sc_0x450C:
-			mov r4, #0x450C
-			mov r5, #0x580C
+			mov r1, #0x450C
+			mov r2, #0x580C
 			b sc_out
 sc_0x450D:
-			mov r4, #0x450D
-			mov r5, #0x580D
+			mov r1, #0x450D
+			mov r2, #0x580D
 			b sc_out
 sc_0x450E:
-			mov r4, #0x450E
-			mov r5, #0x580E
+			mov r1, #0x450E
+			mov r2, #0x580E
 			b sc_out
 sc_0x450F:
-			mov r4, #0x450F
-			mov r5, #0x580F
+			mov r1, #0x450F
+			mov r2, #0x580F
 			b sc_out
 sc_0x4510:
-			mov r4, #0x4510
-			mov r5, #0x5810
+			mov r1, #0x4510
+			mov r2, #0x5810
 			b sc_out
 sc_0x4511:
-			mov r4, #0x4511
-			mov r5, #0x5811
+			mov r1, #0x4511
+			mov r2, #0x5811
 			b sc_out
 sc_0x4512:
-			mov r4, #0x4512
-			mov r5, #0x5812
+			mov r1, #0x4512
+			mov r2, #0x5812
 			b sc_out
 sc_0x4513:
-			mov r4, #0x4513
-			mov r5, #0x5813
+			mov r1, #0x4513
+			mov r2, #0x5813
 			b sc_out
 sc_0x4514:
-			mov r4, #0x4514
-			mov r5, #0x5814
+			mov r1, #0x4514
+			mov r2, #0x5814
 			b sc_out
 sc_0x4515:
-			mov r4, #0x4515
-			mov r5, #0x5815
+			mov r1, #0x4515
+			mov r2, #0x5815
 			b sc_out
 sc_0x4516:
-			mov r4, #0x4516
-			mov r5, #0x5816
+			mov r1, #0x4516
+			mov r2, #0x5816
 			b sc_out
 sc_0x4517:
-			mov r4, #0x4517
-			mov r5, #0x5817
+			mov r1, #0x4517
+			mov r2, #0x5817
 			b sc_out
 sc_0x4518:
-			mov r4, #0x4518
-			mov r5, #0x5818
+			mov r1, #0x4518
+			mov r2, #0x5818
 			b sc_out
 sc_0x4519:
-			mov r4, #0x4519
-			mov r5, #0x5819
+			mov r1, #0x4519
+			mov r2, #0x5819
 			b sc_out
 sc_0x451A:
-			mov r4, #0x451A
-			mov r5, #0x581A
+			mov r1, #0x451A
+			mov r2, #0x581A
 			b sc_out
 sc_0x451B:
-			mov r4, #0x451B
-			mov r5, #0x581B
+			mov r1, #0x451B
+			mov r2, #0x581B
 			b sc_out
 sc_0x451C:
-			mov r4, #0x451C
-			mov r5, #0x581C
+			mov r1, #0x451C
+			mov r2, #0x581C
 			b sc_out
 sc_0x451D:
-			mov r4, #0x451D
-			mov r5, #0x581D
+			mov r1, #0x451D
+			mov r2, #0x581D
 			b sc_out
 sc_0x451E:
-			mov r4, #0x451E
-			mov r5, #0x581E
+			mov r1, #0x451E
+			mov r2, #0x581E
 			b sc_out
 sc_0x451F:
-			mov r4, #0x451F
-			mov r5, #0x581F
+			mov r1, #0x451F
+			mov r2, #0x581F
 			b sc_out
 sc_0x4600:
-			mov r4, #0x4600
-			mov r5, #0x5800
+			mov r1, #0x4600
+			mov r2, #0x5800
 			b sc_out
 sc_0x4601:
-			mov r4, #0x4601
-			mov r5, #0x5801
+			mov r1, #0x4601
+			mov r2, #0x5801
 			b sc_out
 sc_0x4602:
-			mov r4, #0x4602
-			mov r5, #0x5802
+			mov r1, #0x4602
+			mov r2, #0x5802
 			b sc_out
 sc_0x4603:
-			mov r4, #0x4603
-			mov r5, #0x5803
+			mov r1, #0x4603
+			mov r2, #0x5803
 			b sc_out
 sc_0x4604:
-			mov r4, #0x4604
-			mov r5, #0x5804
+			mov r1, #0x4604
+			mov r2, #0x5804
 			b sc_out
 sc_0x4605:
-			mov r4, #0x4605
-			mov r5, #0x5805
+			mov r1, #0x4605
+			mov r2, #0x5805
 			b sc_out
 sc_0x4606:
-			mov r4, #0x4606
-			mov r5, #0x5806
+			mov r1, #0x4606
+			mov r2, #0x5806
 			b sc_out
 sc_0x4607:
-			mov r4, #0x4607
-			mov r5, #0x5807
+			mov r1, #0x4607
+			mov r2, #0x5807
 			b sc_out
 sc_0x4608:
-			mov r4, #0x4608
-			mov r5, #0x5808
+			mov r1, #0x4608
+			mov r2, #0x5808
 			b sc_out
 sc_0x4609:
-			mov r4, #0x4609
-			mov r5, #0x5809
+			mov r1, #0x4609
+			mov r2, #0x5809
 			b sc_out
 sc_0x460A:
-			mov r4, #0x460A
-			mov r5, #0x580A
+			mov r1, #0x460A
+			mov r2, #0x580A
 			b sc_out
 sc_0x460B:
-			mov r4, #0x460B
-			mov r5, #0x580B
+			mov r1, #0x460B
+			mov r2, #0x580B
 			b sc_out
 sc_0x460C:
-			mov r4, #0x460C
-			mov r5, #0x580C
+			mov r1, #0x460C
+			mov r2, #0x580C
 			b sc_out
 sc_0x460D:
-			mov r4, #0x460D
-			mov r5, #0x580D
+			mov r1, #0x460D
+			mov r2, #0x580D
 			b sc_out
 sc_0x460E:
-			mov r4, #0x460E
-			mov r5, #0x580E
+			mov r1, #0x460E
+			mov r2, #0x580E
 			b sc_out
 sc_0x460F:
-			mov r4, #0x460F
-			mov r5, #0x580F
+			mov r1, #0x460F
+			mov r2, #0x580F
 			b sc_out
 sc_0x4610:
-			mov r4, #0x4610
-			mov r5, #0x5810
+			mov r1, #0x4610
+			mov r2, #0x5810
 			b sc_out
 sc_0x4611:
-			mov r4, #0x4611
-			mov r5, #0x5811
+			mov r1, #0x4611
+			mov r2, #0x5811
 			b sc_out
 sc_0x4612:
-			mov r4, #0x4612
-			mov r5, #0x5812
+			mov r1, #0x4612
+			mov r2, #0x5812
 			b sc_out
 sc_0x4613:
-			mov r4, #0x4613
-			mov r5, #0x5813
+			mov r1, #0x4613
+			mov r2, #0x5813
 			b sc_out
 sc_0x4614:
-			mov r4, #0x4614
-			mov r5, #0x5814
+			mov r1, #0x4614
+			mov r2, #0x5814
 			b sc_out
 sc_0x4615:
-			mov r4, #0x4615
-			mov r5, #0x5815
+			mov r1, #0x4615
+			mov r2, #0x5815
 			b sc_out
 sc_0x4616:
-			mov r4, #0x4616
-			mov r5, #0x5816
+			mov r1, #0x4616
+			mov r2, #0x5816
 			b sc_out
 sc_0x4617:
-			mov r4, #0x4617
-			mov r5, #0x5817
+			mov r1, #0x4617
+			mov r2, #0x5817
 			b sc_out
 sc_0x4618:
-			mov r4, #0x4618
-			mov r5, #0x5818
+			mov r1, #0x4618
+			mov r2, #0x5818
 			b sc_out
 sc_0x4619:
-			mov r4, #0x4619
-			mov r5, #0x5819
+			mov r1, #0x4619
+			mov r2, #0x5819
 			b sc_out
 sc_0x461A:
-			mov r4, #0x461A
-			mov r5, #0x581A
+			mov r1, #0x461A
+			mov r2, #0x581A
 			b sc_out
 sc_0x461B:
-			mov r4, #0x461B
-			mov r5, #0x581B
+			mov r1, #0x461B
+			mov r2, #0x581B
 			b sc_out
 sc_0x461C:
-			mov r4, #0x461C
-			mov r5, #0x581C
+			mov r1, #0x461C
+			mov r2, #0x581C
 			b sc_out
 sc_0x461D:
-			mov r4, #0x461D
-			mov r5, #0x581D
+			mov r1, #0x461D
+			mov r2, #0x581D
 			b sc_out
 sc_0x461E:
-			mov r4, #0x461E
-			mov r5, #0x581E
+			mov r1, #0x461E
+			mov r2, #0x581E
 			b sc_out
 sc_0x461F:
-			mov r4, #0x461F
-			mov r5, #0x581F
+			mov r1, #0x461F
+			mov r2, #0x581F
 			b sc_out
 sc_0x4700:
-			mov r4, #0x4700
-			mov r5, #0x5800
+			mov r1, #0x4700
+			mov r2, #0x5800
 			b sc_out
 sc_0x4701:
-			mov r4, #0x4701
-			mov r5, #0x5801
+			mov r1, #0x4701
+			mov r2, #0x5801
 			b sc_out
 sc_0x4702:
-			mov r4, #0x4702
-			mov r5, #0x5802
+			mov r1, #0x4702
+			mov r2, #0x5802
 			b sc_out
 sc_0x4703:
-			mov r4, #0x4703
-			mov r5, #0x5803
+			mov r1, #0x4703
+			mov r2, #0x5803
 			b sc_out
 sc_0x4704:
-			mov r4, #0x4704
-			mov r5, #0x5804
+			mov r1, #0x4704
+			mov r2, #0x5804
 			b sc_out
 sc_0x4705:
-			mov r4, #0x4705
-			mov r5, #0x5805
+			mov r1, #0x4705
+			mov r2, #0x5805
 			b sc_out
 sc_0x4706:
-			mov r4, #0x4706
-			mov r5, #0x5806
+			mov r1, #0x4706
+			mov r2, #0x5806
 			b sc_out
 sc_0x4707:
-			mov r4, #0x4707
-			mov r5, #0x5807
+			mov r1, #0x4707
+			mov r2, #0x5807
 			b sc_out
 sc_0x4708:
-			mov r4, #0x4708
-			mov r5, #0x5808
+			mov r1, #0x4708
+			mov r2, #0x5808
 			b sc_out
 sc_0x4709:
-			mov r4, #0x4709
-			mov r5, #0x5809
+			mov r1, #0x4709
+			mov r2, #0x5809
 			b sc_out
 sc_0x470A:
-			mov r4, #0x470A
-			mov r5, #0x580A
+			mov r1, #0x470A
+			mov r2, #0x580A
 			b sc_out
 sc_0x470B:
-			mov r4, #0x470B
-			mov r5, #0x580B
+			mov r1, #0x470B
+			mov r2, #0x580B
 			b sc_out
 sc_0x470C:
-			mov r4, #0x470C
-			mov r5, #0x580C
+			mov r1, #0x470C
+			mov r2, #0x580C
 			b sc_out
 sc_0x470D:
-			mov r4, #0x470D
-			mov r5, #0x580D
+			mov r1, #0x470D
+			mov r2, #0x580D
 			b sc_out
 sc_0x470E:
-			mov r4, #0x470E
-			mov r5, #0x580E
+			mov r1, #0x470E
+			mov r2, #0x580E
 			b sc_out
 sc_0x470F:
-			mov r4, #0x470F
-			mov r5, #0x580F
+			mov r1, #0x470F
+			mov r2, #0x580F
 			b sc_out
 sc_0x4710:
-			mov r4, #0x4710
-			mov r5, #0x5810
+			mov r1, #0x4710
+			mov r2, #0x5810
 			b sc_out
 sc_0x4711:
-			mov r4, #0x4711
-			mov r5, #0x5811
+			mov r1, #0x4711
+			mov r2, #0x5811
 			b sc_out
 sc_0x4712:
-			mov r4, #0x4712
-			mov r5, #0x5812
+			mov r1, #0x4712
+			mov r2, #0x5812
 			b sc_out
 sc_0x4713:
-			mov r4, #0x4713
-			mov r5, #0x5813
+			mov r1, #0x4713
+			mov r2, #0x5813
 			b sc_out
 sc_0x4714:
-			mov r4, #0x4714
-			mov r5, #0x5814
+			mov r1, #0x4714
+			mov r2, #0x5814
 			b sc_out
 sc_0x4715:
-			mov r4, #0x4715
-			mov r5, #0x5815
+			mov r1, #0x4715
+			mov r2, #0x5815
 			b sc_out
 sc_0x4716:
-			mov r4, #0x4716
-			mov r5, #0x5816
+			mov r1, #0x4716
+			mov r2, #0x5816
 			b sc_out
 sc_0x4717:
-			mov r4, #0x4717
-			mov r5, #0x5817
+			mov r1, #0x4717
+			mov r2, #0x5817
 			b sc_out
 sc_0x4718:
-			mov r4, #0x4718
-			mov r5, #0x5818
+			mov r1, #0x4718
+			mov r2, #0x5818
 			b sc_out
 sc_0x4719:
-			mov r4, #0x4719
-			mov r5, #0x5819
+			mov r1, #0x4719
+			mov r2, #0x5819
 			b sc_out
 sc_0x471A:
-			mov r4, #0x471A
-			mov r5, #0x581A
+			mov r1, #0x471A
+			mov r2, #0x581A
 			b sc_out
 sc_0x471B:
-			mov r4, #0x471B
-			mov r5, #0x581B
+			mov r1, #0x471B
+			mov r2, #0x581B
 			b sc_out
 sc_0x471C:
-			mov r4, #0x471C
-			mov r5, #0x581C
+			mov r1, #0x471C
+			mov r2, #0x581C
 			b sc_out
 sc_0x471D:
-			mov r4, #0x471D
-			mov r5, #0x581D
+			mov r1, #0x471D
+			mov r2, #0x581D
 			b sc_out
 sc_0x471E:
-			mov r4, #0x471E
-			mov r5, #0x581E
+			mov r1, #0x471E
+			mov r2, #0x581E
 			b sc_out
 sc_0x471F:
-			mov r4, #0x471F
-			mov r5, #0x581F
+			mov r1, #0x471F
+			mov r2, #0x581F
 			b sc_out
 sc_0x4020:
-			mov r4, #0x4020
-			mov r5, #0x5820
+			mov r1, #0x4020
+			mov r2, #0x5820
 			b sc_out
 sc_0x4021:
-			mov r4, #0x4021
-			mov r5, #0x5821
+			mov r1, #0x4021
+			mov r2, #0x5821
 			b sc_out
 sc_0x4022:
-			mov r4, #0x4022
-			mov r5, #0x5822
+			mov r1, #0x4022
+			mov r2, #0x5822
 			b sc_out
 sc_0x4023:
-			mov r4, #0x4023
-			mov r5, #0x5823
+			mov r1, #0x4023
+			mov r2, #0x5823
 			b sc_out
 sc_0x4024:
-			mov r4, #0x4024
-			mov r5, #0x5824
+			mov r1, #0x4024
+			mov r2, #0x5824
 			b sc_out
 sc_0x4025:
-			mov r4, #0x4025
-			mov r5, #0x5825
+			mov r1, #0x4025
+			mov r2, #0x5825
 			b sc_out
 sc_0x4026:
-			mov r4, #0x4026
-			mov r5, #0x5826
+			mov r1, #0x4026
+			mov r2, #0x5826
 			b sc_out
 sc_0x4027:
-			mov r4, #0x4027
-			mov r5, #0x5827
+			mov r1, #0x4027
+			mov r2, #0x5827
 			b sc_out
 sc_0x4028:
-			mov r4, #0x4028
-			mov r5, #0x5828
+			mov r1, #0x4028
+			mov r2, #0x5828
 			b sc_out
 sc_0x4029:
-			mov r4, #0x4029
-			mov r5, #0x5829
+			mov r1, #0x4029
+			mov r2, #0x5829
 			b sc_out
 sc_0x402A:
-			mov r4, #0x402A
-			mov r5, #0x582A
+			mov r1, #0x402A
+			mov r2, #0x582A
 			b sc_out
 sc_0x402B:
-			mov r4, #0x402B
-			mov r5, #0x582B
+			mov r1, #0x402B
+			mov r2, #0x582B
 			b sc_out
 sc_0x402C:
-			mov r4, #0x402C
-			mov r5, #0x582C
+			mov r1, #0x402C
+			mov r2, #0x582C
 			b sc_out
 sc_0x402D:
-			mov r4, #0x402D
-			mov r5, #0x582D
+			mov r1, #0x402D
+			mov r2, #0x582D
 			b sc_out
 sc_0x402E:
-			mov r4, #0x402E
-			mov r5, #0x582E
+			mov r1, #0x402E
+			mov r2, #0x582E
 			b sc_out
 sc_0x402F:
-			mov r4, #0x402F
-			mov r5, #0x582F
+			mov r1, #0x402F
+			mov r2, #0x582F
 			b sc_out
 sc_0x4030:
-			mov r4, #0x4030
-			mov r5, #0x5830
+			mov r1, #0x4030
+			mov r2, #0x5830
 			b sc_out
 sc_0x4031:
-			mov r4, #0x4031
-			mov r5, #0x5831
+			mov r1, #0x4031
+			mov r2, #0x5831
 			b sc_out
 sc_0x4032:
-			mov r4, #0x4032
-			mov r5, #0x5832
+			mov r1, #0x4032
+			mov r2, #0x5832
 			b sc_out
 sc_0x4033:
-			mov r4, #0x4033
-			mov r5, #0x5833
+			mov r1, #0x4033
+			mov r2, #0x5833
 			b sc_out
 sc_0x4034:
-			mov r4, #0x4034
-			mov r5, #0x5834
+			mov r1, #0x4034
+			mov r2, #0x5834
 			b sc_out
 sc_0x4035:
-			mov r4, #0x4035
-			mov r5, #0x5835
+			mov r1, #0x4035
+			mov r2, #0x5835
 			b sc_out
 sc_0x4036:
-			mov r4, #0x4036
-			mov r5, #0x5836
+			mov r1, #0x4036
+			mov r2, #0x5836
 			b sc_out
 sc_0x4037:
-			mov r4, #0x4037
-			mov r5, #0x5837
+			mov r1, #0x4037
+			mov r2, #0x5837
 			b sc_out
 sc_0x4038:
-			mov r4, #0x4038
-			mov r5, #0x5838
+			mov r1, #0x4038
+			mov r2, #0x5838
 			b sc_out
 sc_0x4039:
-			mov r4, #0x4039
-			mov r5, #0x5839
+			mov r1, #0x4039
+			mov r2, #0x5839
 			b sc_out
 sc_0x403A:
-			mov r4, #0x403A
-			mov r5, #0x583A
+			mov r1, #0x403A
+			mov r2, #0x583A
 			b sc_out
 sc_0x403B:
-			mov r4, #0x403B
-			mov r5, #0x583B
+			mov r1, #0x403B
+			mov r2, #0x583B
 			b sc_out
 sc_0x403C:
-			mov r4, #0x403C
-			mov r5, #0x583C
+			mov r1, #0x403C
+			mov r2, #0x583C
 			b sc_out
 sc_0x403D:
-			mov r4, #0x403D
-			mov r5, #0x583D
+			mov r1, #0x403D
+			mov r2, #0x583D
 			b sc_out
 sc_0x403E:
-			mov r4, #0x403E
-			mov r5, #0x583E
+			mov r1, #0x403E
+			mov r2, #0x583E
 			b sc_out
 sc_0x403F:
-			mov r4, #0x403F
-			mov r5, #0x583F
+			mov r1, #0x403F
+			mov r2, #0x583F
 			b sc_out
 sc_0x4120:
-			mov r4, #0x4120
-			mov r5, #0x5820
+			mov r1, #0x4120
+			mov r2, #0x5820
 			b sc_out
 sc_0x4121:
-			mov r4, #0x4121
-			mov r5, #0x5821
+			mov r1, #0x4121
+			mov r2, #0x5821
 			b sc_out
 sc_0x4122:
-			mov r4, #0x4122
-			mov r5, #0x5822
+			mov r1, #0x4122
+			mov r2, #0x5822
 			b sc_out
 sc_0x4123:
-			mov r4, #0x4123
-			mov r5, #0x5823
+			mov r1, #0x4123
+			mov r2, #0x5823
 			b sc_out
 sc_0x4124:
-			mov r4, #0x4124
-			mov r5, #0x5824
+			mov r1, #0x4124
+			mov r2, #0x5824
 			b sc_out
 sc_0x4125:
-			mov r4, #0x4125
-			mov r5, #0x5825
+			mov r1, #0x4125
+			mov r2, #0x5825
 			b sc_out
 sc_0x4126:
-			mov r4, #0x4126
-			mov r5, #0x5826
+			mov r1, #0x4126
+			mov r2, #0x5826
 			b sc_out
 sc_0x4127:
-			mov r4, #0x4127
-			mov r5, #0x5827
+			mov r1, #0x4127
+			mov r2, #0x5827
 			b sc_out
 sc_0x4128:
-			mov r4, #0x4128
-			mov r5, #0x5828
+			mov r1, #0x4128
+			mov r2, #0x5828
 			b sc_out
 sc_0x4129:
-			mov r4, #0x4129
-			mov r5, #0x5829
+			mov r1, #0x4129
+			mov r2, #0x5829
 			b sc_out
 sc_0x412A:
-			mov r4, #0x412A
-			mov r5, #0x582A
+			mov r1, #0x412A
+			mov r2, #0x582A
 			b sc_out
 sc_0x412B:
-			mov r4, #0x412B
-			mov r5, #0x582B
+			mov r1, #0x412B
+			mov r2, #0x582B
 			b sc_out
 sc_0x412C:
-			mov r4, #0x412C
-			mov r5, #0x582C
+			mov r1, #0x412C
+			mov r2, #0x582C
 			b sc_out
 sc_0x412D:
-			mov r4, #0x412D
-			mov r5, #0x582D
+			mov r1, #0x412D
+			mov r2, #0x582D
 			b sc_out
 sc_0x412E:
-			mov r4, #0x412E
-			mov r5, #0x582E
+			mov r1, #0x412E
+			mov r2, #0x582E
 			b sc_out
 sc_0x412F:
-			mov r4, #0x412F
-			mov r5, #0x582F
+			mov r1, #0x412F
+			mov r2, #0x582F
 			b sc_out
 sc_0x4130:
-			mov r4, #0x4130
-			mov r5, #0x5830
+			mov r1, #0x4130
+			mov r2, #0x5830
 			b sc_out
 sc_0x4131:
-			mov r4, #0x4131
-			mov r5, #0x5831
+			mov r1, #0x4131
+			mov r2, #0x5831
 			b sc_out
 sc_0x4132:
-			mov r4, #0x4132
-			mov r5, #0x5832
+			mov r1, #0x4132
+			mov r2, #0x5832
 			b sc_out
 sc_0x4133:
-			mov r4, #0x4133
-			mov r5, #0x5833
+			mov r1, #0x4133
+			mov r2, #0x5833
 			b sc_out
 sc_0x4134:
-			mov r4, #0x4134
-			mov r5, #0x5834
+			mov r1, #0x4134
+			mov r2, #0x5834
 			b sc_out
 sc_0x4135:
-			mov r4, #0x4135
-			mov r5, #0x5835
+			mov r1, #0x4135
+			mov r2, #0x5835
 			b sc_out
 sc_0x4136:
-			mov r4, #0x4136
-			mov r5, #0x5836
+			mov r1, #0x4136
+			mov r2, #0x5836
 			b sc_out
 sc_0x4137:
-			mov r4, #0x4137
-			mov r5, #0x5837
+			mov r1, #0x4137
+			mov r2, #0x5837
 			b sc_out
 sc_0x4138:
-			mov r4, #0x4138
-			mov r5, #0x5838
+			mov r1, #0x4138
+			mov r2, #0x5838
 			b sc_out
 sc_0x4139:
-			mov r4, #0x4139
-			mov r5, #0x5839
+			mov r1, #0x4139
+			mov r2, #0x5839
 			b sc_out
 sc_0x413A:
-			mov r4, #0x413A
-			mov r5, #0x583A
+			mov r1, #0x413A
+			mov r2, #0x583A
 			b sc_out
 sc_0x413B:
-			mov r4, #0x413B
-			mov r5, #0x583B
+			mov r1, #0x413B
+			mov r2, #0x583B
 			b sc_out
 sc_0x413C:
-			mov r4, #0x413C
-			mov r5, #0x583C
+			mov r1, #0x413C
+			mov r2, #0x583C
 			b sc_out
 sc_0x413D:
-			mov r4, #0x413D
-			mov r5, #0x583D
+			mov r1, #0x413D
+			mov r2, #0x583D
 			b sc_out
 sc_0x413E:
-			mov r4, #0x413E
-			mov r5, #0x583E
+			mov r1, #0x413E
+			mov r2, #0x583E
 			b sc_out
 sc_0x413F:
-			mov r4, #0x413F
-			mov r5, #0x583F
+			mov r1, #0x413F
+			mov r2, #0x583F
 			b sc_out
 sc_0x4220:
-			mov r4, #0x4220
-			mov r5, #0x5820
+			mov r1, #0x4220
+			mov r2, #0x5820
 			b sc_out
 sc_0x4221:
-			mov r4, #0x4221
-			mov r5, #0x5821
+			mov r1, #0x4221
+			mov r2, #0x5821
 			b sc_out
 sc_0x4222:
-			mov r4, #0x4222
-			mov r5, #0x5822
+			mov r1, #0x4222
+			mov r2, #0x5822
 			b sc_out
 sc_0x4223:
-			mov r4, #0x4223
-			mov r5, #0x5823
+			mov r1, #0x4223
+			mov r2, #0x5823
 			b sc_out
 sc_0x4224:
-			mov r4, #0x4224
-			mov r5, #0x5824
+			mov r1, #0x4224
+			mov r2, #0x5824
 			b sc_out
 sc_0x4225:
-			mov r4, #0x4225
-			mov r5, #0x5825
+			mov r1, #0x4225
+			mov r2, #0x5825
 			b sc_out
 sc_0x4226:
-			mov r4, #0x4226
-			mov r5, #0x5826
+			mov r1, #0x4226
+			mov r2, #0x5826
 			b sc_out
 sc_0x4227:
-			mov r4, #0x4227
-			mov r5, #0x5827
+			mov r1, #0x4227
+			mov r2, #0x5827
 			b sc_out
 sc_0x4228:
-			mov r4, #0x4228
-			mov r5, #0x5828
+			mov r1, #0x4228
+			mov r2, #0x5828
 			b sc_out
 sc_0x4229:
-			mov r4, #0x4229
-			mov r5, #0x5829
+			mov r1, #0x4229
+			mov r2, #0x5829
 			b sc_out
 sc_0x422A:
-			mov r4, #0x422A
-			mov r5, #0x582A
+			mov r1, #0x422A
+			mov r2, #0x582A
 			b sc_out
 sc_0x422B:
-			mov r4, #0x422B
-			mov r5, #0x582B
+			mov r1, #0x422B
+			mov r2, #0x582B
 			b sc_out
 sc_0x422C:
-			mov r4, #0x422C
-			mov r5, #0x582C
+			mov r1, #0x422C
+			mov r2, #0x582C
 			b sc_out
 sc_0x422D:
-			mov r4, #0x422D
-			mov r5, #0x582D
+			mov r1, #0x422D
+			mov r2, #0x582D
 			b sc_out
 sc_0x422E:
-			mov r4, #0x422E
-			mov r5, #0x582E
+			mov r1, #0x422E
+			mov r2, #0x582E
 			b sc_out
 sc_0x422F:
-			mov r4, #0x422F
-			mov r5, #0x582F
+			mov r1, #0x422F
+			mov r2, #0x582F
 			b sc_out
 sc_0x4230:
-			mov r4, #0x4230
-			mov r5, #0x5830
+			mov r1, #0x4230
+			mov r2, #0x5830
 			b sc_out
 sc_0x4231:
-			mov r4, #0x4231
-			mov r5, #0x5831
+			mov r1, #0x4231
+			mov r2, #0x5831
 			b sc_out
 sc_0x4232:
-			mov r4, #0x4232
-			mov r5, #0x5832
+			mov r1, #0x4232
+			mov r2, #0x5832
 			b sc_out
 sc_0x4233:
-			mov r4, #0x4233
-			mov r5, #0x5833
+			mov r1, #0x4233
+			mov r2, #0x5833
 			b sc_out
 sc_0x4234:
-			mov r4, #0x4234
-			mov r5, #0x5834
+			mov r1, #0x4234
+			mov r2, #0x5834
 			b sc_out
 sc_0x4235:
-			mov r4, #0x4235
-			mov r5, #0x5835
+			mov r1, #0x4235
+			mov r2, #0x5835
 			b sc_out
 sc_0x4236:
-			mov r4, #0x4236
-			mov r5, #0x5836
+			mov r1, #0x4236
+			mov r2, #0x5836
 			b sc_out
 sc_0x4237:
-			mov r4, #0x4237
-			mov r5, #0x5837
+			mov r1, #0x4237
+			mov r2, #0x5837
 			b sc_out
 sc_0x4238:
-			mov r4, #0x4238
-			mov r5, #0x5838
+			mov r1, #0x4238
+			mov r2, #0x5838
 			b sc_out
 sc_0x4239:
-			mov r4, #0x4239
-			mov r5, #0x5839
+			mov r1, #0x4239
+			mov r2, #0x5839
 			b sc_out
 sc_0x423A:
-			mov r4, #0x423A
-			mov r5, #0x583A
+			mov r1, #0x423A
+			mov r2, #0x583A
 			b sc_out
 sc_0x423B:
-			mov r4, #0x423B
-			mov r5, #0x583B
+			mov r1, #0x423B
+			mov r2, #0x583B
 			b sc_out
 sc_0x423C:
-			mov r4, #0x423C
-			mov r5, #0x583C
+			mov r1, #0x423C
+			mov r2, #0x583C
 			b sc_out
 sc_0x423D:
-			mov r4, #0x423D
-			mov r5, #0x583D
+			mov r1, #0x423D
+			mov r2, #0x583D
 			b sc_out
 sc_0x423E:
-			mov r4, #0x423E
-			mov r5, #0x583E
+			mov r1, #0x423E
+			mov r2, #0x583E
 			b sc_out
 sc_0x423F:
-			mov r4, #0x423F
-			mov r5, #0x583F
+			mov r1, #0x423F
+			mov r2, #0x583F
 			b sc_out
 sc_0x4320:
-			mov r4, #0x4320
-			mov r5, #0x5820
+			mov r1, #0x4320
+			mov r2, #0x5820
 			b sc_out
 sc_0x4321:
-			mov r4, #0x4321
-			mov r5, #0x5821
+			mov r1, #0x4321
+			mov r2, #0x5821
 			b sc_out
 sc_0x4322:
-			mov r4, #0x4322
-			mov r5, #0x5822
+			mov r1, #0x4322
+			mov r2, #0x5822
 			b sc_out
 sc_0x4323:
-			mov r4, #0x4323
-			mov r5, #0x5823
+			mov r1, #0x4323
+			mov r2, #0x5823
 			b sc_out
 sc_0x4324:
-			mov r4, #0x4324
-			mov r5, #0x5824
+			mov r1, #0x4324
+			mov r2, #0x5824
 			b sc_out
 sc_0x4325:
-			mov r4, #0x4325
-			mov r5, #0x5825
+			mov r1, #0x4325
+			mov r2, #0x5825
 			b sc_out
 sc_0x4326:
-			mov r4, #0x4326
-			mov r5, #0x5826
+			mov r1, #0x4326
+			mov r2, #0x5826
 			b sc_out
 sc_0x4327:
-			mov r4, #0x4327
-			mov r5, #0x5827
+			mov r1, #0x4327
+			mov r2, #0x5827
 			b sc_out
 sc_0x4328:
-			mov r4, #0x4328
-			mov r5, #0x5828
+			mov r1, #0x4328
+			mov r2, #0x5828
 			b sc_out
 sc_0x4329:
-			mov r4, #0x4329
-			mov r5, #0x5829
+			mov r1, #0x4329
+			mov r2, #0x5829
 			b sc_out
 sc_0x432A:
-			mov r4, #0x432A
-			mov r5, #0x582A
+			mov r1, #0x432A
+			mov r2, #0x582A
 			b sc_out
 sc_0x432B:
-			mov r4, #0x432B
-			mov r5, #0x582B
+			mov r1, #0x432B
+			mov r2, #0x582B
 			b sc_out
 sc_0x432C:
-			mov r4, #0x432C
-			mov r5, #0x582C
+			mov r1, #0x432C
+			mov r2, #0x582C
 			b sc_out
 sc_0x432D:
-			mov r4, #0x432D
-			mov r5, #0x582D
+			mov r1, #0x432D
+			mov r2, #0x582D
 			b sc_out
 sc_0x432E:
-			mov r4, #0x432E
-			mov r5, #0x582E
+			mov r1, #0x432E
+			mov r2, #0x582E
 			b sc_out
 sc_0x432F:
-			mov r4, #0x432F
-			mov r5, #0x582F
+			mov r1, #0x432F
+			mov r2, #0x582F
 			b sc_out
 sc_0x4330:
-			mov r4, #0x4330
-			mov r5, #0x5830
+			mov r1, #0x4330
+			mov r2, #0x5830
 			b sc_out
 sc_0x4331:
-			mov r4, #0x4331
-			mov r5, #0x5831
+			mov r1, #0x4331
+			mov r2, #0x5831
 			b sc_out
 sc_0x4332:
-			mov r4, #0x4332
-			mov r5, #0x5832
+			mov r1, #0x4332
+			mov r2, #0x5832
 			b sc_out
 sc_0x4333:
-			mov r4, #0x4333
-			mov r5, #0x5833
+			mov r1, #0x4333
+			mov r2, #0x5833
 			b sc_out
 sc_0x4334:
-			mov r4, #0x4334
-			mov r5, #0x5834
+			mov r1, #0x4334
+			mov r2, #0x5834
 			b sc_out
 sc_0x4335:
-			mov r4, #0x4335
-			mov r5, #0x5835
+			mov r1, #0x4335
+			mov r2, #0x5835
 			b sc_out
 sc_0x4336:
-			mov r4, #0x4336
-			mov r5, #0x5836
+			mov r1, #0x4336
+			mov r2, #0x5836
 			b sc_out
 sc_0x4337:
-			mov r4, #0x4337
-			mov r5, #0x5837
+			mov r1, #0x4337
+			mov r2, #0x5837
 			b sc_out
 sc_0x4338:
-			mov r4, #0x4338
-			mov r5, #0x5838
+			mov r1, #0x4338
+			mov r2, #0x5838
 			b sc_out
 sc_0x4339:
-			mov r4, #0x4339
-			mov r5, #0x5839
+			mov r1, #0x4339
+			mov r2, #0x5839
 			b sc_out
 sc_0x433A:
-			mov r4, #0x433A
-			mov r5, #0x583A
+			mov r1, #0x433A
+			mov r2, #0x583A
 			b sc_out
 sc_0x433B:
-			mov r4, #0x433B
-			mov r5, #0x583B
+			mov r1, #0x433B
+			mov r2, #0x583B
 			b sc_out
 sc_0x433C:
-			mov r4, #0x433C
-			mov r5, #0x583C
+			mov r1, #0x433C
+			mov r2, #0x583C
 			b sc_out
 sc_0x433D:
-			mov r4, #0x433D
-			mov r5, #0x583D
+			mov r1, #0x433D
+			mov r2, #0x583D
 			b sc_out
 sc_0x433E:
-			mov r4, #0x433E
-			mov r5, #0x583E
+			mov r1, #0x433E
+			mov r2, #0x583E
 			b sc_out
 sc_0x433F:
-			mov r4, #0x433F
-			mov r5, #0x583F
+			mov r1, #0x433F
+			mov r2, #0x583F
 			b sc_out
 sc_0x4420:
-			mov r4, #0x4420
-			mov r5, #0x5820
+			mov r1, #0x4420
+			mov r2, #0x5820
 			b sc_out
 sc_0x4421:
-			mov r4, #0x4421
-			mov r5, #0x5821
+			mov r1, #0x4421
+			mov r2, #0x5821
 			b sc_out
 sc_0x4422:
-			mov r4, #0x4422
-			mov r5, #0x5822
+			mov r1, #0x4422
+			mov r2, #0x5822
 			b sc_out
 sc_0x4423:
-			mov r4, #0x4423
-			mov r5, #0x5823
+			mov r1, #0x4423
+			mov r2, #0x5823
 			b sc_out
 sc_0x4424:
-			mov r4, #0x4424
-			mov r5, #0x5824
+			mov r1, #0x4424
+			mov r2, #0x5824
 			b sc_out
 sc_0x4425:
-			mov r4, #0x4425
-			mov r5, #0x5825
+			mov r1, #0x4425
+			mov r2, #0x5825
 			b sc_out
 sc_0x4426:
-			mov r4, #0x4426
-			mov r5, #0x5826
+			mov r1, #0x4426
+			mov r2, #0x5826
 			b sc_out
 sc_0x4427:
-			mov r4, #0x4427
-			mov r5, #0x5827
+			mov r1, #0x4427
+			mov r2, #0x5827
 			b sc_out
 sc_0x4428:
-			mov r4, #0x4428
-			mov r5, #0x5828
+			mov r1, #0x4428
+			mov r2, #0x5828
 			b sc_out
 sc_0x4429:
-			mov r4, #0x4429
-			mov r5, #0x5829
+			mov r1, #0x4429
+			mov r2, #0x5829
 			b sc_out
 sc_0x442A:
-			mov r4, #0x442A
-			mov r5, #0x582A
+			mov r1, #0x442A
+			mov r2, #0x582A
 			b sc_out
 sc_0x442B:
-			mov r4, #0x442B
-			mov r5, #0x582B
+			mov r1, #0x442B
+			mov r2, #0x582B
 			b sc_out
 sc_0x442C:
-			mov r4, #0x442C
-			mov r5, #0x582C
+			mov r1, #0x442C
+			mov r2, #0x582C
 			b sc_out
 sc_0x442D:
-			mov r4, #0x442D
-			mov r5, #0x582D
+			mov r1, #0x442D
+			mov r2, #0x582D
 			b sc_out
 sc_0x442E:
-			mov r4, #0x442E
-			mov r5, #0x582E
+			mov r1, #0x442E
+			mov r2, #0x582E
 			b sc_out
 sc_0x442F:
-			mov r4, #0x442F
-			mov r5, #0x582F
+			mov r1, #0x442F
+			mov r2, #0x582F
 			b sc_out
 sc_0x4430:
-			mov r4, #0x4430
-			mov r5, #0x5830
+			mov r1, #0x4430
+			mov r2, #0x5830
 			b sc_out
 sc_0x4431:
-			mov r4, #0x4431
-			mov r5, #0x5831
+			mov r1, #0x4431
+			mov r2, #0x5831
 			b sc_out
 sc_0x4432:
-			mov r4, #0x4432
-			mov r5, #0x5832
+			mov r1, #0x4432
+			mov r2, #0x5832
 			b sc_out
 sc_0x4433:
-			mov r4, #0x4433
-			mov r5, #0x5833
+			mov r1, #0x4433
+			mov r2, #0x5833
 			b sc_out
 sc_0x4434:
-			mov r4, #0x4434
-			mov r5, #0x5834
+			mov r1, #0x4434
+			mov r2, #0x5834
 			b sc_out
 sc_0x4435:
-			mov r4, #0x4435
-			mov r5, #0x5835
+			mov r1, #0x4435
+			mov r2, #0x5835
 			b sc_out
 sc_0x4436:
-			mov r4, #0x4436
-			mov r5, #0x5836
+			mov r1, #0x4436
+			mov r2, #0x5836
 			b sc_out
 sc_0x4437:
-			mov r4, #0x4437
-			mov r5, #0x5837
+			mov r1, #0x4437
+			mov r2, #0x5837
 			b sc_out
 sc_0x4438:
-			mov r4, #0x4438
-			mov r5, #0x5838
+			mov r1, #0x4438
+			mov r2, #0x5838
 			b sc_out
 sc_0x4439:
-			mov r4, #0x4439
-			mov r5, #0x5839
+			mov r1, #0x4439
+			mov r2, #0x5839
 			b sc_out
 sc_0x443A:
-			mov r4, #0x443A
-			mov r5, #0x583A
+			mov r1, #0x443A
+			mov r2, #0x583A
 			b sc_out
 sc_0x443B:
-			mov r4, #0x443B
-			mov r5, #0x583B
+			mov r1, #0x443B
+			mov r2, #0x583B
 			b sc_out
 sc_0x443C:
-			mov r4, #0x443C
-			mov r5, #0x583C
+			mov r1, #0x443C
+			mov r2, #0x583C
 			b sc_out
 sc_0x443D:
-			mov r4, #0x443D
-			mov r5, #0x583D
+			mov r1, #0x443D
+			mov r2, #0x583D
 			b sc_out
 sc_0x443E:
-			mov r4, #0x443E
-			mov r5, #0x583E
+			mov r1, #0x443E
+			mov r2, #0x583E
 			b sc_out
 sc_0x443F:
-			mov r4, #0x443F
-			mov r5, #0x583F
+			mov r1, #0x443F
+			mov r2, #0x583F
 			b sc_out
 sc_0x4520:
-			mov r4, #0x4520
-			mov r5, #0x5820
+			mov r1, #0x4520
+			mov r2, #0x5820
 			b sc_out
 sc_0x4521:
-			mov r4, #0x4521
-			mov r5, #0x5821
+			mov r1, #0x4521
+			mov r2, #0x5821
 			b sc_out
 sc_0x4522:
-			mov r4, #0x4522
-			mov r5, #0x5822
+			mov r1, #0x4522
+			mov r2, #0x5822
 			b sc_out
 sc_0x4523:
-			mov r4, #0x4523
-			mov r5, #0x5823
+			mov r1, #0x4523
+			mov r2, #0x5823
 			b sc_out
 sc_0x4524:
-			mov r4, #0x4524
-			mov r5, #0x5824
+			mov r1, #0x4524
+			mov r2, #0x5824
 			b sc_out
 sc_0x4525:
-			mov r4, #0x4525
-			mov r5, #0x5825
+			mov r1, #0x4525
+			mov r2, #0x5825
 			b sc_out
 sc_0x4526:
-			mov r4, #0x4526
-			mov r5, #0x5826
+			mov r1, #0x4526
+			mov r2, #0x5826
 			b sc_out
 sc_0x4527:
-			mov r4, #0x4527
-			mov r5, #0x5827
+			mov r1, #0x4527
+			mov r2, #0x5827
 			b sc_out
 sc_0x4528:
-			mov r4, #0x4528
-			mov r5, #0x5828
+			mov r1, #0x4528
+			mov r2, #0x5828
 			b sc_out
 sc_0x4529:
-			mov r4, #0x4529
-			mov r5, #0x5829
+			mov r1, #0x4529
+			mov r2, #0x5829
 			b sc_out
 sc_0x452A:
-			mov r4, #0x452A
-			mov r5, #0x582A
+			mov r1, #0x452A
+			mov r2, #0x582A
 			b sc_out
 sc_0x452B:
-			mov r4, #0x452B
-			mov r5, #0x582B
+			mov r1, #0x452B
+			mov r2, #0x582B
 			b sc_out
 sc_0x452C:
-			mov r4, #0x452C
-			mov r5, #0x582C
+			mov r1, #0x452C
+			mov r2, #0x582C
 			b sc_out
 sc_0x452D:
-			mov r4, #0x452D
-			mov r5, #0x582D
+			mov r1, #0x452D
+			mov r2, #0x582D
 			b sc_out
 sc_0x452E:
-			mov r4, #0x452E
-			mov r5, #0x582E
+			mov r1, #0x452E
+			mov r2, #0x582E
 			b sc_out
 sc_0x452F:
-			mov r4, #0x452F
-			mov r5, #0x582F
+			mov r1, #0x452F
+			mov r2, #0x582F
 			b sc_out
 sc_0x4530:
-			mov r4, #0x4530
-			mov r5, #0x5830
+			mov r1, #0x4530
+			mov r2, #0x5830
 			b sc_out
 sc_0x4531:
-			mov r4, #0x4531
-			mov r5, #0x5831
+			mov r1, #0x4531
+			mov r2, #0x5831
 			b sc_out
 sc_0x4532:
-			mov r4, #0x4532
-			mov r5, #0x5832
+			mov r1, #0x4532
+			mov r2, #0x5832
 			b sc_out
 sc_0x4533:
-			mov r4, #0x4533
-			mov r5, #0x5833
+			mov r1, #0x4533
+			mov r2, #0x5833
 			b sc_out
 sc_0x4534:
-			mov r4, #0x4534
-			mov r5, #0x5834
+			mov r1, #0x4534
+			mov r2, #0x5834
 			b sc_out
 sc_0x4535:
-			mov r4, #0x4535
-			mov r5, #0x5835
+			mov r1, #0x4535
+			mov r2, #0x5835
 			b sc_out
 sc_0x4536:
-			mov r4, #0x4536
-			mov r5, #0x5836
+			mov r1, #0x4536
+			mov r2, #0x5836
 			b sc_out
 sc_0x4537:
-			mov r4, #0x4537
-			mov r5, #0x5837
+			mov r1, #0x4537
+			mov r2, #0x5837
 			b sc_out
 sc_0x4538:
-			mov r4, #0x4538
-			mov r5, #0x5838
+			mov r1, #0x4538
+			mov r2, #0x5838
 			b sc_out
 sc_0x4539:
-			mov r4, #0x4539
-			mov r5, #0x5839
+			mov r1, #0x4539
+			mov r2, #0x5839
 			b sc_out
 sc_0x453A:
-			mov r4, #0x453A
-			mov r5, #0x583A
+			mov r1, #0x453A
+			mov r2, #0x583A
 			b sc_out
 sc_0x453B:
-			mov r4, #0x453B
-			mov r5, #0x583B
+			mov r1, #0x453B
+			mov r2, #0x583B
 			b sc_out
 sc_0x453C:
-			mov r4, #0x453C
-			mov r5, #0x583C
+			mov r1, #0x453C
+			mov r2, #0x583C
 			b sc_out
 sc_0x453D:
-			mov r4, #0x453D
-			mov r5, #0x583D
+			mov r1, #0x453D
+			mov r2, #0x583D
 			b sc_out
 sc_0x453E:
-			mov r4, #0x453E
-			mov r5, #0x583E
+			mov r1, #0x453E
+			mov r2, #0x583E
 			b sc_out
 sc_0x453F:
-			mov r4, #0x453F
-			mov r5, #0x583F
+			mov r1, #0x453F
+			mov r2, #0x583F
 			b sc_out
 sc_0x4620:
-			mov r4, #0x4620
-			mov r5, #0x5820
+			mov r1, #0x4620
+			mov r2, #0x5820
 			b sc_out
 sc_0x4621:
-			mov r4, #0x4621
-			mov r5, #0x5821
+			mov r1, #0x4621
+			mov r2, #0x5821
 			b sc_out
 sc_0x4622:
-			mov r4, #0x4622
-			mov r5, #0x5822
+			mov r1, #0x4622
+			mov r2, #0x5822
 			b sc_out
 sc_0x4623:
-			mov r4, #0x4623
-			mov r5, #0x5823
+			mov r1, #0x4623
+			mov r2, #0x5823
 			b sc_out
 sc_0x4624:
-			mov r4, #0x4624
-			mov r5, #0x5824
+			mov r1, #0x4624
+			mov r2, #0x5824
 			b sc_out
 sc_0x4625:
-			mov r4, #0x4625
-			mov r5, #0x5825
+			mov r1, #0x4625
+			mov r2, #0x5825
 			b sc_out
 sc_0x4626:
-			mov r4, #0x4626
-			mov r5, #0x5826
+			mov r1, #0x4626
+			mov r2, #0x5826
 			b sc_out
 sc_0x4627:
-			mov r4, #0x4627
-			mov r5, #0x5827
+			mov r1, #0x4627
+			mov r2, #0x5827
 			b sc_out
 sc_0x4628:
-			mov r4, #0x4628
-			mov r5, #0x5828
+			mov r1, #0x4628
+			mov r2, #0x5828
 			b sc_out
 sc_0x4629:
-			mov r4, #0x4629
-			mov r5, #0x5829
+			mov r1, #0x4629
+			mov r2, #0x5829
 			b sc_out
 sc_0x462A:
-			mov r4, #0x462A
-			mov r5, #0x582A
+			mov r1, #0x462A
+			mov r2, #0x582A
 			b sc_out
 sc_0x462B:
-			mov r4, #0x462B
-			mov r5, #0x582B
+			mov r1, #0x462B
+			mov r2, #0x582B
 			b sc_out
 sc_0x462C:
-			mov r4, #0x462C
-			mov r5, #0x582C
+			mov r1, #0x462C
+			mov r2, #0x582C
 			b sc_out
 sc_0x462D:
-			mov r4, #0x462D
-			mov r5, #0x582D
+			mov r1, #0x462D
+			mov r2, #0x582D
 			b sc_out
 sc_0x462E:
-			mov r4, #0x462E
-			mov r5, #0x582E
+			mov r1, #0x462E
+			mov r2, #0x582E
 			b sc_out
 sc_0x462F:
-			mov r4, #0x462F
-			mov r5, #0x582F
+			mov r1, #0x462F
+			mov r2, #0x582F
 			b sc_out
 sc_0x4630:
-			mov r4, #0x4630
-			mov r5, #0x5830
+			mov r1, #0x4630
+			mov r2, #0x5830
 			b sc_out
 sc_0x4631:
-			mov r4, #0x4631
-			mov r5, #0x5831
+			mov r1, #0x4631
+			mov r2, #0x5831
 			b sc_out
 sc_0x4632:
-			mov r4, #0x4632
-			mov r5, #0x5832
+			mov r1, #0x4632
+			mov r2, #0x5832
 			b sc_out
 sc_0x4633:
-			mov r4, #0x4633
-			mov r5, #0x5833
+			mov r1, #0x4633
+			mov r2, #0x5833
 			b sc_out
 sc_0x4634:
-			mov r4, #0x4634
-			mov r5, #0x5834
+			mov r1, #0x4634
+			mov r2, #0x5834
 			b sc_out
 sc_0x4635:
-			mov r4, #0x4635
-			mov r5, #0x5835
+			mov r1, #0x4635
+			mov r2, #0x5835
 			b sc_out
 sc_0x4636:
-			mov r4, #0x4636
-			mov r5, #0x5836
+			mov r1, #0x4636
+			mov r2, #0x5836
 			b sc_out
 sc_0x4637:
-			mov r4, #0x4637
-			mov r5, #0x5837
+			mov r1, #0x4637
+			mov r2, #0x5837
 			b sc_out
 sc_0x4638:
-			mov r4, #0x4638
-			mov r5, #0x5838
+			mov r1, #0x4638
+			mov r2, #0x5838
 			b sc_out
 sc_0x4639:
-			mov r4, #0x4639
-			mov r5, #0x5839
+			mov r1, #0x4639
+			mov r2, #0x5839
 			b sc_out
 sc_0x463A:
-			mov r4, #0x463A
-			mov r5, #0x583A
+			mov r1, #0x463A
+			mov r2, #0x583A
 			b sc_out
 sc_0x463B:
-			mov r4, #0x463B
-			mov r5, #0x583B
+			mov r1, #0x463B
+			mov r2, #0x583B
 			b sc_out
 sc_0x463C:
-			mov r4, #0x463C
-			mov r5, #0x583C
+			mov r1, #0x463C
+			mov r2, #0x583C
 			b sc_out
 sc_0x463D:
-			mov r4, #0x463D
-			mov r5, #0x583D
+			mov r1, #0x463D
+			mov r2, #0x583D
 			b sc_out
 sc_0x463E:
-			mov r4, #0x463E
-			mov r5, #0x583E
+			mov r1, #0x463E
+			mov r2, #0x583E
 			b sc_out
 sc_0x463F:
-			mov r4, #0x463F
-			mov r5, #0x583F
+			mov r1, #0x463F
+			mov r2, #0x583F
 			b sc_out
 sc_0x4720:
-			mov r4, #0x4720
-			mov r5, #0x5820
+			mov r1, #0x4720
+			mov r2, #0x5820
 			b sc_out
 sc_0x4721:
-			mov r4, #0x4721
-			mov r5, #0x5821
+			mov r1, #0x4721
+			mov r2, #0x5821
 			b sc_out
 sc_0x4722:
-			mov r4, #0x4722
-			mov r5, #0x5822
+			mov r1, #0x4722
+			mov r2, #0x5822
 			b sc_out
 sc_0x4723:
-			mov r4, #0x4723
-			mov r5, #0x5823
+			mov r1, #0x4723
+			mov r2, #0x5823
 			b sc_out
 sc_0x4724:
-			mov r4, #0x4724
-			mov r5, #0x5824
+			mov r1, #0x4724
+			mov r2, #0x5824
 			b sc_out
 sc_0x4725:
-			mov r4, #0x4725
-			mov r5, #0x5825
+			mov r1, #0x4725
+			mov r2, #0x5825
 			b sc_out
 sc_0x4726:
-			mov r4, #0x4726
-			mov r5, #0x5826
+			mov r1, #0x4726
+			mov r2, #0x5826
 			b sc_out
 sc_0x4727:
-			mov r4, #0x4727
-			mov r5, #0x5827
+			mov r1, #0x4727
+			mov r2, #0x5827
 			b sc_out
 sc_0x4728:
-			mov r4, #0x4728
-			mov r5, #0x5828
+			mov r1, #0x4728
+			mov r2, #0x5828
 			b sc_out
 sc_0x4729:
-			mov r4, #0x4729
-			mov r5, #0x5829
+			mov r1, #0x4729
+			mov r2, #0x5829
 			b sc_out
 sc_0x472A:
-			mov r4, #0x472A
-			mov r5, #0x582A
+			mov r1, #0x472A
+			mov r2, #0x582A
 			b sc_out
 sc_0x472B:
-			mov r4, #0x472B
-			mov r5, #0x582B
+			mov r1, #0x472B
+			mov r2, #0x582B
 			b sc_out
 sc_0x472C:
-			mov r4, #0x472C
-			mov r5, #0x582C
+			mov r1, #0x472C
+			mov r2, #0x582C
 			b sc_out
 sc_0x472D:
-			mov r4, #0x472D
-			mov r5, #0x582D
+			mov r1, #0x472D
+			mov r2, #0x582D
 			b sc_out
 sc_0x472E:
-			mov r4, #0x472E
-			mov r5, #0x582E
+			mov r1, #0x472E
+			mov r2, #0x582E
 			b sc_out
 sc_0x472F:
-			mov r4, #0x472F
-			mov r5, #0x582F
+			mov r1, #0x472F
+			mov r2, #0x582F
 			b sc_out
 sc_0x4730:
-			mov r4, #0x4730
-			mov r5, #0x5830
+			mov r1, #0x4730
+			mov r2, #0x5830
 			b sc_out
 sc_0x4731:
-			mov r4, #0x4731
-			mov r5, #0x5831
+			mov r1, #0x4731
+			mov r2, #0x5831
 			b sc_out
 sc_0x4732:
-			mov r4, #0x4732
-			mov r5, #0x5832
+			mov r1, #0x4732
+			mov r2, #0x5832
 			b sc_out
 sc_0x4733:
-			mov r4, #0x4733
-			mov r5, #0x5833
+			mov r1, #0x4733
+			mov r2, #0x5833
 			b sc_out
 sc_0x4734:
-			mov r4, #0x4734
-			mov r5, #0x5834
+			mov r1, #0x4734
+			mov r2, #0x5834
 			b sc_out
 sc_0x4735:
-			mov r4, #0x4735
-			mov r5, #0x5835
+			mov r1, #0x4735
+			mov r2, #0x5835
 			b sc_out
 sc_0x4736:
-			mov r4, #0x4736
-			mov r5, #0x5836
+			mov r1, #0x4736
+			mov r2, #0x5836
 			b sc_out
 sc_0x4737:
-			mov r4, #0x4737
-			mov r5, #0x5837
+			mov r1, #0x4737
+			mov r2, #0x5837
 			b sc_out
 sc_0x4738:
-			mov r4, #0x4738
-			mov r5, #0x5838
+			mov r1, #0x4738
+			mov r2, #0x5838
 			b sc_out
 sc_0x4739:
-			mov r4, #0x4739
-			mov r5, #0x5839
+			mov r1, #0x4739
+			mov r2, #0x5839
 			b sc_out
 sc_0x473A:
-			mov r4, #0x473A
-			mov r5, #0x583A
+			mov r1, #0x473A
+			mov r2, #0x583A
 			b sc_out
 sc_0x473B:
-			mov r4, #0x473B
-			mov r5, #0x583B
+			mov r1, #0x473B
+			mov r2, #0x583B
 			b sc_out
 sc_0x473C:
-			mov r4, #0x473C
-			mov r5, #0x583C
+			mov r1, #0x473C
+			mov r2, #0x583C
 			b sc_out
 sc_0x473D:
-			mov r4, #0x473D
-			mov r5, #0x583D
+			mov r1, #0x473D
+			mov r2, #0x583D
 			b sc_out
 sc_0x473E:
-			mov r4, #0x473E
-			mov r5, #0x583E
+			mov r1, #0x473E
+			mov r2, #0x583E
 			b sc_out
 sc_0x473F:
-			mov r4, #0x473F
-			mov r5, #0x583F
+			mov r1, #0x473F
+			mov r2, #0x583F
 			b sc_out
 sc_0x4040:
-			mov r4, #0x4040
-			mov r5, #0x5840
+			mov r1, #0x4040
+			mov r2, #0x5840
 			b sc_out
 sc_0x4041:
-			mov r4, #0x4041
-			mov r5, #0x5841
+			mov r1, #0x4041
+			mov r2, #0x5841
 			b sc_out
 sc_0x4042:
-			mov r4, #0x4042
-			mov r5, #0x5842
+			mov r1, #0x4042
+			mov r2, #0x5842
 			b sc_out
 sc_0x4043:
-			mov r4, #0x4043
-			mov r5, #0x5843
+			mov r1, #0x4043
+			mov r2, #0x5843
 			b sc_out
 sc_0x4044:
-			mov r4, #0x4044
-			mov r5, #0x5844
+			mov r1, #0x4044
+			mov r2, #0x5844
 			b sc_out
 sc_0x4045:
-			mov r4, #0x4045
-			mov r5, #0x5845
+			mov r1, #0x4045
+			mov r2, #0x5845
 			b sc_out
 sc_0x4046:
-			mov r4, #0x4046
-			mov r5, #0x5846
+			mov r1, #0x4046
+			mov r2, #0x5846
 			b sc_out
 sc_0x4047:
-			mov r4, #0x4047
-			mov r5, #0x5847
+			mov r1, #0x4047
+			mov r2, #0x5847
 			b sc_out
 sc_0x4048:
-			mov r4, #0x4048
-			mov r5, #0x5848
+			mov r1, #0x4048
+			mov r2, #0x5848
 			b sc_out
 sc_0x4049:
-			mov r4, #0x4049
-			mov r5, #0x5849
+			mov r1, #0x4049
+			mov r2, #0x5849
 			b sc_out
 sc_0x404A:
-			mov r4, #0x404A
-			mov r5, #0x584A
+			mov r1, #0x404A
+			mov r2, #0x584A
 			b sc_out
 sc_0x404B:
-			mov r4, #0x404B
-			mov r5, #0x584B
+			mov r1, #0x404B
+			mov r2, #0x584B
 			b sc_out
 sc_0x404C:
-			mov r4, #0x404C
-			mov r5, #0x584C
+			mov r1, #0x404C
+			mov r2, #0x584C
 			b sc_out
 sc_0x404D:
-			mov r4, #0x404D
-			mov r5, #0x584D
+			mov r1, #0x404D
+			mov r2, #0x584D
 			b sc_out
 sc_0x404E:
-			mov r4, #0x404E
-			mov r5, #0x584E
+			mov r1, #0x404E
+			mov r2, #0x584E
 			b sc_out
 sc_0x404F:
-			mov r4, #0x404F
-			mov r5, #0x584F
+			mov r1, #0x404F
+			mov r2, #0x584F
 			b sc_out
 sc_0x4050:
-			mov r4, #0x4050
-			mov r5, #0x5850
+			mov r1, #0x4050
+			mov r2, #0x5850
 			b sc_out
 sc_0x4051:
-			mov r4, #0x4051
-			mov r5, #0x5851
+			mov r1, #0x4051
+			mov r2, #0x5851
 			b sc_out
 sc_0x4052:
-			mov r4, #0x4052
-			mov r5, #0x5852
+			mov r1, #0x4052
+			mov r2, #0x5852
 			b sc_out
 sc_0x4053:
-			mov r4, #0x4053
-			mov r5, #0x5853
+			mov r1, #0x4053
+			mov r2, #0x5853
 			b sc_out
 sc_0x4054:
-			mov r4, #0x4054
-			mov r5, #0x5854
+			mov r1, #0x4054
+			mov r2, #0x5854
 			b sc_out
 sc_0x4055:
-			mov r4, #0x4055
-			mov r5, #0x5855
+			mov r1, #0x4055
+			mov r2, #0x5855
 			b sc_out
 sc_0x4056:
-			mov r4, #0x4056
-			mov r5, #0x5856
+			mov r1, #0x4056
+			mov r2, #0x5856
 			b sc_out
 sc_0x4057:
-			mov r4, #0x4057
-			mov r5, #0x5857
+			mov r1, #0x4057
+			mov r2, #0x5857
 			b sc_out
 sc_0x4058:
-			mov r4, #0x4058
-			mov r5, #0x5858
+			mov r1, #0x4058
+			mov r2, #0x5858
 			b sc_out
 sc_0x4059:
-			mov r4, #0x4059
-			mov r5, #0x5859
+			mov r1, #0x4059
+			mov r2, #0x5859
 			b sc_out
 sc_0x405A:
-			mov r4, #0x405A
-			mov r5, #0x585A
+			mov r1, #0x405A
+			mov r2, #0x585A
 			b sc_out
 sc_0x405B:
-			mov r4, #0x405B
-			mov r5, #0x585B
+			mov r1, #0x405B
+			mov r2, #0x585B
 			b sc_out
 sc_0x405C:
-			mov r4, #0x405C
-			mov r5, #0x585C
+			mov r1, #0x405C
+			mov r2, #0x585C
 			b sc_out
 sc_0x405D:
-			mov r4, #0x405D
-			mov r5, #0x585D
+			mov r1, #0x405D
+			mov r2, #0x585D
 			b sc_out
 sc_0x405E:
-			mov r4, #0x405E
-			mov r5, #0x585E
+			mov r1, #0x405E
+			mov r2, #0x585E
 			b sc_out
 sc_0x405F:
-			mov r4, #0x405F
-			mov r5, #0x585F
+			mov r1, #0x405F
+			mov r2, #0x585F
 			b sc_out
 sc_0x4140:
-			mov r4, #0x4140
-			mov r5, #0x5840
+			mov r1, #0x4140
+			mov r2, #0x5840
 			b sc_out
 sc_0x4141:
-			mov r4, #0x4141
-			mov r5, #0x5841
+			mov r1, #0x4141
+			mov r2, #0x5841
 			b sc_out
 sc_0x4142:
-			mov r4, #0x4142
-			mov r5, #0x5842
+			mov r1, #0x4142
+			mov r2, #0x5842
 			b sc_out
 sc_0x4143:
-			mov r4, #0x4143
-			mov r5, #0x5843
+			mov r1, #0x4143
+			mov r2, #0x5843
 			b sc_out
 sc_0x4144:
-			mov r4, #0x4144
-			mov r5, #0x5844
+			mov r1, #0x4144
+			mov r2, #0x5844
 			b sc_out
 sc_0x4145:
-			mov r4, #0x4145
-			mov r5, #0x5845
+			mov r1, #0x4145
+			mov r2, #0x5845
 			b sc_out
 sc_0x4146:
-			mov r4, #0x4146
-			mov r5, #0x5846
+			mov r1, #0x4146
+			mov r2, #0x5846
 			b sc_out
 sc_0x4147:
-			mov r4, #0x4147
-			mov r5, #0x5847
+			mov r1, #0x4147
+			mov r2, #0x5847
 			b sc_out
 sc_0x4148:
-			mov r4, #0x4148
-			mov r5, #0x5848
+			mov r1, #0x4148
+			mov r2, #0x5848
 			b sc_out
 sc_0x4149:
-			mov r4, #0x4149
-			mov r5, #0x5849
+			mov r1, #0x4149
+			mov r2, #0x5849
 			b sc_out
 sc_0x414A:
-			mov r4, #0x414A
-			mov r5, #0x584A
+			mov r1, #0x414A
+			mov r2, #0x584A
 			b sc_out
 sc_0x414B:
-			mov r4, #0x414B
-			mov r5, #0x584B
+			mov r1, #0x414B
+			mov r2, #0x584B
 			b sc_out
 sc_0x414C:
-			mov r4, #0x414C
-			mov r5, #0x584C
+			mov r1, #0x414C
+			mov r2, #0x584C
 			b sc_out
 sc_0x414D:
-			mov r4, #0x414D
-			mov r5, #0x584D
+			mov r1, #0x414D
+			mov r2, #0x584D
 			b sc_out
 sc_0x414E:
-			mov r4, #0x414E
-			mov r5, #0x584E
+			mov r1, #0x414E
+			mov r2, #0x584E
 			b sc_out
 sc_0x414F:
-			mov r4, #0x414F
-			mov r5, #0x584F
+			mov r1, #0x414F
+			mov r2, #0x584F
 			b sc_out
 sc_0x4150:
-			mov r4, #0x4150
-			mov r5, #0x5850
+			mov r1, #0x4150
+			mov r2, #0x5850
 			b sc_out
 sc_0x4151:
-			mov r4, #0x4151
-			mov r5, #0x5851
+			mov r1, #0x4151
+			mov r2, #0x5851
 			b sc_out
 sc_0x4152:
-			mov r4, #0x4152
-			mov r5, #0x5852
+			mov r1, #0x4152
+			mov r2, #0x5852
 			b sc_out
 sc_0x4153:
-			mov r4, #0x4153
-			mov r5, #0x5853
+			mov r1, #0x4153
+			mov r2, #0x5853
 			b sc_out
 sc_0x4154:
-			mov r4, #0x4154
-			mov r5, #0x5854
+			mov r1, #0x4154
+			mov r2, #0x5854
 			b sc_out
 sc_0x4155:
-			mov r4, #0x4155
-			mov r5, #0x5855
+			mov r1, #0x4155
+			mov r2, #0x5855
 			b sc_out
 sc_0x4156:
-			mov r4, #0x4156
-			mov r5, #0x5856
+			mov r1, #0x4156
+			mov r2, #0x5856
 			b sc_out
 sc_0x4157:
-			mov r4, #0x4157
-			mov r5, #0x5857
+			mov r1, #0x4157
+			mov r2, #0x5857
 			b sc_out
 sc_0x4158:
-			mov r4, #0x4158
-			mov r5, #0x5858
+			mov r1, #0x4158
+			mov r2, #0x5858
 			b sc_out
 sc_0x4159:
-			mov r4, #0x4159
-			mov r5, #0x5859
+			mov r1, #0x4159
+			mov r2, #0x5859
 			b sc_out
 sc_0x415A:
-			mov r4, #0x415A
-			mov r5, #0x585A
+			mov r1, #0x415A
+			mov r2, #0x585A
 			b sc_out
 sc_0x415B:
-			mov r4, #0x415B
-			mov r5, #0x585B
+			mov r1, #0x415B
+			mov r2, #0x585B
 			b sc_out
 sc_0x415C:
-			mov r4, #0x415C
-			mov r5, #0x585C
+			mov r1, #0x415C
+			mov r2, #0x585C
 			b sc_out
 sc_0x415D:
-			mov r4, #0x415D
-			mov r5, #0x585D
+			mov r1, #0x415D
+			mov r2, #0x585D
 			b sc_out
 sc_0x415E:
-			mov r4, #0x415E
-			mov r5, #0x585E
+			mov r1, #0x415E
+			mov r2, #0x585E
 			b sc_out
 sc_0x415F:
-			mov r4, #0x415F
-			mov r5, #0x585F
+			mov r1, #0x415F
+			mov r2, #0x585F
 			b sc_out
 sc_0x4240:
-			mov r4, #0x4240
-			mov r5, #0x5840
+			mov r1, #0x4240
+			mov r2, #0x5840
 			b sc_out
 sc_0x4241:
-			mov r4, #0x4241
-			mov r5, #0x5841
+			mov r1, #0x4241
+			mov r2, #0x5841
 			b sc_out
 sc_0x4242:
-			mov r4, #0x4242
-			mov r5, #0x5842
+			mov r1, #0x4242
+			mov r2, #0x5842
 			b sc_out
 sc_0x4243:
-			mov r4, #0x4243
-			mov r5, #0x5843
+			mov r1, #0x4243
+			mov r2, #0x5843
 			b sc_out
 sc_0x4244:
-			mov r4, #0x4244
-			mov r5, #0x5844
+			mov r1, #0x4244
+			mov r2, #0x5844
 			b sc_out
 sc_0x4245:
-			mov r4, #0x4245
-			mov r5, #0x5845
+			mov r1, #0x4245
+			mov r2, #0x5845
 			b sc_out
 sc_0x4246:
-			mov r4, #0x4246
-			mov r5, #0x5846
+			mov r1, #0x4246
+			mov r2, #0x5846
 			b sc_out
 sc_0x4247:
-			mov r4, #0x4247
-			mov r5, #0x5847
+			mov r1, #0x4247
+			mov r2, #0x5847
 			b sc_out
 sc_0x4248:
-			mov r4, #0x4248
-			mov r5, #0x5848
+			mov r1, #0x4248
+			mov r2, #0x5848
 			b sc_out
 sc_0x4249:
-			mov r4, #0x4249
-			mov r5, #0x5849
+			mov r1, #0x4249
+			mov r2, #0x5849
 			b sc_out
 sc_0x424A:
-			mov r4, #0x424A
-			mov r5, #0x584A
+			mov r1, #0x424A
+			mov r2, #0x584A
 			b sc_out
 sc_0x424B:
-			mov r4, #0x424B
-			mov r5, #0x584B
+			mov r1, #0x424B
+			mov r2, #0x584B
 			b sc_out
 sc_0x424C:
-			mov r4, #0x424C
-			mov r5, #0x584C
+			mov r1, #0x424C
+			mov r2, #0x584C
 			b sc_out
 sc_0x424D:
-			mov r4, #0x424D
-			mov r5, #0x584D
+			mov r1, #0x424D
+			mov r2, #0x584D
 			b sc_out
 sc_0x424E:
-			mov r4, #0x424E
-			mov r5, #0x584E
+			mov r1, #0x424E
+			mov r2, #0x584E
 			b sc_out
 sc_0x424F:
-			mov r4, #0x424F
-			mov r5, #0x584F
+			mov r1, #0x424F
+			mov r2, #0x584F
 			b sc_out
 sc_0x4250:
-			mov r4, #0x4250
-			mov r5, #0x5850
+			mov r1, #0x4250
+			mov r2, #0x5850
 			b sc_out
 sc_0x4251:
-			mov r4, #0x4251
-			mov r5, #0x5851
+			mov r1, #0x4251
+			mov r2, #0x5851
 			b sc_out
 sc_0x4252:
-			mov r4, #0x4252
-			mov r5, #0x5852
+			mov r1, #0x4252
+			mov r2, #0x5852
 			b sc_out
 sc_0x4253:
-			mov r4, #0x4253
-			mov r5, #0x5853
+			mov r1, #0x4253
+			mov r2, #0x5853
 			b sc_out
 sc_0x4254:
-			mov r4, #0x4254
-			mov r5, #0x5854
+			mov r1, #0x4254
+			mov r2, #0x5854
 			b sc_out
 sc_0x4255:
-			mov r4, #0x4255
-			mov r5, #0x5855
+			mov r1, #0x4255
+			mov r2, #0x5855
 			b sc_out
 sc_0x4256:
-			mov r4, #0x4256
-			mov r5, #0x5856
+			mov r1, #0x4256
+			mov r2, #0x5856
 			b sc_out
 sc_0x4257:
-			mov r4, #0x4257
-			mov r5, #0x5857
+			mov r1, #0x4257
+			mov r2, #0x5857
 			b sc_out
 sc_0x4258:
-			mov r4, #0x4258
-			mov r5, #0x5858
+			mov r1, #0x4258
+			mov r2, #0x5858
 			b sc_out
 sc_0x4259:
-			mov r4, #0x4259
-			mov r5, #0x5859
+			mov r1, #0x4259
+			mov r2, #0x5859
 			b sc_out
 sc_0x425A:
-			mov r4, #0x425A
-			mov r5, #0x585A
+			mov r1, #0x425A
+			mov r2, #0x585A
 			b sc_out
 sc_0x425B:
-			mov r4, #0x425B
-			mov r5, #0x585B
+			mov r1, #0x425B
+			mov r2, #0x585B
 			b sc_out
 sc_0x425C:
-			mov r4, #0x425C
-			mov r5, #0x585C
+			mov r1, #0x425C
+			mov r2, #0x585C
 			b sc_out
 sc_0x425D:
-			mov r4, #0x425D
-			mov r5, #0x585D
+			mov r1, #0x425D
+			mov r2, #0x585D
 			b sc_out
 sc_0x425E:
-			mov r4, #0x425E
-			mov r5, #0x585E
+			mov r1, #0x425E
+			mov r2, #0x585E
 			b sc_out
 sc_0x425F:
-			mov r4, #0x425F
-			mov r5, #0x585F
+			mov r1, #0x425F
+			mov r2, #0x585F
 			b sc_out
 sc_0x4340:
-			mov r4, #0x4340
-			mov r5, #0x5840
+			mov r1, #0x4340
+			mov r2, #0x5840
 			b sc_out
 sc_0x4341:
-			mov r4, #0x4341
-			mov r5, #0x5841
+			mov r1, #0x4341
+			mov r2, #0x5841
 			b sc_out
 sc_0x4342:
-			mov r4, #0x4342
-			mov r5, #0x5842
+			mov r1, #0x4342
+			mov r2, #0x5842
 			b sc_out
 sc_0x4343:
-			mov r4, #0x4343
-			mov r5, #0x5843
+			mov r1, #0x4343
+			mov r2, #0x5843
 			b sc_out
 sc_0x4344:
-			mov r4, #0x4344
-			mov r5, #0x5844
+			mov r1, #0x4344
+			mov r2, #0x5844
 			b sc_out
 sc_0x4345:
-			mov r4, #0x4345
-			mov r5, #0x5845
+			mov r1, #0x4345
+			mov r2, #0x5845
 			b sc_out
 sc_0x4346:
-			mov r4, #0x4346
-			mov r5, #0x5846
+			mov r1, #0x4346
+			mov r2, #0x5846
 			b sc_out
 sc_0x4347:
-			mov r4, #0x4347
-			mov r5, #0x5847
+			mov r1, #0x4347
+			mov r2, #0x5847
 			b sc_out
 sc_0x4348:
-			mov r4, #0x4348
-			mov r5, #0x5848
+			mov r1, #0x4348
+			mov r2, #0x5848
 			b sc_out
 sc_0x4349:
-			mov r4, #0x4349
-			mov r5, #0x5849
+			mov r1, #0x4349
+			mov r2, #0x5849
 			b sc_out
 sc_0x434A:
-			mov r4, #0x434A
-			mov r5, #0x584A
+			mov r1, #0x434A
+			mov r2, #0x584A
 			b sc_out
 sc_0x434B:
-			mov r4, #0x434B
-			mov r5, #0x584B
+			mov r1, #0x434B
+			mov r2, #0x584B
 			b sc_out
 sc_0x434C:
-			mov r4, #0x434C
-			mov r5, #0x584C
+			mov r1, #0x434C
+			mov r2, #0x584C
 			b sc_out
 sc_0x434D:
-			mov r4, #0x434D
-			mov r5, #0x584D
+			mov r1, #0x434D
+			mov r2, #0x584D
 			b sc_out
 sc_0x434E:
-			mov r4, #0x434E
-			mov r5, #0x584E
+			mov r1, #0x434E
+			mov r2, #0x584E
 			b sc_out
 sc_0x434F:
-			mov r4, #0x434F
-			mov r5, #0x584F
+			mov r1, #0x434F
+			mov r2, #0x584F
 			b sc_out
 sc_0x4350:
-			mov r4, #0x4350
-			mov r5, #0x5850
+			mov r1, #0x4350
+			mov r2, #0x5850
 			b sc_out
 sc_0x4351:
-			mov r4, #0x4351
-			mov r5, #0x5851
+			mov r1, #0x4351
+			mov r2, #0x5851
 			b sc_out
 sc_0x4352:
-			mov r4, #0x4352
-			mov r5, #0x5852
+			mov r1, #0x4352
+			mov r2, #0x5852
 			b sc_out
 sc_0x4353:
-			mov r4, #0x4353
-			mov r5, #0x5853
+			mov r1, #0x4353
+			mov r2, #0x5853
 			b sc_out
 sc_0x4354:
-			mov r4, #0x4354
-			mov r5, #0x5854
+			mov r1, #0x4354
+			mov r2, #0x5854
 			b sc_out
 sc_0x4355:
-			mov r4, #0x4355
-			mov r5, #0x5855
+			mov r1, #0x4355
+			mov r2, #0x5855
 			b sc_out
 sc_0x4356:
-			mov r4, #0x4356
-			mov r5, #0x5856
+			mov r1, #0x4356
+			mov r2, #0x5856
 			b sc_out
 sc_0x4357:
-			mov r4, #0x4357
-			mov r5, #0x5857
+			mov r1, #0x4357
+			mov r2, #0x5857
 			b sc_out
 sc_0x4358:
-			mov r4, #0x4358
-			mov r5, #0x5858
+			mov r1, #0x4358
+			mov r2, #0x5858
 			b sc_out
 sc_0x4359:
-			mov r4, #0x4359
-			mov r5, #0x5859
+			mov r1, #0x4359
+			mov r2, #0x5859
 			b sc_out
 sc_0x435A:
-			mov r4, #0x435A
-			mov r5, #0x585A
+			mov r1, #0x435A
+			mov r2, #0x585A
 			b sc_out
 sc_0x435B:
-			mov r4, #0x435B
-			mov r5, #0x585B
+			mov r1, #0x435B
+			mov r2, #0x585B
 			b sc_out
 sc_0x435C:
-			mov r4, #0x435C
-			mov r5, #0x585C
+			mov r1, #0x435C
+			mov r2, #0x585C
 			b sc_out
 sc_0x435D:
-			mov r4, #0x435D
-			mov r5, #0x585D
+			mov r1, #0x435D
+			mov r2, #0x585D
 			b sc_out
 sc_0x435E:
-			mov r4, #0x435E
-			mov r5, #0x585E
+			mov r1, #0x435E
+			mov r2, #0x585E
 			b sc_out
 sc_0x435F:
-			mov r4, #0x435F
-			mov r5, #0x585F
+			mov r1, #0x435F
+			mov r2, #0x585F
 			b sc_out
 sc_0x4440:
-			mov r4, #0x4440
-			mov r5, #0x5840
+			mov r1, #0x4440
+			mov r2, #0x5840
 			b sc_out
 sc_0x4441:
-			mov r4, #0x4441
-			mov r5, #0x5841
+			mov r1, #0x4441
+			mov r2, #0x5841
 			b sc_out
 sc_0x4442:
-			mov r4, #0x4442
-			mov r5, #0x5842
+			mov r1, #0x4442
+			mov r2, #0x5842
 			b sc_out
 sc_0x4443:
-			mov r4, #0x4443
-			mov r5, #0x5843
+			mov r1, #0x4443
+			mov r2, #0x5843
 			b sc_out
 sc_0x4444:
-			mov r4, #0x4444
-			mov r5, #0x5844
+			mov r1, #0x4444
+			mov r2, #0x5844
 			b sc_out
 sc_0x4445:
-			mov r4, #0x4445
-			mov r5, #0x5845
+			mov r1, #0x4445
+			mov r2, #0x5845
 			b sc_out
 sc_0x4446:
-			mov r4, #0x4446
-			mov r5, #0x5846
+			mov r1, #0x4446
+			mov r2, #0x5846
 			b sc_out
 sc_0x4447:
-			mov r4, #0x4447
-			mov r5, #0x5847
+			mov r1, #0x4447
+			mov r2, #0x5847
 			b sc_out
 sc_0x4448:
-			mov r4, #0x4448
-			mov r5, #0x5848
+			mov r1, #0x4448
+			mov r2, #0x5848
 			b sc_out
 sc_0x4449:
-			mov r4, #0x4449
-			mov r5, #0x5849
+			mov r1, #0x4449
+			mov r2, #0x5849
 			b sc_out
 sc_0x444A:
-			mov r4, #0x444A
-			mov r5, #0x584A
+			mov r1, #0x444A
+			mov r2, #0x584A
 			b sc_out
 sc_0x444B:
-			mov r4, #0x444B
-			mov r5, #0x584B
+			mov r1, #0x444B
+			mov r2, #0x584B
 			b sc_out
 sc_0x444C:
-			mov r4, #0x444C
-			mov r5, #0x584C
+			mov r1, #0x444C
+			mov r2, #0x584C
 			b sc_out
 sc_0x444D:
-			mov r4, #0x444D
-			mov r5, #0x584D
+			mov r1, #0x444D
+			mov r2, #0x584D
 			b sc_out
 sc_0x444E:
-			mov r4, #0x444E
-			mov r5, #0x584E
+			mov r1, #0x444E
+			mov r2, #0x584E
 			b sc_out
 sc_0x444F:
-			mov r4, #0x444F
-			mov r5, #0x584F
+			mov r1, #0x444F
+			mov r2, #0x584F
 			b sc_out
 sc_0x4450:
-			mov r4, #0x4450
-			mov r5, #0x5850
+			mov r1, #0x4450
+			mov r2, #0x5850
 			b sc_out
 sc_0x4451:
-			mov r4, #0x4451
-			mov r5, #0x5851
+			mov r1, #0x4451
+			mov r2, #0x5851
 			b sc_out
 sc_0x4452:
-			mov r4, #0x4452
-			mov r5, #0x5852
+			mov r1, #0x4452
+			mov r2, #0x5852
 			b sc_out
 sc_0x4453:
-			mov r4, #0x4453
-			mov r5, #0x5853
+			mov r1, #0x4453
+			mov r2, #0x5853
 			b sc_out
 sc_0x4454:
-			mov r4, #0x4454
-			mov r5, #0x5854
+			mov r1, #0x4454
+			mov r2, #0x5854
 			b sc_out
 sc_0x4455:
-			mov r4, #0x4455
-			mov r5, #0x5855
+			mov r1, #0x4455
+			mov r2, #0x5855
 			b sc_out
 sc_0x4456:
-			mov r4, #0x4456
-			mov r5, #0x5856
+			mov r1, #0x4456
+			mov r2, #0x5856
 			b sc_out
 sc_0x4457:
-			mov r4, #0x4457
-			mov r5, #0x5857
+			mov r1, #0x4457
+			mov r2, #0x5857
 			b sc_out
 sc_0x4458:
-			mov r4, #0x4458
-			mov r5, #0x5858
+			mov r1, #0x4458
+			mov r2, #0x5858
 			b sc_out
 sc_0x4459:
-			mov r4, #0x4459
-			mov r5, #0x5859
+			mov r1, #0x4459
+			mov r2, #0x5859
 			b sc_out
 sc_0x445A:
-			mov r4, #0x445A
-			mov r5, #0x585A
+			mov r1, #0x445A
+			mov r2, #0x585A
 			b sc_out
 sc_0x445B:
-			mov r4, #0x445B
-			mov r5, #0x585B
+			mov r1, #0x445B
+			mov r2, #0x585B
 			b sc_out
 sc_0x445C:
-			mov r4, #0x445C
-			mov r5, #0x585C
+			mov r1, #0x445C
+			mov r2, #0x585C
 			b sc_out
 sc_0x445D:
-			mov r4, #0x445D
-			mov r5, #0x585D
+			mov r1, #0x445D
+			mov r2, #0x585D
 			b sc_out
 sc_0x445E:
-			mov r4, #0x445E
-			mov r5, #0x585E
+			mov r1, #0x445E
+			mov r2, #0x585E
 			b sc_out
 sc_0x445F:
-			mov r4, #0x445F
-			mov r5, #0x585F
+			mov r1, #0x445F
+			mov r2, #0x585F
 			b sc_out
 sc_0x4540:
-			mov r4, #0x4540
-			mov r5, #0x5840
+			mov r1, #0x4540
+			mov r2, #0x5840
 			b sc_out
 sc_0x4541:
-			mov r4, #0x4541
-			mov r5, #0x5841
+			mov r1, #0x4541
+			mov r2, #0x5841
 			b sc_out
 sc_0x4542:
-			mov r4, #0x4542
-			mov r5, #0x5842
+			mov r1, #0x4542
+			mov r2, #0x5842
 			b sc_out
 sc_0x4543:
-			mov r4, #0x4543
-			mov r5, #0x5843
+			mov r1, #0x4543
+			mov r2, #0x5843
 			b sc_out
 sc_0x4544:
-			mov r4, #0x4544
-			mov r5, #0x5844
+			mov r1, #0x4544
+			mov r2, #0x5844
 			b sc_out
 sc_0x4545:
-			mov r4, #0x4545
-			mov r5, #0x5845
+			mov r1, #0x4545
+			mov r2, #0x5845
 			b sc_out
 sc_0x4546:
-			mov r4, #0x4546
-			mov r5, #0x5846
+			mov r1, #0x4546
+			mov r2, #0x5846
 			b sc_out
 sc_0x4547:
-			mov r4, #0x4547
-			mov r5, #0x5847
+			mov r1, #0x4547
+			mov r2, #0x5847
 			b sc_out
 sc_0x4548:
-			mov r4, #0x4548
-			mov r5, #0x5848
+			mov r1, #0x4548
+			mov r2, #0x5848
 			b sc_out
 sc_0x4549:
-			mov r4, #0x4549
-			mov r5, #0x5849
+			mov r1, #0x4549
+			mov r2, #0x5849
 			b sc_out
 sc_0x454A:
-			mov r4, #0x454A
-			mov r5, #0x584A
+			mov r1, #0x454A
+			mov r2, #0x584A
 			b sc_out
 sc_0x454B:
-			mov r4, #0x454B
-			mov r5, #0x584B
+			mov r1, #0x454B
+			mov r2, #0x584B
 			b sc_out
 sc_0x454C:
-			mov r4, #0x454C
-			mov r5, #0x584C
+			mov r1, #0x454C
+			mov r2, #0x584C
 			b sc_out
 sc_0x454D:
-			mov r4, #0x454D
-			mov r5, #0x584D
+			mov r1, #0x454D
+			mov r2, #0x584D
 			b sc_out
 sc_0x454E:
-			mov r4, #0x454E
-			mov r5, #0x584E
+			mov r1, #0x454E
+			mov r2, #0x584E
 			b sc_out
 sc_0x454F:
-			mov r4, #0x454F
-			mov r5, #0x584F
+			mov r1, #0x454F
+			mov r2, #0x584F
 			b sc_out
 sc_0x4550:
-			mov r4, #0x4550
-			mov r5, #0x5850
+			mov r1, #0x4550
+			mov r2, #0x5850
 			b sc_out
 sc_0x4551:
-			mov r4, #0x4551
-			mov r5, #0x5851
+			mov r1, #0x4551
+			mov r2, #0x5851
 			b sc_out
 sc_0x4552:
-			mov r4, #0x4552
-			mov r5, #0x5852
+			mov r1, #0x4552
+			mov r2, #0x5852
 			b sc_out
 sc_0x4553:
-			mov r4, #0x4553
-			mov r5, #0x5853
+			mov r1, #0x4553
+			mov r2, #0x5853
 			b sc_out
 sc_0x4554:
-			mov r4, #0x4554
-			mov r5, #0x5854
+			mov r1, #0x4554
+			mov r2, #0x5854
 			b sc_out
 sc_0x4555:
-			mov r4, #0x4555
-			mov r5, #0x5855
+			mov r1, #0x4555
+			mov r2, #0x5855
 			b sc_out
 sc_0x4556:
-			mov r4, #0x4556
-			mov r5, #0x5856
+			mov r1, #0x4556
+			mov r2, #0x5856
 			b sc_out
 sc_0x4557:
-			mov r4, #0x4557
-			mov r5, #0x5857
+			mov r1, #0x4557
+			mov r2, #0x5857
 			b sc_out
 sc_0x4558:
-			mov r4, #0x4558
-			mov r5, #0x5858
+			mov r1, #0x4558
+			mov r2, #0x5858
 			b sc_out
 sc_0x4559:
-			mov r4, #0x4559
-			mov r5, #0x5859
+			mov r1, #0x4559
+			mov r2, #0x5859
 			b sc_out
 sc_0x455A:
-			mov r4, #0x455A
-			mov r5, #0x585A
+			mov r1, #0x455A
+			mov r2, #0x585A
 			b sc_out
 sc_0x455B:
-			mov r4, #0x455B
-			mov r5, #0x585B
+			mov r1, #0x455B
+			mov r2, #0x585B
 			b sc_out
 sc_0x455C:
-			mov r4, #0x455C
-			mov r5, #0x585C
+			mov r1, #0x455C
+			mov r2, #0x585C
 			b sc_out
 sc_0x455D:
-			mov r4, #0x455D
-			mov r5, #0x585D
+			mov r1, #0x455D
+			mov r2, #0x585D
 			b sc_out
 sc_0x455E:
-			mov r4, #0x455E
-			mov r5, #0x585E
+			mov r1, #0x455E
+			mov r2, #0x585E
 			b sc_out
 sc_0x455F:
-			mov r4, #0x455F
-			mov r5, #0x585F
+			mov r1, #0x455F
+			mov r2, #0x585F
 			b sc_out
 sc_0x4640:
-			mov r4, #0x4640
-			mov r5, #0x5840
+			mov r1, #0x4640
+			mov r2, #0x5840
 			b sc_out
 sc_0x4641:
-			mov r4, #0x4641
-			mov r5, #0x5841
+			mov r1, #0x4641
+			mov r2, #0x5841
 			b sc_out
 sc_0x4642:
-			mov r4, #0x4642
-			mov r5, #0x5842
+			mov r1, #0x4642
+			mov r2, #0x5842
 			b sc_out
 sc_0x4643:
-			mov r4, #0x4643
-			mov r5, #0x5843
+			mov r1, #0x4643
+			mov r2, #0x5843
 			b sc_out
 sc_0x4644:
-			mov r4, #0x4644
-			mov r5, #0x5844
+			mov r1, #0x4644
+			mov r2, #0x5844
 			b sc_out
 sc_0x4645:
-			mov r4, #0x4645
-			mov r5, #0x5845
+			mov r1, #0x4645
+			mov r2, #0x5845
 			b sc_out
 sc_0x4646:
-			mov r4, #0x4646
-			mov r5, #0x5846
+			mov r1, #0x4646
+			mov r2, #0x5846
 			b sc_out
 sc_0x4647:
-			mov r4, #0x4647
-			mov r5, #0x5847
+			mov r1, #0x4647
+			mov r2, #0x5847
 			b sc_out
 sc_0x4648:
-			mov r4, #0x4648
-			mov r5, #0x5848
+			mov r1, #0x4648
+			mov r2, #0x5848
 			b sc_out
 sc_0x4649:
-			mov r4, #0x4649
-			mov r5, #0x5849
+			mov r1, #0x4649
+			mov r2, #0x5849
 			b sc_out
 sc_0x464A:
-			mov r4, #0x464A
-			mov r5, #0x584A
+			mov r1, #0x464A
+			mov r2, #0x584A
 			b sc_out
 sc_0x464B:
-			mov r4, #0x464B
-			mov r5, #0x584B
+			mov r1, #0x464B
+			mov r2, #0x584B
 			b sc_out
 sc_0x464C:
-			mov r4, #0x464C
-			mov r5, #0x584C
+			mov r1, #0x464C
+			mov r2, #0x584C
 			b sc_out
 sc_0x464D:
-			mov r4, #0x464D
-			mov r5, #0x584D
+			mov r1, #0x464D
+			mov r2, #0x584D
 			b sc_out
 sc_0x464E:
-			mov r4, #0x464E
-			mov r5, #0x584E
+			mov r1, #0x464E
+			mov r2, #0x584E
 			b sc_out
 sc_0x464F:
-			mov r4, #0x464F
-			mov r5, #0x584F
+			mov r1, #0x464F
+			mov r2, #0x584F
 			b sc_out
 sc_0x4650:
-			mov r4, #0x4650
-			mov r5, #0x5850
+			mov r1, #0x4650
+			mov r2, #0x5850
 			b sc_out
 sc_0x4651:
-			mov r4, #0x4651
-			mov r5, #0x5851
+			mov r1, #0x4651
+			mov r2, #0x5851
 			b sc_out
 sc_0x4652:
-			mov r4, #0x4652
-			mov r5, #0x5852
+			mov r1, #0x4652
+			mov r2, #0x5852
 			b sc_out
 sc_0x4653:
-			mov r4, #0x4653
-			mov r5, #0x5853
+			mov r1, #0x4653
+			mov r2, #0x5853
 			b sc_out
 sc_0x4654:
-			mov r4, #0x4654
-			mov r5, #0x5854
+			mov r1, #0x4654
+			mov r2, #0x5854
 			b sc_out
 sc_0x4655:
-			mov r4, #0x4655
-			mov r5, #0x5855
+			mov r1, #0x4655
+			mov r2, #0x5855
 			b sc_out
 sc_0x4656:
-			mov r4, #0x4656
-			mov r5, #0x5856
+			mov r1, #0x4656
+			mov r2, #0x5856
 			b sc_out
 sc_0x4657:
-			mov r4, #0x4657
-			mov r5, #0x5857
+			mov r1, #0x4657
+			mov r2, #0x5857
 			b sc_out
 sc_0x4658:
-			mov r4, #0x4658
-			mov r5, #0x5858
+			mov r1, #0x4658
+			mov r2, #0x5858
 			b sc_out
 sc_0x4659:
-			mov r4, #0x4659
-			mov r5, #0x5859
+			mov r1, #0x4659
+			mov r2, #0x5859
 			b sc_out
 sc_0x465A:
-			mov r4, #0x465A
-			mov r5, #0x585A
+			mov r1, #0x465A
+			mov r2, #0x585A
 			b sc_out
 sc_0x465B:
-			mov r4, #0x465B
-			mov r5, #0x585B
+			mov r1, #0x465B
+			mov r2, #0x585B
 			b sc_out
 sc_0x465C:
-			mov r4, #0x465C
-			mov r5, #0x585C
+			mov r1, #0x465C
+			mov r2, #0x585C
 			b sc_out
 sc_0x465D:
-			mov r4, #0x465D
-			mov r5, #0x585D
+			mov r1, #0x465D
+			mov r2, #0x585D
 			b sc_out
 sc_0x465E:
-			mov r4, #0x465E
-			mov r5, #0x585E
+			mov r1, #0x465E
+			mov r2, #0x585E
 			b sc_out
 sc_0x465F:
-			mov r4, #0x465F
-			mov r5, #0x585F
+			mov r1, #0x465F
+			mov r2, #0x585F
 			b sc_out
 sc_0x4740:
-			mov r4, #0x4740
-			mov r5, #0x5840
+			mov r1, #0x4740
+			mov r2, #0x5840
 			b sc_out
 sc_0x4741:
-			mov r4, #0x4741
-			mov r5, #0x5841
+			mov r1, #0x4741
+			mov r2, #0x5841
 			b sc_out
 sc_0x4742:
-			mov r4, #0x4742
-			mov r5, #0x5842
+			mov r1, #0x4742
+			mov r2, #0x5842
 			b sc_out
 sc_0x4743:
-			mov r4, #0x4743
-			mov r5, #0x5843
+			mov r1, #0x4743
+			mov r2, #0x5843
 			b sc_out
 sc_0x4744:
-			mov r4, #0x4744
-			mov r5, #0x5844
+			mov r1, #0x4744
+			mov r2, #0x5844
 			b sc_out
 sc_0x4745:
-			mov r4, #0x4745
-			mov r5, #0x5845
+			mov r1, #0x4745
+			mov r2, #0x5845
 			b sc_out
 sc_0x4746:
-			mov r4, #0x4746
-			mov r5, #0x5846
+			mov r1, #0x4746
+			mov r2, #0x5846
 			b sc_out
 sc_0x4747:
-			mov r4, #0x4747
-			mov r5, #0x5847
+			mov r1, #0x4747
+			mov r2, #0x5847
 			b sc_out
 sc_0x4748:
-			mov r4, #0x4748
-			mov r5, #0x5848
+			mov r1, #0x4748
+			mov r2, #0x5848
 			b sc_out
 sc_0x4749:
-			mov r4, #0x4749
-			mov r5, #0x5849
+			mov r1, #0x4749
+			mov r2, #0x5849
 			b sc_out
 sc_0x474A:
-			mov r4, #0x474A
-			mov r5, #0x584A
+			mov r1, #0x474A
+			mov r2, #0x584A
 			b sc_out
 sc_0x474B:
-			mov r4, #0x474B
-			mov r5, #0x584B
+			mov r1, #0x474B
+			mov r2, #0x584B
 			b sc_out
 sc_0x474C:
-			mov r4, #0x474C
-			mov r5, #0x584C
+			mov r1, #0x474C
+			mov r2, #0x584C
 			b sc_out
 sc_0x474D:
-			mov r4, #0x474D
-			mov r5, #0x584D
+			mov r1, #0x474D
+			mov r2, #0x584D
 			b sc_out
 sc_0x474E:
-			mov r4, #0x474E
-			mov r5, #0x584E
+			mov r1, #0x474E
+			mov r2, #0x584E
 			b sc_out
 sc_0x474F:
-			mov r4, #0x474F
-			mov r5, #0x584F
+			mov r1, #0x474F
+			mov r2, #0x584F
 			b sc_out
 sc_0x4750:
-			mov r4, #0x4750
-			mov r5, #0x5850
+			mov r1, #0x4750
+			mov r2, #0x5850
 			b sc_out
 sc_0x4751:
-			mov r4, #0x4751
-			mov r5, #0x5851
+			mov r1, #0x4751
+			mov r2, #0x5851
 			b sc_out
 sc_0x4752:
-			mov r4, #0x4752
-			mov r5, #0x5852
+			mov r1, #0x4752
+			mov r2, #0x5852
 			b sc_out
 sc_0x4753:
-			mov r4, #0x4753
-			mov r5, #0x5853
+			mov r1, #0x4753
+			mov r2, #0x5853
 			b sc_out
 sc_0x4754:
-			mov r4, #0x4754
-			mov r5, #0x5854
+			mov r1, #0x4754
+			mov r2, #0x5854
 			b sc_out
 sc_0x4755:
-			mov r4, #0x4755
-			mov r5, #0x5855
+			mov r1, #0x4755
+			mov r2, #0x5855
 			b sc_out
 sc_0x4756:
-			mov r4, #0x4756
-			mov r5, #0x5856
+			mov r1, #0x4756
+			mov r2, #0x5856
 			b sc_out
 sc_0x4757:
-			mov r4, #0x4757
-			mov r5, #0x5857
+			mov r1, #0x4757
+			mov r2, #0x5857
 			b sc_out
 sc_0x4758:
-			mov r4, #0x4758
-			mov r5, #0x5858
+			mov r1, #0x4758
+			mov r2, #0x5858
 			b sc_out
 sc_0x4759:
-			mov r4, #0x4759
-			mov r5, #0x5859
+			mov r1, #0x4759
+			mov r2, #0x5859
 			b sc_out
 sc_0x475A:
-			mov r4, #0x475A
-			mov r5, #0x585A
+			mov r1, #0x475A
+			mov r2, #0x585A
 			b sc_out
 sc_0x475B:
-			mov r4, #0x475B
-			mov r5, #0x585B
+			mov r1, #0x475B
+			mov r2, #0x585B
 			b sc_out
 sc_0x475C:
-			mov r4, #0x475C
-			mov r5, #0x585C
+			mov r1, #0x475C
+			mov r2, #0x585C
 			b sc_out
 sc_0x475D:
-			mov r4, #0x475D
-			mov r5, #0x585D
+			mov r1, #0x475D
+			mov r2, #0x585D
 			b sc_out
 sc_0x475E:
-			mov r4, #0x475E
-			mov r5, #0x585E
+			mov r1, #0x475E
+			mov r2, #0x585E
 			b sc_out
 sc_0x475F:
-			mov r4, #0x475F
-			mov r5, #0x585F
+			mov r1, #0x475F
+			mov r2, #0x585F
 			b sc_out
 sc_0x4060:
-			mov r4, #0x4060
-			mov r5, #0x5860
+			mov r1, #0x4060
+			mov r2, #0x5860
 			b sc_out
 sc_0x4061:
-			mov r4, #0x4061
-			mov r5, #0x5861
+			mov r1, #0x4061
+			mov r2, #0x5861
 			b sc_out
 sc_0x4062:
-			mov r4, #0x4062
-			mov r5, #0x5862
+			mov r1, #0x4062
+			mov r2, #0x5862
 			b sc_out
 sc_0x4063:
-			mov r4, #0x4063
-			mov r5, #0x5863
+			mov r1, #0x4063
+			mov r2, #0x5863
 			b sc_out
 sc_0x4064:
-			mov r4, #0x4064
-			mov r5, #0x5864
+			mov r1, #0x4064
+			mov r2, #0x5864
 			b sc_out
 sc_0x4065:
-			mov r4, #0x4065
-			mov r5, #0x5865
+			mov r1, #0x4065
+			mov r2, #0x5865
 			b sc_out
 sc_0x4066:
-			mov r4, #0x4066
-			mov r5, #0x5866
+			mov r1, #0x4066
+			mov r2, #0x5866
 			b sc_out
 sc_0x4067:
-			mov r4, #0x4067
-			mov r5, #0x5867
+			mov r1, #0x4067
+			mov r2, #0x5867
 			b sc_out
 sc_0x4068:
-			mov r4, #0x4068
-			mov r5, #0x5868
+			mov r1, #0x4068
+			mov r2, #0x5868
 			b sc_out
 sc_0x4069:
-			mov r4, #0x4069
-			mov r5, #0x5869
+			mov r1, #0x4069
+			mov r2, #0x5869
 			b sc_out
 sc_0x406A:
-			mov r4, #0x406A
-			mov r5, #0x586A
+			mov r1, #0x406A
+			mov r2, #0x586A
 			b sc_out
 sc_0x406B:
-			mov r4, #0x406B
-			mov r5, #0x586B
+			mov r1, #0x406B
+			mov r2, #0x586B
 			b sc_out
 sc_0x406C:
-			mov r4, #0x406C
-			mov r5, #0x586C
+			mov r1, #0x406C
+			mov r2, #0x586C
 			b sc_out
 sc_0x406D:
-			mov r4, #0x406D
-			mov r5, #0x586D
+			mov r1, #0x406D
+			mov r2, #0x586D
 			b sc_out
 sc_0x406E:
-			mov r4, #0x406E
-			mov r5, #0x586E
+			mov r1, #0x406E
+			mov r2, #0x586E
 			b sc_out
 sc_0x406F:
-			mov r4, #0x406F
-			mov r5, #0x586F
+			mov r1, #0x406F
+			mov r2, #0x586F
 			b sc_out
 sc_0x4070:
-			mov r4, #0x4070
-			mov r5, #0x5870
+			mov r1, #0x4070
+			mov r2, #0x5870
 			b sc_out
 sc_0x4071:
-			mov r4, #0x4071
-			mov r5, #0x5871
+			mov r1, #0x4071
+			mov r2, #0x5871
 			b sc_out
 sc_0x4072:
-			mov r4, #0x4072
-			mov r5, #0x5872
+			mov r1, #0x4072
+			mov r2, #0x5872
 			b sc_out
 sc_0x4073:
-			mov r4, #0x4073
-			mov r5, #0x5873
+			mov r1, #0x4073
+			mov r2, #0x5873
 			b sc_out
 sc_0x4074:
-			mov r4, #0x4074
-			mov r5, #0x5874
+			mov r1, #0x4074
+			mov r2, #0x5874
 			b sc_out
 sc_0x4075:
-			mov r4, #0x4075
-			mov r5, #0x5875
+			mov r1, #0x4075
+			mov r2, #0x5875
 			b sc_out
 sc_0x4076:
-			mov r4, #0x4076
-			mov r5, #0x5876
+			mov r1, #0x4076
+			mov r2, #0x5876
 			b sc_out
 sc_0x4077:
-			mov r4, #0x4077
-			mov r5, #0x5877
+			mov r1, #0x4077
+			mov r2, #0x5877
 			b sc_out
 sc_0x4078:
-			mov r4, #0x4078
-			mov r5, #0x5878
+			mov r1, #0x4078
+			mov r2, #0x5878
 			b sc_out
 sc_0x4079:
-			mov r4, #0x4079
-			mov r5, #0x5879
+			mov r1, #0x4079
+			mov r2, #0x5879
 			b sc_out
 sc_0x407A:
-			mov r4, #0x407A
-			mov r5, #0x587A
+			mov r1, #0x407A
+			mov r2, #0x587A
 			b sc_out
 sc_0x407B:
-			mov r4, #0x407B
-			mov r5, #0x587B
+			mov r1, #0x407B
+			mov r2, #0x587B
 			b sc_out
 sc_0x407C:
-			mov r4, #0x407C
-			mov r5, #0x587C
+			mov r1, #0x407C
+			mov r2, #0x587C
 			b sc_out
 sc_0x407D:
-			mov r4, #0x407D
-			mov r5, #0x587D
+			mov r1, #0x407D
+			mov r2, #0x587D
 			b sc_out
 sc_0x407E:
-			mov r4, #0x407E
-			mov r5, #0x587E
+			mov r1, #0x407E
+			mov r2, #0x587E
 			b sc_out
 sc_0x407F:
-			mov r4, #0x407F
-			mov r5, #0x587F
+			mov r1, #0x407F
+			mov r2, #0x587F
 			b sc_out
 sc_0x4160:
-			mov r4, #0x4160
-			mov r5, #0x5860
+			mov r1, #0x4160
+			mov r2, #0x5860
 			b sc_out
 sc_0x4161:
-			mov r4, #0x4161
-			mov r5, #0x5861
+			mov r1, #0x4161
+			mov r2, #0x5861
 			b sc_out
 sc_0x4162:
-			mov r4, #0x4162
-			mov r5, #0x5862
+			mov r1, #0x4162
+			mov r2, #0x5862
 			b sc_out
 sc_0x4163:
-			mov r4, #0x4163
-			mov r5, #0x5863
+			mov r1, #0x4163
+			mov r2, #0x5863
 			b sc_out
 sc_0x4164:
-			mov r4, #0x4164
-			mov r5, #0x5864
+			mov r1, #0x4164
+			mov r2, #0x5864
 			b sc_out
 sc_0x4165:
-			mov r4, #0x4165
-			mov r5, #0x5865
+			mov r1, #0x4165
+			mov r2, #0x5865
 			b sc_out
 sc_0x4166:
-			mov r4, #0x4166
-			mov r5, #0x5866
+			mov r1, #0x4166
+			mov r2, #0x5866
 			b sc_out
 sc_0x4167:
-			mov r4, #0x4167
-			mov r5, #0x5867
+			mov r1, #0x4167
+			mov r2, #0x5867
 			b sc_out
 sc_0x4168:
-			mov r4, #0x4168
-			mov r5, #0x5868
+			mov r1, #0x4168
+			mov r2, #0x5868
 			b sc_out
 sc_0x4169:
-			mov r4, #0x4169
-			mov r5, #0x5869
+			mov r1, #0x4169
+			mov r2, #0x5869
 			b sc_out
 sc_0x416A:
-			mov r4, #0x416A
-			mov r5, #0x586A
+			mov r1, #0x416A
+			mov r2, #0x586A
 			b sc_out
 sc_0x416B:
-			mov r4, #0x416B
-			mov r5, #0x586B
+			mov r1, #0x416B
+			mov r2, #0x586B
 			b sc_out
 sc_0x416C:
-			mov r4, #0x416C
-			mov r5, #0x586C
+			mov r1, #0x416C
+			mov r2, #0x586C
 			b sc_out
 sc_0x416D:
-			mov r4, #0x416D
-			mov r5, #0x586D
+			mov r1, #0x416D
+			mov r2, #0x586D
 			b sc_out
 sc_0x416E:
-			mov r4, #0x416E
-			mov r5, #0x586E
+			mov r1, #0x416E
+			mov r2, #0x586E
 			b sc_out
 sc_0x416F:
-			mov r4, #0x416F
-			mov r5, #0x586F
+			mov r1, #0x416F
+			mov r2, #0x586F
 			b sc_out
 sc_0x4170:
-			mov r4, #0x4170
-			mov r5, #0x5870
+			mov r1, #0x4170
+			mov r2, #0x5870
 			b sc_out
 sc_0x4171:
-			mov r4, #0x4171
-			mov r5, #0x5871
+			mov r1, #0x4171
+			mov r2, #0x5871
 			b sc_out
 sc_0x4172:
-			mov r4, #0x4172
-			mov r5, #0x5872
+			mov r1, #0x4172
+			mov r2, #0x5872
 			b sc_out
 sc_0x4173:
-			mov r4, #0x4173
-			mov r5, #0x5873
+			mov r1, #0x4173
+			mov r2, #0x5873
 			b sc_out
 sc_0x4174:
-			mov r4, #0x4174
-			mov r5, #0x5874
+			mov r1, #0x4174
+			mov r2, #0x5874
 			b sc_out
 sc_0x4175:
-			mov r4, #0x4175
-			mov r5, #0x5875
+			mov r1, #0x4175
+			mov r2, #0x5875
 			b sc_out
 sc_0x4176:
-			mov r4, #0x4176
-			mov r5, #0x5876
+			mov r1, #0x4176
+			mov r2, #0x5876
 			b sc_out
 sc_0x4177:
-			mov r4, #0x4177
-			mov r5, #0x5877
+			mov r1, #0x4177
+			mov r2, #0x5877
 			b sc_out
 sc_0x4178:
-			mov r4, #0x4178
-			mov r5, #0x5878
+			mov r1, #0x4178
+			mov r2, #0x5878
 			b sc_out
 sc_0x4179:
-			mov r4, #0x4179
-			mov r5, #0x5879
+			mov r1, #0x4179
+			mov r2, #0x5879
 			b sc_out
 sc_0x417A:
-			mov r4, #0x417A
-			mov r5, #0x587A
+			mov r1, #0x417A
+			mov r2, #0x587A
 			b sc_out
 sc_0x417B:
-			mov r4, #0x417B
-			mov r5, #0x587B
+			mov r1, #0x417B
+			mov r2, #0x587B
 			b sc_out
 sc_0x417C:
-			mov r4, #0x417C
-			mov r5, #0x587C
+			mov r1, #0x417C
+			mov r2, #0x587C
 			b sc_out
 sc_0x417D:
-			mov r4, #0x417D
-			mov r5, #0x587D
+			mov r1, #0x417D
+			mov r2, #0x587D
 			b sc_out
 sc_0x417E:
-			mov r4, #0x417E
-			mov r5, #0x587E
+			mov r1, #0x417E
+			mov r2, #0x587E
 			b sc_out
 sc_0x417F:
-			mov r4, #0x417F
-			mov r5, #0x587F
+			mov r1, #0x417F
+			mov r2, #0x587F
 			b sc_out
 sc_0x4260:
-			mov r4, #0x4260
-			mov r5, #0x5860
+			mov r1, #0x4260
+			mov r2, #0x5860
 			b sc_out
 sc_0x4261:
-			mov r4, #0x4261
-			mov r5, #0x5861
+			mov r1, #0x4261
+			mov r2, #0x5861
 			b sc_out
 sc_0x4262:
-			mov r4, #0x4262
-			mov r5, #0x5862
+			mov r1, #0x4262
+			mov r2, #0x5862
 			b sc_out
 sc_0x4263:
-			mov r4, #0x4263
-			mov r5, #0x5863
+			mov r1, #0x4263
+			mov r2, #0x5863
 			b sc_out
 sc_0x4264:
-			mov r4, #0x4264
-			mov r5, #0x5864
+			mov r1, #0x4264
+			mov r2, #0x5864
 			b sc_out
 sc_0x4265:
-			mov r4, #0x4265
-			mov r5, #0x5865
+			mov r1, #0x4265
+			mov r2, #0x5865
 			b sc_out
 sc_0x4266:
-			mov r4, #0x4266
-			mov r5, #0x5866
+			mov r1, #0x4266
+			mov r2, #0x5866
 			b sc_out
 sc_0x4267:
-			mov r4, #0x4267
-			mov r5, #0x5867
+			mov r1, #0x4267
+			mov r2, #0x5867
 			b sc_out
 sc_0x4268:
-			mov r4, #0x4268
-			mov r5, #0x5868
+			mov r1, #0x4268
+			mov r2, #0x5868
 			b sc_out
 sc_0x4269:
-			mov r4, #0x4269
-			mov r5, #0x5869
+			mov r1, #0x4269
+			mov r2, #0x5869
 			b sc_out
 sc_0x426A:
-			mov r4, #0x426A
-			mov r5, #0x586A
+			mov r1, #0x426A
+			mov r2, #0x586A
 			b sc_out
 sc_0x426B:
-			mov r4, #0x426B
-			mov r5, #0x586B
+			mov r1, #0x426B
+			mov r2, #0x586B
 			b sc_out
 sc_0x426C:
-			mov r4, #0x426C
-			mov r5, #0x586C
+			mov r1, #0x426C
+			mov r2, #0x586C
 			b sc_out
 sc_0x426D:
-			mov r4, #0x426D
-			mov r5, #0x586D
+			mov r1, #0x426D
+			mov r2, #0x586D
 			b sc_out
 sc_0x426E:
-			mov r4, #0x426E
-			mov r5, #0x586E
+			mov r1, #0x426E
+			mov r2, #0x586E
 			b sc_out
 sc_0x426F:
-			mov r4, #0x426F
-			mov r5, #0x586F
+			mov r1, #0x426F
+			mov r2, #0x586F
 			b sc_out
 sc_0x4270:
-			mov r4, #0x4270
-			mov r5, #0x5870
+			mov r1, #0x4270
+			mov r2, #0x5870
 			b sc_out
 sc_0x4271:
-			mov r4, #0x4271
-			mov r5, #0x5871
+			mov r1, #0x4271
+			mov r2, #0x5871
 			b sc_out
 sc_0x4272:
-			mov r4, #0x4272
-			mov r5, #0x5872
+			mov r1, #0x4272
+			mov r2, #0x5872
 			b sc_out
 sc_0x4273:
-			mov r4, #0x4273
-			mov r5, #0x5873
+			mov r1, #0x4273
+			mov r2, #0x5873
 			b sc_out
 sc_0x4274:
-			mov r4, #0x4274
-			mov r5, #0x5874
+			mov r1, #0x4274
+			mov r2, #0x5874
 			b sc_out
 sc_0x4275:
-			mov r4, #0x4275
-			mov r5, #0x5875
+			mov r1, #0x4275
+			mov r2, #0x5875
 			b sc_out
 sc_0x4276:
-			mov r4, #0x4276
-			mov r5, #0x5876
+			mov r1, #0x4276
+			mov r2, #0x5876
 			b sc_out
 sc_0x4277:
-			mov r4, #0x4277
-			mov r5, #0x5877
+			mov r1, #0x4277
+			mov r2, #0x5877
 			b sc_out
 sc_0x4278:
-			mov r4, #0x4278
-			mov r5, #0x5878
+			mov r1, #0x4278
+			mov r2, #0x5878
 			b sc_out
 sc_0x4279:
-			mov r4, #0x4279
-			mov r5, #0x5879
+			mov r1, #0x4279
+			mov r2, #0x5879
 			b sc_out
 sc_0x427A:
-			mov r4, #0x427A
-			mov r5, #0x587A
+			mov r1, #0x427A
+			mov r2, #0x587A
 			b sc_out
 sc_0x427B:
-			mov r4, #0x427B
-			mov r5, #0x587B
+			mov r1, #0x427B
+			mov r2, #0x587B
 			b sc_out
 sc_0x427C:
-			mov r4, #0x427C
-			mov r5, #0x587C
+			mov r1, #0x427C
+			mov r2, #0x587C
 			b sc_out
 sc_0x427D:
-			mov r4, #0x427D
-			mov r5, #0x587D
+			mov r1, #0x427D
+			mov r2, #0x587D
 			b sc_out
 sc_0x427E:
-			mov r4, #0x427E
-			mov r5, #0x587E
+			mov r1, #0x427E
+			mov r2, #0x587E
 			b sc_out
 sc_0x427F:
-			mov r4, #0x427F
-			mov r5, #0x587F
+			mov r1, #0x427F
+			mov r2, #0x587F
 			b sc_out
 sc_0x4360:
-			mov r4, #0x4360
-			mov r5, #0x5860
+			mov r1, #0x4360
+			mov r2, #0x5860
 			b sc_out
 sc_0x4361:
-			mov r4, #0x4361
-			mov r5, #0x5861
+			mov r1, #0x4361
+			mov r2, #0x5861
 			b sc_out
 sc_0x4362:
-			mov r4, #0x4362
-			mov r5, #0x5862
+			mov r1, #0x4362
+			mov r2, #0x5862
 			b sc_out
 sc_0x4363:
-			mov r4, #0x4363
-			mov r5, #0x5863
+			mov r1, #0x4363
+			mov r2, #0x5863
 			b sc_out
 sc_0x4364:
-			mov r4, #0x4364
-			mov r5, #0x5864
+			mov r1, #0x4364
+			mov r2, #0x5864
 			b sc_out
 sc_0x4365:
-			mov r4, #0x4365
-			mov r5, #0x5865
+			mov r1, #0x4365
+			mov r2, #0x5865
 			b sc_out
 sc_0x4366:
-			mov r4, #0x4366
-			mov r5, #0x5866
+			mov r1, #0x4366
+			mov r2, #0x5866
 			b sc_out
 sc_0x4367:
-			mov r4, #0x4367
-			mov r5, #0x5867
+			mov r1, #0x4367
+			mov r2, #0x5867
 			b sc_out
 sc_0x4368:
-			mov r4, #0x4368
-			mov r5, #0x5868
+			mov r1, #0x4368
+			mov r2, #0x5868
 			b sc_out
 sc_0x4369:
-			mov r4, #0x4369
-			mov r5, #0x5869
+			mov r1, #0x4369
+			mov r2, #0x5869
 			b sc_out
 sc_0x436A:
-			mov r4, #0x436A
-			mov r5, #0x586A
+			mov r1, #0x436A
+			mov r2, #0x586A
 			b sc_out
 sc_0x436B:
-			mov r4, #0x436B
-			mov r5, #0x586B
+			mov r1, #0x436B
+			mov r2, #0x586B
 			b sc_out
 sc_0x436C:
-			mov r4, #0x436C
-			mov r5, #0x586C
+			mov r1, #0x436C
+			mov r2, #0x586C
 			b sc_out
 sc_0x436D:
-			mov r4, #0x436D
-			mov r5, #0x586D
+			mov r1, #0x436D
+			mov r2, #0x586D
 			b sc_out
 sc_0x436E:
-			mov r4, #0x436E
-			mov r5, #0x586E
+			mov r1, #0x436E
+			mov r2, #0x586E
 			b sc_out
 sc_0x436F:
-			mov r4, #0x436F
-			mov r5, #0x586F
+			mov r1, #0x436F
+			mov r2, #0x586F
 			b sc_out
 sc_0x4370:
-			mov r4, #0x4370
-			mov r5, #0x5870
+			mov r1, #0x4370
+			mov r2, #0x5870
 			b sc_out
 sc_0x4371:
-			mov r4, #0x4371
-			mov r5, #0x5871
+			mov r1, #0x4371
+			mov r2, #0x5871
 			b sc_out
 sc_0x4372:
-			mov r4, #0x4372
-			mov r5, #0x5872
+			mov r1, #0x4372
+			mov r2, #0x5872
 			b sc_out
 sc_0x4373:
-			mov r4, #0x4373
-			mov r5, #0x5873
+			mov r1, #0x4373
+			mov r2, #0x5873
 			b sc_out
 sc_0x4374:
-			mov r4, #0x4374
-			mov r5, #0x5874
+			mov r1, #0x4374
+			mov r2, #0x5874
 			b sc_out
 sc_0x4375:
-			mov r4, #0x4375
-			mov r5, #0x5875
+			mov r1, #0x4375
+			mov r2, #0x5875
 			b sc_out
 sc_0x4376:
-			mov r4, #0x4376
-			mov r5, #0x5876
+			mov r1, #0x4376
+			mov r2, #0x5876
 			b sc_out
 sc_0x4377:
-			mov r4, #0x4377
-			mov r5, #0x5877
+			mov r1, #0x4377
+			mov r2, #0x5877
 			b sc_out
 sc_0x4378:
-			mov r4, #0x4378
-			mov r5, #0x5878
+			mov r1, #0x4378
+			mov r2, #0x5878
 			b sc_out
 sc_0x4379:
-			mov r4, #0x4379
-			mov r5, #0x5879
+			mov r1, #0x4379
+			mov r2, #0x5879
 			b sc_out
 sc_0x437A:
-			mov r4, #0x437A
-			mov r5, #0x587A
+			mov r1, #0x437A
+			mov r2, #0x587A
 			b sc_out
 sc_0x437B:
-			mov r4, #0x437B
-			mov r5, #0x587B
+			mov r1, #0x437B
+			mov r2, #0x587B
 			b sc_out
 sc_0x437C:
-			mov r4, #0x437C
-			mov r5, #0x587C
+			mov r1, #0x437C
+			mov r2, #0x587C
 			b sc_out
 sc_0x437D:
-			mov r4, #0x437D
-			mov r5, #0x587D
+			mov r1, #0x437D
+			mov r2, #0x587D
 			b sc_out
 sc_0x437E:
-			mov r4, #0x437E
-			mov r5, #0x587E
+			mov r1, #0x437E
+			mov r2, #0x587E
 			b sc_out
 sc_0x437F:
-			mov r4, #0x437F
-			mov r5, #0x587F
+			mov r1, #0x437F
+			mov r2, #0x587F
 			b sc_out
 sc_0x4460:
-			mov r4, #0x4460
-			mov r5, #0x5860
+			mov r1, #0x4460
+			mov r2, #0x5860
 			b sc_out
 sc_0x4461:
-			mov r4, #0x4461
-			mov r5, #0x5861
+			mov r1, #0x4461
+			mov r2, #0x5861
 			b sc_out
 sc_0x4462:
-			mov r4, #0x4462
-			mov r5, #0x5862
+			mov r1, #0x4462
+			mov r2, #0x5862
 			b sc_out
 sc_0x4463:
-			mov r4, #0x4463
-			mov r5, #0x5863
+			mov r1, #0x4463
+			mov r2, #0x5863
 			b sc_out
 sc_0x4464:
-			mov r4, #0x4464
-			mov r5, #0x5864
+			mov r1, #0x4464
+			mov r2, #0x5864
 			b sc_out
 sc_0x4465:
-			mov r4, #0x4465
-			mov r5, #0x5865
+			mov r1, #0x4465
+			mov r2, #0x5865
 			b sc_out
 sc_0x4466:
-			mov r4, #0x4466
-			mov r5, #0x5866
+			mov r1, #0x4466
+			mov r2, #0x5866
 			b sc_out
 sc_0x4467:
-			mov r4, #0x4467
-			mov r5, #0x5867
+			mov r1, #0x4467
+			mov r2, #0x5867
 			b sc_out
 sc_0x4468:
-			mov r4, #0x4468
-			mov r5, #0x5868
+			mov r1, #0x4468
+			mov r2, #0x5868
 			b sc_out
 sc_0x4469:
-			mov r4, #0x4469
-			mov r5, #0x5869
+			mov r1, #0x4469
+			mov r2, #0x5869
 			b sc_out
 sc_0x446A:
-			mov r4, #0x446A
-			mov r5, #0x586A
+			mov r1, #0x446A
+			mov r2, #0x586A
 			b sc_out
 sc_0x446B:
-			mov r4, #0x446B
-			mov r5, #0x586B
+			mov r1, #0x446B
+			mov r2, #0x586B
 			b sc_out
 sc_0x446C:
-			mov r4, #0x446C
-			mov r5, #0x586C
+			mov r1, #0x446C
+			mov r2, #0x586C
 			b sc_out
 sc_0x446D:
-			mov r4, #0x446D
-			mov r5, #0x586D
+			mov r1, #0x446D
+			mov r2, #0x586D
 			b sc_out
 sc_0x446E:
-			mov r4, #0x446E
-			mov r5, #0x586E
+			mov r1, #0x446E
+			mov r2, #0x586E
 			b sc_out
 sc_0x446F:
-			mov r4, #0x446F
-			mov r5, #0x586F
+			mov r1, #0x446F
+			mov r2, #0x586F
 			b sc_out
 sc_0x4470:
-			mov r4, #0x4470
-			mov r5, #0x5870
+			mov r1, #0x4470
+			mov r2, #0x5870
 			b sc_out
 sc_0x4471:
-			mov r4, #0x4471
-			mov r5, #0x5871
+			mov r1, #0x4471
+			mov r2, #0x5871
 			b sc_out
 sc_0x4472:
-			mov r4, #0x4472
-			mov r5, #0x5872
+			mov r1, #0x4472
+			mov r2, #0x5872
 			b sc_out
 sc_0x4473:
-			mov r4, #0x4473
-			mov r5, #0x5873
+			mov r1, #0x4473
+			mov r2, #0x5873
 			b sc_out
 sc_0x4474:
-			mov r4, #0x4474
-			mov r5, #0x5874
+			mov r1, #0x4474
+			mov r2, #0x5874
 			b sc_out
 sc_0x4475:
-			mov r4, #0x4475
-			mov r5, #0x5875
+			mov r1, #0x4475
+			mov r2, #0x5875
 			b sc_out
 sc_0x4476:
-			mov r4, #0x4476
-			mov r5, #0x5876
+			mov r1, #0x4476
+			mov r2, #0x5876
 			b sc_out
 sc_0x4477:
-			mov r4, #0x4477
-			mov r5, #0x5877
+			mov r1, #0x4477
+			mov r2, #0x5877
 			b sc_out
 sc_0x4478:
-			mov r4, #0x4478
-			mov r5, #0x5878
+			mov r1, #0x4478
+			mov r2, #0x5878
 			b sc_out
 sc_0x4479:
-			mov r4, #0x4479
-			mov r5, #0x5879
+			mov r1, #0x4479
+			mov r2, #0x5879
 			b sc_out
 sc_0x447A:
-			mov r4, #0x447A
-			mov r5, #0x587A
+			mov r1, #0x447A
+			mov r2, #0x587A
 			b sc_out
 sc_0x447B:
-			mov r4, #0x447B
-			mov r5, #0x587B
+			mov r1, #0x447B
+			mov r2, #0x587B
 			b sc_out
 sc_0x447C:
-			mov r4, #0x447C
-			mov r5, #0x587C
+			mov r1, #0x447C
+			mov r2, #0x587C
 			b sc_out
 sc_0x447D:
-			mov r4, #0x447D
-			mov r5, #0x587D
+			mov r1, #0x447D
+			mov r2, #0x587D
 			b sc_out
 sc_0x447E:
-			mov r4, #0x447E
-			mov r5, #0x587E
+			mov r1, #0x447E
+			mov r2, #0x587E
 			b sc_out
 sc_0x447F:
-			mov r4, #0x447F
-			mov r5, #0x587F
+			mov r1, #0x447F
+			mov r2, #0x587F
 			b sc_out
 sc_0x4560:
-			mov r4, #0x4560
-			mov r5, #0x5860
+			mov r1, #0x4560
+			mov r2, #0x5860
 			b sc_out
 sc_0x4561:
-			mov r4, #0x4561
-			mov r5, #0x5861
+			mov r1, #0x4561
+			mov r2, #0x5861
 			b sc_out
 sc_0x4562:
-			mov r4, #0x4562
-			mov r5, #0x5862
+			mov r1, #0x4562
+			mov r2, #0x5862
 			b sc_out
 sc_0x4563:
-			mov r4, #0x4563
-			mov r5, #0x5863
+			mov r1, #0x4563
+			mov r2, #0x5863
 			b sc_out
 sc_0x4564:
-			mov r4, #0x4564
-			mov r5, #0x5864
+			mov r1, #0x4564
+			mov r2, #0x5864
 			b sc_out
 sc_0x4565:
-			mov r4, #0x4565
-			mov r5, #0x5865
+			mov r1, #0x4565
+			mov r2, #0x5865
 			b sc_out
 sc_0x4566:
-			mov r4, #0x4566
-			mov r5, #0x5866
+			mov r1, #0x4566
+			mov r2, #0x5866
 			b sc_out
 sc_0x4567:
-			mov r4, #0x4567
-			mov r5, #0x5867
+			mov r1, #0x4567
+			mov r2, #0x5867
 			b sc_out
 sc_0x4568:
-			mov r4, #0x4568
-			mov r5, #0x5868
+			mov r1, #0x4568
+			mov r2, #0x5868
 			b sc_out
 sc_0x4569:
-			mov r4, #0x4569
-			mov r5, #0x5869
+			mov r1, #0x4569
+			mov r2, #0x5869
 			b sc_out
 sc_0x456A:
-			mov r4, #0x456A
-			mov r5, #0x586A
+			mov r1, #0x456A
+			mov r2, #0x586A
 			b sc_out
 sc_0x456B:
-			mov r4, #0x456B
-			mov r5, #0x586B
+			mov r1, #0x456B
+			mov r2, #0x586B
 			b sc_out
 sc_0x456C:
-			mov r4, #0x456C
-			mov r5, #0x586C
+			mov r1, #0x456C
+			mov r2, #0x586C
 			b sc_out
 sc_0x456D:
-			mov r4, #0x456D
-			mov r5, #0x586D
+			mov r1, #0x456D
+			mov r2, #0x586D
 			b sc_out
 sc_0x456E:
-			mov r4, #0x456E
-			mov r5, #0x586E
+			mov r1, #0x456E
+			mov r2, #0x586E
 			b sc_out
 sc_0x456F:
-			mov r4, #0x456F
-			mov r5, #0x586F
+			mov r1, #0x456F
+			mov r2, #0x586F
 			b sc_out
 sc_0x4570:
-			mov r4, #0x4570
-			mov r5, #0x5870
+			mov r1, #0x4570
+			mov r2, #0x5870
 			b sc_out
 sc_0x4571:
-			mov r4, #0x4571
-			mov r5, #0x5871
+			mov r1, #0x4571
+			mov r2, #0x5871
 			b sc_out
 sc_0x4572:
-			mov r4, #0x4572
-			mov r5, #0x5872
+			mov r1, #0x4572
+			mov r2, #0x5872
 			b sc_out
 sc_0x4573:
-			mov r4, #0x4573
-			mov r5, #0x5873
+			mov r1, #0x4573
+			mov r2, #0x5873
 			b sc_out
 sc_0x4574:
-			mov r4, #0x4574
-			mov r5, #0x5874
+			mov r1, #0x4574
+			mov r2, #0x5874
 			b sc_out
 sc_0x4575:
-			mov r4, #0x4575
-			mov r5, #0x5875
+			mov r1, #0x4575
+			mov r2, #0x5875
 			b sc_out
 sc_0x4576:
-			mov r4, #0x4576
-			mov r5, #0x5876
+			mov r1, #0x4576
+			mov r2, #0x5876
 			b sc_out
 sc_0x4577:
-			mov r4, #0x4577
-			mov r5, #0x5877
+			mov r1, #0x4577
+			mov r2, #0x5877
 			b sc_out
 sc_0x4578:
-			mov r4, #0x4578
-			mov r5, #0x5878
+			mov r1, #0x4578
+			mov r2, #0x5878
 			b sc_out
 sc_0x4579:
-			mov r4, #0x4579
-			mov r5, #0x5879
+			mov r1, #0x4579
+			mov r2, #0x5879
 			b sc_out
 sc_0x457A:
-			mov r4, #0x457A
-			mov r5, #0x587A
+			mov r1, #0x457A
+			mov r2, #0x587A
 			b sc_out
 sc_0x457B:
-			mov r4, #0x457B
-			mov r5, #0x587B
+			mov r1, #0x457B
+			mov r2, #0x587B
 			b sc_out
 sc_0x457C:
-			mov r4, #0x457C
-			mov r5, #0x587C
+			mov r1, #0x457C
+			mov r2, #0x587C
 			b sc_out
 sc_0x457D:
-			mov r4, #0x457D
-			mov r5, #0x587D
+			mov r1, #0x457D
+			mov r2, #0x587D
 			b sc_out
 sc_0x457E:
-			mov r4, #0x457E
-			mov r5, #0x587E
+			mov r1, #0x457E
+			mov r2, #0x587E
 			b sc_out
 sc_0x457F:
-			mov r4, #0x457F
-			mov r5, #0x587F
+			mov r1, #0x457F
+			mov r2, #0x587F
 			b sc_out
 sc_0x4660:
-			mov r4, #0x4660
-			mov r5, #0x5860
+			mov r1, #0x4660
+			mov r2, #0x5860
 			b sc_out
 sc_0x4661:
-			mov r4, #0x4661
-			mov r5, #0x5861
+			mov r1, #0x4661
+			mov r2, #0x5861
 			b sc_out
 sc_0x4662:
-			mov r4, #0x4662
-			mov r5, #0x5862
+			mov r1, #0x4662
+			mov r2, #0x5862
 			b sc_out
 sc_0x4663:
-			mov r4, #0x4663
-			mov r5, #0x5863
+			mov r1, #0x4663
+			mov r2, #0x5863
 			b sc_out
 sc_0x4664:
-			mov r4, #0x4664
-			mov r5, #0x5864
+			mov r1, #0x4664
+			mov r2, #0x5864
 			b sc_out
 sc_0x4665:
-			mov r4, #0x4665
-			mov r5, #0x5865
+			mov r1, #0x4665
+			mov r2, #0x5865
 			b sc_out
 sc_0x4666:
-			mov r4, #0x4666
-			mov r5, #0x5866
+			mov r1, #0x4666
+			mov r2, #0x5866
 			b sc_out
 sc_0x4667:
-			mov r4, #0x4667
-			mov r5, #0x5867
+			mov r1, #0x4667
+			mov r2, #0x5867
 			b sc_out
 sc_0x4668:
-			mov r4, #0x4668
-			mov r5, #0x5868
+			mov r1, #0x4668
+			mov r2, #0x5868
 			b sc_out
 sc_0x4669:
-			mov r4, #0x4669
-			mov r5, #0x5869
+			mov r1, #0x4669
+			mov r2, #0x5869
 			b sc_out
 sc_0x466A:
-			mov r4, #0x466A
-			mov r5, #0x586A
+			mov r1, #0x466A
+			mov r2, #0x586A
 			b sc_out
 sc_0x466B:
-			mov r4, #0x466B
-			mov r5, #0x586B
+			mov r1, #0x466B
+			mov r2, #0x586B
 			b sc_out
 sc_0x466C:
-			mov r4, #0x466C
-			mov r5, #0x586C
+			mov r1, #0x466C
+			mov r2, #0x586C
 			b sc_out
 sc_0x466D:
-			mov r4, #0x466D
-			mov r5, #0x586D
+			mov r1, #0x466D
+			mov r2, #0x586D
 			b sc_out
 sc_0x466E:
-			mov r4, #0x466E
-			mov r5, #0x586E
+			mov r1, #0x466E
+			mov r2, #0x586E
 			b sc_out
 sc_0x466F:
-			mov r4, #0x466F
-			mov r5, #0x586F
+			mov r1, #0x466F
+			mov r2, #0x586F
 			b sc_out
 sc_0x4670:
-			mov r4, #0x4670
-			mov r5, #0x5870
+			mov r1, #0x4670
+			mov r2, #0x5870
 			b sc_out
 sc_0x4671:
-			mov r4, #0x4671
-			mov r5, #0x5871
+			mov r1, #0x4671
+			mov r2, #0x5871
 			b sc_out
 sc_0x4672:
-			mov r4, #0x4672
-			mov r5, #0x5872
+			mov r1, #0x4672
+			mov r2, #0x5872
 			b sc_out
 sc_0x4673:
-			mov r4, #0x4673
-			mov r5, #0x5873
+			mov r1, #0x4673
+			mov r2, #0x5873
 			b sc_out
 sc_0x4674:
-			mov r4, #0x4674
-			mov r5, #0x5874
+			mov r1, #0x4674
+			mov r2, #0x5874
 			b sc_out
 sc_0x4675:
-			mov r4, #0x4675
-			mov r5, #0x5875
+			mov r1, #0x4675
+			mov r2, #0x5875
 			b sc_out
 sc_0x4676:
-			mov r4, #0x4676
-			mov r5, #0x5876
+			mov r1, #0x4676
+			mov r2, #0x5876
 			b sc_out
 sc_0x4677:
-			mov r4, #0x4677
-			mov r5, #0x5877
+			mov r1, #0x4677
+			mov r2, #0x5877
 			b sc_out
 sc_0x4678:
-			mov r4, #0x4678
-			mov r5, #0x5878
+			mov r1, #0x4678
+			mov r2, #0x5878
 			b sc_out
 sc_0x4679:
-			mov r4, #0x4679
-			mov r5, #0x5879
+			mov r1, #0x4679
+			mov r2, #0x5879
 			b sc_out
 sc_0x467A:
-			mov r4, #0x467A
-			mov r5, #0x587A
+			mov r1, #0x467A
+			mov r2, #0x587A
 			b sc_out
 sc_0x467B:
-			mov r4, #0x467B
-			mov r5, #0x587B
+			mov r1, #0x467B
+			mov r2, #0x587B
 			b sc_out
 sc_0x467C:
-			mov r4, #0x467C
-			mov r5, #0x587C
+			mov r1, #0x467C
+			mov r2, #0x587C
 			b sc_out
 sc_0x467D:
-			mov r4, #0x467D
-			mov r5, #0x587D
+			mov r1, #0x467D
+			mov r2, #0x587D
 			b sc_out
 sc_0x467E:
-			mov r4, #0x467E
-			mov r5, #0x587E
+			mov r1, #0x467E
+			mov r2, #0x587E
 			b sc_out
 sc_0x467F:
-			mov r4, #0x467F
-			mov r5, #0x587F
+			mov r1, #0x467F
+			mov r2, #0x587F
 			b sc_out
 sc_0x4760:
-			mov r4, #0x4760
-			mov r5, #0x5860
+			mov r1, #0x4760
+			mov r2, #0x5860
 			b sc_out
 sc_0x4761:
-			mov r4, #0x4761
-			mov r5, #0x5861
+			mov r1, #0x4761
+			mov r2, #0x5861
 			b sc_out
 sc_0x4762:
-			mov r4, #0x4762
-			mov r5, #0x5862
+			mov r1, #0x4762
+			mov r2, #0x5862
 			b sc_out
 sc_0x4763:
-			mov r4, #0x4763
-			mov r5, #0x5863
+			mov r1, #0x4763
+			mov r2, #0x5863
 			b sc_out
 sc_0x4764:
-			mov r4, #0x4764
-			mov r5, #0x5864
+			mov r1, #0x4764
+			mov r2, #0x5864
 			b sc_out
 sc_0x4765:
-			mov r4, #0x4765
-			mov r5, #0x5865
+			mov r1, #0x4765
+			mov r2, #0x5865
 			b sc_out
 sc_0x4766:
-			mov r4, #0x4766
-			mov r5, #0x5866
+			mov r1, #0x4766
+			mov r2, #0x5866
 			b sc_out
 sc_0x4767:
-			mov r4, #0x4767
-			mov r5, #0x5867
+			mov r1, #0x4767
+			mov r2, #0x5867
 			b sc_out
 sc_0x4768:
-			mov r4, #0x4768
-			mov r5, #0x5868
+			mov r1, #0x4768
+			mov r2, #0x5868
 			b sc_out
 sc_0x4769:
-			mov r4, #0x4769
-			mov r5, #0x5869
+			mov r1, #0x4769
+			mov r2, #0x5869
 			b sc_out
 sc_0x476A:
-			mov r4, #0x476A
-			mov r5, #0x586A
+			mov r1, #0x476A
+			mov r2, #0x586A
 			b sc_out
 sc_0x476B:
-			mov r4, #0x476B
-			mov r5, #0x586B
+			mov r1, #0x476B
+			mov r2, #0x586B
 			b sc_out
 sc_0x476C:
-			mov r4, #0x476C
-			mov r5, #0x586C
+			mov r1, #0x476C
+			mov r2, #0x586C
 			b sc_out
 sc_0x476D:
-			mov r4, #0x476D
-			mov r5, #0x586D
+			mov r1, #0x476D
+			mov r2, #0x586D
 			b sc_out
 sc_0x476E:
-			mov r4, #0x476E
-			mov r5, #0x586E
+			mov r1, #0x476E
+			mov r2, #0x586E
 			b sc_out
 sc_0x476F:
-			mov r4, #0x476F
-			mov r5, #0x586F
+			mov r1, #0x476F
+			mov r2, #0x586F
 			b sc_out
 sc_0x4770:
-			mov r4, #0x4770
-			mov r5, #0x5870
+			mov r1, #0x4770
+			mov r2, #0x5870
 			b sc_out
 sc_0x4771:
-			mov r4, #0x4771
-			mov r5, #0x5871
+			mov r1, #0x4771
+			mov r2, #0x5871
 			b sc_out
 sc_0x4772:
-			mov r4, #0x4772
-			mov r5, #0x5872
+			mov r1, #0x4772
+			mov r2, #0x5872
 			b sc_out
 sc_0x4773:
-			mov r4, #0x4773
-			mov r5, #0x5873
+			mov r1, #0x4773
+			mov r2, #0x5873
 			b sc_out
 sc_0x4774:
-			mov r4, #0x4774
-			mov r5, #0x5874
+			mov r1, #0x4774
+			mov r2, #0x5874
 			b sc_out
 sc_0x4775:
-			mov r4, #0x4775
-			mov r5, #0x5875
+			mov r1, #0x4775
+			mov r2, #0x5875
 			b sc_out
 sc_0x4776:
-			mov r4, #0x4776
-			mov r5, #0x5876
+			mov r1, #0x4776
+			mov r2, #0x5876
 			b sc_out
 sc_0x4777:
-			mov r4, #0x4777
-			mov r5, #0x5877
+			mov r1, #0x4777
+			mov r2, #0x5877
 			b sc_out
 sc_0x4778:
-			mov r4, #0x4778
-			mov r5, #0x5878
+			mov r1, #0x4778
+			mov r2, #0x5878
 			b sc_out
 sc_0x4779:
-			mov r4, #0x4779
-			mov r5, #0x5879
+			mov r1, #0x4779
+			mov r2, #0x5879
 			b sc_out
 sc_0x477A:
-			mov r4, #0x477A
-			mov r5, #0x587A
+			mov r1, #0x477A
+			mov r2, #0x587A
 			b sc_out
 sc_0x477B:
-			mov r4, #0x477B
-			mov r5, #0x587B
+			mov r1, #0x477B
+			mov r2, #0x587B
 			b sc_out
 sc_0x477C:
-			mov r4, #0x477C
-			mov r5, #0x587C
+			mov r1, #0x477C
+			mov r2, #0x587C
 			b sc_out
 sc_0x477D:
-			mov r4, #0x477D
-			mov r5, #0x587D
+			mov r1, #0x477D
+			mov r2, #0x587D
 			b sc_out
 sc_0x477E:
-			mov r4, #0x477E
-			mov r5, #0x587E
+			mov r1, #0x477E
+			mov r2, #0x587E
 			b sc_out
 sc_0x477F:
-			mov r4, #0x477F
-			mov r5, #0x587F
+			mov r1, #0x477F
+			mov r2, #0x587F
 			b sc_out
 sc_0x4080:
-			mov r4, #0x4080
-			mov r5, #0x5880
+			mov r1, #0x4080
+			mov r2, #0x5880
 			b sc_out
 sc_0x4081:
-			mov r4, #0x4081
-			mov r5, #0x5881
+			mov r1, #0x4081
+			mov r2, #0x5881
 			b sc_out
 sc_0x4082:
-			mov r4, #0x4082
-			mov r5, #0x5882
+			mov r1, #0x4082
+			mov r2, #0x5882
 			b sc_out
 sc_0x4083:
-			mov r4, #0x4083
-			mov r5, #0x5883
+			mov r1, #0x4083
+			mov r2, #0x5883
 			b sc_out
 sc_0x4084:
-			mov r4, #0x4084
-			mov r5, #0x5884
+			mov r1, #0x4084
+			mov r2, #0x5884
 			b sc_out
 sc_0x4085:
-			mov r4, #0x4085
-			mov r5, #0x5885
+			mov r1, #0x4085
+			mov r2, #0x5885
 			b sc_out
 sc_0x4086:
-			mov r4, #0x4086
-			mov r5, #0x5886
+			mov r1, #0x4086
+			mov r2, #0x5886
 			b sc_out
 sc_0x4087:
-			mov r4, #0x4087
-			mov r5, #0x5887
+			mov r1, #0x4087
+			mov r2, #0x5887
 			b sc_out
 sc_0x4088:
-			mov r4, #0x4088
-			mov r5, #0x5888
+			mov r1, #0x4088
+			mov r2, #0x5888
 			b sc_out
 sc_0x4089:
-			mov r4, #0x4089
-			mov r5, #0x5889
+			mov r1, #0x4089
+			mov r2, #0x5889
 			b sc_out
 sc_0x408A:
-			mov r4, #0x408A
-			mov r5, #0x588A
+			mov r1, #0x408A
+			mov r2, #0x588A
 			b sc_out
 sc_0x408B:
-			mov r4, #0x408B
-			mov r5, #0x588B
+			mov r1, #0x408B
+			mov r2, #0x588B
 			b sc_out
 sc_0x408C:
-			mov r4, #0x408C
-			mov r5, #0x588C
+			mov r1, #0x408C
+			mov r2, #0x588C
 			b sc_out
 sc_0x408D:
-			mov r4, #0x408D
-			mov r5, #0x588D
+			mov r1, #0x408D
+			mov r2, #0x588D
 			b sc_out
 sc_0x408E:
-			mov r4, #0x408E
-			mov r5, #0x588E
+			mov r1, #0x408E
+			mov r2, #0x588E
 			b sc_out
 sc_0x408F:
-			mov r4, #0x408F
-			mov r5, #0x588F
+			mov r1, #0x408F
+			mov r2, #0x588F
 			b sc_out
 sc_0x4090:
-			mov r4, #0x4090
-			mov r5, #0x5890
+			mov r1, #0x4090
+			mov r2, #0x5890
 			b sc_out
 sc_0x4091:
-			mov r4, #0x4091
-			mov r5, #0x5891
+			mov r1, #0x4091
+			mov r2, #0x5891
 			b sc_out
 sc_0x4092:
-			mov r4, #0x4092
-			mov r5, #0x5892
+			mov r1, #0x4092
+			mov r2, #0x5892
 			b sc_out
 sc_0x4093:
-			mov r4, #0x4093
-			mov r5, #0x5893
+			mov r1, #0x4093
+			mov r2, #0x5893
 			b sc_out
 sc_0x4094:
-			mov r4, #0x4094
-			mov r5, #0x5894
+			mov r1, #0x4094
+			mov r2, #0x5894
 			b sc_out
 sc_0x4095:
-			mov r4, #0x4095
-			mov r5, #0x5895
+			mov r1, #0x4095
+			mov r2, #0x5895
 			b sc_out
 sc_0x4096:
-			mov r4, #0x4096
-			mov r5, #0x5896
+			mov r1, #0x4096
+			mov r2, #0x5896
 			b sc_out
 sc_0x4097:
-			mov r4, #0x4097
-			mov r5, #0x5897
+			mov r1, #0x4097
+			mov r2, #0x5897
 			b sc_out
 sc_0x4098:
-			mov r4, #0x4098
-			mov r5, #0x5898
+			mov r1, #0x4098
+			mov r2, #0x5898
 			b sc_out
 sc_0x4099:
-			mov r4, #0x4099
-			mov r5, #0x5899
+			mov r1, #0x4099
+			mov r2, #0x5899
 			b sc_out
 sc_0x409A:
-			mov r4, #0x409A
-			mov r5, #0x589A
+			mov r1, #0x409A
+			mov r2, #0x589A
 			b sc_out
 sc_0x409B:
-			mov r4, #0x409B
-			mov r5, #0x589B
+			mov r1, #0x409B
+			mov r2, #0x589B
 			b sc_out
 sc_0x409C:
-			mov r4, #0x409C
-			mov r5, #0x589C
+			mov r1, #0x409C
+			mov r2, #0x589C
 			b sc_out
 sc_0x409D:
-			mov r4, #0x409D
-			mov r5, #0x589D
+			mov r1, #0x409D
+			mov r2, #0x589D
 			b sc_out
 sc_0x409E:
-			mov r4, #0x409E
-			mov r5, #0x589E
+			mov r1, #0x409E
+			mov r2, #0x589E
 			b sc_out
 sc_0x409F:
-			mov r4, #0x409F
-			mov r5, #0x589F
+			mov r1, #0x409F
+			mov r2, #0x589F
 			b sc_out
 sc_0x4180:
-			mov r4, #0x4180
-			mov r5, #0x5880
+			mov r1, #0x4180
+			mov r2, #0x5880
 			b sc_out
 sc_0x4181:
-			mov r4, #0x4181
-			mov r5, #0x5881
+			mov r1, #0x4181
+			mov r2, #0x5881
 			b sc_out
 sc_0x4182:
-			mov r4, #0x4182
-			mov r5, #0x5882
+			mov r1, #0x4182
+			mov r2, #0x5882
 			b sc_out
 sc_0x4183:
-			mov r4, #0x4183
-			mov r5, #0x5883
+			mov r1, #0x4183
+			mov r2, #0x5883
 			b sc_out
 sc_0x4184:
-			mov r4, #0x4184
-			mov r5, #0x5884
+			mov r1, #0x4184
+			mov r2, #0x5884
 			b sc_out
 sc_0x4185:
-			mov r4, #0x4185
-			mov r5, #0x5885
+			mov r1, #0x4185
+			mov r2, #0x5885
 			b sc_out
 sc_0x4186:
-			mov r4, #0x4186
-			mov r5, #0x5886
+			mov r1, #0x4186
+			mov r2, #0x5886
 			b sc_out
 sc_0x4187:
-			mov r4, #0x4187
-			mov r5, #0x5887
+			mov r1, #0x4187
+			mov r2, #0x5887
 			b sc_out
 sc_0x4188:
-			mov r4, #0x4188
-			mov r5, #0x5888
+			mov r1, #0x4188
+			mov r2, #0x5888
 			b sc_out
 sc_0x4189:
-			mov r4, #0x4189
-			mov r5, #0x5889
+			mov r1, #0x4189
+			mov r2, #0x5889
 			b sc_out
 sc_0x418A:
-			mov r4, #0x418A
-			mov r5, #0x588A
+			mov r1, #0x418A
+			mov r2, #0x588A
 			b sc_out
 sc_0x418B:
-			mov r4, #0x418B
-			mov r5, #0x588B
+			mov r1, #0x418B
+			mov r2, #0x588B
 			b sc_out
 sc_0x418C:
-			mov r4, #0x418C
-			mov r5, #0x588C
+			mov r1, #0x418C
+			mov r2, #0x588C
 			b sc_out
 sc_0x418D:
-			mov r4, #0x418D
-			mov r5, #0x588D
+			mov r1, #0x418D
+			mov r2, #0x588D
 			b sc_out
 sc_0x418E:
-			mov r4, #0x418E
-			mov r5, #0x588E
+			mov r1, #0x418E
+			mov r2, #0x588E
 			b sc_out
 sc_0x418F:
-			mov r4, #0x418F
-			mov r5, #0x588F
+			mov r1, #0x418F
+			mov r2, #0x588F
 			b sc_out
 sc_0x4190:
-			mov r4, #0x4190
-			mov r5, #0x5890
+			mov r1, #0x4190
+			mov r2, #0x5890
 			b sc_out
 sc_0x4191:
-			mov r4, #0x4191
-			mov r5, #0x5891
+			mov r1, #0x4191
+			mov r2, #0x5891
 			b sc_out
 sc_0x4192:
-			mov r4, #0x4192
-			mov r5, #0x5892
+			mov r1, #0x4192
+			mov r2, #0x5892
 			b sc_out
 sc_0x4193:
-			mov r4, #0x4193
-			mov r5, #0x5893
+			mov r1, #0x4193
+			mov r2, #0x5893
 			b sc_out
 sc_0x4194:
-			mov r4, #0x4194
-			mov r5, #0x5894
+			mov r1, #0x4194
+			mov r2, #0x5894
 			b sc_out
 sc_0x4195:
-			mov r4, #0x4195
-			mov r5, #0x5895
+			mov r1, #0x4195
+			mov r2, #0x5895
 			b sc_out
 sc_0x4196:
-			mov r4, #0x4196
-			mov r5, #0x5896
+			mov r1, #0x4196
+			mov r2, #0x5896
 			b sc_out
 sc_0x4197:
-			mov r4, #0x4197
-			mov r5, #0x5897
+			mov r1, #0x4197
+			mov r2, #0x5897
 			b sc_out
 sc_0x4198:
-			mov r4, #0x4198
-			mov r5, #0x5898
+			mov r1, #0x4198
+			mov r2, #0x5898
 			b sc_out
 sc_0x4199:
-			mov r4, #0x4199
-			mov r5, #0x5899
+			mov r1, #0x4199
+			mov r2, #0x5899
 			b sc_out
 sc_0x419A:
-			mov r4, #0x419A
-			mov r5, #0x589A
+			mov r1, #0x419A
+			mov r2, #0x589A
 			b sc_out
 sc_0x419B:
-			mov r4, #0x419B
-			mov r5, #0x589B
+			mov r1, #0x419B
+			mov r2, #0x589B
 			b sc_out
 sc_0x419C:
-			mov r4, #0x419C
-			mov r5, #0x589C
+			mov r1, #0x419C
+			mov r2, #0x589C
 			b sc_out
 sc_0x419D:
-			mov r4, #0x419D
-			mov r5, #0x589D
+			mov r1, #0x419D
+			mov r2, #0x589D
 			b sc_out
 sc_0x419E:
-			mov r4, #0x419E
-			mov r5, #0x589E
+			mov r1, #0x419E
+			mov r2, #0x589E
 			b sc_out
 sc_0x419F:
-			mov r4, #0x419F
-			mov r5, #0x589F
+			mov r1, #0x419F
+			mov r2, #0x589F
 			b sc_out
 sc_0x4280:
-			mov r4, #0x4280
-			mov r5, #0x5880
+			mov r1, #0x4280
+			mov r2, #0x5880
 			b sc_out
 sc_0x4281:
-			mov r4, #0x4281
-			mov r5, #0x5881
+			mov r1, #0x4281
+			mov r2, #0x5881
 			b sc_out
 sc_0x4282:
-			mov r4, #0x4282
-			mov r5, #0x5882
+			mov r1, #0x4282
+			mov r2, #0x5882
 			b sc_out
 sc_0x4283:
-			mov r4, #0x4283
-			mov r5, #0x5883
+			mov r1, #0x4283
+			mov r2, #0x5883
 			b sc_out
 sc_0x4284:
-			mov r4, #0x4284
-			mov r5, #0x5884
+			mov r1, #0x4284
+			mov r2, #0x5884
 			b sc_out
 sc_0x4285:
-			mov r4, #0x4285
-			mov r5, #0x5885
+			mov r1, #0x4285
+			mov r2, #0x5885
 			b sc_out
 sc_0x4286:
-			mov r4, #0x4286
-			mov r5, #0x5886
+			mov r1, #0x4286
+			mov r2, #0x5886
 			b sc_out
 sc_0x4287:
-			mov r4, #0x4287
-			mov r5, #0x5887
+			mov r1, #0x4287
+			mov r2, #0x5887
 			b sc_out
 sc_0x4288:
-			mov r4, #0x4288
-			mov r5, #0x5888
+			mov r1, #0x4288
+			mov r2, #0x5888
 			b sc_out
 sc_0x4289:
-			mov r4, #0x4289
-			mov r5, #0x5889
+			mov r1, #0x4289
+			mov r2, #0x5889
 			b sc_out
 sc_0x428A:
-			mov r4, #0x428A
-			mov r5, #0x588A
+			mov r1, #0x428A
+			mov r2, #0x588A
 			b sc_out
 sc_0x428B:
-			mov r4, #0x428B
-			mov r5, #0x588B
+			mov r1, #0x428B
+			mov r2, #0x588B
 			b sc_out
 sc_0x428C:
-			mov r4, #0x428C
-			mov r5, #0x588C
+			mov r1, #0x428C
+			mov r2, #0x588C
 			b sc_out
 sc_0x428D:
-			mov r4, #0x428D
-			mov r5, #0x588D
+			mov r1, #0x428D
+			mov r2, #0x588D
 			b sc_out
 sc_0x428E:
-			mov r4, #0x428E
-			mov r5, #0x588E
+			mov r1, #0x428E
+			mov r2, #0x588E
 			b sc_out
 sc_0x428F:
-			mov r4, #0x428F
-			mov r5, #0x588F
+			mov r1, #0x428F
+			mov r2, #0x588F
 			b sc_out
 sc_0x4290:
-			mov r4, #0x4290
-			mov r5, #0x5890
+			mov r1, #0x4290
+			mov r2, #0x5890
 			b sc_out
 sc_0x4291:
-			mov r4, #0x4291
-			mov r5, #0x5891
+			mov r1, #0x4291
+			mov r2, #0x5891
 			b sc_out
 sc_0x4292:
-			mov r4, #0x4292
-			mov r5, #0x5892
+			mov r1, #0x4292
+			mov r2, #0x5892
 			b sc_out
 sc_0x4293:
-			mov r4, #0x4293
-			mov r5, #0x5893
+			mov r1, #0x4293
+			mov r2, #0x5893
 			b sc_out
 sc_0x4294:
-			mov r4, #0x4294
-			mov r5, #0x5894
+			mov r1, #0x4294
+			mov r2, #0x5894
 			b sc_out
 sc_0x4295:
-			mov r4, #0x4295
-			mov r5, #0x5895
+			mov r1, #0x4295
+			mov r2, #0x5895
 			b sc_out
 sc_0x4296:
-			mov r4, #0x4296
-			mov r5, #0x5896
+			mov r1, #0x4296
+			mov r2, #0x5896
 			b sc_out
 sc_0x4297:
-			mov r4, #0x4297
-			mov r5, #0x5897
+			mov r1, #0x4297
+			mov r2, #0x5897
 			b sc_out
 sc_0x4298:
-			mov r4, #0x4298
-			mov r5, #0x5898
+			mov r1, #0x4298
+			mov r2, #0x5898
 			b sc_out
 sc_0x4299:
-			mov r4, #0x4299
-			mov r5, #0x5899
+			mov r1, #0x4299
+			mov r2, #0x5899
 			b sc_out
 sc_0x429A:
-			mov r4, #0x429A
-			mov r5, #0x589A
+			mov r1, #0x429A
+			mov r2, #0x589A
 			b sc_out
 sc_0x429B:
-			mov r4, #0x429B
-			mov r5, #0x589B
+			mov r1, #0x429B
+			mov r2, #0x589B
 			b sc_out
 sc_0x429C:
-			mov r4, #0x429C
-			mov r5, #0x589C
+			mov r1, #0x429C
+			mov r2, #0x589C
 			b sc_out
 sc_0x429D:
-			mov r4, #0x429D
-			mov r5, #0x589D
+			mov r1, #0x429D
+			mov r2, #0x589D
 			b sc_out
 sc_0x429E:
-			mov r4, #0x429E
-			mov r5, #0x589E
+			mov r1, #0x429E
+			mov r2, #0x589E
 			b sc_out
 sc_0x429F:
-			mov r4, #0x429F
-			mov r5, #0x589F
+			mov r1, #0x429F
+			mov r2, #0x589F
 			b sc_out
 sc_0x4380:
-			mov r4, #0x4380
-			mov r5, #0x5880
+			mov r1, #0x4380
+			mov r2, #0x5880
 			b sc_out
 sc_0x4381:
-			mov r4, #0x4381
-			mov r5, #0x5881
+			mov r1, #0x4381
+			mov r2, #0x5881
 			b sc_out
 sc_0x4382:
-			mov r4, #0x4382
-			mov r5, #0x5882
+			mov r1, #0x4382
+			mov r2, #0x5882
 			b sc_out
 sc_0x4383:
-			mov r4, #0x4383
-			mov r5, #0x5883
+			mov r1, #0x4383
+			mov r2, #0x5883
 			b sc_out
 sc_0x4384:
-			mov r4, #0x4384
-			mov r5, #0x5884
+			mov r1, #0x4384
+			mov r2, #0x5884
 			b sc_out
 sc_0x4385:
-			mov r4, #0x4385
-			mov r5, #0x5885
+			mov r1, #0x4385
+			mov r2, #0x5885
 			b sc_out
 sc_0x4386:
-			mov r4, #0x4386
-			mov r5, #0x5886
+			mov r1, #0x4386
+			mov r2, #0x5886
 			b sc_out
 sc_0x4387:
-			mov r4, #0x4387
-			mov r5, #0x5887
+			mov r1, #0x4387
+			mov r2, #0x5887
 			b sc_out
 sc_0x4388:
-			mov r4, #0x4388
-			mov r5, #0x5888
+			mov r1, #0x4388
+			mov r2, #0x5888
 			b sc_out
 sc_0x4389:
-			mov r4, #0x4389
-			mov r5, #0x5889
+			mov r1, #0x4389
+			mov r2, #0x5889
 			b sc_out
 sc_0x438A:
-			mov r4, #0x438A
-			mov r5, #0x588A
+			mov r1, #0x438A
+			mov r2, #0x588A
 			b sc_out
 sc_0x438B:
-			mov r4, #0x438B
-			mov r5, #0x588B
+			mov r1, #0x438B
+			mov r2, #0x588B
 			b sc_out
 sc_0x438C:
-			mov r4, #0x438C
-			mov r5, #0x588C
+			mov r1, #0x438C
+			mov r2, #0x588C
 			b sc_out
 sc_0x438D:
-			mov r4, #0x438D
-			mov r5, #0x588D
+			mov r1, #0x438D
+			mov r2, #0x588D
 			b sc_out
 sc_0x438E:
-			mov r4, #0x438E
-			mov r5, #0x588E
+			mov r1, #0x438E
+			mov r2, #0x588E
 			b sc_out
 sc_0x438F:
-			mov r4, #0x438F
-			mov r5, #0x588F
+			mov r1, #0x438F
+			mov r2, #0x588F
 			b sc_out
 sc_0x4390:
-			mov r4, #0x4390
-			mov r5, #0x5890
+			mov r1, #0x4390
+			mov r2, #0x5890
 			b sc_out
 sc_0x4391:
-			mov r4, #0x4391
-			mov r5, #0x5891
+			mov r1, #0x4391
+			mov r2, #0x5891
 			b sc_out
 sc_0x4392:
-			mov r4, #0x4392
-			mov r5, #0x5892
+			mov r1, #0x4392
+			mov r2, #0x5892
 			b sc_out
 sc_0x4393:
-			mov r4, #0x4393
-			mov r5, #0x5893
+			mov r1, #0x4393
+			mov r2, #0x5893
 			b sc_out
 sc_0x4394:
-			mov r4, #0x4394
-			mov r5, #0x5894
+			mov r1, #0x4394
+			mov r2, #0x5894
 			b sc_out
 sc_0x4395:
-			mov r4, #0x4395
-			mov r5, #0x5895
+			mov r1, #0x4395
+			mov r2, #0x5895
 			b sc_out
 sc_0x4396:
-			mov r4, #0x4396
-			mov r5, #0x5896
+			mov r1, #0x4396
+			mov r2, #0x5896
 			b sc_out
 sc_0x4397:
-			mov r4, #0x4397
-			mov r5, #0x5897
+			mov r1, #0x4397
+			mov r2, #0x5897
 			b sc_out
 sc_0x4398:
-			mov r4, #0x4398
-			mov r5, #0x5898
+			mov r1, #0x4398
+			mov r2, #0x5898
 			b sc_out
 sc_0x4399:
-			mov r4, #0x4399
-			mov r5, #0x5899
+			mov r1, #0x4399
+			mov r2, #0x5899
 			b sc_out
 sc_0x439A:
-			mov r4, #0x439A
-			mov r5, #0x589A
+			mov r1, #0x439A
+			mov r2, #0x589A
 			b sc_out
 sc_0x439B:
-			mov r4, #0x439B
-			mov r5, #0x589B
+			mov r1, #0x439B
+			mov r2, #0x589B
 			b sc_out
 sc_0x439C:
-			mov r4, #0x439C
-			mov r5, #0x589C
+			mov r1, #0x439C
+			mov r2, #0x589C
 			b sc_out
 sc_0x439D:
-			mov r4, #0x439D
-			mov r5, #0x589D
+			mov r1, #0x439D
+			mov r2, #0x589D
 			b sc_out
 sc_0x439E:
-			mov r4, #0x439E
-			mov r5, #0x589E
+			mov r1, #0x439E
+			mov r2, #0x589E
 			b sc_out
 sc_0x439F:
-			mov r4, #0x439F
-			mov r5, #0x589F
+			mov r1, #0x439F
+			mov r2, #0x589F
 			b sc_out
 sc_0x4480:
-			mov r4, #0x4480
-			mov r5, #0x5880
+			mov r1, #0x4480
+			mov r2, #0x5880
 			b sc_out
 sc_0x4481:
-			mov r4, #0x4481
-			mov r5, #0x5881
+			mov r1, #0x4481
+			mov r2, #0x5881
 			b sc_out
 sc_0x4482:
-			mov r4, #0x4482
-			mov r5, #0x5882
+			mov r1, #0x4482
+			mov r2, #0x5882
 			b sc_out
 sc_0x4483:
-			mov r4, #0x4483
-			mov r5, #0x5883
+			mov r1, #0x4483
+			mov r2, #0x5883
 			b sc_out
 sc_0x4484:
-			mov r4, #0x4484
-			mov r5, #0x5884
+			mov r1, #0x4484
+			mov r2, #0x5884
 			b sc_out
 sc_0x4485:
-			mov r4, #0x4485
-			mov r5, #0x5885
+			mov r1, #0x4485
+			mov r2, #0x5885
 			b sc_out
 sc_0x4486:
-			mov r4, #0x4486
-			mov r5, #0x5886
+			mov r1, #0x4486
+			mov r2, #0x5886
 			b sc_out
 sc_0x4487:
-			mov r4, #0x4487
-			mov r5, #0x5887
+			mov r1, #0x4487
+			mov r2, #0x5887
 			b sc_out
 sc_0x4488:
-			mov r4, #0x4488
-			mov r5, #0x5888
+			mov r1, #0x4488
+			mov r2, #0x5888
 			b sc_out
 sc_0x4489:
-			mov r4, #0x4489
-			mov r5, #0x5889
+			mov r1, #0x4489
+			mov r2, #0x5889
 			b sc_out
 sc_0x448A:
-			mov r4, #0x448A
-			mov r5, #0x588A
+			mov r1, #0x448A
+			mov r2, #0x588A
 			b sc_out
 sc_0x448B:
-			mov r4, #0x448B
-			mov r5, #0x588B
+			mov r1, #0x448B
+			mov r2, #0x588B
 			b sc_out
 sc_0x448C:
-			mov r4, #0x448C
-			mov r5, #0x588C
+			mov r1, #0x448C
+			mov r2, #0x588C
 			b sc_out
 sc_0x448D:
-			mov r4, #0x448D
-			mov r5, #0x588D
+			mov r1, #0x448D
+			mov r2, #0x588D
 			b sc_out
 sc_0x448E:
-			mov r4, #0x448E
-			mov r5, #0x588E
+			mov r1, #0x448E
+			mov r2, #0x588E
 			b sc_out
 sc_0x448F:
-			mov r4, #0x448F
-			mov r5, #0x588F
+			mov r1, #0x448F
+			mov r2, #0x588F
 			b sc_out
 sc_0x4490:
-			mov r4, #0x4490
-			mov r5, #0x5890
+			mov r1, #0x4490
+			mov r2, #0x5890
 			b sc_out
 sc_0x4491:
-			mov r4, #0x4491
-			mov r5, #0x5891
+			mov r1, #0x4491
+			mov r2, #0x5891
 			b sc_out
 sc_0x4492:
-			mov r4, #0x4492
-			mov r5, #0x5892
+			mov r1, #0x4492
+			mov r2, #0x5892
 			b sc_out
 sc_0x4493:
-			mov r4, #0x4493
-			mov r5, #0x5893
+			mov r1, #0x4493
+			mov r2, #0x5893
 			b sc_out
 sc_0x4494:
-			mov r4, #0x4494
-			mov r5, #0x5894
+			mov r1, #0x4494
+			mov r2, #0x5894
 			b sc_out
 sc_0x4495:
-			mov r4, #0x4495
-			mov r5, #0x5895
+			mov r1, #0x4495
+			mov r2, #0x5895
 			b sc_out
 sc_0x4496:
-			mov r4, #0x4496
-			mov r5, #0x5896
+			mov r1, #0x4496
+			mov r2, #0x5896
 			b sc_out
 sc_0x4497:
-			mov r4, #0x4497
-			mov r5, #0x5897
+			mov r1, #0x4497
+			mov r2, #0x5897
 			b sc_out
 sc_0x4498:
-			mov r4, #0x4498
-			mov r5, #0x5898
+			mov r1, #0x4498
+			mov r2, #0x5898
 			b sc_out
 sc_0x4499:
-			mov r4, #0x4499
-			mov r5, #0x5899
+			mov r1, #0x4499
+			mov r2, #0x5899
 			b sc_out
 sc_0x449A:
-			mov r4, #0x449A
-			mov r5, #0x589A
+			mov r1, #0x449A
+			mov r2, #0x589A
 			b sc_out
 sc_0x449B:
-			mov r4, #0x449B
-			mov r5, #0x589B
+			mov r1, #0x449B
+			mov r2, #0x589B
 			b sc_out
 sc_0x449C:
-			mov r4, #0x449C
-			mov r5, #0x589C
+			mov r1, #0x449C
+			mov r2, #0x589C
 			b sc_out
 sc_0x449D:
-			mov r4, #0x449D
-			mov r5, #0x589D
+			mov r1, #0x449D
+			mov r2, #0x589D
 			b sc_out
 sc_0x449E:
-			mov r4, #0x449E
-			mov r5, #0x589E
+			mov r1, #0x449E
+			mov r2, #0x589E
 			b sc_out
 sc_0x449F:
-			mov r4, #0x449F
-			mov r5, #0x589F
+			mov r1, #0x449F
+			mov r2, #0x589F
 			b sc_out
 sc_0x4580:
-			mov r4, #0x4580
-			mov r5, #0x5880
+			mov r1, #0x4580
+			mov r2, #0x5880
 			b sc_out
 sc_0x4581:
-			mov r4, #0x4581
-			mov r5, #0x5881
+			mov r1, #0x4581
+			mov r2, #0x5881
 			b sc_out
 sc_0x4582:
-			mov r4, #0x4582
-			mov r5, #0x5882
+			mov r1, #0x4582
+			mov r2, #0x5882
 			b sc_out
 sc_0x4583:
-			mov r4, #0x4583
-			mov r5, #0x5883
+			mov r1, #0x4583
+			mov r2, #0x5883
 			b sc_out
 sc_0x4584:
-			mov r4, #0x4584
-			mov r5, #0x5884
+			mov r1, #0x4584
+			mov r2, #0x5884
 			b sc_out
 sc_0x4585:
-			mov r4, #0x4585
-			mov r5, #0x5885
+			mov r1, #0x4585
+			mov r2, #0x5885
 			b sc_out
 sc_0x4586:
-			mov r4, #0x4586
-			mov r5, #0x5886
+			mov r1, #0x4586
+			mov r2, #0x5886
 			b sc_out
 sc_0x4587:
-			mov r4, #0x4587
-			mov r5, #0x5887
+			mov r1, #0x4587
+			mov r2, #0x5887
 			b sc_out
 sc_0x4588:
-			mov r4, #0x4588
-			mov r5, #0x5888
+			mov r1, #0x4588
+			mov r2, #0x5888
 			b sc_out
 sc_0x4589:
-			mov r4, #0x4589
-			mov r5, #0x5889
+			mov r1, #0x4589
+			mov r2, #0x5889
 			b sc_out
 sc_0x458A:
-			mov r4, #0x458A
-			mov r5, #0x588A
+			mov r1, #0x458A
+			mov r2, #0x588A
 			b sc_out
 sc_0x458B:
-			mov r4, #0x458B
-			mov r5, #0x588B
+			mov r1, #0x458B
+			mov r2, #0x588B
 			b sc_out
 sc_0x458C:
-			mov r4, #0x458C
-			mov r5, #0x588C
+			mov r1, #0x458C
+			mov r2, #0x588C
 			b sc_out
 sc_0x458D:
-			mov r4, #0x458D
-			mov r5, #0x588D
+			mov r1, #0x458D
+			mov r2, #0x588D
 			b sc_out
 sc_0x458E:
-			mov r4, #0x458E
-			mov r5, #0x588E
+			mov r1, #0x458E
+			mov r2, #0x588E
 			b sc_out
 sc_0x458F:
-			mov r4, #0x458F
-			mov r5, #0x588F
+			mov r1, #0x458F
+			mov r2, #0x588F
 			b sc_out
 sc_0x4590:
-			mov r4, #0x4590
-			mov r5, #0x5890
+			mov r1, #0x4590
+			mov r2, #0x5890
 			b sc_out
 sc_0x4591:
-			mov r4, #0x4591
-			mov r5, #0x5891
+			mov r1, #0x4591
+			mov r2, #0x5891
 			b sc_out
 sc_0x4592:
-			mov r4, #0x4592
-			mov r5, #0x5892
+			mov r1, #0x4592
+			mov r2, #0x5892
 			b sc_out
 sc_0x4593:
-			mov r4, #0x4593
-			mov r5, #0x5893
+			mov r1, #0x4593
+			mov r2, #0x5893
 			b sc_out
 sc_0x4594:
-			mov r4, #0x4594
-			mov r5, #0x5894
+			mov r1, #0x4594
+			mov r2, #0x5894
 			b sc_out
 sc_0x4595:
-			mov r4, #0x4595
-			mov r5, #0x5895
+			mov r1, #0x4595
+			mov r2, #0x5895
 			b sc_out
 sc_0x4596:
-			mov r4, #0x4596
-			mov r5, #0x5896
+			mov r1, #0x4596
+			mov r2, #0x5896
 			b sc_out
 sc_0x4597:
-			mov r4, #0x4597
-			mov r5, #0x5897
+			mov r1, #0x4597
+			mov r2, #0x5897
 			b sc_out
 sc_0x4598:
-			mov r4, #0x4598
-			mov r5, #0x5898
+			mov r1, #0x4598
+			mov r2, #0x5898
 			b sc_out
 sc_0x4599:
-			mov r4, #0x4599
-			mov r5, #0x5899
+			mov r1, #0x4599
+			mov r2, #0x5899
 			b sc_out
 sc_0x459A:
-			mov r4, #0x459A
-			mov r5, #0x589A
+			mov r1, #0x459A
+			mov r2, #0x589A
 			b sc_out
 sc_0x459B:
-			mov r4, #0x459B
-			mov r5, #0x589B
+			mov r1, #0x459B
+			mov r2, #0x589B
 			b sc_out
 sc_0x459C:
-			mov r4, #0x459C
-			mov r5, #0x589C
+			mov r1, #0x459C
+			mov r2, #0x589C
 			b sc_out
 sc_0x459D:
-			mov r4, #0x459D
-			mov r5, #0x589D
+			mov r1, #0x459D
+			mov r2, #0x589D
 			b sc_out
 sc_0x459E:
-			mov r4, #0x459E
-			mov r5, #0x589E
+			mov r1, #0x459E
+			mov r2, #0x589E
 			b sc_out
 sc_0x459F:
-			mov r4, #0x459F
-			mov r5, #0x589F
+			mov r1, #0x459F
+			mov r2, #0x589F
 			b sc_out
 sc_0x4680:
-			mov r4, #0x4680
-			mov r5, #0x5880
+			mov r1, #0x4680
+			mov r2, #0x5880
 			b sc_out
 sc_0x4681:
-			mov r4, #0x4681
-			mov r5, #0x5881
+			mov r1, #0x4681
+			mov r2, #0x5881
 			b sc_out
 sc_0x4682:
-			mov r4, #0x4682
-			mov r5, #0x5882
+			mov r1, #0x4682
+			mov r2, #0x5882
 			b sc_out
 sc_0x4683:
-			mov r4, #0x4683
-			mov r5, #0x5883
+			mov r1, #0x4683
+			mov r2, #0x5883
 			b sc_out
 sc_0x4684:
-			mov r4, #0x4684
-			mov r5, #0x5884
+			mov r1, #0x4684
+			mov r2, #0x5884
 			b sc_out
 sc_0x4685:
-			mov r4, #0x4685
-			mov r5, #0x5885
+			mov r1, #0x4685
+			mov r2, #0x5885
 			b sc_out
 sc_0x4686:
-			mov r4, #0x4686
-			mov r5, #0x5886
+			mov r1, #0x4686
+			mov r2, #0x5886
 			b sc_out
 sc_0x4687:
-			mov r4, #0x4687
-			mov r5, #0x5887
+			mov r1, #0x4687
+			mov r2, #0x5887
 			b sc_out
 sc_0x4688:
-			mov r4, #0x4688
-			mov r5, #0x5888
+			mov r1, #0x4688
+			mov r2, #0x5888
 			b sc_out
 sc_0x4689:
-			mov r4, #0x4689
-			mov r5, #0x5889
+			mov r1, #0x4689
+			mov r2, #0x5889
 			b sc_out
 sc_0x468A:
-			mov r4, #0x468A
-			mov r5, #0x588A
+			mov r1, #0x468A
+			mov r2, #0x588A
 			b sc_out
 sc_0x468B:
-			mov r4, #0x468B
-			mov r5, #0x588B
+			mov r1, #0x468B
+			mov r2, #0x588B
 			b sc_out
 sc_0x468C:
-			mov r4, #0x468C
-			mov r5, #0x588C
+			mov r1, #0x468C
+			mov r2, #0x588C
 			b sc_out
 sc_0x468D:
-			mov r4, #0x468D
-			mov r5, #0x588D
+			mov r1, #0x468D
+			mov r2, #0x588D
 			b sc_out
 sc_0x468E:
-			mov r4, #0x468E
-			mov r5, #0x588E
+			mov r1, #0x468E
+			mov r2, #0x588E
 			b sc_out
 sc_0x468F:
-			mov r4, #0x468F
-			mov r5, #0x588F
+			mov r1, #0x468F
+			mov r2, #0x588F
 			b sc_out
 sc_0x4690:
-			mov r4, #0x4690
-			mov r5, #0x5890
+			mov r1, #0x4690
+			mov r2, #0x5890
 			b sc_out
 sc_0x4691:
-			mov r4, #0x4691
-			mov r5, #0x5891
+			mov r1, #0x4691
+			mov r2, #0x5891
 			b sc_out
 sc_0x4692:
-			mov r4, #0x4692
-			mov r5, #0x5892
+			mov r1, #0x4692
+			mov r2, #0x5892
 			b sc_out
 sc_0x4693:
-			mov r4, #0x4693
-			mov r5, #0x5893
+			mov r1, #0x4693
+			mov r2, #0x5893
 			b sc_out
 sc_0x4694:
-			mov r4, #0x4694
-			mov r5, #0x5894
+			mov r1, #0x4694
+			mov r2, #0x5894
 			b sc_out
 sc_0x4695:
-			mov r4, #0x4695
-			mov r5, #0x5895
+			mov r1, #0x4695
+			mov r2, #0x5895
 			b sc_out
 sc_0x4696:
-			mov r4, #0x4696
-			mov r5, #0x5896
+			mov r1, #0x4696
+			mov r2, #0x5896
 			b sc_out
 sc_0x4697:
-			mov r4, #0x4697
-			mov r5, #0x5897
+			mov r1, #0x4697
+			mov r2, #0x5897
 			b sc_out
 sc_0x4698:
-			mov r4, #0x4698
-			mov r5, #0x5898
+			mov r1, #0x4698
+			mov r2, #0x5898
 			b sc_out
 sc_0x4699:
-			mov r4, #0x4699
-			mov r5, #0x5899
+			mov r1, #0x4699
+			mov r2, #0x5899
 			b sc_out
 sc_0x469A:
-			mov r4, #0x469A
-			mov r5, #0x589A
+			mov r1, #0x469A
+			mov r2, #0x589A
 			b sc_out
 sc_0x469B:
-			mov r4, #0x469B
-			mov r5, #0x589B
+			mov r1, #0x469B
+			mov r2, #0x589B
 			b sc_out
 sc_0x469C:
-			mov r4, #0x469C
-			mov r5, #0x589C
+			mov r1, #0x469C
+			mov r2, #0x589C
 			b sc_out
 sc_0x469D:
-			mov r4, #0x469D
-			mov r5, #0x589D
+			mov r1, #0x469D
+			mov r2, #0x589D
 			b sc_out
 sc_0x469E:
-			mov r4, #0x469E
-			mov r5, #0x589E
+			mov r1, #0x469E
+			mov r2, #0x589E
 			b sc_out
 sc_0x469F:
-			mov r4, #0x469F
-			mov r5, #0x589F
+			mov r1, #0x469F
+			mov r2, #0x589F
 			b sc_out
 sc_0x4780:
-			mov r4, #0x4780
-			mov r5, #0x5880
+			mov r1, #0x4780
+			mov r2, #0x5880
 			b sc_out
 sc_0x4781:
-			mov r4, #0x4781
-			mov r5, #0x5881
+			mov r1, #0x4781
+			mov r2, #0x5881
 			b sc_out
 sc_0x4782:
-			mov r4, #0x4782
-			mov r5, #0x5882
+			mov r1, #0x4782
+			mov r2, #0x5882
 			b sc_out
 sc_0x4783:
-			mov r4, #0x4783
-			mov r5, #0x5883
+			mov r1, #0x4783
+			mov r2, #0x5883
 			b sc_out
 sc_0x4784:
-			mov r4, #0x4784
-			mov r5, #0x5884
+			mov r1, #0x4784
+			mov r2, #0x5884
 			b sc_out
 sc_0x4785:
-			mov r4, #0x4785
-			mov r5, #0x5885
+			mov r1, #0x4785
+			mov r2, #0x5885
 			b sc_out
 sc_0x4786:
-			mov r4, #0x4786
-			mov r5, #0x5886
+			mov r1, #0x4786
+			mov r2, #0x5886
 			b sc_out
 sc_0x4787:
-			mov r4, #0x4787
-			mov r5, #0x5887
+			mov r1, #0x4787
+			mov r2, #0x5887
 			b sc_out
 sc_0x4788:
-			mov r4, #0x4788
-			mov r5, #0x5888
+			mov r1, #0x4788
+			mov r2, #0x5888
 			b sc_out
 sc_0x4789:
-			mov r4, #0x4789
-			mov r5, #0x5889
+			mov r1, #0x4789
+			mov r2, #0x5889
 			b sc_out
 sc_0x478A:
-			mov r4, #0x478A
-			mov r5, #0x588A
+			mov r1, #0x478A
+			mov r2, #0x588A
 			b sc_out
 sc_0x478B:
-			mov r4, #0x478B
-			mov r5, #0x588B
+			mov r1, #0x478B
+			mov r2, #0x588B
 			b sc_out
 sc_0x478C:
-			mov r4, #0x478C
-			mov r5, #0x588C
+			mov r1, #0x478C
+			mov r2, #0x588C
 			b sc_out
 sc_0x478D:
-			mov r4, #0x478D
-			mov r5, #0x588D
+			mov r1, #0x478D
+			mov r2, #0x588D
 			b sc_out
 sc_0x478E:
-			mov r4, #0x478E
-			mov r5, #0x588E
+			mov r1, #0x478E
+			mov r2, #0x588E
 			b sc_out
 sc_0x478F:
-			mov r4, #0x478F
-			mov r5, #0x588F
+			mov r1, #0x478F
+			mov r2, #0x588F
 			b sc_out
 sc_0x4790:
-			mov r4, #0x4790
-			mov r5, #0x5890
+			mov r1, #0x4790
+			mov r2, #0x5890
 			b sc_out
 sc_0x4791:
-			mov r4, #0x4791
-			mov r5, #0x5891
+			mov r1, #0x4791
+			mov r2, #0x5891
 			b sc_out
 sc_0x4792:
-			mov r4, #0x4792
-			mov r5, #0x5892
+			mov r1, #0x4792
+			mov r2, #0x5892
 			b sc_out
 sc_0x4793:
-			mov r4, #0x4793
-			mov r5, #0x5893
+			mov r1, #0x4793
+			mov r2, #0x5893
 			b sc_out
 sc_0x4794:
-			mov r4, #0x4794
-			mov r5, #0x5894
+			mov r1, #0x4794
+			mov r2, #0x5894
 			b sc_out
 sc_0x4795:
-			mov r4, #0x4795
-			mov r5, #0x5895
+			mov r1, #0x4795
+			mov r2, #0x5895
 			b sc_out
 sc_0x4796:
-			mov r4, #0x4796
-			mov r5, #0x5896
+			mov r1, #0x4796
+			mov r2, #0x5896
 			b sc_out
 sc_0x4797:
-			mov r4, #0x4797
-			mov r5, #0x5897
+			mov r1, #0x4797
+			mov r2, #0x5897
 			b sc_out
 sc_0x4798:
-			mov r4, #0x4798
-			mov r5, #0x5898
+			mov r1, #0x4798
+			mov r2, #0x5898
 			b sc_out
 sc_0x4799:
-			mov r4, #0x4799
-			mov r5, #0x5899
+			mov r1, #0x4799
+			mov r2, #0x5899
 			b sc_out
 sc_0x479A:
-			mov r4, #0x479A
-			mov r5, #0x589A
+			mov r1, #0x479A
+			mov r2, #0x589A
 			b sc_out
 sc_0x479B:
-			mov r4, #0x479B
-			mov r5, #0x589B
+			mov r1, #0x479B
+			mov r2, #0x589B
 			b sc_out
 sc_0x479C:
-			mov r4, #0x479C
-			mov r5, #0x589C
+			mov r1, #0x479C
+			mov r2, #0x589C
 			b sc_out
 sc_0x479D:
-			mov r4, #0x479D
-			mov r5, #0x589D
+			mov r1, #0x479D
+			mov r2, #0x589D
 			b sc_out
 sc_0x479E:
-			mov r4, #0x479E
-			mov r5, #0x589E
+			mov r1, #0x479E
+			mov r2, #0x589E
 			b sc_out
 sc_0x479F:
-			mov r4, #0x479F
-			mov r5, #0x589F
+			mov r1, #0x479F
+			mov r2, #0x589F
 			b sc_out
 sc_0x40A0:
-			mov r4, #0x40A0
-			mov r5, #0x58A0
+			mov r1, #0x40A0
+			mov r2, #0x58A0
 			b sc_out
 sc_0x40A1:
-			mov r4, #0x40A1
-			mov r5, #0x58A1
+			mov r1, #0x40A1
+			mov r2, #0x58A1
 			b sc_out
 sc_0x40A2:
-			mov r4, #0x40A2
-			mov r5, #0x58A2
+			mov r1, #0x40A2
+			mov r2, #0x58A2
 			b sc_out
 sc_0x40A3:
-			mov r4, #0x40A3
-			mov r5, #0x58A3
+			mov r1, #0x40A3
+			mov r2, #0x58A3
 			b sc_out
 sc_0x40A4:
-			mov r4, #0x40A4
-			mov r5, #0x58A4
+			mov r1, #0x40A4
+			mov r2, #0x58A4
 			b sc_out
 sc_0x40A5:
-			mov r4, #0x40A5
-			mov r5, #0x58A5
+			mov r1, #0x40A5
+			mov r2, #0x58A5
 			b sc_out
 sc_0x40A6:
-			mov r4, #0x40A6
-			mov r5, #0x58A6
+			mov r1, #0x40A6
+			mov r2, #0x58A6
 			b sc_out
 sc_0x40A7:
-			mov r4, #0x40A7
-			mov r5, #0x58A7
+			mov r1, #0x40A7
+			mov r2, #0x58A7
 			b sc_out
 sc_0x40A8:
-			mov r4, #0x40A8
-			mov r5, #0x58A8
+			mov r1, #0x40A8
+			mov r2, #0x58A8
 			b sc_out
 sc_0x40A9:
-			mov r4, #0x40A9
-			mov r5, #0x58A9
+			mov r1, #0x40A9
+			mov r2, #0x58A9
 			b sc_out
 sc_0x40AA:
-			mov r4, #0x40AA
-			mov r5, #0x58AA
+			mov r1, #0x40AA
+			mov r2, #0x58AA
 			b sc_out
 sc_0x40AB:
-			mov r4, #0x40AB
-			mov r5, #0x58AB
+			mov r1, #0x40AB
+			mov r2, #0x58AB
 			b sc_out
 sc_0x40AC:
-			mov r4, #0x40AC
-			mov r5, #0x58AC
+			mov r1, #0x40AC
+			mov r2, #0x58AC
 			b sc_out
 sc_0x40AD:
-			mov r4, #0x40AD
-			mov r5, #0x58AD
+			mov r1, #0x40AD
+			mov r2, #0x58AD
 			b sc_out
 sc_0x40AE:
-			mov r4, #0x40AE
-			mov r5, #0x58AE
+			mov r1, #0x40AE
+			mov r2, #0x58AE
 			b sc_out
 sc_0x40AF:
-			mov r4, #0x40AF
-			mov r5, #0x58AF
+			mov r1, #0x40AF
+			mov r2, #0x58AF
 			b sc_out
 sc_0x40B0:
-			mov r4, #0x40B0
-			mov r5, #0x58B0
+			mov r1, #0x40B0
+			mov r2, #0x58B0
 			b sc_out
 sc_0x40B1:
-			mov r4, #0x40B1
-			mov r5, #0x58B1
+			mov r1, #0x40B1
+			mov r2, #0x58B1
 			b sc_out
 sc_0x40B2:
-			mov r4, #0x40B2
-			mov r5, #0x58B2
+			mov r1, #0x40B2
+			mov r2, #0x58B2
 			b sc_out
 sc_0x40B3:
-			mov r4, #0x40B3
-			mov r5, #0x58B3
+			mov r1, #0x40B3
+			mov r2, #0x58B3
 			b sc_out
 sc_0x40B4:
-			mov r4, #0x40B4
-			mov r5, #0x58B4
+			mov r1, #0x40B4
+			mov r2, #0x58B4
 			b sc_out
 sc_0x40B5:
-			mov r4, #0x40B5
-			mov r5, #0x58B5
+			mov r1, #0x40B5
+			mov r2, #0x58B5
 			b sc_out
 sc_0x40B6:
-			mov r4, #0x40B6
-			mov r5, #0x58B6
+			mov r1, #0x40B6
+			mov r2, #0x58B6
 			b sc_out
 sc_0x40B7:
-			mov r4, #0x40B7
-			mov r5, #0x58B7
+			mov r1, #0x40B7
+			mov r2, #0x58B7
 			b sc_out
 sc_0x40B8:
-			mov r4, #0x40B8
-			mov r5, #0x58B8
+			mov r1, #0x40B8
+			mov r2, #0x58B8
 			b sc_out
 sc_0x40B9:
-			mov r4, #0x40B9
-			mov r5, #0x58B9
+			mov r1, #0x40B9
+			mov r2, #0x58B9
 			b sc_out
 sc_0x40BA:
-			mov r4, #0x40BA
-			mov r5, #0x58BA
+			mov r1, #0x40BA
+			mov r2, #0x58BA
 			b sc_out
 sc_0x40BB:
-			mov r4, #0x40BB
-			mov r5, #0x58BB
+			mov r1, #0x40BB
+			mov r2, #0x58BB
 			b sc_out
 sc_0x40BC:
-			mov r4, #0x40BC
-			mov r5, #0x58BC
+			mov r1, #0x40BC
+			mov r2, #0x58BC
 			b sc_out
 sc_0x40BD:
-			mov r4, #0x40BD
-			mov r5, #0x58BD
+			mov r1, #0x40BD
+			mov r2, #0x58BD
 			b sc_out
 sc_0x40BE:
-			mov r4, #0x40BE
-			mov r5, #0x58BE
+			mov r1, #0x40BE
+			mov r2, #0x58BE
 			b sc_out
 sc_0x40BF:
-			mov r4, #0x40BF
-			mov r5, #0x58BF
+			mov r1, #0x40BF
+			mov r2, #0x58BF
 			b sc_out
 sc_0x41A0:
-			mov r4, #0x41A0
-			mov r5, #0x58A0
+			mov r1, #0x41A0
+			mov r2, #0x58A0
 			b sc_out
 sc_0x41A1:
-			mov r4, #0x41A1
-			mov r5, #0x58A1
+			mov r1, #0x41A1
+			mov r2, #0x58A1
 			b sc_out
 sc_0x41A2:
-			mov r4, #0x41A2
-			mov r5, #0x58A2
+			mov r1, #0x41A2
+			mov r2, #0x58A2
 			b sc_out
 sc_0x41A3:
-			mov r4, #0x41A3
-			mov r5, #0x58A3
+			mov r1, #0x41A3
+			mov r2, #0x58A3
 			b sc_out
 sc_0x41A4:
-			mov r4, #0x41A4
-			mov r5, #0x58A4
+			mov r1, #0x41A4
+			mov r2, #0x58A4
 			b sc_out
 sc_0x41A5:
-			mov r4, #0x41A5
-			mov r5, #0x58A5
+			mov r1, #0x41A5
+			mov r2, #0x58A5
 			b sc_out
 sc_0x41A6:
-			mov r4, #0x41A6
-			mov r5, #0x58A6
+			mov r1, #0x41A6
+			mov r2, #0x58A6
 			b sc_out
 sc_0x41A7:
-			mov r4, #0x41A7
-			mov r5, #0x58A7
+			mov r1, #0x41A7
+			mov r2, #0x58A7
 			b sc_out
 sc_0x41A8:
-			mov r4, #0x41A8
-			mov r5, #0x58A8
+			mov r1, #0x41A8
+			mov r2, #0x58A8
 			b sc_out
 sc_0x41A9:
-			mov r4, #0x41A9
-			mov r5, #0x58A9
+			mov r1, #0x41A9
+			mov r2, #0x58A9
 			b sc_out
 sc_0x41AA:
-			mov r4, #0x41AA
-			mov r5, #0x58AA
+			mov r1, #0x41AA
+			mov r2, #0x58AA
 			b sc_out
 sc_0x41AB:
-			mov r4, #0x41AB
-			mov r5, #0x58AB
+			mov r1, #0x41AB
+			mov r2, #0x58AB
 			b sc_out
 sc_0x41AC:
-			mov r4, #0x41AC
-			mov r5, #0x58AC
+			mov r1, #0x41AC
+			mov r2, #0x58AC
 			b sc_out
 sc_0x41AD:
-			mov r4, #0x41AD
-			mov r5, #0x58AD
+			mov r1, #0x41AD
+			mov r2, #0x58AD
 			b sc_out
 sc_0x41AE:
-			mov r4, #0x41AE
-			mov r5, #0x58AE
+			mov r1, #0x41AE
+			mov r2, #0x58AE
 			b sc_out
 sc_0x41AF:
-			mov r4, #0x41AF
-			mov r5, #0x58AF
+			mov r1, #0x41AF
+			mov r2, #0x58AF
 			b sc_out
 sc_0x41B0:
-			mov r4, #0x41B0
-			mov r5, #0x58B0
+			mov r1, #0x41B0
+			mov r2, #0x58B0
 			b sc_out
 sc_0x41B1:
-			mov r4, #0x41B1
-			mov r5, #0x58B1
+			mov r1, #0x41B1
+			mov r2, #0x58B1
 			b sc_out
 sc_0x41B2:
-			mov r4, #0x41B2
-			mov r5, #0x58B2
+			mov r1, #0x41B2
+			mov r2, #0x58B2
 			b sc_out
 sc_0x41B3:
-			mov r4, #0x41B3
-			mov r5, #0x58B3
+			mov r1, #0x41B3
+			mov r2, #0x58B3
 			b sc_out
 sc_0x41B4:
-			mov r4, #0x41B4
-			mov r5, #0x58B4
+			mov r1, #0x41B4
+			mov r2, #0x58B4
 			b sc_out
 sc_0x41B5:
-			mov r4, #0x41B5
-			mov r5, #0x58B5
+			mov r1, #0x41B5
+			mov r2, #0x58B5
 			b sc_out
 sc_0x41B6:
-			mov r4, #0x41B6
-			mov r5, #0x58B6
+			mov r1, #0x41B6
+			mov r2, #0x58B6
 			b sc_out
 sc_0x41B7:
-			mov r4, #0x41B7
-			mov r5, #0x58B7
+			mov r1, #0x41B7
+			mov r2, #0x58B7
 			b sc_out
 sc_0x41B8:
-			mov r4, #0x41B8
-			mov r5, #0x58B8
+			mov r1, #0x41B8
+			mov r2, #0x58B8
 			b sc_out
 sc_0x41B9:
-			mov r4, #0x41B9
-			mov r5, #0x58B9
+			mov r1, #0x41B9
+			mov r2, #0x58B9
 			b sc_out
 sc_0x41BA:
-			mov r4, #0x41BA
-			mov r5, #0x58BA
+			mov r1, #0x41BA
+			mov r2, #0x58BA
 			b sc_out
 sc_0x41BB:
-			mov r4, #0x41BB
-			mov r5, #0x58BB
+			mov r1, #0x41BB
+			mov r2, #0x58BB
 			b sc_out
 sc_0x41BC:
-			mov r4, #0x41BC
-			mov r5, #0x58BC
+			mov r1, #0x41BC
+			mov r2, #0x58BC
 			b sc_out
 sc_0x41BD:
-			mov r4, #0x41BD
-			mov r5, #0x58BD
+			mov r1, #0x41BD
+			mov r2, #0x58BD
 			b sc_out
 sc_0x41BE:
-			mov r4, #0x41BE
-			mov r5, #0x58BE
+			mov r1, #0x41BE
+			mov r2, #0x58BE
 			b sc_out
 sc_0x41BF:
-			mov r4, #0x41BF
-			mov r5, #0x58BF
+			mov r1, #0x41BF
+			mov r2, #0x58BF
 			b sc_out
 sc_0x42A0:
-			mov r4, #0x42A0
-			mov r5, #0x58A0
+			mov r1, #0x42A0
+			mov r2, #0x58A0
 			b sc_out
 sc_0x42A1:
-			mov r4, #0x42A1
-			mov r5, #0x58A1
+			mov r1, #0x42A1
+			mov r2, #0x58A1
 			b sc_out
 sc_0x42A2:
-			mov r4, #0x42A2
-			mov r5, #0x58A2
+			mov r1, #0x42A2
+			mov r2, #0x58A2
 			b sc_out
 sc_0x42A3:
-			mov r4, #0x42A3
-			mov r5, #0x58A3
+			mov r1, #0x42A3
+			mov r2, #0x58A3
 			b sc_out
 sc_0x42A4:
-			mov r4, #0x42A4
-			mov r5, #0x58A4
+			mov r1, #0x42A4
+			mov r2, #0x58A4
 			b sc_out
 sc_0x42A5:
-			mov r4, #0x42A5
-			mov r5, #0x58A5
+			mov r1, #0x42A5
+			mov r2, #0x58A5
 			b sc_out
 sc_0x42A6:
-			mov r4, #0x42A6
-			mov r5, #0x58A6
+			mov r1, #0x42A6
+			mov r2, #0x58A6
 			b sc_out
 sc_0x42A7:
-			mov r4, #0x42A7
-			mov r5, #0x58A7
+			mov r1, #0x42A7
+			mov r2, #0x58A7
 			b sc_out
 sc_0x42A8:
-			mov r4, #0x42A8
-			mov r5, #0x58A8
+			mov r1, #0x42A8
+			mov r2, #0x58A8
 			b sc_out
 sc_0x42A9:
-			mov r4, #0x42A9
-			mov r5, #0x58A9
+			mov r1, #0x42A9
+			mov r2, #0x58A9
 			b sc_out
 sc_0x42AA:
-			mov r4, #0x42AA
-			mov r5, #0x58AA
+			mov r1, #0x42AA
+			mov r2, #0x58AA
 			b sc_out
 sc_0x42AB:
-			mov r4, #0x42AB
-			mov r5, #0x58AB
+			mov r1, #0x42AB
+			mov r2, #0x58AB
 			b sc_out
 sc_0x42AC:
-			mov r4, #0x42AC
-			mov r5, #0x58AC
+			mov r1, #0x42AC
+			mov r2, #0x58AC
 			b sc_out
 sc_0x42AD:
-			mov r4, #0x42AD
-			mov r5, #0x58AD
+			mov r1, #0x42AD
+			mov r2, #0x58AD
 			b sc_out
 sc_0x42AE:
-			mov r4, #0x42AE
-			mov r5, #0x58AE
+			mov r1, #0x42AE
+			mov r2, #0x58AE
 			b sc_out
 sc_0x42AF:
-			mov r4, #0x42AF
-			mov r5, #0x58AF
+			mov r1, #0x42AF
+			mov r2, #0x58AF
 			b sc_out
 sc_0x42B0:
-			mov r4, #0x42B0
-			mov r5, #0x58B0
+			mov r1, #0x42B0
+			mov r2, #0x58B0
 			b sc_out
 sc_0x42B1:
-			mov r4, #0x42B1
-			mov r5, #0x58B1
+			mov r1, #0x42B1
+			mov r2, #0x58B1
 			b sc_out
 sc_0x42B2:
-			mov r4, #0x42B2
-			mov r5, #0x58B2
+			mov r1, #0x42B2
+			mov r2, #0x58B2
 			b sc_out
 sc_0x42B3:
-			mov r4, #0x42B3
-			mov r5, #0x58B3
+			mov r1, #0x42B3
+			mov r2, #0x58B3
 			b sc_out
 sc_0x42B4:
-			mov r4, #0x42B4
-			mov r5, #0x58B4
+			mov r1, #0x42B4
+			mov r2, #0x58B4
 			b sc_out
 sc_0x42B5:
-			mov r4, #0x42B5
-			mov r5, #0x58B5
+			mov r1, #0x42B5
+			mov r2, #0x58B5
 			b sc_out
 sc_0x42B6:
-			mov r4, #0x42B6
-			mov r5, #0x58B6
+			mov r1, #0x42B6
+			mov r2, #0x58B6
 			b sc_out
 sc_0x42B7:
-			mov r4, #0x42B7
-			mov r5, #0x58B7
+			mov r1, #0x42B7
+			mov r2, #0x58B7
 			b sc_out
 sc_0x42B8:
-			mov r4, #0x42B8
-			mov r5, #0x58B8
+			mov r1, #0x42B8
+			mov r2, #0x58B8
 			b sc_out
 sc_0x42B9:
-			mov r4, #0x42B9
-			mov r5, #0x58B9
+			mov r1, #0x42B9
+			mov r2, #0x58B9
 			b sc_out
 sc_0x42BA:
-			mov r4, #0x42BA
-			mov r5, #0x58BA
+			mov r1, #0x42BA
+			mov r2, #0x58BA
 			b sc_out
 sc_0x42BB:
-			mov r4, #0x42BB
-			mov r5, #0x58BB
+			mov r1, #0x42BB
+			mov r2, #0x58BB
 			b sc_out
 sc_0x42BC:
-			mov r4, #0x42BC
-			mov r5, #0x58BC
+			mov r1, #0x42BC
+			mov r2, #0x58BC
 			b sc_out
 sc_0x42BD:
-			mov r4, #0x42BD
-			mov r5, #0x58BD
+			mov r1, #0x42BD
+			mov r2, #0x58BD
 			b sc_out
 sc_0x42BE:
-			mov r4, #0x42BE
-			mov r5, #0x58BE
+			mov r1, #0x42BE
+			mov r2, #0x58BE
 			b sc_out
 sc_0x42BF:
-			mov r4, #0x42BF
-			mov r5, #0x58BF
+			mov r1, #0x42BF
+			mov r2, #0x58BF
 			b sc_out
 sc_0x43A0:
-			mov r4, #0x43A0
-			mov r5, #0x58A0
+			mov r1, #0x43A0
+			mov r2, #0x58A0
 			b sc_out
 sc_0x43A1:
-			mov r4, #0x43A1
-			mov r5, #0x58A1
+			mov r1, #0x43A1
+			mov r2, #0x58A1
 			b sc_out
 sc_0x43A2:
-			mov r4, #0x43A2
-			mov r5, #0x58A2
+			mov r1, #0x43A2
+			mov r2, #0x58A2
 			b sc_out
 sc_0x43A3:
-			mov r4, #0x43A3
-			mov r5, #0x58A3
+			mov r1, #0x43A3
+			mov r2, #0x58A3
 			b sc_out
 sc_0x43A4:
-			mov r4, #0x43A4
-			mov r5, #0x58A4
+			mov r1, #0x43A4
+			mov r2, #0x58A4
 			b sc_out
 sc_0x43A5:
-			mov r4, #0x43A5
-			mov r5, #0x58A5
+			mov r1, #0x43A5
+			mov r2, #0x58A5
 			b sc_out
 sc_0x43A6:
-			mov r4, #0x43A6
-			mov r5, #0x58A6
+			mov r1, #0x43A6
+			mov r2, #0x58A6
 			b sc_out
 sc_0x43A7:
-			mov r4, #0x43A7
-			mov r5, #0x58A7
+			mov r1, #0x43A7
+			mov r2, #0x58A7
 			b sc_out
 sc_0x43A8:
-			mov r4, #0x43A8
-			mov r5, #0x58A8
+			mov r1, #0x43A8
+			mov r2, #0x58A8
 			b sc_out
 sc_0x43A9:
-			mov r4, #0x43A9
-			mov r5, #0x58A9
+			mov r1, #0x43A9
+			mov r2, #0x58A9
 			b sc_out
 sc_0x43AA:
-			mov r4, #0x43AA
-			mov r5, #0x58AA
+			mov r1, #0x43AA
+			mov r2, #0x58AA
 			b sc_out
 sc_0x43AB:
-			mov r4, #0x43AB
-			mov r5, #0x58AB
+			mov r1, #0x43AB
+			mov r2, #0x58AB
 			b sc_out
 sc_0x43AC:
-			mov r4, #0x43AC
-			mov r5, #0x58AC
+			mov r1, #0x43AC
+			mov r2, #0x58AC
 			b sc_out
 sc_0x43AD:
-			mov r4, #0x43AD
-			mov r5, #0x58AD
+			mov r1, #0x43AD
+			mov r2, #0x58AD
 			b sc_out
 sc_0x43AE:
-			mov r4, #0x43AE
-			mov r5, #0x58AE
+			mov r1, #0x43AE
+			mov r2, #0x58AE
 			b sc_out
 sc_0x43AF:
-			mov r4, #0x43AF
-			mov r5, #0x58AF
+			mov r1, #0x43AF
+			mov r2, #0x58AF
 			b sc_out
 sc_0x43B0:
-			mov r4, #0x43B0
-			mov r5, #0x58B0
+			mov r1, #0x43B0
+			mov r2, #0x58B0
 			b sc_out
 sc_0x43B1:
-			mov r4, #0x43B1
-			mov r5, #0x58B1
+			mov r1, #0x43B1
+			mov r2, #0x58B1
 			b sc_out
 sc_0x43B2:
-			mov r4, #0x43B2
-			mov r5, #0x58B2
+			mov r1, #0x43B2
+			mov r2, #0x58B2
 			b sc_out
 sc_0x43B3:
-			mov r4, #0x43B3
-			mov r5, #0x58B3
+			mov r1, #0x43B3
+			mov r2, #0x58B3
 			b sc_out
 sc_0x43B4:
-			mov r4, #0x43B4
-			mov r5, #0x58B4
+			mov r1, #0x43B4
+			mov r2, #0x58B4
 			b sc_out
 sc_0x43B5:
-			mov r4, #0x43B5
-			mov r5, #0x58B5
+			mov r1, #0x43B5
+			mov r2, #0x58B5
 			b sc_out
 sc_0x43B6:
-			mov r4, #0x43B6
-			mov r5, #0x58B6
+			mov r1, #0x43B6
+			mov r2, #0x58B6
 			b sc_out
 sc_0x43B7:
-			mov r4, #0x43B7
-			mov r5, #0x58B7
+			mov r1, #0x43B7
+			mov r2, #0x58B7
 			b sc_out
 sc_0x43B8:
-			mov r4, #0x43B8
-			mov r5, #0x58B8
+			mov r1, #0x43B8
+			mov r2, #0x58B8
 			b sc_out
 sc_0x43B9:
-			mov r4, #0x43B9
-			mov r5, #0x58B9
+			mov r1, #0x43B9
+			mov r2, #0x58B9
 			b sc_out
 sc_0x43BA:
-			mov r4, #0x43BA
-			mov r5, #0x58BA
+			mov r1, #0x43BA
+			mov r2, #0x58BA
 			b sc_out
 sc_0x43BB:
-			mov r4, #0x43BB
-			mov r5, #0x58BB
+			mov r1, #0x43BB
+			mov r2, #0x58BB
 			b sc_out
 sc_0x43BC:
-			mov r4, #0x43BC
-			mov r5, #0x58BC
+			mov r1, #0x43BC
+			mov r2, #0x58BC
 			b sc_out
 sc_0x43BD:
-			mov r4, #0x43BD
-			mov r5, #0x58BD
+			mov r1, #0x43BD
+			mov r2, #0x58BD
 			b sc_out
 sc_0x43BE:
-			mov r4, #0x43BE
-			mov r5, #0x58BE
+			mov r1, #0x43BE
+			mov r2, #0x58BE
 			b sc_out
 sc_0x43BF:
-			mov r4, #0x43BF
-			mov r5, #0x58BF
+			mov r1, #0x43BF
+			mov r2, #0x58BF
 			b sc_out
 sc_0x44A0:
-			mov r4, #0x44A0
-			mov r5, #0x58A0
+			mov r1, #0x44A0
+			mov r2, #0x58A0
 			b sc_out
 sc_0x44A1:
-			mov r4, #0x44A1
-			mov r5, #0x58A1
+			mov r1, #0x44A1
+			mov r2, #0x58A1
 			b sc_out
 sc_0x44A2:
-			mov r4, #0x44A2
-			mov r5, #0x58A2
+			mov r1, #0x44A2
+			mov r2, #0x58A2
 			b sc_out
 sc_0x44A3:
-			mov r4, #0x44A3
-			mov r5, #0x58A3
+			mov r1, #0x44A3
+			mov r2, #0x58A3
 			b sc_out
 sc_0x44A4:
-			mov r4, #0x44A4
-			mov r5, #0x58A4
+			mov r1, #0x44A4
+			mov r2, #0x58A4
 			b sc_out
 sc_0x44A5:
-			mov r4, #0x44A5
-			mov r5, #0x58A5
+			mov r1, #0x44A5
+			mov r2, #0x58A5
 			b sc_out
 sc_0x44A6:
-			mov r4, #0x44A6
-			mov r5, #0x58A6
+			mov r1, #0x44A6
+			mov r2, #0x58A6
 			b sc_out
 sc_0x44A7:
-			mov r4, #0x44A7
-			mov r5, #0x58A7
+			mov r1, #0x44A7
+			mov r2, #0x58A7
 			b sc_out
 sc_0x44A8:
-			mov r4, #0x44A8
-			mov r5, #0x58A8
+			mov r1, #0x44A8
+			mov r2, #0x58A8
 			b sc_out
 sc_0x44A9:
-			mov r4, #0x44A9
-			mov r5, #0x58A9
+			mov r1, #0x44A9
+			mov r2, #0x58A9
 			b sc_out
 sc_0x44AA:
-			mov r4, #0x44AA
-			mov r5, #0x58AA
+			mov r1, #0x44AA
+			mov r2, #0x58AA
 			b sc_out
 sc_0x44AB:
-			mov r4, #0x44AB
-			mov r5, #0x58AB
+			mov r1, #0x44AB
+			mov r2, #0x58AB
 			b sc_out
 sc_0x44AC:
-			mov r4, #0x44AC
-			mov r5, #0x58AC
+			mov r1, #0x44AC
+			mov r2, #0x58AC
 			b sc_out
 sc_0x44AD:
-			mov r4, #0x44AD
-			mov r5, #0x58AD
+			mov r1, #0x44AD
+			mov r2, #0x58AD
 			b sc_out
 sc_0x44AE:
-			mov r4, #0x44AE
-			mov r5, #0x58AE
+			mov r1, #0x44AE
+			mov r2, #0x58AE
 			b sc_out
 sc_0x44AF:
-			mov r4, #0x44AF
-			mov r5, #0x58AF
+			mov r1, #0x44AF
+			mov r2, #0x58AF
 			b sc_out
 sc_0x44B0:
-			mov r4, #0x44B0
-			mov r5, #0x58B0
+			mov r1, #0x44B0
+			mov r2, #0x58B0
 			b sc_out
 sc_0x44B1:
-			mov r4, #0x44B1
-			mov r5, #0x58B1
+			mov r1, #0x44B1
+			mov r2, #0x58B1
 			b sc_out
 sc_0x44B2:
-			mov r4, #0x44B2
-			mov r5, #0x58B2
+			mov r1, #0x44B2
+			mov r2, #0x58B2
 			b sc_out
 sc_0x44B3:
-			mov r4, #0x44B3
-			mov r5, #0x58B3
+			mov r1, #0x44B3
+			mov r2, #0x58B3
 			b sc_out
 sc_0x44B4:
-			mov r4, #0x44B4
-			mov r5, #0x58B4
+			mov r1, #0x44B4
+			mov r2, #0x58B4
 			b sc_out
 sc_0x44B5:
-			mov r4, #0x44B5
-			mov r5, #0x58B5
+			mov r1, #0x44B5
+			mov r2, #0x58B5
 			b sc_out
 sc_0x44B6:
-			mov r4, #0x44B6
-			mov r5, #0x58B6
+			mov r1, #0x44B6
+			mov r2, #0x58B6
 			b sc_out
 sc_0x44B7:
-			mov r4, #0x44B7
-			mov r5, #0x58B7
+			mov r1, #0x44B7
+			mov r2, #0x58B7
 			b sc_out
 sc_0x44B8:
-			mov r4, #0x44B8
-			mov r5, #0x58B8
+			mov r1, #0x44B8
+			mov r2, #0x58B8
 			b sc_out
 sc_0x44B9:
-			mov r4, #0x44B9
-			mov r5, #0x58B9
+			mov r1, #0x44B9
+			mov r2, #0x58B9
 			b sc_out
 sc_0x44BA:
-			mov r4, #0x44BA
-			mov r5, #0x58BA
+			mov r1, #0x44BA
+			mov r2, #0x58BA
 			b sc_out
 sc_0x44BB:
-			mov r4, #0x44BB
-			mov r5, #0x58BB
+			mov r1, #0x44BB
+			mov r2, #0x58BB
 			b sc_out
 sc_0x44BC:
-			mov r4, #0x44BC
-			mov r5, #0x58BC
+			mov r1, #0x44BC
+			mov r2, #0x58BC
 			b sc_out
 sc_0x44BD:
-			mov r4, #0x44BD
-			mov r5, #0x58BD
+			mov r1, #0x44BD
+			mov r2, #0x58BD
 			b sc_out
 sc_0x44BE:
-			mov r4, #0x44BE
-			mov r5, #0x58BE
+			mov r1, #0x44BE
+			mov r2, #0x58BE
 			b sc_out
 sc_0x44BF:
-			mov r4, #0x44BF
-			mov r5, #0x58BF
+			mov r1, #0x44BF
+			mov r2, #0x58BF
 			b sc_out
 sc_0x45A0:
-			mov r4, #0x45A0
-			mov r5, #0x58A0
+			mov r1, #0x45A0
+			mov r2, #0x58A0
 			b sc_out
 sc_0x45A1:
-			mov r4, #0x45A1
-			mov r5, #0x58A1
+			mov r1, #0x45A1
+			mov r2, #0x58A1
 			b sc_out
 sc_0x45A2:
-			mov r4, #0x45A2
-			mov r5, #0x58A2
+			mov r1, #0x45A2
+			mov r2, #0x58A2
 			b sc_out
 sc_0x45A3:
-			mov r4, #0x45A3
-			mov r5, #0x58A3
+			mov r1, #0x45A3
+			mov r2, #0x58A3
 			b sc_out
 sc_0x45A4:
-			mov r4, #0x45A4
-			mov r5, #0x58A4
+			mov r1, #0x45A4
+			mov r2, #0x58A4
 			b sc_out
 sc_0x45A5:
-			mov r4, #0x45A5
-			mov r5, #0x58A5
+			mov r1, #0x45A5
+			mov r2, #0x58A5
 			b sc_out
 sc_0x45A6:
-			mov r4, #0x45A6
-			mov r5, #0x58A6
+			mov r1, #0x45A6
+			mov r2, #0x58A6
 			b sc_out
 sc_0x45A7:
-			mov r4, #0x45A7
-			mov r5, #0x58A7
+			mov r1, #0x45A7
+			mov r2, #0x58A7
 			b sc_out
 sc_0x45A8:
-			mov r4, #0x45A8
-			mov r5, #0x58A8
+			mov r1, #0x45A8
+			mov r2, #0x58A8
 			b sc_out
 sc_0x45A9:
-			mov r4, #0x45A9
-			mov r5, #0x58A9
+			mov r1, #0x45A9
+			mov r2, #0x58A9
 			b sc_out
 sc_0x45AA:
-			mov r4, #0x45AA
-			mov r5, #0x58AA
+			mov r1, #0x45AA
+			mov r2, #0x58AA
 			b sc_out
 sc_0x45AB:
-			mov r4, #0x45AB
-			mov r5, #0x58AB
+			mov r1, #0x45AB
+			mov r2, #0x58AB
 			b sc_out
 sc_0x45AC:
-			mov r4, #0x45AC
-			mov r5, #0x58AC
+			mov r1, #0x45AC
+			mov r2, #0x58AC
 			b sc_out
 sc_0x45AD:
-			mov r4, #0x45AD
-			mov r5, #0x58AD
+			mov r1, #0x45AD
+			mov r2, #0x58AD
 			b sc_out
 sc_0x45AE:
-			mov r4, #0x45AE
-			mov r5, #0x58AE
+			mov r1, #0x45AE
+			mov r2, #0x58AE
 			b sc_out
 sc_0x45AF:
-			mov r4, #0x45AF
-			mov r5, #0x58AF
+			mov r1, #0x45AF
+			mov r2, #0x58AF
 			b sc_out
 sc_0x45B0:
-			mov r4, #0x45B0
-			mov r5, #0x58B0
+			mov r1, #0x45B0
+			mov r2, #0x58B0
 			b sc_out
 sc_0x45B1:
-			mov r4, #0x45B1
-			mov r5, #0x58B1
+			mov r1, #0x45B1
+			mov r2, #0x58B1
 			b sc_out
 sc_0x45B2:
-			mov r4, #0x45B2
-			mov r5, #0x58B2
+			mov r1, #0x45B2
+			mov r2, #0x58B2
 			b sc_out
 sc_0x45B3:
-			mov r4, #0x45B3
-			mov r5, #0x58B3
+			mov r1, #0x45B3
+			mov r2, #0x58B3
 			b sc_out
 sc_0x45B4:
-			mov r4, #0x45B4
-			mov r5, #0x58B4
+			mov r1, #0x45B4
+			mov r2, #0x58B4
 			b sc_out
 sc_0x45B5:
-			mov r4, #0x45B5
-			mov r5, #0x58B5
+			mov r1, #0x45B5
+			mov r2, #0x58B5
 			b sc_out
 sc_0x45B6:
-			mov r4, #0x45B6
-			mov r5, #0x58B6
+			mov r1, #0x45B6
+			mov r2, #0x58B6
 			b sc_out
 sc_0x45B7:
-			mov r4, #0x45B7
-			mov r5, #0x58B7
+			mov r1, #0x45B7
+			mov r2, #0x58B7
 			b sc_out
 sc_0x45B8:
-			mov r4, #0x45B8
-			mov r5, #0x58B8
+			mov r1, #0x45B8
+			mov r2, #0x58B8
 			b sc_out
 sc_0x45B9:
-			mov r4, #0x45B9
-			mov r5, #0x58B9
+			mov r1, #0x45B9
+			mov r2, #0x58B9
 			b sc_out
 sc_0x45BA:
-			mov r4, #0x45BA
-			mov r5, #0x58BA
+			mov r1, #0x45BA
+			mov r2, #0x58BA
 			b sc_out
 sc_0x45BB:
-			mov r4, #0x45BB
-			mov r5, #0x58BB
+			mov r1, #0x45BB
+			mov r2, #0x58BB
 			b sc_out
 sc_0x45BC:
-			mov r4, #0x45BC
-			mov r5, #0x58BC
+			mov r1, #0x45BC
+			mov r2, #0x58BC
 			b sc_out
 sc_0x45BD:
-			mov r4, #0x45BD
-			mov r5, #0x58BD
+			mov r1, #0x45BD
+			mov r2, #0x58BD
 			b sc_out
 sc_0x45BE:
-			mov r4, #0x45BE
-			mov r5, #0x58BE
+			mov r1, #0x45BE
+			mov r2, #0x58BE
 			b sc_out
 sc_0x45BF:
-			mov r4, #0x45BF
-			mov r5, #0x58BF
+			mov r1, #0x45BF
+			mov r2, #0x58BF
 			b sc_out
 sc_0x46A0:
-			mov r4, #0x46A0
-			mov r5, #0x58A0
+			mov r1, #0x46A0
+			mov r2, #0x58A0
 			b sc_out
 sc_0x46A1:
-			mov r4, #0x46A1
-			mov r5, #0x58A1
+			mov r1, #0x46A1
+			mov r2, #0x58A1
 			b sc_out
 sc_0x46A2:
-			mov r4, #0x46A2
-			mov r5, #0x58A2
+			mov r1, #0x46A2
+			mov r2, #0x58A2
 			b sc_out
 sc_0x46A3:
-			mov r4, #0x46A3
-			mov r5, #0x58A3
+			mov r1, #0x46A3
+			mov r2, #0x58A3
 			b sc_out
 sc_0x46A4:
-			mov r4, #0x46A4
-			mov r5, #0x58A4
+			mov r1, #0x46A4
+			mov r2, #0x58A4
 			b sc_out
 sc_0x46A5:
-			mov r4, #0x46A5
-			mov r5, #0x58A5
+			mov r1, #0x46A5
+			mov r2, #0x58A5
 			b sc_out
 sc_0x46A6:
-			mov r4, #0x46A6
-			mov r5, #0x58A6
+			mov r1, #0x46A6
+			mov r2, #0x58A6
 			b sc_out
 sc_0x46A7:
-			mov r4, #0x46A7
-			mov r5, #0x58A7
+			mov r1, #0x46A7
+			mov r2, #0x58A7
 			b sc_out
 sc_0x46A8:
-			mov r4, #0x46A8
-			mov r5, #0x58A8
+			mov r1, #0x46A8
+			mov r2, #0x58A8
 			b sc_out
 sc_0x46A9:
-			mov r4, #0x46A9
-			mov r5, #0x58A9
+			mov r1, #0x46A9
+			mov r2, #0x58A9
 			b sc_out
 sc_0x46AA:
-			mov r4, #0x46AA
-			mov r5, #0x58AA
+			mov r1, #0x46AA
+			mov r2, #0x58AA
 			b sc_out
 sc_0x46AB:
-			mov r4, #0x46AB
-			mov r5, #0x58AB
+			mov r1, #0x46AB
+			mov r2, #0x58AB
 			b sc_out
 sc_0x46AC:
-			mov r4, #0x46AC
-			mov r5, #0x58AC
+			mov r1, #0x46AC
+			mov r2, #0x58AC
 			b sc_out
 sc_0x46AD:
-			mov r4, #0x46AD
-			mov r5, #0x58AD
+			mov r1, #0x46AD
+			mov r2, #0x58AD
 			b sc_out
 sc_0x46AE:
-			mov r4, #0x46AE
-			mov r5, #0x58AE
+			mov r1, #0x46AE
+			mov r2, #0x58AE
 			b sc_out
 sc_0x46AF:
-			mov r4, #0x46AF
-			mov r5, #0x58AF
+			mov r1, #0x46AF
+			mov r2, #0x58AF
 			b sc_out
 sc_0x46B0:
-			mov r4, #0x46B0
-			mov r5, #0x58B0
+			mov r1, #0x46B0
+			mov r2, #0x58B0
 			b sc_out
 sc_0x46B1:
-			mov r4, #0x46B1
-			mov r5, #0x58B1
+			mov r1, #0x46B1
+			mov r2, #0x58B1
 			b sc_out
 sc_0x46B2:
-			mov r4, #0x46B2
-			mov r5, #0x58B2
+			mov r1, #0x46B2
+			mov r2, #0x58B2
 			b sc_out
 sc_0x46B3:
-			mov r4, #0x46B3
-			mov r5, #0x58B3
+			mov r1, #0x46B3
+			mov r2, #0x58B3
 			b sc_out
 sc_0x46B4:
-			mov r4, #0x46B4
-			mov r5, #0x58B4
+			mov r1, #0x46B4
+			mov r2, #0x58B4
 			b sc_out
 sc_0x46B5:
-			mov r4, #0x46B5
-			mov r5, #0x58B5
+			mov r1, #0x46B5
+			mov r2, #0x58B5
 			b sc_out
 sc_0x46B6:
-			mov r4, #0x46B6
-			mov r5, #0x58B6
+			mov r1, #0x46B6
+			mov r2, #0x58B6
 			b sc_out
 sc_0x46B7:
-			mov r4, #0x46B7
-			mov r5, #0x58B7
+			mov r1, #0x46B7
+			mov r2, #0x58B7
 			b sc_out
 sc_0x46B8:
-			mov r4, #0x46B8
-			mov r5, #0x58B8
+			mov r1, #0x46B8
+			mov r2, #0x58B8
 			b sc_out
 sc_0x46B9:
-			mov r4, #0x46B9
-			mov r5, #0x58B9
+			mov r1, #0x46B9
+			mov r2, #0x58B9
 			b sc_out
 sc_0x46BA:
-			mov r4, #0x46BA
-			mov r5, #0x58BA
+			mov r1, #0x46BA
+			mov r2, #0x58BA
 			b sc_out
 sc_0x46BB:
-			mov r4, #0x46BB
-			mov r5, #0x58BB
+			mov r1, #0x46BB
+			mov r2, #0x58BB
 			b sc_out
 sc_0x46BC:
-			mov r4, #0x46BC
-			mov r5, #0x58BC
+			mov r1, #0x46BC
+			mov r2, #0x58BC
 			b sc_out
 sc_0x46BD:
-			mov r4, #0x46BD
-			mov r5, #0x58BD
+			mov r1, #0x46BD
+			mov r2, #0x58BD
 			b sc_out
 sc_0x46BE:
-			mov r4, #0x46BE
-			mov r5, #0x58BE
+			mov r1, #0x46BE
+			mov r2, #0x58BE
 			b sc_out
 sc_0x46BF:
-			mov r4, #0x46BF
-			mov r5, #0x58BF
+			mov r1, #0x46BF
+			mov r2, #0x58BF
 			b sc_out
 sc_0x47A0:
-			mov r4, #0x47A0
-			mov r5, #0x58A0
+			mov r1, #0x47A0
+			mov r2, #0x58A0
 			b sc_out
 sc_0x47A1:
-			mov r4, #0x47A1
-			mov r5, #0x58A1
+			mov r1, #0x47A1
+			mov r2, #0x58A1
 			b sc_out
 sc_0x47A2:
-			mov r4, #0x47A2
-			mov r5, #0x58A2
+			mov r1, #0x47A2
+			mov r2, #0x58A2
 			b sc_out
 sc_0x47A3:
-			mov r4, #0x47A3
-			mov r5, #0x58A3
+			mov r1, #0x47A3
+			mov r2, #0x58A3
 			b sc_out
 sc_0x47A4:
-			mov r4, #0x47A4
-			mov r5, #0x58A4
+			mov r1, #0x47A4
+			mov r2, #0x58A4
 			b sc_out
 sc_0x47A5:
-			mov r4, #0x47A5
-			mov r5, #0x58A5
+			mov r1, #0x47A5
+			mov r2, #0x58A5
 			b sc_out
 sc_0x47A6:
-			mov r4, #0x47A6
-			mov r5, #0x58A6
+			mov r1, #0x47A6
+			mov r2, #0x58A6
 			b sc_out
 sc_0x47A7:
-			mov r4, #0x47A7
-			mov r5, #0x58A7
+			mov r1, #0x47A7
+			mov r2, #0x58A7
 			b sc_out
 sc_0x47A8:
-			mov r4, #0x47A8
-			mov r5, #0x58A8
+			mov r1, #0x47A8
+			mov r2, #0x58A8
 			b sc_out
 sc_0x47A9:
-			mov r4, #0x47A9
-			mov r5, #0x58A9
+			mov r1, #0x47A9
+			mov r2, #0x58A9
 			b sc_out
 sc_0x47AA:
-			mov r4, #0x47AA
-			mov r5, #0x58AA
+			mov r1, #0x47AA
+			mov r2, #0x58AA
 			b sc_out
 sc_0x47AB:
-			mov r4, #0x47AB
-			mov r5, #0x58AB
+			mov r1, #0x47AB
+			mov r2, #0x58AB
 			b sc_out
 sc_0x47AC:
-			mov r4, #0x47AC
-			mov r5, #0x58AC
+			mov r1, #0x47AC
+			mov r2, #0x58AC
 			b sc_out
 sc_0x47AD:
-			mov r4, #0x47AD
-			mov r5, #0x58AD
+			mov r1, #0x47AD
+			mov r2, #0x58AD
 			b sc_out
 sc_0x47AE:
-			mov r4, #0x47AE
-			mov r5, #0x58AE
+			mov r1, #0x47AE
+			mov r2, #0x58AE
 			b sc_out
 sc_0x47AF:
-			mov r4, #0x47AF
-			mov r5, #0x58AF
+			mov r1, #0x47AF
+			mov r2, #0x58AF
 			b sc_out
 sc_0x47B0:
-			mov r4, #0x47B0
-			mov r5, #0x58B0
+			mov r1, #0x47B0
+			mov r2, #0x58B0
 			b sc_out
 sc_0x47B1:
-			mov r4, #0x47B1
-			mov r5, #0x58B1
+			mov r1, #0x47B1
+			mov r2, #0x58B1
 			b sc_out
 sc_0x47B2:
-			mov r4, #0x47B2
-			mov r5, #0x58B2
+			mov r1, #0x47B2
+			mov r2, #0x58B2
 			b sc_out
 sc_0x47B3:
-			mov r4, #0x47B3
-			mov r5, #0x58B3
+			mov r1, #0x47B3
+			mov r2, #0x58B3
 			b sc_out
 sc_0x47B4:
-			mov r4, #0x47B4
-			mov r5, #0x58B4
+			mov r1, #0x47B4
+			mov r2, #0x58B4
 			b sc_out
 sc_0x47B5:
-			mov r4, #0x47B5
-			mov r5, #0x58B5
+			mov r1, #0x47B5
+			mov r2, #0x58B5
 			b sc_out
 sc_0x47B6:
-			mov r4, #0x47B6
-			mov r5, #0x58B6
+			mov r1, #0x47B6
+			mov r2, #0x58B6
 			b sc_out
 sc_0x47B7:
-			mov r4, #0x47B7
-			mov r5, #0x58B7
+			mov r1, #0x47B7
+			mov r2, #0x58B7
 			b sc_out
 sc_0x47B8:
-			mov r4, #0x47B8
-			mov r5, #0x58B8
+			mov r1, #0x47B8
+			mov r2, #0x58B8
 			b sc_out
 sc_0x47B9:
-			mov r4, #0x47B9
-			mov r5, #0x58B9
+			mov r1, #0x47B9
+			mov r2, #0x58B9
 			b sc_out
 sc_0x47BA:
-			mov r4, #0x47BA
-			mov r5, #0x58BA
+			mov r1, #0x47BA
+			mov r2, #0x58BA
 			b sc_out
 sc_0x47BB:
-			mov r4, #0x47BB
-			mov r5, #0x58BB
+			mov r1, #0x47BB
+			mov r2, #0x58BB
 			b sc_out
 sc_0x47BC:
-			mov r4, #0x47BC
-			mov r5, #0x58BC
+			mov r1, #0x47BC
+			mov r2, #0x58BC
 			b sc_out
 sc_0x47BD:
-			mov r4, #0x47BD
-			mov r5, #0x58BD
+			mov r1, #0x47BD
+			mov r2, #0x58BD
 			b sc_out
 sc_0x47BE:
-			mov r4, #0x47BE
-			mov r5, #0x58BE
+			mov r1, #0x47BE
+			mov r2, #0x58BE
 			b sc_out
 sc_0x47BF:
-			mov r4, #0x47BF
-			mov r5, #0x58BF
+			mov r1, #0x47BF
+			mov r2, #0x58BF
 			b sc_out
 sc_0x40C0:
-			mov r4, #0x40C0
-			mov r5, #0x58C0
+			mov r1, #0x40C0
+			mov r2, #0x58C0
 			b sc_out
 sc_0x40C1:
-			mov r4, #0x40C1
-			mov r5, #0x58C1
+			mov r1, #0x40C1
+			mov r2, #0x58C1
 			b sc_out
 sc_0x40C2:
-			mov r4, #0x40C2
-			mov r5, #0x58C2
+			mov r1, #0x40C2
+			mov r2, #0x58C2
 			b sc_out
 sc_0x40C3:
-			mov r4, #0x40C3
-			mov r5, #0x58C3
+			mov r1, #0x40C3
+			mov r2, #0x58C3
 			b sc_out
 sc_0x40C4:
-			mov r4, #0x40C4
-			mov r5, #0x58C4
+			mov r1, #0x40C4
+			mov r2, #0x58C4
 			b sc_out
 sc_0x40C5:
-			mov r4, #0x40C5
-			mov r5, #0x58C5
+			mov r1, #0x40C5
+			mov r2, #0x58C5
 			b sc_out
 sc_0x40C6:
-			mov r4, #0x40C6
-			mov r5, #0x58C6
+			mov r1, #0x40C6
+			mov r2, #0x58C6
 			b sc_out
 sc_0x40C7:
-			mov r4, #0x40C7
-			mov r5, #0x58C7
+			mov r1, #0x40C7
+			mov r2, #0x58C7
 			b sc_out
 sc_0x40C8:
-			mov r4, #0x40C8
-			mov r5, #0x58C8
+			mov r1, #0x40C8
+			mov r2, #0x58C8
 			b sc_out
 sc_0x40C9:
-			mov r4, #0x40C9
-			mov r5, #0x58C9
+			mov r1, #0x40C9
+			mov r2, #0x58C9
 			b sc_out
 sc_0x40CA:
-			mov r4, #0x40CA
-			mov r5, #0x58CA
+			mov r1, #0x40CA
+			mov r2, #0x58CA
 			b sc_out
 sc_0x40CB:
-			mov r4, #0x40CB
-			mov r5, #0x58CB
+			mov r1, #0x40CB
+			mov r2, #0x58CB
 			b sc_out
 sc_0x40CC:
-			mov r4, #0x40CC
-			mov r5, #0x58CC
+			mov r1, #0x40CC
+			mov r2, #0x58CC
 			b sc_out
 sc_0x40CD:
-			mov r4, #0x40CD
-			mov r5, #0x58CD
+			mov r1, #0x40CD
+			mov r2, #0x58CD
 			b sc_out
 sc_0x40CE:
-			mov r4, #0x40CE
-			mov r5, #0x58CE
+			mov r1, #0x40CE
+			mov r2, #0x58CE
 			b sc_out
 sc_0x40CF:
-			mov r4, #0x40CF
-			mov r5, #0x58CF
+			mov r1, #0x40CF
+			mov r2, #0x58CF
 			b sc_out
 sc_0x40D0:
-			mov r4, #0x40D0
-			mov r5, #0x58D0
+			mov r1, #0x40D0
+			mov r2, #0x58D0
 			b sc_out
 sc_0x40D1:
-			mov r4, #0x40D1
-			mov r5, #0x58D1
+			mov r1, #0x40D1
+			mov r2, #0x58D1
 			b sc_out
 sc_0x40D2:
-			mov r4, #0x40D2
-			mov r5, #0x58D2
+			mov r1, #0x40D2
+			mov r2, #0x58D2
 			b sc_out
 sc_0x40D3:
-			mov r4, #0x40D3
-			mov r5, #0x58D3
+			mov r1, #0x40D3
+			mov r2, #0x58D3
 			b sc_out
 sc_0x40D4:
-			mov r4, #0x40D4
-			mov r5, #0x58D4
+			mov r1, #0x40D4
+			mov r2, #0x58D4
 			b sc_out
 sc_0x40D5:
-			mov r4, #0x40D5
-			mov r5, #0x58D5
+			mov r1, #0x40D5
+			mov r2, #0x58D5
 			b sc_out
 sc_0x40D6:
-			mov r4, #0x40D6
-			mov r5, #0x58D6
+			mov r1, #0x40D6
+			mov r2, #0x58D6
 			b sc_out
 sc_0x40D7:
-			mov r4, #0x40D7
-			mov r5, #0x58D7
+			mov r1, #0x40D7
+			mov r2, #0x58D7
 			b sc_out
 sc_0x40D8:
-			mov r4, #0x40D8
-			mov r5, #0x58D8
+			mov r1, #0x40D8
+			mov r2, #0x58D8
 			b sc_out
 sc_0x40D9:
-			mov r4, #0x40D9
-			mov r5, #0x58D9
+			mov r1, #0x40D9
+			mov r2, #0x58D9
 			b sc_out
 sc_0x40DA:
-			mov r4, #0x40DA
-			mov r5, #0x58DA
+			mov r1, #0x40DA
+			mov r2, #0x58DA
 			b sc_out
 sc_0x40DB:
-			mov r4, #0x40DB
-			mov r5, #0x58DB
+			mov r1, #0x40DB
+			mov r2, #0x58DB
 			b sc_out
 sc_0x40DC:
-			mov r4, #0x40DC
-			mov r5, #0x58DC
+			mov r1, #0x40DC
+			mov r2, #0x58DC
 			b sc_out
 sc_0x40DD:
-			mov r4, #0x40DD
-			mov r5, #0x58DD
+			mov r1, #0x40DD
+			mov r2, #0x58DD
 			b sc_out
 sc_0x40DE:
-			mov r4, #0x40DE
-			mov r5, #0x58DE
+			mov r1, #0x40DE
+			mov r2, #0x58DE
 			b sc_out
 sc_0x40DF:
-			mov r4, #0x40DF
-			mov r5, #0x58DF
+			mov r1, #0x40DF
+			mov r2, #0x58DF
 			b sc_out
 sc_0x41C0:
-			mov r4, #0x41C0
-			mov r5, #0x58C0
+			mov r1, #0x41C0
+			mov r2, #0x58C0
 			b sc_out
 sc_0x41C1:
-			mov r4, #0x41C1
-			mov r5, #0x58C1
+			mov r1, #0x41C1
+			mov r2, #0x58C1
 			b sc_out
 sc_0x41C2:
-			mov r4, #0x41C2
-			mov r5, #0x58C2
+			mov r1, #0x41C2
+			mov r2, #0x58C2
 			b sc_out
 sc_0x41C3:
-			mov r4, #0x41C3
-			mov r5, #0x58C3
+			mov r1, #0x41C3
+			mov r2, #0x58C3
 			b sc_out
 sc_0x41C4:
-			mov r4, #0x41C4
-			mov r5, #0x58C4
+			mov r1, #0x41C4
+			mov r2, #0x58C4
 			b sc_out
 sc_0x41C5:
-			mov r4, #0x41C5
-			mov r5, #0x58C5
+			mov r1, #0x41C5
+			mov r2, #0x58C5
 			b sc_out
 sc_0x41C6:
-			mov r4, #0x41C6
-			mov r5, #0x58C6
+			mov r1, #0x41C6
+			mov r2, #0x58C6
 			b sc_out
 sc_0x41C7:
-			mov r4, #0x41C7
-			mov r5, #0x58C7
+			mov r1, #0x41C7
+			mov r2, #0x58C7
 			b sc_out
 sc_0x41C8:
-			mov r4, #0x41C8
-			mov r5, #0x58C8
+			mov r1, #0x41C8
+			mov r2, #0x58C8
 			b sc_out
 sc_0x41C9:
-			mov r4, #0x41C9
-			mov r5, #0x58C9
+			mov r1, #0x41C9
+			mov r2, #0x58C9
 			b sc_out
 sc_0x41CA:
-			mov r4, #0x41CA
-			mov r5, #0x58CA
+			mov r1, #0x41CA
+			mov r2, #0x58CA
 			b sc_out
 sc_0x41CB:
-			mov r4, #0x41CB
-			mov r5, #0x58CB
+			mov r1, #0x41CB
+			mov r2, #0x58CB
 			b sc_out
 sc_0x41CC:
-			mov r4, #0x41CC
-			mov r5, #0x58CC
+			mov r1, #0x41CC
+			mov r2, #0x58CC
 			b sc_out
 sc_0x41CD:
-			mov r4, #0x41CD
-			mov r5, #0x58CD
+			mov r1, #0x41CD
+			mov r2, #0x58CD
 			b sc_out
 sc_0x41CE:
-			mov r4, #0x41CE
-			mov r5, #0x58CE
+			mov r1, #0x41CE
+			mov r2, #0x58CE
 			b sc_out
 sc_0x41CF:
-			mov r4, #0x41CF
-			mov r5, #0x58CF
+			mov r1, #0x41CF
+			mov r2, #0x58CF
 			b sc_out
 sc_0x41D0:
-			mov r4, #0x41D0
-			mov r5, #0x58D0
+			mov r1, #0x41D0
+			mov r2, #0x58D0
 			b sc_out
 sc_0x41D1:
-			mov r4, #0x41D1
-			mov r5, #0x58D1
+			mov r1, #0x41D1
+			mov r2, #0x58D1
 			b sc_out
 sc_0x41D2:
-			mov r4, #0x41D2
-			mov r5, #0x58D2
+			mov r1, #0x41D2
+			mov r2, #0x58D2
 			b sc_out
 sc_0x41D3:
-			mov r4, #0x41D3
-			mov r5, #0x58D3
+			mov r1, #0x41D3
+			mov r2, #0x58D3
 			b sc_out
 sc_0x41D4:
-			mov r4, #0x41D4
-			mov r5, #0x58D4
+			mov r1, #0x41D4
+			mov r2, #0x58D4
 			b sc_out
 sc_0x41D5:
-			mov r4, #0x41D5
-			mov r5, #0x58D5
+			mov r1, #0x41D5
+			mov r2, #0x58D5
 			b sc_out
 sc_0x41D6:
-			mov r4, #0x41D6
-			mov r5, #0x58D6
+			mov r1, #0x41D6
+			mov r2, #0x58D6
 			b sc_out
 sc_0x41D7:
-			mov r4, #0x41D7
-			mov r5, #0x58D7
+			mov r1, #0x41D7
+			mov r2, #0x58D7
 			b sc_out
 sc_0x41D8:
-			mov r4, #0x41D8
-			mov r5, #0x58D8
+			mov r1, #0x41D8
+			mov r2, #0x58D8
 			b sc_out
 sc_0x41D9:
-			mov r4, #0x41D9
-			mov r5, #0x58D9
+			mov r1, #0x41D9
+			mov r2, #0x58D9
 			b sc_out
 sc_0x41DA:
-			mov r4, #0x41DA
-			mov r5, #0x58DA
+			mov r1, #0x41DA
+			mov r2, #0x58DA
 			b sc_out
 sc_0x41DB:
-			mov r4, #0x41DB
-			mov r5, #0x58DB
+			mov r1, #0x41DB
+			mov r2, #0x58DB
 			b sc_out
 sc_0x41DC:
-			mov r4, #0x41DC
-			mov r5, #0x58DC
+			mov r1, #0x41DC
+			mov r2, #0x58DC
 			b sc_out
 sc_0x41DD:
-			mov r4, #0x41DD
-			mov r5, #0x58DD
+			mov r1, #0x41DD
+			mov r2, #0x58DD
 			b sc_out
 sc_0x41DE:
-			mov r4, #0x41DE
-			mov r5, #0x58DE
+			mov r1, #0x41DE
+			mov r2, #0x58DE
 			b sc_out
 sc_0x41DF:
-			mov r4, #0x41DF
-			mov r5, #0x58DF
+			mov r1, #0x41DF
+			mov r2, #0x58DF
 			b sc_out
 sc_0x42C0:
-			mov r4, #0x42C0
-			mov r5, #0x58C0
+			mov r1, #0x42C0
+			mov r2, #0x58C0
 			b sc_out
 sc_0x42C1:
-			mov r4, #0x42C1
-			mov r5, #0x58C1
+			mov r1, #0x42C1
+			mov r2, #0x58C1
 			b sc_out
 sc_0x42C2:
-			mov r4, #0x42C2
-			mov r5, #0x58C2
+			mov r1, #0x42C2
+			mov r2, #0x58C2
 			b sc_out
 sc_0x42C3:
-			mov r4, #0x42C3
-			mov r5, #0x58C3
+			mov r1, #0x42C3
+			mov r2, #0x58C3
 			b sc_out
 sc_0x42C4:
-			mov r4, #0x42C4
-			mov r5, #0x58C4
+			mov r1, #0x42C4
+			mov r2, #0x58C4
 			b sc_out
 sc_0x42C5:
-			mov r4, #0x42C5
-			mov r5, #0x58C5
+			mov r1, #0x42C5
+			mov r2, #0x58C5
 			b sc_out
 sc_0x42C6:
-			mov r4, #0x42C6
-			mov r5, #0x58C6
+			mov r1, #0x42C6
+			mov r2, #0x58C6
 			b sc_out
 sc_0x42C7:
-			mov r4, #0x42C7
-			mov r5, #0x58C7
+			mov r1, #0x42C7
+			mov r2, #0x58C7
 			b sc_out
 sc_0x42C8:
-			mov r4, #0x42C8
-			mov r5, #0x58C8
+			mov r1, #0x42C8
+			mov r2, #0x58C8
 			b sc_out
 sc_0x42C9:
-			mov r4, #0x42C9
-			mov r5, #0x58C9
+			mov r1, #0x42C9
+			mov r2, #0x58C9
 			b sc_out
 sc_0x42CA:
-			mov r4, #0x42CA
-			mov r5, #0x58CA
+			mov r1, #0x42CA
+			mov r2, #0x58CA
 			b sc_out
 sc_0x42CB:
-			mov r4, #0x42CB
-			mov r5, #0x58CB
+			mov r1, #0x42CB
+			mov r2, #0x58CB
 			b sc_out
 sc_0x42CC:
-			mov r4, #0x42CC
-			mov r5, #0x58CC
+			mov r1, #0x42CC
+			mov r2, #0x58CC
 			b sc_out
 sc_0x42CD:
-			mov r4, #0x42CD
-			mov r5, #0x58CD
+			mov r1, #0x42CD
+			mov r2, #0x58CD
 			b sc_out
 sc_0x42CE:
-			mov r4, #0x42CE
-			mov r5, #0x58CE
+			mov r1, #0x42CE
+			mov r2, #0x58CE
 			b sc_out
 sc_0x42CF:
-			mov r4, #0x42CF
-			mov r5, #0x58CF
+			mov r1, #0x42CF
+			mov r2, #0x58CF
 			b sc_out
 sc_0x42D0:
-			mov r4, #0x42D0
-			mov r5, #0x58D0
+			mov r1, #0x42D0
+			mov r2, #0x58D0
 			b sc_out
 sc_0x42D1:
-			mov r4, #0x42D1
-			mov r5, #0x58D1
+			mov r1, #0x42D1
+			mov r2, #0x58D1
 			b sc_out
 sc_0x42D2:
-			mov r4, #0x42D2
-			mov r5, #0x58D2
+			mov r1, #0x42D2
+			mov r2, #0x58D2
 			b sc_out
 sc_0x42D3:
-			mov r4, #0x42D3
-			mov r5, #0x58D3
+			mov r1, #0x42D3
+			mov r2, #0x58D3
 			b sc_out
 sc_0x42D4:
-			mov r4, #0x42D4
-			mov r5, #0x58D4
+			mov r1, #0x42D4
+			mov r2, #0x58D4
 			b sc_out
 sc_0x42D5:
-			mov r4, #0x42D5
-			mov r5, #0x58D5
+			mov r1, #0x42D5
+			mov r2, #0x58D5
 			b sc_out
 sc_0x42D6:
-			mov r4, #0x42D6
-			mov r5, #0x58D6
+			mov r1, #0x42D6
+			mov r2, #0x58D6
 			b sc_out
 sc_0x42D7:
-			mov r4, #0x42D7
-			mov r5, #0x58D7
+			mov r1, #0x42D7
+			mov r2, #0x58D7
 			b sc_out
 sc_0x42D8:
-			mov r4, #0x42D8
-			mov r5, #0x58D8
+			mov r1, #0x42D8
+			mov r2, #0x58D8
 			b sc_out
 sc_0x42D9:
-			mov r4, #0x42D9
-			mov r5, #0x58D9
+			mov r1, #0x42D9
+			mov r2, #0x58D9
 			b sc_out
 sc_0x42DA:
-			mov r4, #0x42DA
-			mov r5, #0x58DA
+			mov r1, #0x42DA
+			mov r2, #0x58DA
 			b sc_out
 sc_0x42DB:
-			mov r4, #0x42DB
-			mov r5, #0x58DB
+			mov r1, #0x42DB
+			mov r2, #0x58DB
 			b sc_out
 sc_0x42DC:
-			mov r4, #0x42DC
-			mov r5, #0x58DC
+			mov r1, #0x42DC
+			mov r2, #0x58DC
 			b sc_out
 sc_0x42DD:
-			mov r4, #0x42DD
-			mov r5, #0x58DD
+			mov r1, #0x42DD
+			mov r2, #0x58DD
 			b sc_out
 sc_0x42DE:
-			mov r4, #0x42DE
-			mov r5, #0x58DE
+			mov r1, #0x42DE
+			mov r2, #0x58DE
 			b sc_out
 sc_0x42DF:
-			mov r4, #0x42DF
-			mov r5, #0x58DF
+			mov r1, #0x42DF
+			mov r2, #0x58DF
 			b sc_out
 sc_0x43C0:
-			mov r4, #0x43C0
-			mov r5, #0x58C0
+			mov r1, #0x43C0
+			mov r2, #0x58C0
 			b sc_out
 sc_0x43C1:
-			mov r4, #0x43C1
-			mov r5, #0x58C1
+			mov r1, #0x43C1
+			mov r2, #0x58C1
 			b sc_out
 sc_0x43C2:
-			mov r4, #0x43C2
-			mov r5, #0x58C2
+			mov r1, #0x43C2
+			mov r2, #0x58C2
 			b sc_out
 sc_0x43C3:
-			mov r4, #0x43C3
-			mov r5, #0x58C3
+			mov r1, #0x43C3
+			mov r2, #0x58C3
 			b sc_out
 sc_0x43C4:
-			mov r4, #0x43C4
-			mov r5, #0x58C4
+			mov r1, #0x43C4
+			mov r2, #0x58C4
 			b sc_out
 sc_0x43C5:
-			mov r4, #0x43C5
-			mov r5, #0x58C5
+			mov r1, #0x43C5
+			mov r2, #0x58C5
 			b sc_out
 sc_0x43C6:
-			mov r4, #0x43C6
-			mov r5, #0x58C6
+			mov r1, #0x43C6
+			mov r2, #0x58C6
 			b sc_out
 sc_0x43C7:
-			mov r4, #0x43C7
-			mov r5, #0x58C7
+			mov r1, #0x43C7
+			mov r2, #0x58C7
 			b sc_out
 sc_0x43C8:
-			mov r4, #0x43C8
-			mov r5, #0x58C8
+			mov r1, #0x43C8
+			mov r2, #0x58C8
 			b sc_out
 sc_0x43C9:
-			mov r4, #0x43C9
-			mov r5, #0x58C9
+			mov r1, #0x43C9
+			mov r2, #0x58C9
 			b sc_out
 sc_0x43CA:
-			mov r4, #0x43CA
-			mov r5, #0x58CA
+			mov r1, #0x43CA
+			mov r2, #0x58CA
 			b sc_out
 sc_0x43CB:
-			mov r4, #0x43CB
-			mov r5, #0x58CB
+			mov r1, #0x43CB
+			mov r2, #0x58CB
 			b sc_out
 sc_0x43CC:
-			mov r4, #0x43CC
-			mov r5, #0x58CC
+			mov r1, #0x43CC
+			mov r2, #0x58CC
 			b sc_out
 sc_0x43CD:
-			mov r4, #0x43CD
-			mov r5, #0x58CD
+			mov r1, #0x43CD
+			mov r2, #0x58CD
 			b sc_out
 sc_0x43CE:
-			mov r4, #0x43CE
-			mov r5, #0x58CE
+			mov r1, #0x43CE
+			mov r2, #0x58CE
 			b sc_out
 sc_0x43CF:
-			mov r4, #0x43CF
-			mov r5, #0x58CF
+			mov r1, #0x43CF
+			mov r2, #0x58CF
 			b sc_out
 sc_0x43D0:
-			mov r4, #0x43D0
-			mov r5, #0x58D0
+			mov r1, #0x43D0
+			mov r2, #0x58D0
 			b sc_out
 sc_0x43D1:
-			mov r4, #0x43D1
-			mov r5, #0x58D1
+			mov r1, #0x43D1
+			mov r2, #0x58D1
 			b sc_out
 sc_0x43D2:
-			mov r4, #0x43D2
-			mov r5, #0x58D2
+			mov r1, #0x43D2
+			mov r2, #0x58D2
 			b sc_out
 sc_0x43D3:
-			mov r4, #0x43D3
-			mov r5, #0x58D3
+			mov r1, #0x43D3
+			mov r2, #0x58D3
 			b sc_out
 sc_0x43D4:
-			mov r4, #0x43D4
-			mov r5, #0x58D4
+			mov r1, #0x43D4
+			mov r2, #0x58D4
 			b sc_out
 sc_0x43D5:
-			mov r4, #0x43D5
-			mov r5, #0x58D5
+			mov r1, #0x43D5
+			mov r2, #0x58D5
 			b sc_out
 sc_0x43D6:
-			mov r4, #0x43D6
-			mov r5, #0x58D6
+			mov r1, #0x43D6
+			mov r2, #0x58D6
 			b sc_out
 sc_0x43D7:
-			mov r4, #0x43D7
-			mov r5, #0x58D7
+			mov r1, #0x43D7
+			mov r2, #0x58D7
 			b sc_out
 sc_0x43D8:
-			mov r4, #0x43D8
-			mov r5, #0x58D8
+			mov r1, #0x43D8
+			mov r2, #0x58D8
 			b sc_out
 sc_0x43D9:
-			mov r4, #0x43D9
-			mov r5, #0x58D9
+			mov r1, #0x43D9
+			mov r2, #0x58D9
 			b sc_out
 sc_0x43DA:
-			mov r4, #0x43DA
-			mov r5, #0x58DA
+			mov r1, #0x43DA
+			mov r2, #0x58DA
 			b sc_out
 sc_0x43DB:
-			mov r4, #0x43DB
-			mov r5, #0x58DB
+			mov r1, #0x43DB
+			mov r2, #0x58DB
 			b sc_out
 sc_0x43DC:
-			mov r4, #0x43DC
-			mov r5, #0x58DC
+			mov r1, #0x43DC
+			mov r2, #0x58DC
 			b sc_out
 sc_0x43DD:
-			mov r4, #0x43DD
-			mov r5, #0x58DD
+			mov r1, #0x43DD
+			mov r2, #0x58DD
 			b sc_out
 sc_0x43DE:
-			mov r4, #0x43DE
-			mov r5, #0x58DE
+			mov r1, #0x43DE
+			mov r2, #0x58DE
 			b sc_out
 sc_0x43DF:
-			mov r4, #0x43DF
-			mov r5, #0x58DF
+			mov r1, #0x43DF
+			mov r2, #0x58DF
 			b sc_out
 sc_0x44C0:
-			mov r4, #0x44C0
-			mov r5, #0x58C0
+			mov r1, #0x44C0
+			mov r2, #0x58C0
 			b sc_out
 sc_0x44C1:
-			mov r4, #0x44C1
-			mov r5, #0x58C1
+			mov r1, #0x44C1
+			mov r2, #0x58C1
 			b sc_out
 sc_0x44C2:
-			mov r4, #0x44C2
-			mov r5, #0x58C2
+			mov r1, #0x44C2
+			mov r2, #0x58C2
 			b sc_out
 sc_0x44C3:
-			mov r4, #0x44C3
-			mov r5, #0x58C3
+			mov r1, #0x44C3
+			mov r2, #0x58C3
 			b sc_out
 sc_0x44C4:
-			mov r4, #0x44C4
-			mov r5, #0x58C4
+			mov r1, #0x44C4
+			mov r2, #0x58C4
 			b sc_out
 sc_0x44C5:
-			mov r4, #0x44C5
-			mov r5, #0x58C5
+			mov r1, #0x44C5
+			mov r2, #0x58C5
 			b sc_out
 sc_0x44C6:
-			mov r4, #0x44C6
-			mov r5, #0x58C6
+			mov r1, #0x44C6
+			mov r2, #0x58C6
 			b sc_out
 sc_0x44C7:
-			mov r4, #0x44C7
-			mov r5, #0x58C7
+			mov r1, #0x44C7
+			mov r2, #0x58C7
 			b sc_out
 sc_0x44C8:
-			mov r4, #0x44C8
-			mov r5, #0x58C8
+			mov r1, #0x44C8
+			mov r2, #0x58C8
 			b sc_out
 sc_0x44C9:
-			mov r4, #0x44C9
-			mov r5, #0x58C9
+			mov r1, #0x44C9
+			mov r2, #0x58C9
 			b sc_out
 sc_0x44CA:
-			mov r4, #0x44CA
-			mov r5, #0x58CA
+			mov r1, #0x44CA
+			mov r2, #0x58CA
 			b sc_out
 sc_0x44CB:
-			mov r4, #0x44CB
-			mov r5, #0x58CB
+			mov r1, #0x44CB
+			mov r2, #0x58CB
 			b sc_out
 sc_0x44CC:
-			mov r4, #0x44CC
-			mov r5, #0x58CC
+			mov r1, #0x44CC
+			mov r2, #0x58CC
 			b sc_out
 sc_0x44CD:
-			mov r4, #0x44CD
-			mov r5, #0x58CD
+			mov r1, #0x44CD
+			mov r2, #0x58CD
 			b sc_out
 sc_0x44CE:
-			mov r4, #0x44CE
-			mov r5, #0x58CE
+			mov r1, #0x44CE
+			mov r2, #0x58CE
 			b sc_out
 sc_0x44CF:
-			mov r4, #0x44CF
-			mov r5, #0x58CF
+			mov r1, #0x44CF
+			mov r2, #0x58CF
 			b sc_out
 sc_0x44D0:
-			mov r4, #0x44D0
-			mov r5, #0x58D0
+			mov r1, #0x44D0
+			mov r2, #0x58D0
 			b sc_out
 sc_0x44D1:
-			mov r4, #0x44D1
-			mov r5, #0x58D1
+			mov r1, #0x44D1
+			mov r2, #0x58D1
 			b sc_out
 sc_0x44D2:
-			mov r4, #0x44D2
-			mov r5, #0x58D2
+			mov r1, #0x44D2
+			mov r2, #0x58D2
 			b sc_out
 sc_0x44D3:
-			mov r4, #0x44D3
-			mov r5, #0x58D3
+			mov r1, #0x44D3
+			mov r2, #0x58D3
 			b sc_out
 sc_0x44D4:
-			mov r4, #0x44D4
-			mov r5, #0x58D4
+			mov r1, #0x44D4
+			mov r2, #0x58D4
 			b sc_out
 sc_0x44D5:
-			mov r4, #0x44D5
-			mov r5, #0x58D5
+			mov r1, #0x44D5
+			mov r2, #0x58D5
 			b sc_out
 sc_0x44D6:
-			mov r4, #0x44D6
-			mov r5, #0x58D6
+			mov r1, #0x44D6
+			mov r2, #0x58D6
 			b sc_out
 sc_0x44D7:
-			mov r4, #0x44D7
-			mov r5, #0x58D7
+			mov r1, #0x44D7
+			mov r2, #0x58D7
 			b sc_out
 sc_0x44D8:
-			mov r4, #0x44D8
-			mov r5, #0x58D8
+			mov r1, #0x44D8
+			mov r2, #0x58D8
 			b sc_out
 sc_0x44D9:
-			mov r4, #0x44D9
-			mov r5, #0x58D9
+			mov r1, #0x44D9
+			mov r2, #0x58D9
 			b sc_out
 sc_0x44DA:
-			mov r4, #0x44DA
-			mov r5, #0x58DA
+			mov r1, #0x44DA
+			mov r2, #0x58DA
 			b sc_out
 sc_0x44DB:
-			mov r4, #0x44DB
-			mov r5, #0x58DB
+			mov r1, #0x44DB
+			mov r2, #0x58DB
 			b sc_out
 sc_0x44DC:
-			mov r4, #0x44DC
-			mov r5, #0x58DC
+			mov r1, #0x44DC
+			mov r2, #0x58DC
 			b sc_out
 sc_0x44DD:
-			mov r4, #0x44DD
-			mov r5, #0x58DD
+			mov r1, #0x44DD
+			mov r2, #0x58DD
 			b sc_out
 sc_0x44DE:
-			mov r4, #0x44DE
-			mov r5, #0x58DE
+			mov r1, #0x44DE
+			mov r2, #0x58DE
 			b sc_out
 sc_0x44DF:
-			mov r4, #0x44DF
-			mov r5, #0x58DF
+			mov r1, #0x44DF
+			mov r2, #0x58DF
 			b sc_out
 sc_0x45C0:
-			mov r4, #0x45C0
-			mov r5, #0x58C0
+			mov r1, #0x45C0
+			mov r2, #0x58C0
 			b sc_out
 sc_0x45C1:
-			mov r4, #0x45C1
-			mov r5, #0x58C1
+			mov r1, #0x45C1
+			mov r2, #0x58C1
 			b sc_out
 sc_0x45C2:
-			mov r4, #0x45C2
-			mov r5, #0x58C2
+			mov r1, #0x45C2
+			mov r2, #0x58C2
 			b sc_out
 sc_0x45C3:
-			mov r4, #0x45C3
-			mov r5, #0x58C3
+			mov r1, #0x45C3
+			mov r2, #0x58C3
 			b sc_out
 sc_0x45C4:
-			mov r4, #0x45C4
-			mov r5, #0x58C4
+			mov r1, #0x45C4
+			mov r2, #0x58C4
 			b sc_out
 sc_0x45C5:
-			mov r4, #0x45C5
-			mov r5, #0x58C5
+			mov r1, #0x45C5
+			mov r2, #0x58C5
 			b sc_out
 sc_0x45C6:
-			mov r4, #0x45C6
-			mov r5, #0x58C6
+			mov r1, #0x45C6
+			mov r2, #0x58C6
 			b sc_out
 sc_0x45C7:
-			mov r4, #0x45C7
-			mov r5, #0x58C7
+			mov r1, #0x45C7
+			mov r2, #0x58C7
 			b sc_out
 sc_0x45C8:
-			mov r4, #0x45C8
-			mov r5, #0x58C8
+			mov r1, #0x45C8
+			mov r2, #0x58C8
 			b sc_out
 sc_0x45C9:
-			mov r4, #0x45C9
-			mov r5, #0x58C9
+			mov r1, #0x45C9
+			mov r2, #0x58C9
 			b sc_out
 sc_0x45CA:
-			mov r4, #0x45CA
-			mov r5, #0x58CA
+			mov r1, #0x45CA
+			mov r2, #0x58CA
 			b sc_out
 sc_0x45CB:
-			mov r4, #0x45CB
-			mov r5, #0x58CB
+			mov r1, #0x45CB
+			mov r2, #0x58CB
 			b sc_out
 sc_0x45CC:
-			mov r4, #0x45CC
-			mov r5, #0x58CC
+			mov r1, #0x45CC
+			mov r2, #0x58CC
 			b sc_out
 sc_0x45CD:
-			mov r4, #0x45CD
-			mov r5, #0x58CD
+			mov r1, #0x45CD
+			mov r2, #0x58CD
 			b sc_out
 sc_0x45CE:
-			mov r4, #0x45CE
-			mov r5, #0x58CE
+			mov r1, #0x45CE
+			mov r2, #0x58CE
 			b sc_out
 sc_0x45CF:
-			mov r4, #0x45CF
-			mov r5, #0x58CF
+			mov r1, #0x45CF
+			mov r2, #0x58CF
 			b sc_out
 sc_0x45D0:
-			mov r4, #0x45D0
-			mov r5, #0x58D0
+			mov r1, #0x45D0
+			mov r2, #0x58D0
 			b sc_out
 sc_0x45D1:
-			mov r4, #0x45D1
-			mov r5, #0x58D1
+			mov r1, #0x45D1
+			mov r2, #0x58D1
 			b sc_out
 sc_0x45D2:
-			mov r4, #0x45D2
-			mov r5, #0x58D2
+			mov r1, #0x45D2
+			mov r2, #0x58D2
 			b sc_out
 sc_0x45D3:
-			mov r4, #0x45D3
-			mov r5, #0x58D3
+			mov r1, #0x45D3
+			mov r2, #0x58D3
 			b sc_out
 sc_0x45D4:
-			mov r4, #0x45D4
-			mov r5, #0x58D4
+			mov r1, #0x45D4
+			mov r2, #0x58D4
 			b sc_out
 sc_0x45D5:
-			mov r4, #0x45D5
-			mov r5, #0x58D5
+			mov r1, #0x45D5
+			mov r2, #0x58D5
 			b sc_out
 sc_0x45D6:
-			mov r4, #0x45D6
-			mov r5, #0x58D6
+			mov r1, #0x45D6
+			mov r2, #0x58D6
 			b sc_out
 sc_0x45D7:
-			mov r4, #0x45D7
-			mov r5, #0x58D7
+			mov r1, #0x45D7
+			mov r2, #0x58D7
 			b sc_out
 sc_0x45D8:
-			mov r4, #0x45D8
-			mov r5, #0x58D8
+			mov r1, #0x45D8
+			mov r2, #0x58D8
 			b sc_out
 sc_0x45D9:
-			mov r4, #0x45D9
-			mov r5, #0x58D9
+			mov r1, #0x45D9
+			mov r2, #0x58D9
 			b sc_out
 sc_0x45DA:
-			mov r4, #0x45DA
-			mov r5, #0x58DA
+			mov r1, #0x45DA
+			mov r2, #0x58DA
 			b sc_out
 sc_0x45DB:
-			mov r4, #0x45DB
-			mov r5, #0x58DB
+			mov r1, #0x45DB
+			mov r2, #0x58DB
 			b sc_out
 sc_0x45DC:
-			mov r4, #0x45DC
-			mov r5, #0x58DC
+			mov r1, #0x45DC
+			mov r2, #0x58DC
 			b sc_out
 sc_0x45DD:
-			mov r4, #0x45DD
-			mov r5, #0x58DD
+			mov r1, #0x45DD
+			mov r2, #0x58DD
 			b sc_out
 sc_0x45DE:
-			mov r4, #0x45DE
-			mov r5, #0x58DE
+			mov r1, #0x45DE
+			mov r2, #0x58DE
 			b sc_out
 sc_0x45DF:
-			mov r4, #0x45DF
-			mov r5, #0x58DF
+			mov r1, #0x45DF
+			mov r2, #0x58DF
 			b sc_out
 sc_0x46C0:
-			mov r4, #0x46C0
-			mov r5, #0x58C0
+			mov r1, #0x46C0
+			mov r2, #0x58C0
 			b sc_out
 sc_0x46C1:
-			mov r4, #0x46C1
-			mov r5, #0x58C1
+			mov r1, #0x46C1
+			mov r2, #0x58C1
 			b sc_out
 sc_0x46C2:
-			mov r4, #0x46C2
-			mov r5, #0x58C2
+			mov r1, #0x46C2
+			mov r2, #0x58C2
 			b sc_out
 sc_0x46C3:
-			mov r4, #0x46C3
-			mov r5, #0x58C3
+			mov r1, #0x46C3
+			mov r2, #0x58C3
 			b sc_out
 sc_0x46C4:
-			mov r4, #0x46C4
-			mov r5, #0x58C4
+			mov r1, #0x46C4
+			mov r2, #0x58C4
 			b sc_out
 sc_0x46C5:
-			mov r4, #0x46C5
-			mov r5, #0x58C5
+			mov r1, #0x46C5
+			mov r2, #0x58C5
 			b sc_out
 sc_0x46C6:
-			mov r4, #0x46C6
-			mov r5, #0x58C6
+			mov r1, #0x46C6
+			mov r2, #0x58C6
 			b sc_out
 sc_0x46C7:
-			mov r4, #0x46C7
-			mov r5, #0x58C7
+			mov r1, #0x46C7
+			mov r2, #0x58C7
 			b sc_out
 sc_0x46C8:
-			mov r4, #0x46C8
-			mov r5, #0x58C8
+			mov r1, #0x46C8
+			mov r2, #0x58C8
 			b sc_out
 sc_0x46C9:
-			mov r4, #0x46C9
-			mov r5, #0x58C9
+			mov r1, #0x46C9
+			mov r2, #0x58C9
 			b sc_out
 sc_0x46CA:
-			mov r4, #0x46CA
-			mov r5, #0x58CA
+			mov r1, #0x46CA
+			mov r2, #0x58CA
 			b sc_out
 sc_0x46CB:
-			mov r4, #0x46CB
-			mov r5, #0x58CB
+			mov r1, #0x46CB
+			mov r2, #0x58CB
 			b sc_out
 sc_0x46CC:
-			mov r4, #0x46CC
-			mov r5, #0x58CC
+			mov r1, #0x46CC
+			mov r2, #0x58CC
 			b sc_out
 sc_0x46CD:
-			mov r4, #0x46CD
-			mov r5, #0x58CD
+			mov r1, #0x46CD
+			mov r2, #0x58CD
 			b sc_out
 sc_0x46CE:
-			mov r4, #0x46CE
-			mov r5, #0x58CE
+			mov r1, #0x46CE
+			mov r2, #0x58CE
 			b sc_out
 sc_0x46CF:
-			mov r4, #0x46CF
-			mov r5, #0x58CF
+			mov r1, #0x46CF
+			mov r2, #0x58CF
 			b sc_out
 sc_0x46D0:
-			mov r4, #0x46D0
-			mov r5, #0x58D0
+			mov r1, #0x46D0
+			mov r2, #0x58D0
 			b sc_out
 sc_0x46D1:
-			mov r4, #0x46D1
-			mov r5, #0x58D1
+			mov r1, #0x46D1
+			mov r2, #0x58D1
 			b sc_out
 sc_0x46D2:
-			mov r4, #0x46D2
-			mov r5, #0x58D2
+			mov r1, #0x46D2
+			mov r2, #0x58D2
 			b sc_out
 sc_0x46D3:
-			mov r4, #0x46D3
-			mov r5, #0x58D3
+			mov r1, #0x46D3
+			mov r2, #0x58D3
 			b sc_out
 sc_0x46D4:
-			mov r4, #0x46D4
-			mov r5, #0x58D4
+			mov r1, #0x46D4
+			mov r2, #0x58D4
 			b sc_out
 sc_0x46D5:
-			mov r4, #0x46D5
-			mov r5, #0x58D5
+			mov r1, #0x46D5
+			mov r2, #0x58D5
 			b sc_out
 sc_0x46D6:
-			mov r4, #0x46D6
-			mov r5, #0x58D6
+			mov r1, #0x46D6
+			mov r2, #0x58D6
 			b sc_out
 sc_0x46D7:
-			mov r4, #0x46D7
-			mov r5, #0x58D7
+			mov r1, #0x46D7
+			mov r2, #0x58D7
 			b sc_out
 sc_0x46D8:
-			mov r4, #0x46D8
-			mov r5, #0x58D8
+			mov r1, #0x46D8
+			mov r2, #0x58D8
 			b sc_out
 sc_0x46D9:
-			mov r4, #0x46D9
-			mov r5, #0x58D9
+			mov r1, #0x46D9
+			mov r2, #0x58D9
 			b sc_out
 sc_0x46DA:
-			mov r4, #0x46DA
-			mov r5, #0x58DA
+			mov r1, #0x46DA
+			mov r2, #0x58DA
 			b sc_out
 sc_0x46DB:
-			mov r4, #0x46DB
-			mov r5, #0x58DB
+			mov r1, #0x46DB
+			mov r2, #0x58DB
 			b sc_out
 sc_0x46DC:
-			mov r4, #0x46DC
-			mov r5, #0x58DC
+			mov r1, #0x46DC
+			mov r2, #0x58DC
 			b sc_out
 sc_0x46DD:
-			mov r4, #0x46DD
-			mov r5, #0x58DD
+			mov r1, #0x46DD
+			mov r2, #0x58DD
 			b sc_out
 sc_0x46DE:
-			mov r4, #0x46DE
-			mov r5, #0x58DE
+			mov r1, #0x46DE
+			mov r2, #0x58DE
 			b sc_out
 sc_0x46DF:
-			mov r4, #0x46DF
-			mov r5, #0x58DF
+			mov r1, #0x46DF
+			mov r2, #0x58DF
 			b sc_out
 sc_0x47C0:
-			mov r4, #0x47C0
-			mov r5, #0x58C0
+			mov r1, #0x47C0
+			mov r2, #0x58C0
 			b sc_out
 sc_0x47C1:
-			mov r4, #0x47C1
-			mov r5, #0x58C1
+			mov r1, #0x47C1
+			mov r2, #0x58C1
 			b sc_out
 sc_0x47C2:
-			mov r4, #0x47C2
-			mov r5, #0x58C2
+			mov r1, #0x47C2
+			mov r2, #0x58C2
 			b sc_out
 sc_0x47C3:
-			mov r4, #0x47C3
-			mov r5, #0x58C3
+			mov r1, #0x47C3
+			mov r2, #0x58C3
 			b sc_out
 sc_0x47C4:
-			mov r4, #0x47C4
-			mov r5, #0x58C4
+			mov r1, #0x47C4
+			mov r2, #0x58C4
 			b sc_out
 sc_0x47C5:
-			mov r4, #0x47C5
-			mov r5, #0x58C5
+			mov r1, #0x47C5
+			mov r2, #0x58C5
 			b sc_out
 sc_0x47C6:
-			mov r4, #0x47C6
-			mov r5, #0x58C6
+			mov r1, #0x47C6
+			mov r2, #0x58C6
 			b sc_out
 sc_0x47C7:
-			mov r4, #0x47C7
-			mov r5, #0x58C7
+			mov r1, #0x47C7
+			mov r2, #0x58C7
 			b sc_out
 sc_0x47C8:
-			mov r4, #0x47C8
-			mov r5, #0x58C8
+			mov r1, #0x47C8
+			mov r2, #0x58C8
 			b sc_out
 sc_0x47C9:
-			mov r4, #0x47C9
-			mov r5, #0x58C9
+			mov r1, #0x47C9
+			mov r2, #0x58C9
 			b sc_out
 sc_0x47CA:
-			mov r4, #0x47CA
-			mov r5, #0x58CA
+			mov r1, #0x47CA
+			mov r2, #0x58CA
 			b sc_out
 sc_0x47CB:
-			mov r4, #0x47CB
-			mov r5, #0x58CB
+			mov r1, #0x47CB
+			mov r2, #0x58CB
 			b sc_out
 sc_0x47CC:
-			mov r4, #0x47CC
-			mov r5, #0x58CC
+			mov r1, #0x47CC
+			mov r2, #0x58CC
 			b sc_out
 sc_0x47CD:
-			mov r4, #0x47CD
-			mov r5, #0x58CD
+			mov r1, #0x47CD
+			mov r2, #0x58CD
 			b sc_out
 sc_0x47CE:
-			mov r4, #0x47CE
-			mov r5, #0x58CE
+			mov r1, #0x47CE
+			mov r2, #0x58CE
 			b sc_out
 sc_0x47CF:
-			mov r4, #0x47CF
-			mov r5, #0x58CF
+			mov r1, #0x47CF
+			mov r2, #0x58CF
 			b sc_out
 sc_0x47D0:
-			mov r4, #0x47D0
-			mov r5, #0x58D0
+			mov r1, #0x47D0
+			mov r2, #0x58D0
 			b sc_out
 sc_0x47D1:
-			mov r4, #0x47D1
-			mov r5, #0x58D1
+			mov r1, #0x47D1
+			mov r2, #0x58D1
 			b sc_out
 sc_0x47D2:
-			mov r4, #0x47D2
-			mov r5, #0x58D2
+			mov r1, #0x47D2
+			mov r2, #0x58D2
 			b sc_out
 sc_0x47D3:
-			mov r4, #0x47D3
-			mov r5, #0x58D3
+			mov r1, #0x47D3
+			mov r2, #0x58D3
 			b sc_out
 sc_0x47D4:
-			mov r4, #0x47D4
-			mov r5, #0x58D4
+			mov r1, #0x47D4
+			mov r2, #0x58D4
 			b sc_out
 sc_0x47D5:
-			mov r4, #0x47D5
-			mov r5, #0x58D5
+			mov r1, #0x47D5
+			mov r2, #0x58D5
 			b sc_out
 sc_0x47D6:
-			mov r4, #0x47D6
-			mov r5, #0x58D6
+			mov r1, #0x47D6
+			mov r2, #0x58D6
 			b sc_out
 sc_0x47D7:
-			mov r4, #0x47D7
-			mov r5, #0x58D7
+			mov r1, #0x47D7
+			mov r2, #0x58D7
 			b sc_out
 sc_0x47D8:
-			mov r4, #0x47D8
-			mov r5, #0x58D8
+			mov r1, #0x47D8
+			mov r2, #0x58D8
 			b sc_out
 sc_0x47D9:
-			mov r4, #0x47D9
-			mov r5, #0x58D9
+			mov r1, #0x47D9
+			mov r2, #0x58D9
 			b sc_out
 sc_0x47DA:
-			mov r4, #0x47DA
-			mov r5, #0x58DA
+			mov r1, #0x47DA
+			mov r2, #0x58DA
 			b sc_out
 sc_0x47DB:
-			mov r4, #0x47DB
-			mov r5, #0x58DB
+			mov r1, #0x47DB
+			mov r2, #0x58DB
 			b sc_out
 sc_0x47DC:
-			mov r4, #0x47DC
-			mov r5, #0x58DC
+			mov r1, #0x47DC
+			mov r2, #0x58DC
 			b sc_out
 sc_0x47DD:
-			mov r4, #0x47DD
-			mov r5, #0x58DD
+			mov r1, #0x47DD
+			mov r2, #0x58DD
 			b sc_out
 sc_0x47DE:
-			mov r4, #0x47DE
-			mov r5, #0x58DE
+			mov r1, #0x47DE
+			mov r2, #0x58DE
 			b sc_out
 sc_0x47DF:
-			mov r4, #0x47DF
-			mov r5, #0x58DF
+			mov r1, #0x47DF
+			mov r2, #0x58DF
 			b sc_out
 sc_0x40E0:
-			mov r4, #0x40E0
-			mov r5, #0x58E0
+			mov r1, #0x40E0
+			mov r2, #0x58E0
 			b sc_out
 sc_0x40E1:
-			mov r4, #0x40E1
-			mov r5, #0x58E1
+			mov r1, #0x40E1
+			mov r2, #0x58E1
 			b sc_out
 sc_0x40E2:
-			mov r4, #0x40E2
-			mov r5, #0x58E2
+			mov r1, #0x40E2
+			mov r2, #0x58E2
 			b sc_out
 sc_0x40E3:
-			mov r4, #0x40E3
-			mov r5, #0x58E3
+			mov r1, #0x40E3
+			mov r2, #0x58E3
 			b sc_out
 sc_0x40E4:
-			mov r4, #0x40E4
-			mov r5, #0x58E4
+			mov r1, #0x40E4
+			mov r2, #0x58E4
 			b sc_out
 sc_0x40E5:
-			mov r4, #0x40E5
-			mov r5, #0x58E5
+			mov r1, #0x40E5
+			mov r2, #0x58E5
 			b sc_out
 sc_0x40E6:
-			mov r4, #0x40E6
-			mov r5, #0x58E6
+			mov r1, #0x40E6
+			mov r2, #0x58E6
 			b sc_out
 sc_0x40E7:
-			mov r4, #0x40E7
-			mov r5, #0x58E7
+			mov r1, #0x40E7
+			mov r2, #0x58E7
 			b sc_out
 sc_0x40E8:
-			mov r4, #0x40E8
-			mov r5, #0x58E8
+			mov r1, #0x40E8
+			mov r2, #0x58E8
 			b sc_out
 sc_0x40E9:
-			mov r4, #0x40E9
-			mov r5, #0x58E9
+			mov r1, #0x40E9
+			mov r2, #0x58E9
 			b sc_out
 sc_0x40EA:
-			mov r4, #0x40EA
-			mov r5, #0x58EA
+			mov r1, #0x40EA
+			mov r2, #0x58EA
 			b sc_out
 sc_0x40EB:
-			mov r4, #0x40EB
-			mov r5, #0x58EB
+			mov r1, #0x40EB
+			mov r2, #0x58EB
 			b sc_out
 sc_0x40EC:
-			mov r4, #0x40EC
-			mov r5, #0x58EC
+			mov r1, #0x40EC
+			mov r2, #0x58EC
 			b sc_out
 sc_0x40ED:
-			mov r4, #0x40ED
-			mov r5, #0x58ED
+			mov r1, #0x40ED
+			mov r2, #0x58ED
 			b sc_out
 sc_0x40EE:
-			mov r4, #0x40EE
-			mov r5, #0x58EE
+			mov r1, #0x40EE
+			mov r2, #0x58EE
 			b sc_out
 sc_0x40EF:
-			mov r4, #0x40EF
-			mov r5, #0x58EF
+			mov r1, #0x40EF
+			mov r2, #0x58EF
 			b sc_out
 sc_0x40F0:
-			mov r4, #0x40F0
-			mov r5, #0x58F0
+			mov r1, #0x40F0
+			mov r2, #0x58F0
 			b sc_out
 sc_0x40F1:
-			mov r4, #0x40F1
-			mov r5, #0x58F1
+			mov r1, #0x40F1
+			mov r2, #0x58F1
 			b sc_out
 sc_0x40F2:
-			mov r4, #0x40F2
-			mov r5, #0x58F2
+			mov r1, #0x40F2
+			mov r2, #0x58F2
 			b sc_out
 sc_0x40F3:
-			mov r4, #0x40F3
-			mov r5, #0x58F3
+			mov r1, #0x40F3
+			mov r2, #0x58F3
 			b sc_out
 sc_0x40F4:
-			mov r4, #0x40F4
-			mov r5, #0x58F4
+			mov r1, #0x40F4
+			mov r2, #0x58F4
 			b sc_out
 sc_0x40F5:
-			mov r4, #0x40F5
-			mov r5, #0x58F5
+			mov r1, #0x40F5
+			mov r2, #0x58F5
 			b sc_out
 sc_0x40F6:
-			mov r4, #0x40F6
-			mov r5, #0x58F6
+			mov r1, #0x40F6
+			mov r2, #0x58F6
 			b sc_out
 sc_0x40F7:
-			mov r4, #0x40F7
-			mov r5, #0x58F7
+			mov r1, #0x40F7
+			mov r2, #0x58F7
 			b sc_out
 sc_0x40F8:
-			mov r4, #0x40F8
-			mov r5, #0x58F8
+			mov r1, #0x40F8
+			mov r2, #0x58F8
 			b sc_out
 sc_0x40F9:
-			mov r4, #0x40F9
-			mov r5, #0x58F9
+			mov r1, #0x40F9
+			mov r2, #0x58F9
 			b sc_out
 sc_0x40FA:
-			mov r4, #0x40FA
-			mov r5, #0x58FA
+			mov r1, #0x40FA
+			mov r2, #0x58FA
 			b sc_out
 sc_0x40FB:
-			mov r4, #0x40FB
-			mov r5, #0x58FB
+			mov r1, #0x40FB
+			mov r2, #0x58FB
 			b sc_out
 sc_0x40FC:
-			mov r4, #0x40FC
-			mov r5, #0x58FC
+			mov r1, #0x40FC
+			mov r2, #0x58FC
 			b sc_out
 sc_0x40FD:
-			mov r4, #0x40FD
-			mov r5, #0x58FD
+			mov r1, #0x40FD
+			mov r2, #0x58FD
 			b sc_out
 sc_0x40FE:
-			mov r4, #0x40FE
-			mov r5, #0x58FE
+			mov r1, #0x40FE
+			mov r2, #0x58FE
 			b sc_out
 sc_0x40FF:
-			mov r4, #0x40FF
-			mov r5, #0x58FF
+			mov r1, #0x40FF
+			mov r2, #0x58FF
 			b sc_out
 sc_0x41E0:
-			mov r4, #0x41E0
-			mov r5, #0x58E0
+			mov r1, #0x41E0
+			mov r2, #0x58E0
 			b sc_out
 sc_0x41E1:
-			mov r4, #0x41E1
-			mov r5, #0x58E1
+			mov r1, #0x41E1
+			mov r2, #0x58E1
 			b sc_out
 sc_0x41E2:
-			mov r4, #0x41E2
-			mov r5, #0x58E2
+			mov r1, #0x41E2
+			mov r2, #0x58E2
 			b sc_out
 sc_0x41E3:
-			mov r4, #0x41E3
-			mov r5, #0x58E3
+			mov r1, #0x41E3
+			mov r2, #0x58E3
 			b sc_out
 sc_0x41E4:
-			mov r4, #0x41E4
-			mov r5, #0x58E4
+			mov r1, #0x41E4
+			mov r2, #0x58E4
 			b sc_out
 sc_0x41E5:
-			mov r4, #0x41E5
-			mov r5, #0x58E5
+			mov r1, #0x41E5
+			mov r2, #0x58E5
 			b sc_out
 sc_0x41E6:
-			mov r4, #0x41E6
-			mov r5, #0x58E6
+			mov r1, #0x41E6
+			mov r2, #0x58E6
 			b sc_out
 sc_0x41E7:
-			mov r4, #0x41E7
-			mov r5, #0x58E7
+			mov r1, #0x41E7
+			mov r2, #0x58E7
 			b sc_out
 sc_0x41E8:
-			mov r4, #0x41E8
-			mov r5, #0x58E8
+			mov r1, #0x41E8
+			mov r2, #0x58E8
 			b sc_out
 sc_0x41E9:
-			mov r4, #0x41E9
-			mov r5, #0x58E9
+			mov r1, #0x41E9
+			mov r2, #0x58E9
 			b sc_out
 sc_0x41EA:
-			mov r4, #0x41EA
-			mov r5, #0x58EA
+			mov r1, #0x41EA
+			mov r2, #0x58EA
 			b sc_out
 sc_0x41EB:
-			mov r4, #0x41EB
-			mov r5, #0x58EB
+			mov r1, #0x41EB
+			mov r2, #0x58EB
 			b sc_out
 sc_0x41EC:
-			mov r4, #0x41EC
-			mov r5, #0x58EC
+			mov r1, #0x41EC
+			mov r2, #0x58EC
 			b sc_out
 sc_0x41ED:
-			mov r4, #0x41ED
-			mov r5, #0x58ED
+			mov r1, #0x41ED
+			mov r2, #0x58ED
 			b sc_out
 sc_0x41EE:
-			mov r4, #0x41EE
-			mov r5, #0x58EE
+			mov r1, #0x41EE
+			mov r2, #0x58EE
 			b sc_out
 sc_0x41EF:
-			mov r4, #0x41EF
-			mov r5, #0x58EF
+			mov r1, #0x41EF
+			mov r2, #0x58EF
 			b sc_out
 sc_0x41F0:
-			mov r4, #0x41F0
-			mov r5, #0x58F0
+			mov r1, #0x41F0
+			mov r2, #0x58F0
 			b sc_out
 sc_0x41F1:
-			mov r4, #0x41F1
-			mov r5, #0x58F1
+			mov r1, #0x41F1
+			mov r2, #0x58F1
 			b sc_out
 sc_0x41F2:
-			mov r4, #0x41F2
-			mov r5, #0x58F2
+			mov r1, #0x41F2
+			mov r2, #0x58F2
 			b sc_out
 sc_0x41F3:
-			mov r4, #0x41F3
-			mov r5, #0x58F3
+			mov r1, #0x41F3
+			mov r2, #0x58F3
 			b sc_out
 sc_0x41F4:
-			mov r4, #0x41F4
-			mov r5, #0x58F4
+			mov r1, #0x41F4
+			mov r2, #0x58F4
 			b sc_out
 sc_0x41F5:
-			mov r4, #0x41F5
-			mov r5, #0x58F5
+			mov r1, #0x41F5
+			mov r2, #0x58F5
 			b sc_out
 sc_0x41F6:
-			mov r4, #0x41F6
-			mov r5, #0x58F6
+			mov r1, #0x41F6
+			mov r2, #0x58F6
 			b sc_out
 sc_0x41F7:
-			mov r4, #0x41F7
-			mov r5, #0x58F7
+			mov r1, #0x41F7
+			mov r2, #0x58F7
 			b sc_out
 sc_0x41F8:
-			mov r4, #0x41F8
-			mov r5, #0x58F8
+			mov r1, #0x41F8
+			mov r2, #0x58F8
 			b sc_out
 sc_0x41F9:
-			mov r4, #0x41F9
-			mov r5, #0x58F9
+			mov r1, #0x41F9
+			mov r2, #0x58F9
 			b sc_out
 sc_0x41FA:
-			mov r4, #0x41FA
-			mov r5, #0x58FA
+			mov r1, #0x41FA
+			mov r2, #0x58FA
 			b sc_out
 sc_0x41FB:
-			mov r4, #0x41FB
-			mov r5, #0x58FB
+			mov r1, #0x41FB
+			mov r2, #0x58FB
 			b sc_out
 sc_0x41FC:
-			mov r4, #0x41FC
-			mov r5, #0x58FC
+			mov r1, #0x41FC
+			mov r2, #0x58FC
 			b sc_out
 sc_0x41FD:
-			mov r4, #0x41FD
-			mov r5, #0x58FD
+			mov r1, #0x41FD
+			mov r2, #0x58FD
 			b sc_out
 sc_0x41FE:
-			mov r4, #0x41FE
-			mov r5, #0x58FE
+			mov r1, #0x41FE
+			mov r2, #0x58FE
 			b sc_out
 sc_0x41FF:
-			mov r4, #0x41FF
-			mov r5, #0x58FF
+			mov r1, #0x41FF
+			mov r2, #0x58FF
 			b sc_out
 sc_0x42E0:
-			mov r4, #0x42E0
-			mov r5, #0x58E0
+			mov r1, #0x42E0
+			mov r2, #0x58E0
 			b sc_out
 sc_0x42E1:
-			mov r4, #0x42E1
-			mov r5, #0x58E1
+			mov r1, #0x42E1
+			mov r2, #0x58E1
 			b sc_out
 sc_0x42E2:
-			mov r4, #0x42E2
-			mov r5, #0x58E2
+			mov r1, #0x42E2
+			mov r2, #0x58E2
 			b sc_out
 sc_0x42E3:
-			mov r4, #0x42E3
-			mov r5, #0x58E3
+			mov r1, #0x42E3
+			mov r2, #0x58E3
 			b sc_out
 sc_0x42E4:
-			mov r4, #0x42E4
-			mov r5, #0x58E4
+			mov r1, #0x42E4
+			mov r2, #0x58E4
 			b sc_out
 sc_0x42E5:
-			mov r4, #0x42E5
-			mov r5, #0x58E5
+			mov r1, #0x42E5
+			mov r2, #0x58E5
 			b sc_out
 sc_0x42E6:
-			mov r4, #0x42E6
-			mov r5, #0x58E6
+			mov r1, #0x42E6
+			mov r2, #0x58E6
 			b sc_out
 sc_0x42E7:
-			mov r4, #0x42E7
-			mov r5, #0x58E7
+			mov r1, #0x42E7
+			mov r2, #0x58E7
 			b sc_out
 sc_0x42E8:
-			mov r4, #0x42E8
-			mov r5, #0x58E8
+			mov r1, #0x42E8
+			mov r2, #0x58E8
 			b sc_out
 sc_0x42E9:
-			mov r4, #0x42E9
-			mov r5, #0x58E9
+			mov r1, #0x42E9
+			mov r2, #0x58E9
 			b sc_out
 sc_0x42EA:
-			mov r4, #0x42EA
-			mov r5, #0x58EA
+			mov r1, #0x42EA
+			mov r2, #0x58EA
 			b sc_out
 sc_0x42EB:
-			mov r4, #0x42EB
-			mov r5, #0x58EB
+			mov r1, #0x42EB
+			mov r2, #0x58EB
 			b sc_out
 sc_0x42EC:
-			mov r4, #0x42EC
-			mov r5, #0x58EC
+			mov r1, #0x42EC
+			mov r2, #0x58EC
 			b sc_out
 sc_0x42ED:
-			mov r4, #0x42ED
-			mov r5, #0x58ED
+			mov r1, #0x42ED
+			mov r2, #0x58ED
 			b sc_out
 sc_0x42EE:
-			mov r4, #0x42EE
-			mov r5, #0x58EE
+			mov r1, #0x42EE
+			mov r2, #0x58EE
 			b sc_out
 sc_0x42EF:
-			mov r4, #0x42EF
-			mov r5, #0x58EF
+			mov r1, #0x42EF
+			mov r2, #0x58EF
 			b sc_out
 sc_0x42F0:
-			mov r4, #0x42F0
-			mov r5, #0x58F0
+			mov r1, #0x42F0
+			mov r2, #0x58F0
 			b sc_out
 sc_0x42F1:
-			mov r4, #0x42F1
-			mov r5, #0x58F1
+			mov r1, #0x42F1
+			mov r2, #0x58F1
 			b sc_out
 sc_0x42F2:
-			mov r4, #0x42F2
-			mov r5, #0x58F2
+			mov r1, #0x42F2
+			mov r2, #0x58F2
 			b sc_out
 sc_0x42F3:
-			mov r4, #0x42F3
-			mov r5, #0x58F3
+			mov r1, #0x42F3
+			mov r2, #0x58F3
 			b sc_out
 sc_0x42F4:
-			mov r4, #0x42F4
-			mov r5, #0x58F4
+			mov r1, #0x42F4
+			mov r2, #0x58F4
 			b sc_out
 sc_0x42F5:
-			mov r4, #0x42F5
-			mov r5, #0x58F5
+			mov r1, #0x42F5
+			mov r2, #0x58F5
 			b sc_out
 sc_0x42F6:
-			mov r4, #0x42F6
-			mov r5, #0x58F6
+			mov r1, #0x42F6
+			mov r2, #0x58F6
 			b sc_out
 sc_0x42F7:
-			mov r4, #0x42F7
-			mov r5, #0x58F7
+			mov r1, #0x42F7
+			mov r2, #0x58F7
 			b sc_out
 sc_0x42F8:
-			mov r4, #0x42F8
-			mov r5, #0x58F8
+			mov r1, #0x42F8
+			mov r2, #0x58F8
 			b sc_out
 sc_0x42F9:
-			mov r4, #0x42F9
-			mov r5, #0x58F9
+			mov r1, #0x42F9
+			mov r2, #0x58F9
 			b sc_out
 sc_0x42FA:
-			mov r4, #0x42FA
-			mov r5, #0x58FA
+			mov r1, #0x42FA
+			mov r2, #0x58FA
 			b sc_out
 sc_0x42FB:
-			mov r4, #0x42FB
-			mov r5, #0x58FB
+			mov r1, #0x42FB
+			mov r2, #0x58FB
 			b sc_out
 sc_0x42FC:
-			mov r4, #0x42FC
-			mov r5, #0x58FC
+			mov r1, #0x42FC
+			mov r2, #0x58FC
 			b sc_out
 sc_0x42FD:
-			mov r4, #0x42FD
-			mov r5, #0x58FD
+			mov r1, #0x42FD
+			mov r2, #0x58FD
 			b sc_out
 sc_0x42FE:
-			mov r4, #0x42FE
-			mov r5, #0x58FE
+			mov r1, #0x42FE
+			mov r2, #0x58FE
 			b sc_out
 sc_0x42FF:
-			mov r4, #0x42FF
-			mov r5, #0x58FF
+			mov r1, #0x42FF
+			mov r2, #0x58FF
 			b sc_out
 sc_0x43E0:
-			mov r4, #0x43E0
-			mov r5, #0x58E0
+			mov r1, #0x43E0
+			mov r2, #0x58E0
 			b sc_out
 sc_0x43E1:
-			mov r4, #0x43E1
-			mov r5, #0x58E1
+			mov r1, #0x43E1
+			mov r2, #0x58E1
 			b sc_out
 sc_0x43E2:
-			mov r4, #0x43E2
-			mov r5, #0x58E2
+			mov r1, #0x43E2
+			mov r2, #0x58E2
 			b sc_out
 sc_0x43E3:
-			mov r4, #0x43E3
-			mov r5, #0x58E3
+			mov r1, #0x43E3
+			mov r2, #0x58E3
 			b sc_out
 sc_0x43E4:
-			mov r4, #0x43E4
-			mov r5, #0x58E4
+			mov r1, #0x43E4
+			mov r2, #0x58E4
 			b sc_out
 sc_0x43E5:
-			mov r4, #0x43E5
-			mov r5, #0x58E5
+			mov r1, #0x43E5
+			mov r2, #0x58E5
 			b sc_out
 sc_0x43E6:
-			mov r4, #0x43E6
-			mov r5, #0x58E6
+			mov r1, #0x43E6
+			mov r2, #0x58E6
 			b sc_out
 sc_0x43E7:
-			mov r4, #0x43E7
-			mov r5, #0x58E7
+			mov r1, #0x43E7
+			mov r2, #0x58E7
 			b sc_out
 sc_0x43E8:
-			mov r4, #0x43E8
-			mov r5, #0x58E8
+			mov r1, #0x43E8
+			mov r2, #0x58E8
 			b sc_out
 sc_0x43E9:
-			mov r4, #0x43E9
-			mov r5, #0x58E9
+			mov r1, #0x43E9
+			mov r2, #0x58E9
 			b sc_out
 sc_0x43EA:
-			mov r4, #0x43EA
-			mov r5, #0x58EA
+			mov r1, #0x43EA
+			mov r2, #0x58EA
 			b sc_out
 sc_0x43EB:
-			mov r4, #0x43EB
-			mov r5, #0x58EB
+			mov r1, #0x43EB
+			mov r2, #0x58EB
 			b sc_out
 sc_0x43EC:
-			mov r4, #0x43EC
-			mov r5, #0x58EC
+			mov r1, #0x43EC
+			mov r2, #0x58EC
 			b sc_out
 sc_0x43ED:
-			mov r4, #0x43ED
-			mov r5, #0x58ED
+			mov r1, #0x43ED
+			mov r2, #0x58ED
 			b sc_out
 sc_0x43EE:
-			mov r4, #0x43EE
-			mov r5, #0x58EE
+			mov r1, #0x43EE
+			mov r2, #0x58EE
 			b sc_out
 sc_0x43EF:
-			mov r4, #0x43EF
-			mov r5, #0x58EF
+			mov r1, #0x43EF
+			mov r2, #0x58EF
 			b sc_out
 sc_0x43F0:
-			mov r4, #0x43F0
-			mov r5, #0x58F0
+			mov r1, #0x43F0
+			mov r2, #0x58F0
 			b sc_out
 sc_0x43F1:
-			mov r4, #0x43F1
-			mov r5, #0x58F1
+			mov r1, #0x43F1
+			mov r2, #0x58F1
 			b sc_out
 sc_0x43F2:
-			mov r4, #0x43F2
-			mov r5, #0x58F2
+			mov r1, #0x43F2
+			mov r2, #0x58F2
 			b sc_out
 sc_0x43F3:
-			mov r4, #0x43F3
-			mov r5, #0x58F3
+			mov r1, #0x43F3
+			mov r2, #0x58F3
 			b sc_out
 sc_0x43F4:
-			mov r4, #0x43F4
-			mov r5, #0x58F4
+			mov r1, #0x43F4
+			mov r2, #0x58F4
 			b sc_out
 sc_0x43F5:
-			mov r4, #0x43F5
-			mov r5, #0x58F5
+			mov r1, #0x43F5
+			mov r2, #0x58F5
 			b sc_out
 sc_0x43F6:
-			mov r4, #0x43F6
-			mov r5, #0x58F6
+			mov r1, #0x43F6
+			mov r2, #0x58F6
 			b sc_out
 sc_0x43F7:
-			mov r4, #0x43F7
-			mov r5, #0x58F7
+			mov r1, #0x43F7
+			mov r2, #0x58F7
 			b sc_out
 sc_0x43F8:
-			mov r4, #0x43F8
-			mov r5, #0x58F8
+			mov r1, #0x43F8
+			mov r2, #0x58F8
 			b sc_out
 sc_0x43F9:
-			mov r4, #0x43F9
-			mov r5, #0x58F9
+			mov r1, #0x43F9
+			mov r2, #0x58F9
 			b sc_out
 sc_0x43FA:
-			mov r4, #0x43FA
-			mov r5, #0x58FA
+			mov r1, #0x43FA
+			mov r2, #0x58FA
 			b sc_out
 sc_0x43FB:
-			mov r4, #0x43FB
-			mov r5, #0x58FB
+			mov r1, #0x43FB
+			mov r2, #0x58FB
 			b sc_out
 sc_0x43FC:
-			mov r4, #0x43FC
-			mov r5, #0x58FC
+			mov r1, #0x43FC
+			mov r2, #0x58FC
 			b sc_out
 sc_0x43FD:
-			mov r4, #0x43FD
-			mov r5, #0x58FD
+			mov r1, #0x43FD
+			mov r2, #0x58FD
 			b sc_out
 sc_0x43FE:
-			mov r4, #0x43FE
-			mov r5, #0x58FE
+			mov r1, #0x43FE
+			mov r2, #0x58FE
 			b sc_out
 sc_0x43FF:
-			mov r4, #0x43FF
-			mov r5, #0x58FF
+			mov r1, #0x43FF
+			mov r2, #0x58FF
 			b sc_out
 sc_0x44E0:
-			mov r4, #0x44E0
-			mov r5, #0x58E0
+			mov r1, #0x44E0
+			mov r2, #0x58E0
 			b sc_out
 sc_0x44E1:
-			mov r4, #0x44E1
-			mov r5, #0x58E1
+			mov r1, #0x44E1
+			mov r2, #0x58E1
 			b sc_out
 sc_0x44E2:
-			mov r4, #0x44E2
-			mov r5, #0x58E2
+			mov r1, #0x44E2
+			mov r2, #0x58E2
 			b sc_out
 sc_0x44E3:
-			mov r4, #0x44E3
-			mov r5, #0x58E3
+			mov r1, #0x44E3
+			mov r2, #0x58E3
 			b sc_out
 sc_0x44E4:
-			mov r4, #0x44E4
-			mov r5, #0x58E4
+			mov r1, #0x44E4
+			mov r2, #0x58E4
 			b sc_out
 sc_0x44E5:
-			mov r4, #0x44E5
-			mov r5, #0x58E5
+			mov r1, #0x44E5
+			mov r2, #0x58E5
 			b sc_out
 sc_0x44E6:
-			mov r4, #0x44E6
-			mov r5, #0x58E6
+			mov r1, #0x44E6
+			mov r2, #0x58E6
 			b sc_out
 sc_0x44E7:
-			mov r4, #0x44E7
-			mov r5, #0x58E7
+			mov r1, #0x44E7
+			mov r2, #0x58E7
 			b sc_out
 sc_0x44E8:
-			mov r4, #0x44E8
-			mov r5, #0x58E8
+			mov r1, #0x44E8
+			mov r2, #0x58E8
 			b sc_out
 sc_0x44E9:
-			mov r4, #0x44E9
-			mov r5, #0x58E9
+			mov r1, #0x44E9
+			mov r2, #0x58E9
 			b sc_out
 sc_0x44EA:
-			mov r4, #0x44EA
-			mov r5, #0x58EA
+			mov r1, #0x44EA
+			mov r2, #0x58EA
 			b sc_out
 sc_0x44EB:
-			mov r4, #0x44EB
-			mov r5, #0x58EB
+			mov r1, #0x44EB
+			mov r2, #0x58EB
 			b sc_out
 sc_0x44EC:
-			mov r4, #0x44EC
-			mov r5, #0x58EC
+			mov r1, #0x44EC
+			mov r2, #0x58EC
 			b sc_out
 sc_0x44ED:
-			mov r4, #0x44ED
-			mov r5, #0x58ED
+			mov r1, #0x44ED
+			mov r2, #0x58ED
 			b sc_out
 sc_0x44EE:
-			mov r4, #0x44EE
-			mov r5, #0x58EE
+			mov r1, #0x44EE
+			mov r2, #0x58EE
 			b sc_out
 sc_0x44EF:
-			mov r4, #0x44EF
-			mov r5, #0x58EF
+			mov r1, #0x44EF
+			mov r2, #0x58EF
 			b sc_out
 sc_0x44F0:
-			mov r4, #0x44F0
-			mov r5, #0x58F0
+			mov r1, #0x44F0
+			mov r2, #0x58F0
 			b sc_out
 sc_0x44F1:
-			mov r4, #0x44F1
-			mov r5, #0x58F1
+			mov r1, #0x44F1
+			mov r2, #0x58F1
 			b sc_out
 sc_0x44F2:
-			mov r4, #0x44F2
-			mov r5, #0x58F2
+			mov r1, #0x44F2
+			mov r2, #0x58F2
 			b sc_out
 sc_0x44F3:
-			mov r4, #0x44F3
-			mov r5, #0x58F3
+			mov r1, #0x44F3
+			mov r2, #0x58F3
 			b sc_out
 sc_0x44F4:
-			mov r4, #0x44F4
-			mov r5, #0x58F4
+			mov r1, #0x44F4
+			mov r2, #0x58F4
 			b sc_out
 sc_0x44F5:
-			mov r4, #0x44F5
-			mov r5, #0x58F5
+			mov r1, #0x44F5
+			mov r2, #0x58F5
 			b sc_out
 sc_0x44F6:
-			mov r4, #0x44F6
-			mov r5, #0x58F6
+			mov r1, #0x44F6
+			mov r2, #0x58F6
 			b sc_out
 sc_0x44F7:
-			mov r4, #0x44F7
-			mov r5, #0x58F7
+			mov r1, #0x44F7
+			mov r2, #0x58F7
 			b sc_out
 sc_0x44F8:
-			mov r4, #0x44F8
-			mov r5, #0x58F8
+			mov r1, #0x44F8
+			mov r2, #0x58F8
 			b sc_out
 sc_0x44F9:
-			mov r4, #0x44F9
-			mov r5, #0x58F9
+			mov r1, #0x44F9
+			mov r2, #0x58F9
 			b sc_out
 sc_0x44FA:
-			mov r4, #0x44FA
-			mov r5, #0x58FA
+			mov r1, #0x44FA
+			mov r2, #0x58FA
 			b sc_out
 sc_0x44FB:
-			mov r4, #0x44FB
-			mov r5, #0x58FB
+			mov r1, #0x44FB
+			mov r2, #0x58FB
 			b sc_out
 sc_0x44FC:
-			mov r4, #0x44FC
-			mov r5, #0x58FC
+			mov r1, #0x44FC
+			mov r2, #0x58FC
 			b sc_out
 sc_0x44FD:
-			mov r4, #0x44FD
-			mov r5, #0x58FD
+			mov r1, #0x44FD
+			mov r2, #0x58FD
 			b sc_out
 sc_0x44FE:
-			mov r4, #0x44FE
-			mov r5, #0x58FE
+			mov r1, #0x44FE
+			mov r2, #0x58FE
 			b sc_out
 sc_0x44FF:
-			mov r4, #0x44FF
-			mov r5, #0x58FF
+			mov r1, #0x44FF
+			mov r2, #0x58FF
 			b sc_out
 sc_0x45E0:
-			mov r4, #0x45E0
-			mov r5, #0x58E0
+			mov r1, #0x45E0
+			mov r2, #0x58E0
 			b sc_out
 sc_0x45E1:
-			mov r4, #0x45E1
-			mov r5, #0x58E1
+			mov r1, #0x45E1
+			mov r2, #0x58E1
 			b sc_out
 sc_0x45E2:
-			mov r4, #0x45E2
-			mov r5, #0x58E2
+			mov r1, #0x45E2
+			mov r2, #0x58E2
 			b sc_out
 sc_0x45E3:
-			mov r4, #0x45E3
-			mov r5, #0x58E3
+			mov r1, #0x45E3
+			mov r2, #0x58E3
 			b sc_out
 sc_0x45E4:
-			mov r4, #0x45E4
-			mov r5, #0x58E4
+			mov r1, #0x45E4
+			mov r2, #0x58E4
 			b sc_out
 sc_0x45E5:
-			mov r4, #0x45E5
-			mov r5, #0x58E5
+			mov r1, #0x45E5
+			mov r2, #0x58E5
 			b sc_out
 sc_0x45E6:
-			mov r4, #0x45E6
-			mov r5, #0x58E6
+			mov r1, #0x45E6
+			mov r2, #0x58E6
 			b sc_out
 sc_0x45E7:
-			mov r4, #0x45E7
-			mov r5, #0x58E7
+			mov r1, #0x45E7
+			mov r2, #0x58E7
 			b sc_out
 sc_0x45E8:
-			mov r4, #0x45E8
-			mov r5, #0x58E8
+			mov r1, #0x45E8
+			mov r2, #0x58E8
 			b sc_out
 sc_0x45E9:
-			mov r4, #0x45E9
-			mov r5, #0x58E9
+			mov r1, #0x45E9
+			mov r2, #0x58E9
 			b sc_out
 sc_0x45EA:
-			mov r4, #0x45EA
-			mov r5, #0x58EA
+			mov r1, #0x45EA
+			mov r2, #0x58EA
 			b sc_out
 sc_0x45EB:
-			mov r4, #0x45EB
-			mov r5, #0x58EB
+			mov r1, #0x45EB
+			mov r2, #0x58EB
 			b sc_out
 sc_0x45EC:
-			mov r4, #0x45EC
-			mov r5, #0x58EC
+			mov r1, #0x45EC
+			mov r2, #0x58EC
 			b sc_out
 sc_0x45ED:
-			mov r4, #0x45ED
-			mov r5, #0x58ED
+			mov r1, #0x45ED
+			mov r2, #0x58ED
 			b sc_out
 sc_0x45EE:
-			mov r4, #0x45EE
-			mov r5, #0x58EE
+			mov r1, #0x45EE
+			mov r2, #0x58EE
 			b sc_out
 sc_0x45EF:
-			mov r4, #0x45EF
-			mov r5, #0x58EF
+			mov r1, #0x45EF
+			mov r2, #0x58EF
 			b sc_out
 sc_0x45F0:
-			mov r4, #0x45F0
-			mov r5, #0x58F0
+			mov r1, #0x45F0
+			mov r2, #0x58F0
 			b sc_out
 sc_0x45F1:
-			mov r4, #0x45F1
-			mov r5, #0x58F1
+			mov r1, #0x45F1
+			mov r2, #0x58F1
 			b sc_out
 sc_0x45F2:
-			mov r4, #0x45F2
-			mov r5, #0x58F2
+			mov r1, #0x45F2
+			mov r2, #0x58F2
 			b sc_out
 sc_0x45F3:
-			mov r4, #0x45F3
-			mov r5, #0x58F3
+			mov r1, #0x45F3
+			mov r2, #0x58F3
 			b sc_out
 sc_0x45F4:
-			mov r4, #0x45F4
-			mov r5, #0x58F4
+			mov r1, #0x45F4
+			mov r2, #0x58F4
 			b sc_out
 sc_0x45F5:
-			mov r4, #0x45F5
-			mov r5, #0x58F5
+			mov r1, #0x45F5
+			mov r2, #0x58F5
 			b sc_out
 sc_0x45F6:
-			mov r4, #0x45F6
-			mov r5, #0x58F6
+			mov r1, #0x45F6
+			mov r2, #0x58F6
 			b sc_out
 sc_0x45F7:
-			mov r4, #0x45F7
-			mov r5, #0x58F7
+			mov r1, #0x45F7
+			mov r2, #0x58F7
 			b sc_out
 sc_0x45F8:
-			mov r4, #0x45F8
-			mov r5, #0x58F8
+			mov r1, #0x45F8
+			mov r2, #0x58F8
 			b sc_out
 sc_0x45F9:
-			mov r4, #0x45F9
-			mov r5, #0x58F9
+			mov r1, #0x45F9
+			mov r2, #0x58F9
 			b sc_out
 sc_0x45FA:
-			mov r4, #0x45FA
-			mov r5, #0x58FA
+			mov r1, #0x45FA
+			mov r2, #0x58FA
 			b sc_out
 sc_0x45FB:
-			mov r4, #0x45FB
-			mov r5, #0x58FB
+			mov r1, #0x45FB
+			mov r2, #0x58FB
 			b sc_out
 sc_0x45FC:
-			mov r4, #0x45FC
-			mov r5, #0x58FC
+			mov r1, #0x45FC
+			mov r2, #0x58FC
 			b sc_out
 sc_0x45FD:
-			mov r4, #0x45FD
-			mov r5, #0x58FD
+			mov r1, #0x45FD
+			mov r2, #0x58FD
 			b sc_out
 sc_0x45FE:
-			mov r4, #0x45FE
-			mov r5, #0x58FE
+			mov r1, #0x45FE
+			mov r2, #0x58FE
 			b sc_out
 sc_0x45FF:
-			mov r4, #0x45FF
-			mov r5, #0x58FF
+			mov r1, #0x45FF
+			mov r2, #0x58FF
 			b sc_out
 sc_0x46E0:
-			mov r4, #0x46E0
-			mov r5, #0x58E0
+			mov r1, #0x46E0
+			mov r2, #0x58E0
 			b sc_out
 sc_0x46E1:
-			mov r4, #0x46E1
-			mov r5, #0x58E1
+			mov r1, #0x46E1
+			mov r2, #0x58E1
 			b sc_out
 sc_0x46E2:
-			mov r4, #0x46E2
-			mov r5, #0x58E2
+			mov r1, #0x46E2
+			mov r2, #0x58E2
 			b sc_out
 sc_0x46E3:
-			mov r4, #0x46E3
-			mov r5, #0x58E3
+			mov r1, #0x46E3
+			mov r2, #0x58E3
 			b sc_out
 sc_0x46E4:
-			mov r4, #0x46E4
-			mov r5, #0x58E4
+			mov r1, #0x46E4
+			mov r2, #0x58E4
 			b sc_out
 sc_0x46E5:
-			mov r4, #0x46E5
-			mov r5, #0x58E5
+			mov r1, #0x46E5
+			mov r2, #0x58E5
 			b sc_out
 sc_0x46E6:
-			mov r4, #0x46E6
-			mov r5, #0x58E6
+			mov r1, #0x46E6
+			mov r2, #0x58E6
 			b sc_out
 sc_0x46E7:
-			mov r4, #0x46E7
-			mov r5, #0x58E7
+			mov r1, #0x46E7
+			mov r2, #0x58E7
 			b sc_out
 sc_0x46E8:
-			mov r4, #0x46E8
-			mov r5, #0x58E8
+			mov r1, #0x46E8
+			mov r2, #0x58E8
 			b sc_out
 sc_0x46E9:
-			mov r4, #0x46E9
-			mov r5, #0x58E9
+			mov r1, #0x46E9
+			mov r2, #0x58E9
 			b sc_out
 sc_0x46EA:
-			mov r4, #0x46EA
-			mov r5, #0x58EA
+			mov r1, #0x46EA
+			mov r2, #0x58EA
 			b sc_out
 sc_0x46EB:
-			mov r4, #0x46EB
-			mov r5, #0x58EB
+			mov r1, #0x46EB
+			mov r2, #0x58EB
 			b sc_out
 sc_0x46EC:
-			mov r4, #0x46EC
-			mov r5, #0x58EC
+			mov r1, #0x46EC
+			mov r2, #0x58EC
 			b sc_out
 sc_0x46ED:
-			mov r4, #0x46ED
-			mov r5, #0x58ED
+			mov r1, #0x46ED
+			mov r2, #0x58ED
 			b sc_out
 sc_0x46EE:
-			mov r4, #0x46EE
-			mov r5, #0x58EE
+			mov r1, #0x46EE
+			mov r2, #0x58EE
 			b sc_out
 sc_0x46EF:
-			mov r4, #0x46EF
-			mov r5, #0x58EF
+			mov r1, #0x46EF
+			mov r2, #0x58EF
 			b sc_out
 sc_0x46F0:
-			mov r4, #0x46F0
-			mov r5, #0x58F0
+			mov r1, #0x46F0
+			mov r2, #0x58F0
 			b sc_out
 sc_0x46F1:
-			mov r4, #0x46F1
-			mov r5, #0x58F1
+			mov r1, #0x46F1
+			mov r2, #0x58F1
 			b sc_out
 sc_0x46F2:
-			mov r4, #0x46F2
-			mov r5, #0x58F2
+			mov r1, #0x46F2
+			mov r2, #0x58F2
 			b sc_out
 sc_0x46F3:
-			mov r4, #0x46F3
-			mov r5, #0x58F3
+			mov r1, #0x46F3
+			mov r2, #0x58F3
 			b sc_out
 sc_0x46F4:
-			mov r4, #0x46F4
-			mov r5, #0x58F4
+			mov r1, #0x46F4
+			mov r2, #0x58F4
 			b sc_out
 sc_0x46F5:
-			mov r4, #0x46F5
-			mov r5, #0x58F5
+			mov r1, #0x46F5
+			mov r2, #0x58F5
 			b sc_out
 sc_0x46F6:
-			mov r4, #0x46F6
-			mov r5, #0x58F6
+			mov r1, #0x46F6
+			mov r2, #0x58F6
 			b sc_out
 sc_0x46F7:
-			mov r4, #0x46F7
-			mov r5, #0x58F7
+			mov r1, #0x46F7
+			mov r2, #0x58F7
 			b sc_out
 sc_0x46F8:
-			mov r4, #0x46F8
-			mov r5, #0x58F8
+			mov r1, #0x46F8
+			mov r2, #0x58F8
 			b sc_out
 sc_0x46F9:
-			mov r4, #0x46F9
-			mov r5, #0x58F9
+			mov r1, #0x46F9
+			mov r2, #0x58F9
 			b sc_out
 sc_0x46FA:
-			mov r4, #0x46FA
-			mov r5, #0x58FA
+			mov r1, #0x46FA
+			mov r2, #0x58FA
 			b sc_out
 sc_0x46FB:
-			mov r4, #0x46FB
-			mov r5, #0x58FB
+			mov r1, #0x46FB
+			mov r2, #0x58FB
 			b sc_out
 sc_0x46FC:
-			mov r4, #0x46FC
-			mov r5, #0x58FC
+			mov r1, #0x46FC
+			mov r2, #0x58FC
 			b sc_out
 sc_0x46FD:
-			mov r4, #0x46FD
-			mov r5, #0x58FD
+			mov r1, #0x46FD
+			mov r2, #0x58FD
 			b sc_out
 sc_0x46FE:
-			mov r4, #0x46FE
-			mov r5, #0x58FE
+			mov r1, #0x46FE
+			mov r2, #0x58FE
 			b sc_out
 sc_0x46FF:
-			mov r4, #0x46FF
-			mov r5, #0x58FF
+			mov r1, #0x46FF
+			mov r2, #0x58FF
 			b sc_out
 sc_0x47E0:
-			mov r4, #0x47E0
-			mov r5, #0x58E0
+			mov r1, #0x47E0
+			mov r2, #0x58E0
 			b sc_out
 sc_0x47E1:
-			mov r4, #0x47E1
-			mov r5, #0x58E1
+			mov r1, #0x47E1
+			mov r2, #0x58E1
 			b sc_out
 sc_0x47E2:
-			mov r4, #0x47E2
-			mov r5, #0x58E2
+			mov r1, #0x47E2
+			mov r2, #0x58E2
 			b sc_out
 sc_0x47E3:
-			mov r4, #0x47E3
-			mov r5, #0x58E3
+			mov r1, #0x47E3
+			mov r2, #0x58E3
 			b sc_out
 sc_0x47E4:
-			mov r4, #0x47E4
-			mov r5, #0x58E4
+			mov r1, #0x47E4
+			mov r2, #0x58E4
 			b sc_out
 sc_0x47E5:
-			mov r4, #0x47E5
-			mov r5, #0x58E5
+			mov r1, #0x47E5
+			mov r2, #0x58E5
 			b sc_out
 sc_0x47E6:
-			mov r4, #0x47E6
-			mov r5, #0x58E6
+			mov r1, #0x47E6
+			mov r2, #0x58E6
 			b sc_out
 sc_0x47E7:
-			mov r4, #0x47E7
-			mov r5, #0x58E7
+			mov r1, #0x47E7
+			mov r2, #0x58E7
 			b sc_out
 sc_0x47E8:
-			mov r4, #0x47E8
-			mov r5, #0x58E8
+			mov r1, #0x47E8
+			mov r2, #0x58E8
 			b sc_out
 sc_0x47E9:
-			mov r4, #0x47E9
-			mov r5, #0x58E9
+			mov r1, #0x47E9
+			mov r2, #0x58E9
 			b sc_out
 sc_0x47EA:
-			mov r4, #0x47EA
-			mov r5, #0x58EA
+			mov r1, #0x47EA
+			mov r2, #0x58EA
 			b sc_out
 sc_0x47EB:
-			mov r4, #0x47EB
-			mov r5, #0x58EB
+			mov r1, #0x47EB
+			mov r2, #0x58EB
 			b sc_out
 sc_0x47EC:
-			mov r4, #0x47EC
-			mov r5, #0x58EC
+			mov r1, #0x47EC
+			mov r2, #0x58EC
 			b sc_out
 sc_0x47ED:
-			mov r4, #0x47ED
-			mov r5, #0x58ED
+			mov r1, #0x47ED
+			mov r2, #0x58ED
 			b sc_out
 sc_0x47EE:
-			mov r4, #0x47EE
-			mov r5, #0x58EE
+			mov r1, #0x47EE
+			mov r2, #0x58EE
 			b sc_out
 sc_0x47EF:
-			mov r4, #0x47EF
-			mov r5, #0x58EF
+			mov r1, #0x47EF
+			mov r2, #0x58EF
 			b sc_out
 sc_0x47F0:
-			mov r4, #0x47F0
-			mov r5, #0x58F0
+			mov r1, #0x47F0
+			mov r2, #0x58F0
 			b sc_out
 sc_0x47F1:
-			mov r4, #0x47F1
-			mov r5, #0x58F1
+			mov r1, #0x47F1
+			mov r2, #0x58F1
 			b sc_out
 sc_0x47F2:
-			mov r4, #0x47F2
-			mov r5, #0x58F2
+			mov r1, #0x47F2
+			mov r2, #0x58F2
 			b sc_out
 sc_0x47F3:
-			mov r4, #0x47F3
-			mov r5, #0x58F3
+			mov r1, #0x47F3
+			mov r2, #0x58F3
 			b sc_out
 sc_0x47F4:
-			mov r4, #0x47F4
-			mov r5, #0x58F4
+			mov r1, #0x47F4
+			mov r2, #0x58F4
 			b sc_out
 sc_0x47F5:
-			mov r4, #0x47F5
-			mov r5, #0x58F5
+			mov r1, #0x47F5
+			mov r2, #0x58F5
 			b sc_out
 sc_0x47F6:
-			mov r4, #0x47F6
-			mov r5, #0x58F6
+			mov r1, #0x47F6
+			mov r2, #0x58F6
 			b sc_out
 sc_0x47F7:
-			mov r4, #0x47F7
-			mov r5, #0x58F7
+			mov r1, #0x47F7
+			mov r2, #0x58F7
 			b sc_out
 sc_0x47F8:
-			mov r4, #0x47F8
-			mov r5, #0x58F8
+			mov r1, #0x47F8
+			mov r2, #0x58F8
 			b sc_out
 sc_0x47F9:
-			mov r4, #0x47F9
-			mov r5, #0x58F9
+			mov r1, #0x47F9
+			mov r2, #0x58F9
 			b sc_out
 sc_0x47FA:
-			mov r4, #0x47FA
-			mov r5, #0x58FA
+			mov r1, #0x47FA
+			mov r2, #0x58FA
 			b sc_out
 sc_0x47FB:
-			mov r4, #0x47FB
-			mov r5, #0x58FB
+			mov r1, #0x47FB
+			mov r2, #0x58FB
 			b sc_out
 sc_0x47FC:
-			mov r4, #0x47FC
-			mov r5, #0x58FC
+			mov r1, #0x47FC
+			mov r2, #0x58FC
 			b sc_out
 sc_0x47FD:
-			mov r4, #0x47FD
-			mov r5, #0x58FD
+			mov r1, #0x47FD
+			mov r2, #0x58FD
 			b sc_out
 sc_0x47FE:
-			mov r4, #0x47FE
-			mov r5, #0x58FE
+			mov r1, #0x47FE
+			mov r2, #0x58FE
 			b sc_out
 sc_0x47FF:
-			mov r4, #0x47FF
-			mov r5, #0x58FF
+			mov r1, #0x47FF
+			mov r2, #0x58FF
 			b sc_out
 sc_0x4800:
-			mov r4, #0x4800
-			mov r5, #0x5900
+			mov r1, #0x4800
+			mov r2, #0x5900
 			b sc_out
 sc_0x4801:
-			mov r4, #0x4801
-			mov r5, #0x5901
+			mov r1, #0x4801
+			mov r2, #0x5901
 			b sc_out
 sc_0x4802:
-			mov r4, #0x4802
-			mov r5, #0x5902
+			mov r1, #0x4802
+			mov r2, #0x5902
 			b sc_out
 sc_0x4803:
-			mov r4, #0x4803
-			mov r5, #0x5903
+			mov r1, #0x4803
+			mov r2, #0x5903
 			b sc_out
 sc_0x4804:
-			mov r4, #0x4804
-			mov r5, #0x5904
+			mov r1, #0x4804
+			mov r2, #0x5904
 			b sc_out
 sc_0x4805:
-			mov r4, #0x4805
-			mov r5, #0x5905
+			mov r1, #0x4805
+			mov r2, #0x5905
 			b sc_out
 sc_0x4806:
-			mov r4, #0x4806
-			mov r5, #0x5906
+			mov r1, #0x4806
+			mov r2, #0x5906
 			b sc_out
 sc_0x4807:
-			mov r4, #0x4807
-			mov r5, #0x5907
+			mov r1, #0x4807
+			mov r2, #0x5907
 			b sc_out
 sc_0x4808:
-			mov r4, #0x4808
-			mov r5, #0x5908
+			mov r1, #0x4808
+			mov r2, #0x5908
 			b sc_out
 sc_0x4809:
-			mov r4, #0x4809
-			mov r5, #0x5909
+			mov r1, #0x4809
+			mov r2, #0x5909
 			b sc_out
 sc_0x480A:
-			mov r4, #0x480A
-			mov r5, #0x590A
+			mov r1, #0x480A
+			mov r2, #0x590A
 			b sc_out
 sc_0x480B:
-			mov r4, #0x480B
-			mov r5, #0x590B
+			mov r1, #0x480B
+			mov r2, #0x590B
 			b sc_out
 sc_0x480C:
-			mov r4, #0x480C
-			mov r5, #0x590C
+			mov r1, #0x480C
+			mov r2, #0x590C
 			b sc_out
 sc_0x480D:
-			mov r4, #0x480D
-			mov r5, #0x590D
+			mov r1, #0x480D
+			mov r2, #0x590D
 			b sc_out
 sc_0x480E:
-			mov r4, #0x480E
-			mov r5, #0x590E
+			mov r1, #0x480E
+			mov r2, #0x590E
 			b sc_out
 sc_0x480F:
-			mov r4, #0x480F
-			mov r5, #0x590F
+			mov r1, #0x480F
+			mov r2, #0x590F
 			b sc_out
 sc_0x4810:
-			mov r4, #0x4810
-			mov r5, #0x5910
+			mov r1, #0x4810
+			mov r2, #0x5910
 			b sc_out
 sc_0x4811:
-			mov r4, #0x4811
-			mov r5, #0x5911
+			mov r1, #0x4811
+			mov r2, #0x5911
 			b sc_out
 sc_0x4812:
-			mov r4, #0x4812
-			mov r5, #0x5912
+			mov r1, #0x4812
+			mov r2, #0x5912
 			b sc_out
 sc_0x4813:
-			mov r4, #0x4813
-			mov r5, #0x5913
+			mov r1, #0x4813
+			mov r2, #0x5913
 			b sc_out
 sc_0x4814:
-			mov r4, #0x4814
-			mov r5, #0x5914
+			mov r1, #0x4814
+			mov r2, #0x5914
 			b sc_out
 sc_0x4815:
-			mov r4, #0x4815
-			mov r5, #0x5915
+			mov r1, #0x4815
+			mov r2, #0x5915
 			b sc_out
 sc_0x4816:
-			mov r4, #0x4816
-			mov r5, #0x5916
+			mov r1, #0x4816
+			mov r2, #0x5916
 			b sc_out
 sc_0x4817:
-			mov r4, #0x4817
-			mov r5, #0x5917
+			mov r1, #0x4817
+			mov r2, #0x5917
 			b sc_out
 sc_0x4818:
-			mov r4, #0x4818
-			mov r5, #0x5918
+			mov r1, #0x4818
+			mov r2, #0x5918
 			b sc_out
 sc_0x4819:
-			mov r4, #0x4819
-			mov r5, #0x5919
+			mov r1, #0x4819
+			mov r2, #0x5919
 			b sc_out
 sc_0x481A:
-			mov r4, #0x481A
-			mov r5, #0x591A
+			mov r1, #0x481A
+			mov r2, #0x591A
 			b sc_out
 sc_0x481B:
-			mov r4, #0x481B
-			mov r5, #0x591B
+			mov r1, #0x481B
+			mov r2, #0x591B
 			b sc_out
 sc_0x481C:
-			mov r4, #0x481C
-			mov r5, #0x591C
+			mov r1, #0x481C
+			mov r2, #0x591C
 			b sc_out
 sc_0x481D:
-			mov r4, #0x481D
-			mov r5, #0x591D
+			mov r1, #0x481D
+			mov r2, #0x591D
 			b sc_out
 sc_0x481E:
-			mov r4, #0x481E
-			mov r5, #0x591E
+			mov r1, #0x481E
+			mov r2, #0x591E
 			b sc_out
 sc_0x481F:
-			mov r4, #0x481F
-			mov r5, #0x591F
+			mov r1, #0x481F
+			mov r2, #0x591F
 			b sc_out
 sc_0x4900:
-			mov r4, #0x4900
-			mov r5, #0x5900
+			mov r1, #0x4900
+			mov r2, #0x5900
 			b sc_out
 sc_0x4901:
-			mov r4, #0x4901
-			mov r5, #0x5901
+			mov r1, #0x4901
+			mov r2, #0x5901
 			b sc_out
 sc_0x4902:
-			mov r4, #0x4902
-			mov r5, #0x5902
+			mov r1, #0x4902
+			mov r2, #0x5902
 			b sc_out
 sc_0x4903:
-			mov r4, #0x4903
-			mov r5, #0x5903
+			mov r1, #0x4903
+			mov r2, #0x5903
 			b sc_out
 sc_0x4904:
-			mov r4, #0x4904
-			mov r5, #0x5904
+			mov r1, #0x4904
+			mov r2, #0x5904
 			b sc_out
 sc_0x4905:
-			mov r4, #0x4905
-			mov r5, #0x5905
+			mov r1, #0x4905
+			mov r2, #0x5905
 			b sc_out
 sc_0x4906:
-			mov r4, #0x4906
-			mov r5, #0x5906
+			mov r1, #0x4906
+			mov r2, #0x5906
 			b sc_out
 sc_0x4907:
-			mov r4, #0x4907
-			mov r5, #0x5907
+			mov r1, #0x4907
+			mov r2, #0x5907
 			b sc_out
 sc_0x4908:
-			mov r4, #0x4908
-			mov r5, #0x5908
+			mov r1, #0x4908
+			mov r2, #0x5908
 			b sc_out
 sc_0x4909:
-			mov r4, #0x4909
-			mov r5, #0x5909
+			mov r1, #0x4909
+			mov r2, #0x5909
 			b sc_out
 sc_0x490A:
-			mov r4, #0x490A
-			mov r5, #0x590A
+			mov r1, #0x490A
+			mov r2, #0x590A
 			b sc_out
 sc_0x490B:
-			mov r4, #0x490B
-			mov r5, #0x590B
+			mov r1, #0x490B
+			mov r2, #0x590B
 			b sc_out
 sc_0x490C:
-			mov r4, #0x490C
-			mov r5, #0x590C
+			mov r1, #0x490C
+			mov r2, #0x590C
 			b sc_out
 sc_0x490D:
-			mov r4, #0x490D
-			mov r5, #0x590D
+			mov r1, #0x490D
+			mov r2, #0x590D
 			b sc_out
 sc_0x490E:
-			mov r4, #0x490E
-			mov r5, #0x590E
+			mov r1, #0x490E
+			mov r2, #0x590E
 			b sc_out
 sc_0x490F:
-			mov r4, #0x490F
-			mov r5, #0x590F
+			mov r1, #0x490F
+			mov r2, #0x590F
 			b sc_out
 sc_0x4910:
-			mov r4, #0x4910
-			mov r5, #0x5910
+			mov r1, #0x4910
+			mov r2, #0x5910
 			b sc_out
 sc_0x4911:
-			mov r4, #0x4911
-			mov r5, #0x5911
+			mov r1, #0x4911
+			mov r2, #0x5911
 			b sc_out
 sc_0x4912:
-			mov r4, #0x4912
-			mov r5, #0x5912
+			mov r1, #0x4912
+			mov r2, #0x5912
 			b sc_out
 sc_0x4913:
-			mov r4, #0x4913
-			mov r5, #0x5913
+			mov r1, #0x4913
+			mov r2, #0x5913
 			b sc_out
 sc_0x4914:
-			mov r4, #0x4914
-			mov r5, #0x5914
+			mov r1, #0x4914
+			mov r2, #0x5914
 			b sc_out
 sc_0x4915:
-			mov r4, #0x4915
-			mov r5, #0x5915
+			mov r1, #0x4915
+			mov r2, #0x5915
 			b sc_out
 sc_0x4916:
-			mov r4, #0x4916
-			mov r5, #0x5916
+			mov r1, #0x4916
+			mov r2, #0x5916
 			b sc_out
 sc_0x4917:
-			mov r4, #0x4917
-			mov r5, #0x5917
+			mov r1, #0x4917
+			mov r2, #0x5917
 			b sc_out
 sc_0x4918:
-			mov r4, #0x4918
-			mov r5, #0x5918
+			mov r1, #0x4918
+			mov r2, #0x5918
 			b sc_out
 sc_0x4919:
-			mov r4, #0x4919
-			mov r5, #0x5919
+			mov r1, #0x4919
+			mov r2, #0x5919
 			b sc_out
 sc_0x491A:
-			mov r4, #0x491A
-			mov r5, #0x591A
+			mov r1, #0x491A
+			mov r2, #0x591A
 			b sc_out
 sc_0x491B:
-			mov r4, #0x491B
-			mov r5, #0x591B
+			mov r1, #0x491B
+			mov r2, #0x591B
 			b sc_out
 sc_0x491C:
-			mov r4, #0x491C
-			mov r5, #0x591C
+			mov r1, #0x491C
+			mov r2, #0x591C
 			b sc_out
 sc_0x491D:
-			mov r4, #0x491D
-			mov r5, #0x591D
+			mov r1, #0x491D
+			mov r2, #0x591D
 			b sc_out
 sc_0x491E:
-			mov r4, #0x491E
-			mov r5, #0x591E
+			mov r1, #0x491E
+			mov r2, #0x591E
 			b sc_out
 sc_0x491F:
-			mov r4, #0x491F
-			mov r5, #0x591F
+			mov r1, #0x491F
+			mov r2, #0x591F
 			b sc_out
 sc_0x4A00:
-			mov r4, #0x4A00
-			mov r5, #0x5900
+			mov r1, #0x4A00
+			mov r2, #0x5900
 			b sc_out
 sc_0x4A01:
-			mov r4, #0x4A01
-			mov r5, #0x5901
+			mov r1, #0x4A01
+			mov r2, #0x5901
 			b sc_out
 sc_0x4A02:
-			mov r4, #0x4A02
-			mov r5, #0x5902
+			mov r1, #0x4A02
+			mov r2, #0x5902
 			b sc_out
 sc_0x4A03:
-			mov r4, #0x4A03
-			mov r5, #0x5903
+			mov r1, #0x4A03
+			mov r2, #0x5903
 			b sc_out
 sc_0x4A04:
-			mov r4, #0x4A04
-			mov r5, #0x5904
+			mov r1, #0x4A04
+			mov r2, #0x5904
 			b sc_out
 sc_0x4A05:
-			mov r4, #0x4A05
-			mov r5, #0x5905
+			mov r1, #0x4A05
+			mov r2, #0x5905
 			b sc_out
 sc_0x4A06:
-			mov r4, #0x4A06
-			mov r5, #0x5906
+			mov r1, #0x4A06
+			mov r2, #0x5906
 			b sc_out
 sc_0x4A07:
-			mov r4, #0x4A07
-			mov r5, #0x5907
+			mov r1, #0x4A07
+			mov r2, #0x5907
 			b sc_out
 sc_0x4A08:
-			mov r4, #0x4A08
-			mov r5, #0x5908
+			mov r1, #0x4A08
+			mov r2, #0x5908
 			b sc_out
 sc_0x4A09:
-			mov r4, #0x4A09
-			mov r5, #0x5909
+			mov r1, #0x4A09
+			mov r2, #0x5909
 			b sc_out
 sc_0x4A0A:
-			mov r4, #0x4A0A
-			mov r5, #0x590A
+			mov r1, #0x4A0A
+			mov r2, #0x590A
 			b sc_out
 sc_0x4A0B:
-			mov r4, #0x4A0B
-			mov r5, #0x590B
+			mov r1, #0x4A0B
+			mov r2, #0x590B
 			b sc_out
 sc_0x4A0C:
-			mov r4, #0x4A0C
-			mov r5, #0x590C
+			mov r1, #0x4A0C
+			mov r2, #0x590C
 			b sc_out
 sc_0x4A0D:
-			mov r4, #0x4A0D
-			mov r5, #0x590D
+			mov r1, #0x4A0D
+			mov r2, #0x590D
 			b sc_out
 sc_0x4A0E:
-			mov r4, #0x4A0E
-			mov r5, #0x590E
+			mov r1, #0x4A0E
+			mov r2, #0x590E
 			b sc_out
 sc_0x4A0F:
-			mov r4, #0x4A0F
-			mov r5, #0x590F
+			mov r1, #0x4A0F
+			mov r2, #0x590F
 			b sc_out
 sc_0x4A10:
-			mov r4, #0x4A10
-			mov r5, #0x5910
+			mov r1, #0x4A10
+			mov r2, #0x5910
 			b sc_out
 sc_0x4A11:
-			mov r4, #0x4A11
-			mov r5, #0x5911
+			mov r1, #0x4A11
+			mov r2, #0x5911
 			b sc_out
 sc_0x4A12:
-			mov r4, #0x4A12
-			mov r5, #0x5912
+			mov r1, #0x4A12
+			mov r2, #0x5912
 			b sc_out
 sc_0x4A13:
-			mov r4, #0x4A13
-			mov r5, #0x5913
+			mov r1, #0x4A13
+			mov r2, #0x5913
 			b sc_out
 sc_0x4A14:
-			mov r4, #0x4A14
-			mov r5, #0x5914
+			mov r1, #0x4A14
+			mov r2, #0x5914
 			b sc_out
 sc_0x4A15:
-			mov r4, #0x4A15
-			mov r5, #0x5915
+			mov r1, #0x4A15
+			mov r2, #0x5915
 			b sc_out
 sc_0x4A16:
-			mov r4, #0x4A16
-			mov r5, #0x5916
+			mov r1, #0x4A16
+			mov r2, #0x5916
 			b sc_out
 sc_0x4A17:
-			mov r4, #0x4A17
-			mov r5, #0x5917
+			mov r1, #0x4A17
+			mov r2, #0x5917
 			b sc_out
 sc_0x4A18:
-			mov r4, #0x4A18
-			mov r5, #0x5918
+			mov r1, #0x4A18
+			mov r2, #0x5918
 			b sc_out
 sc_0x4A19:
-			mov r4, #0x4A19
-			mov r5, #0x5919
+			mov r1, #0x4A19
+			mov r2, #0x5919
 			b sc_out
 sc_0x4A1A:
-			mov r4, #0x4A1A
-			mov r5, #0x591A
+			mov r1, #0x4A1A
+			mov r2, #0x591A
 			b sc_out
 sc_0x4A1B:
-			mov r4, #0x4A1B
-			mov r5, #0x591B
+			mov r1, #0x4A1B
+			mov r2, #0x591B
 			b sc_out
 sc_0x4A1C:
-			mov r4, #0x4A1C
-			mov r5, #0x591C
+			mov r1, #0x4A1C
+			mov r2, #0x591C
 			b sc_out
 sc_0x4A1D:
-			mov r4, #0x4A1D
-			mov r5, #0x591D
+			mov r1, #0x4A1D
+			mov r2, #0x591D
 			b sc_out
 sc_0x4A1E:
-			mov r4, #0x4A1E
-			mov r5, #0x591E
+			mov r1, #0x4A1E
+			mov r2, #0x591E
 			b sc_out
 sc_0x4A1F:
-			mov r4, #0x4A1F
-			mov r5, #0x591F
+			mov r1, #0x4A1F
+			mov r2, #0x591F
 			b sc_out
 sc_0x4B00:
-			mov r4, #0x4B00
-			mov r5, #0x5900
+			mov r1, #0x4B00
+			mov r2, #0x5900
 			b sc_out
 sc_0x4B01:
-			mov r4, #0x4B01
-			mov r5, #0x5901
+			mov r1, #0x4B01
+			mov r2, #0x5901
 			b sc_out
 sc_0x4B02:
-			mov r4, #0x4B02
-			mov r5, #0x5902
+			mov r1, #0x4B02
+			mov r2, #0x5902
 			b sc_out
 sc_0x4B03:
-			mov r4, #0x4B03
-			mov r5, #0x5903
+			mov r1, #0x4B03
+			mov r2, #0x5903
 			b sc_out
 sc_0x4B04:
-			mov r4, #0x4B04
-			mov r5, #0x5904
+			mov r1, #0x4B04
+			mov r2, #0x5904
 			b sc_out
 sc_0x4B05:
-			mov r4, #0x4B05
-			mov r5, #0x5905
+			mov r1, #0x4B05
+			mov r2, #0x5905
 			b sc_out
 sc_0x4B06:
-			mov r4, #0x4B06
-			mov r5, #0x5906
+			mov r1, #0x4B06
+			mov r2, #0x5906
 			b sc_out
 sc_0x4B07:
-			mov r4, #0x4B07
-			mov r5, #0x5907
+			mov r1, #0x4B07
+			mov r2, #0x5907
 			b sc_out
 sc_0x4B08:
-			mov r4, #0x4B08
-			mov r5, #0x5908
+			mov r1, #0x4B08
+			mov r2, #0x5908
 			b sc_out
 sc_0x4B09:
-			mov r4, #0x4B09
-			mov r5, #0x5909
+			mov r1, #0x4B09
+			mov r2, #0x5909
 			b sc_out
 sc_0x4B0A:
-			mov r4, #0x4B0A
-			mov r5, #0x590A
+			mov r1, #0x4B0A
+			mov r2, #0x590A
 			b sc_out
 sc_0x4B0B:
-			mov r4, #0x4B0B
-			mov r5, #0x590B
+			mov r1, #0x4B0B
+			mov r2, #0x590B
 			b sc_out
 sc_0x4B0C:
-			mov r4, #0x4B0C
-			mov r5, #0x590C
+			mov r1, #0x4B0C
+			mov r2, #0x590C
 			b sc_out
 sc_0x4B0D:
-			mov r4, #0x4B0D
-			mov r5, #0x590D
+			mov r1, #0x4B0D
+			mov r2, #0x590D
 			b sc_out
 sc_0x4B0E:
-			mov r4, #0x4B0E
-			mov r5, #0x590E
+			mov r1, #0x4B0E
+			mov r2, #0x590E
 			b sc_out
 sc_0x4B0F:
-			mov r4, #0x4B0F
-			mov r5, #0x590F
+			mov r1, #0x4B0F
+			mov r2, #0x590F
 			b sc_out
 sc_0x4B10:
-			mov r4, #0x4B10
-			mov r5, #0x5910
+			mov r1, #0x4B10
+			mov r2, #0x5910
 			b sc_out
 sc_0x4B11:
-			mov r4, #0x4B11
-			mov r5, #0x5911
+			mov r1, #0x4B11
+			mov r2, #0x5911
 			b sc_out
 sc_0x4B12:
-			mov r4, #0x4B12
-			mov r5, #0x5912
+			mov r1, #0x4B12
+			mov r2, #0x5912
 			b sc_out
 sc_0x4B13:
-			mov r4, #0x4B13
-			mov r5, #0x5913
+			mov r1, #0x4B13
+			mov r2, #0x5913
 			b sc_out
 sc_0x4B14:
-			mov r4, #0x4B14
-			mov r5, #0x5914
+			mov r1, #0x4B14
+			mov r2, #0x5914
 			b sc_out
 sc_0x4B15:
-			mov r4, #0x4B15
-			mov r5, #0x5915
+			mov r1, #0x4B15
+			mov r2, #0x5915
 			b sc_out
 sc_0x4B16:
-			mov r4, #0x4B16
-			mov r5, #0x5916
+			mov r1, #0x4B16
+			mov r2, #0x5916
 			b sc_out
 sc_0x4B17:
-			mov r4, #0x4B17
-			mov r5, #0x5917
+			mov r1, #0x4B17
+			mov r2, #0x5917
 			b sc_out
 sc_0x4B18:
-			mov r4, #0x4B18
-			mov r5, #0x5918
+			mov r1, #0x4B18
+			mov r2, #0x5918
 			b sc_out
 sc_0x4B19:
-			mov r4, #0x4B19
-			mov r5, #0x5919
+			mov r1, #0x4B19
+			mov r2, #0x5919
 			b sc_out
 sc_0x4B1A:
-			mov r4, #0x4B1A
-			mov r5, #0x591A
+			mov r1, #0x4B1A
+			mov r2, #0x591A
 			b sc_out
 sc_0x4B1B:
-			mov r4, #0x4B1B
-			mov r5, #0x591B
+			mov r1, #0x4B1B
+			mov r2, #0x591B
 			b sc_out
 sc_0x4B1C:
-			mov r4, #0x4B1C
-			mov r5, #0x591C
+			mov r1, #0x4B1C
+			mov r2, #0x591C
 			b sc_out
 sc_0x4B1D:
-			mov r4, #0x4B1D
-			mov r5, #0x591D
+			mov r1, #0x4B1D
+			mov r2, #0x591D
 			b sc_out
 sc_0x4B1E:
-			mov r4, #0x4B1E
-			mov r5, #0x591E
+			mov r1, #0x4B1E
+			mov r2, #0x591E
 			b sc_out
 sc_0x4B1F:
-			mov r4, #0x4B1F
-			mov r5, #0x591F
+			mov r1, #0x4B1F
+			mov r2, #0x591F
 			b sc_out
 sc_0x4C00:
-			mov r4, #0x4C00
-			mov r5, #0x5900
+			mov r1, #0x4C00
+			mov r2, #0x5900
 			b sc_out
 sc_0x4C01:
-			mov r4, #0x4C01
-			mov r5, #0x5901
+			mov r1, #0x4C01
+			mov r2, #0x5901
 			b sc_out
 sc_0x4C02:
-			mov r4, #0x4C02
-			mov r5, #0x5902
+			mov r1, #0x4C02
+			mov r2, #0x5902
 			b sc_out
 sc_0x4C03:
-			mov r4, #0x4C03
-			mov r5, #0x5903
+			mov r1, #0x4C03
+			mov r2, #0x5903
 			b sc_out
 sc_0x4C04:
-			mov r4, #0x4C04
-			mov r5, #0x5904
+			mov r1, #0x4C04
+			mov r2, #0x5904
 			b sc_out
 sc_0x4C05:
-			mov r4, #0x4C05
-			mov r5, #0x5905
+			mov r1, #0x4C05
+			mov r2, #0x5905
 			b sc_out
 sc_0x4C06:
-			mov r4, #0x4C06
-			mov r5, #0x5906
+			mov r1, #0x4C06
+			mov r2, #0x5906
 			b sc_out
 sc_0x4C07:
-			mov r4, #0x4C07
-			mov r5, #0x5907
+			mov r1, #0x4C07
+			mov r2, #0x5907
 			b sc_out
 sc_0x4C08:
-			mov r4, #0x4C08
-			mov r5, #0x5908
+			mov r1, #0x4C08
+			mov r2, #0x5908
 			b sc_out
 sc_0x4C09:
-			mov r4, #0x4C09
-			mov r5, #0x5909
+			mov r1, #0x4C09
+			mov r2, #0x5909
 			b sc_out
 sc_0x4C0A:
-			mov r4, #0x4C0A
-			mov r5, #0x590A
+			mov r1, #0x4C0A
+			mov r2, #0x590A
 			b sc_out
 sc_0x4C0B:
-			mov r4, #0x4C0B
-			mov r5, #0x590B
+			mov r1, #0x4C0B
+			mov r2, #0x590B
 			b sc_out
 sc_0x4C0C:
-			mov r4, #0x4C0C
-			mov r5, #0x590C
+			mov r1, #0x4C0C
+			mov r2, #0x590C
 			b sc_out
 sc_0x4C0D:
-			mov r4, #0x4C0D
-			mov r5, #0x590D
+			mov r1, #0x4C0D
+			mov r2, #0x590D
 			b sc_out
 sc_0x4C0E:
-			mov r4, #0x4C0E
-			mov r5, #0x590E
+			mov r1, #0x4C0E
+			mov r2, #0x590E
 			b sc_out
 sc_0x4C0F:
-			mov r4, #0x4C0F
-			mov r5, #0x590F
+			mov r1, #0x4C0F
+			mov r2, #0x590F
 			b sc_out
 sc_0x4C10:
-			mov r4, #0x4C10
-			mov r5, #0x5910
+			mov r1, #0x4C10
+			mov r2, #0x5910
 			b sc_out
 sc_0x4C11:
-			mov r4, #0x4C11
-			mov r5, #0x5911
+			mov r1, #0x4C11
+			mov r2, #0x5911
 			b sc_out
 sc_0x4C12:
-			mov r4, #0x4C12
-			mov r5, #0x5912
+			mov r1, #0x4C12
+			mov r2, #0x5912
 			b sc_out
 sc_0x4C13:
-			mov r4, #0x4C13
-			mov r5, #0x5913
+			mov r1, #0x4C13
+			mov r2, #0x5913
 			b sc_out
 sc_0x4C14:
-			mov r4, #0x4C14
-			mov r5, #0x5914
+			mov r1, #0x4C14
+			mov r2, #0x5914
 			b sc_out
 sc_0x4C15:
-			mov r4, #0x4C15
-			mov r5, #0x5915
+			mov r1, #0x4C15
+			mov r2, #0x5915
 			b sc_out
 sc_0x4C16:
-			mov r4, #0x4C16
-			mov r5, #0x5916
+			mov r1, #0x4C16
+			mov r2, #0x5916
 			b sc_out
 sc_0x4C17:
-			mov r4, #0x4C17
-			mov r5, #0x5917
+			mov r1, #0x4C17
+			mov r2, #0x5917
 			b sc_out
 sc_0x4C18:
-			mov r4, #0x4C18
-			mov r5, #0x5918
+			mov r1, #0x4C18
+			mov r2, #0x5918
 			b sc_out
 sc_0x4C19:
-			mov r4, #0x4C19
-			mov r5, #0x5919
+			mov r1, #0x4C19
+			mov r2, #0x5919
 			b sc_out
 sc_0x4C1A:
-			mov r4, #0x4C1A
-			mov r5, #0x591A
+			mov r1, #0x4C1A
+			mov r2, #0x591A
 			b sc_out
 sc_0x4C1B:
-			mov r4, #0x4C1B
-			mov r5, #0x591B
+			mov r1, #0x4C1B
+			mov r2, #0x591B
 			b sc_out
 sc_0x4C1C:
-			mov r4, #0x4C1C
-			mov r5, #0x591C
+			mov r1, #0x4C1C
+			mov r2, #0x591C
 			b sc_out
 sc_0x4C1D:
-			mov r4, #0x4C1D
-			mov r5, #0x591D
+			mov r1, #0x4C1D
+			mov r2, #0x591D
 			b sc_out
 sc_0x4C1E:
-			mov r4, #0x4C1E
-			mov r5, #0x591E
+			mov r1, #0x4C1E
+			mov r2, #0x591E
 			b sc_out
 sc_0x4C1F:
-			mov r4, #0x4C1F
-			mov r5, #0x591F
+			mov r1, #0x4C1F
+			mov r2, #0x591F
 			b sc_out
 sc_0x4D00:
-			mov r4, #0x4D00
-			mov r5, #0x5900
+			mov r1, #0x4D00
+			mov r2, #0x5900
 			b sc_out
 sc_0x4D01:
-			mov r4, #0x4D01
-			mov r5, #0x5901
+			mov r1, #0x4D01
+			mov r2, #0x5901
 			b sc_out
 sc_0x4D02:
-			mov r4, #0x4D02
-			mov r5, #0x5902
+			mov r1, #0x4D02
+			mov r2, #0x5902
 			b sc_out
 sc_0x4D03:
-			mov r4, #0x4D03
-			mov r5, #0x5903
+			mov r1, #0x4D03
+			mov r2, #0x5903
 			b sc_out
 sc_0x4D04:
-			mov r4, #0x4D04
-			mov r5, #0x5904
+			mov r1, #0x4D04
+			mov r2, #0x5904
 			b sc_out
 sc_0x4D05:
-			mov r4, #0x4D05
-			mov r5, #0x5905
+			mov r1, #0x4D05
+			mov r2, #0x5905
 			b sc_out
 sc_0x4D06:
-			mov r4, #0x4D06
-			mov r5, #0x5906
+			mov r1, #0x4D06
+			mov r2, #0x5906
 			b sc_out
 sc_0x4D07:
-			mov r4, #0x4D07
-			mov r5, #0x5907
+			mov r1, #0x4D07
+			mov r2, #0x5907
 			b sc_out
 sc_0x4D08:
-			mov r4, #0x4D08
-			mov r5, #0x5908
+			mov r1, #0x4D08
+			mov r2, #0x5908
 			b sc_out
 sc_0x4D09:
-			mov r4, #0x4D09
-			mov r5, #0x5909
+			mov r1, #0x4D09
+			mov r2, #0x5909
 			b sc_out
 sc_0x4D0A:
-			mov r4, #0x4D0A
-			mov r5, #0x590A
+			mov r1, #0x4D0A
+			mov r2, #0x590A
 			b sc_out
 sc_0x4D0B:
-			mov r4, #0x4D0B
-			mov r5, #0x590B
+			mov r1, #0x4D0B
+			mov r2, #0x590B
 			b sc_out
 sc_0x4D0C:
-			mov r4, #0x4D0C
-			mov r5, #0x590C
+			mov r1, #0x4D0C
+			mov r2, #0x590C
 			b sc_out
 sc_0x4D0D:
-			mov r4, #0x4D0D
-			mov r5, #0x590D
+			mov r1, #0x4D0D
+			mov r2, #0x590D
 			b sc_out
 sc_0x4D0E:
-			mov r4, #0x4D0E
-			mov r5, #0x590E
+			mov r1, #0x4D0E
+			mov r2, #0x590E
 			b sc_out
 sc_0x4D0F:
-			mov r4, #0x4D0F
-			mov r5, #0x590F
+			mov r1, #0x4D0F
+			mov r2, #0x590F
 			b sc_out
 sc_0x4D10:
-			mov r4, #0x4D10
-			mov r5, #0x5910
+			mov r1, #0x4D10
+			mov r2, #0x5910
 			b sc_out
 sc_0x4D11:
-			mov r4, #0x4D11
-			mov r5, #0x5911
+			mov r1, #0x4D11
+			mov r2, #0x5911
 			b sc_out
 sc_0x4D12:
-			mov r4, #0x4D12
-			mov r5, #0x5912
+			mov r1, #0x4D12
+			mov r2, #0x5912
 			b sc_out
 sc_0x4D13:
-			mov r4, #0x4D13
-			mov r5, #0x5913
+			mov r1, #0x4D13
+			mov r2, #0x5913
 			b sc_out
 sc_0x4D14:
-			mov r4, #0x4D14
-			mov r5, #0x5914
+			mov r1, #0x4D14
+			mov r2, #0x5914
 			b sc_out
 sc_0x4D15:
-			mov r4, #0x4D15
-			mov r5, #0x5915
+			mov r1, #0x4D15
+			mov r2, #0x5915
 			b sc_out
 sc_0x4D16:
-			mov r4, #0x4D16
-			mov r5, #0x5916
+			mov r1, #0x4D16
+			mov r2, #0x5916
 			b sc_out
 sc_0x4D17:
-			mov r4, #0x4D17
-			mov r5, #0x5917
+			mov r1, #0x4D17
+			mov r2, #0x5917
 			b sc_out
 sc_0x4D18:
-			mov r4, #0x4D18
-			mov r5, #0x5918
+			mov r1, #0x4D18
+			mov r2, #0x5918
 			b sc_out
 sc_0x4D19:
-			mov r4, #0x4D19
-			mov r5, #0x5919
+			mov r1, #0x4D19
+			mov r2, #0x5919
 			b sc_out
 sc_0x4D1A:
-			mov r4, #0x4D1A
-			mov r5, #0x591A
+			mov r1, #0x4D1A
+			mov r2, #0x591A
 			b sc_out
 sc_0x4D1B:
-			mov r4, #0x4D1B
-			mov r5, #0x591B
+			mov r1, #0x4D1B
+			mov r2, #0x591B
 			b sc_out
 sc_0x4D1C:
-			mov r4, #0x4D1C
-			mov r5, #0x591C
+			mov r1, #0x4D1C
+			mov r2, #0x591C
 			b sc_out
 sc_0x4D1D:
-			mov r4, #0x4D1D
-			mov r5, #0x591D
+			mov r1, #0x4D1D
+			mov r2, #0x591D
 			b sc_out
 sc_0x4D1E:
-			mov r4, #0x4D1E
-			mov r5, #0x591E
+			mov r1, #0x4D1E
+			mov r2, #0x591E
 			b sc_out
 sc_0x4D1F:
-			mov r4, #0x4D1F
-			mov r5, #0x591F
+			mov r1, #0x4D1F
+			mov r2, #0x591F
 			b sc_out
 sc_0x4E00:
-			mov r4, #0x4E00
-			mov r5, #0x5900
+			mov r1, #0x4E00
+			mov r2, #0x5900
 			b sc_out
 sc_0x4E01:
-			mov r4, #0x4E01
-			mov r5, #0x5901
+			mov r1, #0x4E01
+			mov r2, #0x5901
 			b sc_out
 sc_0x4E02:
-			mov r4, #0x4E02
-			mov r5, #0x5902
+			mov r1, #0x4E02
+			mov r2, #0x5902
 			b sc_out
 sc_0x4E03:
-			mov r4, #0x4E03
-			mov r5, #0x5903
+			mov r1, #0x4E03
+			mov r2, #0x5903
 			b sc_out
 sc_0x4E04:
-			mov r4, #0x4E04
-			mov r5, #0x5904
+			mov r1, #0x4E04
+			mov r2, #0x5904
 			b sc_out
 sc_0x4E05:
-			mov r4, #0x4E05
-			mov r5, #0x5905
+			mov r1, #0x4E05
+			mov r2, #0x5905
 			b sc_out
 sc_0x4E06:
-			mov r4, #0x4E06
-			mov r5, #0x5906
+			mov r1, #0x4E06
+			mov r2, #0x5906
 			b sc_out
 sc_0x4E07:
-			mov r4, #0x4E07
-			mov r5, #0x5907
+			mov r1, #0x4E07
+			mov r2, #0x5907
 			b sc_out
 sc_0x4E08:
-			mov r4, #0x4E08
-			mov r5, #0x5908
+			mov r1, #0x4E08
+			mov r2, #0x5908
 			b sc_out
 sc_0x4E09:
-			mov r4, #0x4E09
-			mov r5, #0x5909
+			mov r1, #0x4E09
+			mov r2, #0x5909
 			b sc_out
 sc_0x4E0A:
-			mov r4, #0x4E0A
-			mov r5, #0x590A
+			mov r1, #0x4E0A
+			mov r2, #0x590A
 			b sc_out
 sc_0x4E0B:
-			mov r4, #0x4E0B
-			mov r5, #0x590B
+			mov r1, #0x4E0B
+			mov r2, #0x590B
 			b sc_out
 sc_0x4E0C:
-			mov r4, #0x4E0C
-			mov r5, #0x590C
+			mov r1, #0x4E0C
+			mov r2, #0x590C
 			b sc_out
 sc_0x4E0D:
-			mov r4, #0x4E0D
-			mov r5, #0x590D
+			mov r1, #0x4E0D
+			mov r2, #0x590D
 			b sc_out
 sc_0x4E0E:
-			mov r4, #0x4E0E
-			mov r5, #0x590E
+			mov r1, #0x4E0E
+			mov r2, #0x590E
 			b sc_out
 sc_0x4E0F:
-			mov r4, #0x4E0F
-			mov r5, #0x590F
+			mov r1, #0x4E0F
+			mov r2, #0x590F
 			b sc_out
 sc_0x4E10:
-			mov r4, #0x4E10
-			mov r5, #0x5910
+			mov r1, #0x4E10
+			mov r2, #0x5910
 			b sc_out
 sc_0x4E11:
-			mov r4, #0x4E11
-			mov r5, #0x5911
+			mov r1, #0x4E11
+			mov r2, #0x5911
 			b sc_out
 sc_0x4E12:
-			mov r4, #0x4E12
-			mov r5, #0x5912
+			mov r1, #0x4E12
+			mov r2, #0x5912
 			b sc_out
 sc_0x4E13:
-			mov r4, #0x4E13
-			mov r5, #0x5913
+			mov r1, #0x4E13
+			mov r2, #0x5913
 			b sc_out
 sc_0x4E14:
-			mov r4, #0x4E14
-			mov r5, #0x5914
+			mov r1, #0x4E14
+			mov r2, #0x5914
 			b sc_out
 sc_0x4E15:
-			mov r4, #0x4E15
-			mov r5, #0x5915
+			mov r1, #0x4E15
+			mov r2, #0x5915
 			b sc_out
 sc_0x4E16:
-			mov r4, #0x4E16
-			mov r5, #0x5916
+			mov r1, #0x4E16
+			mov r2, #0x5916
 			b sc_out
 sc_0x4E17:
-			mov r4, #0x4E17
-			mov r5, #0x5917
+			mov r1, #0x4E17
+			mov r2, #0x5917
 			b sc_out
 sc_0x4E18:
-			mov r4, #0x4E18
-			mov r5, #0x5918
+			mov r1, #0x4E18
+			mov r2, #0x5918
 			b sc_out
 sc_0x4E19:
-			mov r4, #0x4E19
-			mov r5, #0x5919
+			mov r1, #0x4E19
+			mov r2, #0x5919
 			b sc_out
 sc_0x4E1A:
-			mov r4, #0x4E1A
-			mov r5, #0x591A
+			mov r1, #0x4E1A
+			mov r2, #0x591A
 			b sc_out
 sc_0x4E1B:
-			mov r4, #0x4E1B
-			mov r5, #0x591B
+			mov r1, #0x4E1B
+			mov r2, #0x591B
 			b sc_out
 sc_0x4E1C:
-			mov r4, #0x4E1C
-			mov r5, #0x591C
+			mov r1, #0x4E1C
+			mov r2, #0x591C
 			b sc_out
 sc_0x4E1D:
-			mov r4, #0x4E1D
-			mov r5, #0x591D
+			mov r1, #0x4E1D
+			mov r2, #0x591D
 			b sc_out
 sc_0x4E1E:
-			mov r4, #0x4E1E
-			mov r5, #0x591E
+			mov r1, #0x4E1E
+			mov r2, #0x591E
 			b sc_out
 sc_0x4E1F:
-			mov r4, #0x4E1F
-			mov r5, #0x591F
+			mov r1, #0x4E1F
+			mov r2, #0x591F
 			b sc_out
 sc_0x4F00:
-			mov r4, #0x4F00
-			mov r5, #0x5900
+			mov r1, #0x4F00
+			mov r2, #0x5900
 			b sc_out
 sc_0x4F01:
-			mov r4, #0x4F01
-			mov r5, #0x5901
+			mov r1, #0x4F01
+			mov r2, #0x5901
 			b sc_out
 sc_0x4F02:
-			mov r4, #0x4F02
-			mov r5, #0x5902
+			mov r1, #0x4F02
+			mov r2, #0x5902
 			b sc_out
 sc_0x4F03:
-			mov r4, #0x4F03
-			mov r5, #0x5903
+			mov r1, #0x4F03
+			mov r2, #0x5903
 			b sc_out
 sc_0x4F04:
-			mov r4, #0x4F04
-			mov r5, #0x5904
+			mov r1, #0x4F04
+			mov r2, #0x5904
 			b sc_out
 sc_0x4F05:
-			mov r4, #0x4F05
-			mov r5, #0x5905
+			mov r1, #0x4F05
+			mov r2, #0x5905
 			b sc_out
 sc_0x4F06:
-			mov r4, #0x4F06
-			mov r5, #0x5906
+			mov r1, #0x4F06
+			mov r2, #0x5906
 			b sc_out
 sc_0x4F07:
-			mov r4, #0x4F07
-			mov r5, #0x5907
+			mov r1, #0x4F07
+			mov r2, #0x5907
 			b sc_out
 sc_0x4F08:
-			mov r4, #0x4F08
-			mov r5, #0x5908
+			mov r1, #0x4F08
+			mov r2, #0x5908
 			b sc_out
 sc_0x4F09:
-			mov r4, #0x4F09
-			mov r5, #0x5909
+			mov r1, #0x4F09
+			mov r2, #0x5909
 			b sc_out
 sc_0x4F0A:
-			mov r4, #0x4F0A
-			mov r5, #0x590A
+			mov r1, #0x4F0A
+			mov r2, #0x590A
 			b sc_out
 sc_0x4F0B:
-			mov r4, #0x4F0B
-			mov r5, #0x590B
+			mov r1, #0x4F0B
+			mov r2, #0x590B
 			b sc_out
 sc_0x4F0C:
-			mov r4, #0x4F0C
-			mov r5, #0x590C
+			mov r1, #0x4F0C
+			mov r2, #0x590C
 			b sc_out
 sc_0x4F0D:
-			mov r4, #0x4F0D
-			mov r5, #0x590D
+			mov r1, #0x4F0D
+			mov r2, #0x590D
 			b sc_out
 sc_0x4F0E:
-			mov r4, #0x4F0E
-			mov r5, #0x590E
+			mov r1, #0x4F0E
+			mov r2, #0x590E
 			b sc_out
 sc_0x4F0F:
-			mov r4, #0x4F0F
-			mov r5, #0x590F
+			mov r1, #0x4F0F
+			mov r2, #0x590F
 			b sc_out
 sc_0x4F10:
-			mov r4, #0x4F10
-			mov r5, #0x5910
+			mov r1, #0x4F10
+			mov r2, #0x5910
 			b sc_out
 sc_0x4F11:
-			mov r4, #0x4F11
-			mov r5, #0x5911
+			mov r1, #0x4F11
+			mov r2, #0x5911
 			b sc_out
 sc_0x4F12:
-			mov r4, #0x4F12
-			mov r5, #0x5912
+			mov r1, #0x4F12
+			mov r2, #0x5912
 			b sc_out
 sc_0x4F13:
-			mov r4, #0x4F13
-			mov r5, #0x5913
+			mov r1, #0x4F13
+			mov r2, #0x5913
 			b sc_out
 sc_0x4F14:
-			mov r4, #0x4F14
-			mov r5, #0x5914
+			mov r1, #0x4F14
+			mov r2, #0x5914
 			b sc_out
 sc_0x4F15:
-			mov r4, #0x4F15
-			mov r5, #0x5915
+			mov r1, #0x4F15
+			mov r2, #0x5915
 			b sc_out
 sc_0x4F16:
-			mov r4, #0x4F16
-			mov r5, #0x5916
+			mov r1, #0x4F16
+			mov r2, #0x5916
 			b sc_out
 sc_0x4F17:
-			mov r4, #0x4F17
-			mov r5, #0x5917
+			mov r1, #0x4F17
+			mov r2, #0x5917
 			b sc_out
 sc_0x4F18:
-			mov r4, #0x4F18
-			mov r5, #0x5918
+			mov r1, #0x4F18
+			mov r2, #0x5918
 			b sc_out
 sc_0x4F19:
-			mov r4, #0x4F19
-			mov r5, #0x5919
+			mov r1, #0x4F19
+			mov r2, #0x5919
 			b sc_out
 sc_0x4F1A:
-			mov r4, #0x4F1A
-			mov r5, #0x591A
+			mov r1, #0x4F1A
+			mov r2, #0x591A
 			b sc_out
 sc_0x4F1B:
-			mov r4, #0x4F1B
-			mov r5, #0x591B
+			mov r1, #0x4F1B
+			mov r2, #0x591B
 			b sc_out
 sc_0x4F1C:
-			mov r4, #0x4F1C
-			mov r5, #0x591C
+			mov r1, #0x4F1C
+			mov r2, #0x591C
 			b sc_out
 sc_0x4F1D:
-			mov r4, #0x4F1D
-			mov r5, #0x591D
+			mov r1, #0x4F1D
+			mov r2, #0x591D
 			b sc_out
 sc_0x4F1E:
-			mov r4, #0x4F1E
-			mov r5, #0x591E
+			mov r1, #0x4F1E
+			mov r2, #0x591E
 			b sc_out
 sc_0x4F1F:
-			mov r4, #0x4F1F
-			mov r5, #0x591F
+			mov r1, #0x4F1F
+			mov r2, #0x591F
 			b sc_out
 sc_0x4820:
-			mov r4, #0x4820
-			mov r5, #0x5920
+			mov r1, #0x4820
+			mov r2, #0x5920
 			b sc_out
 sc_0x4821:
-			mov r4, #0x4821
-			mov r5, #0x5921
+			mov r1, #0x4821
+			mov r2, #0x5921
 			b sc_out
 sc_0x4822:
-			mov r4, #0x4822
-			mov r5, #0x5922
+			mov r1, #0x4822
+			mov r2, #0x5922
 			b sc_out
 sc_0x4823:
-			mov r4, #0x4823
-			mov r5, #0x5923
+			mov r1, #0x4823
+			mov r2, #0x5923
 			b sc_out
 sc_0x4824:
-			mov r4, #0x4824
-			mov r5, #0x5924
+			mov r1, #0x4824
+			mov r2, #0x5924
 			b sc_out
 sc_0x4825:
-			mov r4, #0x4825
-			mov r5, #0x5925
+			mov r1, #0x4825
+			mov r2, #0x5925
 			b sc_out
 sc_0x4826:
-			mov r4, #0x4826
-			mov r5, #0x5926
+			mov r1, #0x4826
+			mov r2, #0x5926
 			b sc_out
 sc_0x4827:
-			mov r4, #0x4827
-			mov r5, #0x5927
+			mov r1, #0x4827
+			mov r2, #0x5927
 			b sc_out
 sc_0x4828:
-			mov r4, #0x4828
-			mov r5, #0x5928
+			mov r1, #0x4828
+			mov r2, #0x5928
 			b sc_out
 sc_0x4829:
-			mov r4, #0x4829
-			mov r5, #0x5929
+			mov r1, #0x4829
+			mov r2, #0x5929
 			b sc_out
 sc_0x482A:
-			mov r4, #0x482A
-			mov r5, #0x592A
+			mov r1, #0x482A
+			mov r2, #0x592A
 			b sc_out
 sc_0x482B:
-			mov r4, #0x482B
-			mov r5, #0x592B
+			mov r1, #0x482B
+			mov r2, #0x592B
 			b sc_out
 sc_0x482C:
-			mov r4, #0x482C
-			mov r5, #0x592C
+			mov r1, #0x482C
+			mov r2, #0x592C
 			b sc_out
 sc_0x482D:
-			mov r4, #0x482D
-			mov r5, #0x592D
+			mov r1, #0x482D
+			mov r2, #0x592D
 			b sc_out
 sc_0x482E:
-			mov r4, #0x482E
-			mov r5, #0x592E
+			mov r1, #0x482E
+			mov r2, #0x592E
 			b sc_out
 sc_0x482F:
-			mov r4, #0x482F
-			mov r5, #0x592F
+			mov r1, #0x482F
+			mov r2, #0x592F
 			b sc_out
 sc_0x4830:
-			mov r4, #0x4830
-			mov r5, #0x5930
+			mov r1, #0x4830
+			mov r2, #0x5930
 			b sc_out
 sc_0x4831:
-			mov r4, #0x4831
-			mov r5, #0x5931
+			mov r1, #0x4831
+			mov r2, #0x5931
 			b sc_out
 sc_0x4832:
-			mov r4, #0x4832
-			mov r5, #0x5932
+			mov r1, #0x4832
+			mov r2, #0x5932
 			b sc_out
 sc_0x4833:
-			mov r4, #0x4833
-			mov r5, #0x5933
+			mov r1, #0x4833
+			mov r2, #0x5933
 			b sc_out
 sc_0x4834:
-			mov r4, #0x4834
-			mov r5, #0x5934
+			mov r1, #0x4834
+			mov r2, #0x5934
 			b sc_out
 sc_0x4835:
-			mov r4, #0x4835
-			mov r5, #0x5935
+			mov r1, #0x4835
+			mov r2, #0x5935
 			b sc_out
 sc_0x4836:
-			mov r4, #0x4836
-			mov r5, #0x5936
+			mov r1, #0x4836
+			mov r2, #0x5936
 			b sc_out
 sc_0x4837:
-			mov r4, #0x4837
-			mov r5, #0x5937
+			mov r1, #0x4837
+			mov r2, #0x5937
 			b sc_out
 sc_0x4838:
-			mov r4, #0x4838
-			mov r5, #0x5938
+			mov r1, #0x4838
+			mov r2, #0x5938
 			b sc_out
 sc_0x4839:
-			mov r4, #0x4839
-			mov r5, #0x5939
+			mov r1, #0x4839
+			mov r2, #0x5939
 			b sc_out
 sc_0x483A:
-			mov r4, #0x483A
-			mov r5, #0x593A
+			mov r1, #0x483A
+			mov r2, #0x593A
 			b sc_out
 sc_0x483B:
-			mov r4, #0x483B
-			mov r5, #0x593B
+			mov r1, #0x483B
+			mov r2, #0x593B
 			b sc_out
 sc_0x483C:
-			mov r4, #0x483C
-			mov r5, #0x593C
+			mov r1, #0x483C
+			mov r2, #0x593C
 			b sc_out
 sc_0x483D:
-			mov r4, #0x483D
-			mov r5, #0x593D
+			mov r1, #0x483D
+			mov r2, #0x593D
 			b sc_out
 sc_0x483E:
-			mov r4, #0x483E
-			mov r5, #0x593E
+			mov r1, #0x483E
+			mov r2, #0x593E
 			b sc_out
 sc_0x483F:
-			mov r4, #0x483F
-			mov r5, #0x593F
+			mov r1, #0x483F
+			mov r2, #0x593F
 			b sc_out
 sc_0x4920:
-			mov r4, #0x4920
-			mov r5, #0x5920
+			mov r1, #0x4920
+			mov r2, #0x5920
 			b sc_out
 sc_0x4921:
-			mov r4, #0x4921
-			mov r5, #0x5921
+			mov r1, #0x4921
+			mov r2, #0x5921
 			b sc_out
 sc_0x4922:
-			mov r4, #0x4922
-			mov r5, #0x5922
+			mov r1, #0x4922
+			mov r2, #0x5922
 			b sc_out
 sc_0x4923:
-			mov r4, #0x4923
-			mov r5, #0x5923
+			mov r1, #0x4923
+			mov r2, #0x5923
 			b sc_out
 sc_0x4924:
-			mov r4, #0x4924
-			mov r5, #0x5924
+			mov r1, #0x4924
+			mov r2, #0x5924
 			b sc_out
 sc_0x4925:
-			mov r4, #0x4925
-			mov r5, #0x5925
+			mov r1, #0x4925
+			mov r2, #0x5925
 			b sc_out
 sc_0x4926:
-			mov r4, #0x4926
-			mov r5, #0x5926
+			mov r1, #0x4926
+			mov r2, #0x5926
 			b sc_out
 sc_0x4927:
-			mov r4, #0x4927
-			mov r5, #0x5927
+			mov r1, #0x4927
+			mov r2, #0x5927
 			b sc_out
 sc_0x4928:
-			mov r4, #0x4928
-			mov r5, #0x5928
+			mov r1, #0x4928
+			mov r2, #0x5928
 			b sc_out
 sc_0x4929:
-			mov r4, #0x4929
-			mov r5, #0x5929
+			mov r1, #0x4929
+			mov r2, #0x5929
 			b sc_out
 sc_0x492A:
-			mov r4, #0x492A
-			mov r5, #0x592A
+			mov r1, #0x492A
+			mov r2, #0x592A
 			b sc_out
 sc_0x492B:
-			mov r4, #0x492B
-			mov r5, #0x592B
+			mov r1, #0x492B
+			mov r2, #0x592B
 			b sc_out
 sc_0x492C:
-			mov r4, #0x492C
-			mov r5, #0x592C
+			mov r1, #0x492C
+			mov r2, #0x592C
 			b sc_out
 sc_0x492D:
-			mov r4, #0x492D
-			mov r5, #0x592D
+			mov r1, #0x492D
+			mov r2, #0x592D
 			b sc_out
 sc_0x492E:
-			mov r4, #0x492E
-			mov r5, #0x592E
+			mov r1, #0x492E
+			mov r2, #0x592E
 			b sc_out
 sc_0x492F:
-			mov r4, #0x492F
-			mov r5, #0x592F
+			mov r1, #0x492F
+			mov r2, #0x592F
 			b sc_out
 sc_0x4930:
-			mov r4, #0x4930
-			mov r5, #0x5930
+			mov r1, #0x4930
+			mov r2, #0x5930
 			b sc_out
 sc_0x4931:
-			mov r4, #0x4931
-			mov r5, #0x5931
+			mov r1, #0x4931
+			mov r2, #0x5931
 			b sc_out
 sc_0x4932:
-			mov r4, #0x4932
-			mov r5, #0x5932
+			mov r1, #0x4932
+			mov r2, #0x5932
 			b sc_out
 sc_0x4933:
-			mov r4, #0x4933
-			mov r5, #0x5933
+			mov r1, #0x4933
+			mov r2, #0x5933
 			b sc_out
 sc_0x4934:
-			mov r4, #0x4934
-			mov r5, #0x5934
+			mov r1, #0x4934
+			mov r2, #0x5934
 			b sc_out
 sc_0x4935:
-			mov r4, #0x4935
-			mov r5, #0x5935
+			mov r1, #0x4935
+			mov r2, #0x5935
 			b sc_out
 sc_0x4936:
-			mov r4, #0x4936
-			mov r5, #0x5936
+			mov r1, #0x4936
+			mov r2, #0x5936
 			b sc_out
 sc_0x4937:
-			mov r4, #0x4937
-			mov r5, #0x5937
+			mov r1, #0x4937
+			mov r2, #0x5937
 			b sc_out
 sc_0x4938:
-			mov r4, #0x4938
-			mov r5, #0x5938
+			mov r1, #0x4938
+			mov r2, #0x5938
 			b sc_out
 sc_0x4939:
-			mov r4, #0x4939
-			mov r5, #0x5939
+			mov r1, #0x4939
+			mov r2, #0x5939
 			b sc_out
 sc_0x493A:
-			mov r4, #0x493A
-			mov r5, #0x593A
+			mov r1, #0x493A
+			mov r2, #0x593A
 			b sc_out
 sc_0x493B:
-			mov r4, #0x493B
-			mov r5, #0x593B
+			mov r1, #0x493B
+			mov r2, #0x593B
 			b sc_out
 sc_0x493C:
-			mov r4, #0x493C
-			mov r5, #0x593C
+			mov r1, #0x493C
+			mov r2, #0x593C
 			b sc_out
 sc_0x493D:
-			mov r4, #0x493D
-			mov r5, #0x593D
+			mov r1, #0x493D
+			mov r2, #0x593D
 			b sc_out
 sc_0x493E:
-			mov r4, #0x493E
-			mov r5, #0x593E
+			mov r1, #0x493E
+			mov r2, #0x593E
 			b sc_out
 sc_0x493F:
-			mov r4, #0x493F
-			mov r5, #0x593F
+			mov r1, #0x493F
+			mov r2, #0x593F
 			b sc_out
 sc_0x4A20:
-			mov r4, #0x4A20
-			mov r5, #0x5920
+			mov r1, #0x4A20
+			mov r2, #0x5920
 			b sc_out
 sc_0x4A21:
-			mov r4, #0x4A21
-			mov r5, #0x5921
+			mov r1, #0x4A21
+			mov r2, #0x5921
 			b sc_out
 sc_0x4A22:
-			mov r4, #0x4A22
-			mov r5, #0x5922
+			mov r1, #0x4A22
+			mov r2, #0x5922
 			b sc_out
 sc_0x4A23:
-			mov r4, #0x4A23
-			mov r5, #0x5923
+			mov r1, #0x4A23
+			mov r2, #0x5923
 			b sc_out
 sc_0x4A24:
-			mov r4, #0x4A24
-			mov r5, #0x5924
+			mov r1, #0x4A24
+			mov r2, #0x5924
 			b sc_out
 sc_0x4A25:
-			mov r4, #0x4A25
-			mov r5, #0x5925
+			mov r1, #0x4A25
+			mov r2, #0x5925
 			b sc_out
 sc_0x4A26:
-			mov r4, #0x4A26
-			mov r5, #0x5926
+			mov r1, #0x4A26
+			mov r2, #0x5926
 			b sc_out
 sc_0x4A27:
-			mov r4, #0x4A27
-			mov r5, #0x5927
+			mov r1, #0x4A27
+			mov r2, #0x5927
 			b sc_out
 sc_0x4A28:
-			mov r4, #0x4A28
-			mov r5, #0x5928
+			mov r1, #0x4A28
+			mov r2, #0x5928
 			b sc_out
 sc_0x4A29:
-			mov r4, #0x4A29
-			mov r5, #0x5929
+			mov r1, #0x4A29
+			mov r2, #0x5929
 			b sc_out
 sc_0x4A2A:
-			mov r4, #0x4A2A
-			mov r5, #0x592A
+			mov r1, #0x4A2A
+			mov r2, #0x592A
 			b sc_out
 sc_0x4A2B:
-			mov r4, #0x4A2B
-			mov r5, #0x592B
+			mov r1, #0x4A2B
+			mov r2, #0x592B
 			b sc_out
 sc_0x4A2C:
-			mov r4, #0x4A2C
-			mov r5, #0x592C
+			mov r1, #0x4A2C
+			mov r2, #0x592C
 			b sc_out
 sc_0x4A2D:
-			mov r4, #0x4A2D
-			mov r5, #0x592D
+			mov r1, #0x4A2D
+			mov r2, #0x592D
 			b sc_out
 sc_0x4A2E:
-			mov r4, #0x4A2E
-			mov r5, #0x592E
+			mov r1, #0x4A2E
+			mov r2, #0x592E
 			b sc_out
 sc_0x4A2F:
-			mov r4, #0x4A2F
-			mov r5, #0x592F
+			mov r1, #0x4A2F
+			mov r2, #0x592F
 			b sc_out
 sc_0x4A30:
-			mov r4, #0x4A30
-			mov r5, #0x5930
+			mov r1, #0x4A30
+			mov r2, #0x5930
 			b sc_out
 sc_0x4A31:
-			mov r4, #0x4A31
-			mov r5, #0x5931
+			mov r1, #0x4A31
+			mov r2, #0x5931
 			b sc_out
 sc_0x4A32:
-			mov r4, #0x4A32
-			mov r5, #0x5932
+			mov r1, #0x4A32
+			mov r2, #0x5932
 			b sc_out
 sc_0x4A33:
-			mov r4, #0x4A33
-			mov r5, #0x5933
+			mov r1, #0x4A33
+			mov r2, #0x5933
 			b sc_out
 sc_0x4A34:
-			mov r4, #0x4A34
-			mov r5, #0x5934
+			mov r1, #0x4A34
+			mov r2, #0x5934
 			b sc_out
 sc_0x4A35:
-			mov r4, #0x4A35
-			mov r5, #0x5935
+			mov r1, #0x4A35
+			mov r2, #0x5935
 			b sc_out
 sc_0x4A36:
-			mov r4, #0x4A36
-			mov r5, #0x5936
+			mov r1, #0x4A36
+			mov r2, #0x5936
 			b sc_out
 sc_0x4A37:
-			mov r4, #0x4A37
-			mov r5, #0x5937
+			mov r1, #0x4A37
+			mov r2, #0x5937
 			b sc_out
 sc_0x4A38:
-			mov r4, #0x4A38
-			mov r5, #0x5938
+			mov r1, #0x4A38
+			mov r2, #0x5938
 			b sc_out
 sc_0x4A39:
-			mov r4, #0x4A39
-			mov r5, #0x5939
+			mov r1, #0x4A39
+			mov r2, #0x5939
 			b sc_out
 sc_0x4A3A:
-			mov r4, #0x4A3A
-			mov r5, #0x593A
+			mov r1, #0x4A3A
+			mov r2, #0x593A
 			b sc_out
 sc_0x4A3B:
-			mov r4, #0x4A3B
-			mov r5, #0x593B
+			mov r1, #0x4A3B
+			mov r2, #0x593B
 			b sc_out
 sc_0x4A3C:
-			mov r4, #0x4A3C
-			mov r5, #0x593C
+			mov r1, #0x4A3C
+			mov r2, #0x593C
 			b sc_out
 sc_0x4A3D:
-			mov r4, #0x4A3D
-			mov r5, #0x593D
+			mov r1, #0x4A3D
+			mov r2, #0x593D
 			b sc_out
 sc_0x4A3E:
-			mov r4, #0x4A3E
-			mov r5, #0x593E
+			mov r1, #0x4A3E
+			mov r2, #0x593E
 			b sc_out
 sc_0x4A3F:
-			mov r4, #0x4A3F
-			mov r5, #0x593F
+			mov r1, #0x4A3F
+			mov r2, #0x593F
 			b sc_out
 sc_0x4B20:
-			mov r4, #0x4B20
-			mov r5, #0x5920
+			mov r1, #0x4B20
+			mov r2, #0x5920
 			b sc_out
 sc_0x4B21:
-			mov r4, #0x4B21
-			mov r5, #0x5921
+			mov r1, #0x4B21
+			mov r2, #0x5921
 			b sc_out
 sc_0x4B22:
-			mov r4, #0x4B22
-			mov r5, #0x5922
+			mov r1, #0x4B22
+			mov r2, #0x5922
 			b sc_out
 sc_0x4B23:
-			mov r4, #0x4B23
-			mov r5, #0x5923
+			mov r1, #0x4B23
+			mov r2, #0x5923
 			b sc_out
 sc_0x4B24:
-			mov r4, #0x4B24
-			mov r5, #0x5924
+			mov r1, #0x4B24
+			mov r2, #0x5924
 			b sc_out
 sc_0x4B25:
-			mov r4, #0x4B25
-			mov r5, #0x5925
+			mov r1, #0x4B25
+			mov r2, #0x5925
 			b sc_out
 sc_0x4B26:
-			mov r4, #0x4B26
-			mov r5, #0x5926
+			mov r1, #0x4B26
+			mov r2, #0x5926
 			b sc_out
 sc_0x4B27:
-			mov r4, #0x4B27
-			mov r5, #0x5927
+			mov r1, #0x4B27
+			mov r2, #0x5927
 			b sc_out
 sc_0x4B28:
-			mov r4, #0x4B28
-			mov r5, #0x5928
+			mov r1, #0x4B28
+			mov r2, #0x5928
 			b sc_out
 sc_0x4B29:
-			mov r4, #0x4B29
-			mov r5, #0x5929
+			mov r1, #0x4B29
+			mov r2, #0x5929
 			b sc_out
 sc_0x4B2A:
-			mov r4, #0x4B2A
-			mov r5, #0x592A
+			mov r1, #0x4B2A
+			mov r2, #0x592A
 			b sc_out
 sc_0x4B2B:
-			mov r4, #0x4B2B
-			mov r5, #0x592B
+			mov r1, #0x4B2B
+			mov r2, #0x592B
 			b sc_out
 sc_0x4B2C:
-			mov r4, #0x4B2C
-			mov r5, #0x592C
+			mov r1, #0x4B2C
+			mov r2, #0x592C
 			b sc_out
 sc_0x4B2D:
-			mov r4, #0x4B2D
-			mov r5, #0x592D
+			mov r1, #0x4B2D
+			mov r2, #0x592D
 			b sc_out
 sc_0x4B2E:
-			mov r4, #0x4B2E
-			mov r5, #0x592E
+			mov r1, #0x4B2E
+			mov r2, #0x592E
 			b sc_out
 sc_0x4B2F:
-			mov r4, #0x4B2F
-			mov r5, #0x592F
+			mov r1, #0x4B2F
+			mov r2, #0x592F
 			b sc_out
 sc_0x4B30:
-			mov r4, #0x4B30
-			mov r5, #0x5930
+			mov r1, #0x4B30
+			mov r2, #0x5930
 			b sc_out
 sc_0x4B31:
-			mov r4, #0x4B31
-			mov r5, #0x5931
+			mov r1, #0x4B31
+			mov r2, #0x5931
 			b sc_out
 sc_0x4B32:
-			mov r4, #0x4B32
-			mov r5, #0x5932
+			mov r1, #0x4B32
+			mov r2, #0x5932
 			b sc_out
 sc_0x4B33:
-			mov r4, #0x4B33
-			mov r5, #0x5933
+			mov r1, #0x4B33
+			mov r2, #0x5933
 			b sc_out
 sc_0x4B34:
-			mov r4, #0x4B34
-			mov r5, #0x5934
+			mov r1, #0x4B34
+			mov r2, #0x5934
 			b sc_out
 sc_0x4B35:
-			mov r4, #0x4B35
-			mov r5, #0x5935
+			mov r1, #0x4B35
+			mov r2, #0x5935
 			b sc_out
 sc_0x4B36:
-			mov r4, #0x4B36
-			mov r5, #0x5936
+			mov r1, #0x4B36
+			mov r2, #0x5936
 			b sc_out
 sc_0x4B37:
-			mov r4, #0x4B37
-			mov r5, #0x5937
+			mov r1, #0x4B37
+			mov r2, #0x5937
 			b sc_out
 sc_0x4B38:
-			mov r4, #0x4B38
-			mov r5, #0x5938
+			mov r1, #0x4B38
+			mov r2, #0x5938
 			b sc_out
 sc_0x4B39:
-			mov r4, #0x4B39
-			mov r5, #0x5939
+			mov r1, #0x4B39
+			mov r2, #0x5939
 			b sc_out
 sc_0x4B3A:
-			mov r4, #0x4B3A
-			mov r5, #0x593A
+			mov r1, #0x4B3A
+			mov r2, #0x593A
 			b sc_out
 sc_0x4B3B:
-			mov r4, #0x4B3B
-			mov r5, #0x593B
+			mov r1, #0x4B3B
+			mov r2, #0x593B
 			b sc_out
 sc_0x4B3C:
-			mov r4, #0x4B3C
-			mov r5, #0x593C
+			mov r1, #0x4B3C
+			mov r2, #0x593C
 			b sc_out
 sc_0x4B3D:
-			mov r4, #0x4B3D
-			mov r5, #0x593D
+			mov r1, #0x4B3D
+			mov r2, #0x593D
 			b sc_out
 sc_0x4B3E:
-			mov r4, #0x4B3E
-			mov r5, #0x593E
+			mov r1, #0x4B3E
+			mov r2, #0x593E
 			b sc_out
 sc_0x4B3F:
-			mov r4, #0x4B3F
-			mov r5, #0x593F
+			mov r1, #0x4B3F
+			mov r2, #0x593F
 			b sc_out
 sc_0x4C20:
-			mov r4, #0x4C20
-			mov r5, #0x5920
+			mov r1, #0x4C20
+			mov r2, #0x5920
 			b sc_out
 sc_0x4C21:
-			mov r4, #0x4C21
-			mov r5, #0x5921
+			mov r1, #0x4C21
+			mov r2, #0x5921
 			b sc_out
 sc_0x4C22:
-			mov r4, #0x4C22
-			mov r5, #0x5922
+			mov r1, #0x4C22
+			mov r2, #0x5922
 			b sc_out
 sc_0x4C23:
-			mov r4, #0x4C23
-			mov r5, #0x5923
+			mov r1, #0x4C23
+			mov r2, #0x5923
 			b sc_out
 sc_0x4C24:
-			mov r4, #0x4C24
-			mov r5, #0x5924
+			mov r1, #0x4C24
+			mov r2, #0x5924
 			b sc_out
 sc_0x4C25:
-			mov r4, #0x4C25
-			mov r5, #0x5925
+			mov r1, #0x4C25
+			mov r2, #0x5925
 			b sc_out
 sc_0x4C26:
-			mov r4, #0x4C26
-			mov r5, #0x5926
+			mov r1, #0x4C26
+			mov r2, #0x5926
 			b sc_out
 sc_0x4C27:
-			mov r4, #0x4C27
-			mov r5, #0x5927
+			mov r1, #0x4C27
+			mov r2, #0x5927
 			b sc_out
 sc_0x4C28:
-			mov r4, #0x4C28
-			mov r5, #0x5928
+			mov r1, #0x4C28
+			mov r2, #0x5928
 			b sc_out
 sc_0x4C29:
-			mov r4, #0x4C29
-			mov r5, #0x5929
+			mov r1, #0x4C29
+			mov r2, #0x5929
 			b sc_out
 sc_0x4C2A:
-			mov r4, #0x4C2A
-			mov r5, #0x592A
+			mov r1, #0x4C2A
+			mov r2, #0x592A
 			b sc_out
 sc_0x4C2B:
-			mov r4, #0x4C2B
-			mov r5, #0x592B
+			mov r1, #0x4C2B
+			mov r2, #0x592B
 			b sc_out
 sc_0x4C2C:
-			mov r4, #0x4C2C
-			mov r5, #0x592C
+			mov r1, #0x4C2C
+			mov r2, #0x592C
 			b sc_out
 sc_0x4C2D:
-			mov r4, #0x4C2D
-			mov r5, #0x592D
+			mov r1, #0x4C2D
+			mov r2, #0x592D
 			b sc_out
 sc_0x4C2E:
-			mov r4, #0x4C2E
-			mov r5, #0x592E
+			mov r1, #0x4C2E
+			mov r2, #0x592E
 			b sc_out
 sc_0x4C2F:
-			mov r4, #0x4C2F
-			mov r5, #0x592F
+			mov r1, #0x4C2F
+			mov r2, #0x592F
 			b sc_out
 sc_0x4C30:
-			mov r4, #0x4C30
-			mov r5, #0x5930
+			mov r1, #0x4C30
+			mov r2, #0x5930
 			b sc_out
 sc_0x4C31:
-			mov r4, #0x4C31
-			mov r5, #0x5931
+			mov r1, #0x4C31
+			mov r2, #0x5931
 			b sc_out
 sc_0x4C32:
-			mov r4, #0x4C32
-			mov r5, #0x5932
+			mov r1, #0x4C32
+			mov r2, #0x5932
 			b sc_out
 sc_0x4C33:
-			mov r4, #0x4C33
-			mov r5, #0x5933
+			mov r1, #0x4C33
+			mov r2, #0x5933
 			b sc_out
 sc_0x4C34:
-			mov r4, #0x4C34
-			mov r5, #0x5934
+			mov r1, #0x4C34
+			mov r2, #0x5934
 			b sc_out
 sc_0x4C35:
-			mov r4, #0x4C35
-			mov r5, #0x5935
+			mov r1, #0x4C35
+			mov r2, #0x5935
 			b sc_out
 sc_0x4C36:
-			mov r4, #0x4C36
-			mov r5, #0x5936
+			mov r1, #0x4C36
+			mov r2, #0x5936
 			b sc_out
 sc_0x4C37:
-			mov r4, #0x4C37
-			mov r5, #0x5937
+			mov r1, #0x4C37
+			mov r2, #0x5937
 			b sc_out
 sc_0x4C38:
-			mov r4, #0x4C38
-			mov r5, #0x5938
+			mov r1, #0x4C38
+			mov r2, #0x5938
 			b sc_out
 sc_0x4C39:
-			mov r4, #0x4C39
-			mov r5, #0x5939
+			mov r1, #0x4C39
+			mov r2, #0x5939
 			b sc_out
 sc_0x4C3A:
-			mov r4, #0x4C3A
-			mov r5, #0x593A
+			mov r1, #0x4C3A
+			mov r2, #0x593A
 			b sc_out
 sc_0x4C3B:
-			mov r4, #0x4C3B
-			mov r5, #0x593B
+			mov r1, #0x4C3B
+			mov r2, #0x593B
 			b sc_out
 sc_0x4C3C:
-			mov r4, #0x4C3C
-			mov r5, #0x593C
+			mov r1, #0x4C3C
+			mov r2, #0x593C
 			b sc_out
 sc_0x4C3D:
-			mov r4, #0x4C3D
-			mov r5, #0x593D
+			mov r1, #0x4C3D
+			mov r2, #0x593D
 			b sc_out
 sc_0x4C3E:
-			mov r4, #0x4C3E
-			mov r5, #0x593E
+			mov r1, #0x4C3E
+			mov r2, #0x593E
 			b sc_out
 sc_0x4C3F:
-			mov r4, #0x4C3F
-			mov r5, #0x593F
+			mov r1, #0x4C3F
+			mov r2, #0x593F
 			b sc_out
 sc_0x4D20:
-			mov r4, #0x4D20
-			mov r5, #0x5920
+			mov r1, #0x4D20
+			mov r2, #0x5920
 			b sc_out
 sc_0x4D21:
-			mov r4, #0x4D21
-			mov r5, #0x5921
+			mov r1, #0x4D21
+			mov r2, #0x5921
 			b sc_out
 sc_0x4D22:
-			mov r4, #0x4D22
-			mov r5, #0x5922
+			mov r1, #0x4D22
+			mov r2, #0x5922
 			b sc_out
 sc_0x4D23:
-			mov r4, #0x4D23
-			mov r5, #0x5923
+			mov r1, #0x4D23
+			mov r2, #0x5923
 			b sc_out
 sc_0x4D24:
-			mov r4, #0x4D24
-			mov r5, #0x5924
+			mov r1, #0x4D24
+			mov r2, #0x5924
 			b sc_out
 sc_0x4D25:
-			mov r4, #0x4D25
-			mov r5, #0x5925
+			mov r1, #0x4D25
+			mov r2, #0x5925
 			b sc_out
 sc_0x4D26:
-			mov r4, #0x4D26
-			mov r5, #0x5926
+			mov r1, #0x4D26
+			mov r2, #0x5926
 			b sc_out
 sc_0x4D27:
-			mov r4, #0x4D27
-			mov r5, #0x5927
+			mov r1, #0x4D27
+			mov r2, #0x5927
 			b sc_out
 sc_0x4D28:
-			mov r4, #0x4D28
-			mov r5, #0x5928
+			mov r1, #0x4D28
+			mov r2, #0x5928
 			b sc_out
 sc_0x4D29:
-			mov r4, #0x4D29
-			mov r5, #0x5929
+			mov r1, #0x4D29
+			mov r2, #0x5929
 			b sc_out
 sc_0x4D2A:
-			mov r4, #0x4D2A
-			mov r5, #0x592A
+			mov r1, #0x4D2A
+			mov r2, #0x592A
 			b sc_out
 sc_0x4D2B:
-			mov r4, #0x4D2B
-			mov r5, #0x592B
+			mov r1, #0x4D2B
+			mov r2, #0x592B
 			b sc_out
 sc_0x4D2C:
-			mov r4, #0x4D2C
-			mov r5, #0x592C
+			mov r1, #0x4D2C
+			mov r2, #0x592C
 			b sc_out
 sc_0x4D2D:
-			mov r4, #0x4D2D
-			mov r5, #0x592D
+			mov r1, #0x4D2D
+			mov r2, #0x592D
 			b sc_out
 sc_0x4D2E:
-			mov r4, #0x4D2E
-			mov r5, #0x592E
+			mov r1, #0x4D2E
+			mov r2, #0x592E
 			b sc_out
 sc_0x4D2F:
-			mov r4, #0x4D2F
-			mov r5, #0x592F
+			mov r1, #0x4D2F
+			mov r2, #0x592F
 			b sc_out
 sc_0x4D30:
-			mov r4, #0x4D30
-			mov r5, #0x5930
+			mov r1, #0x4D30
+			mov r2, #0x5930
 			b sc_out
 sc_0x4D31:
-			mov r4, #0x4D31
-			mov r5, #0x5931
+			mov r1, #0x4D31
+			mov r2, #0x5931
 			b sc_out
 sc_0x4D32:
-			mov r4, #0x4D32
-			mov r5, #0x5932
+			mov r1, #0x4D32
+			mov r2, #0x5932
 			b sc_out
 sc_0x4D33:
-			mov r4, #0x4D33
-			mov r5, #0x5933
+			mov r1, #0x4D33
+			mov r2, #0x5933
 			b sc_out
 sc_0x4D34:
-			mov r4, #0x4D34
-			mov r5, #0x5934
+			mov r1, #0x4D34
+			mov r2, #0x5934
 			b sc_out
 sc_0x4D35:
-			mov r4, #0x4D35
-			mov r5, #0x5935
+			mov r1, #0x4D35
+			mov r2, #0x5935
 			b sc_out
 sc_0x4D36:
-			mov r4, #0x4D36
-			mov r5, #0x5936
+			mov r1, #0x4D36
+			mov r2, #0x5936
 			b sc_out
 sc_0x4D37:
-			mov r4, #0x4D37
-			mov r5, #0x5937
+			mov r1, #0x4D37
+			mov r2, #0x5937
 			b sc_out
 sc_0x4D38:
-			mov r4, #0x4D38
-			mov r5, #0x5938
+			mov r1, #0x4D38
+			mov r2, #0x5938
 			b sc_out
 sc_0x4D39:
-			mov r4, #0x4D39
-			mov r5, #0x5939
+			mov r1, #0x4D39
+			mov r2, #0x5939
 			b sc_out
 sc_0x4D3A:
-			mov r4, #0x4D3A
-			mov r5, #0x593A
+			mov r1, #0x4D3A
+			mov r2, #0x593A
 			b sc_out
 sc_0x4D3B:
-			mov r4, #0x4D3B
-			mov r5, #0x593B
+			mov r1, #0x4D3B
+			mov r2, #0x593B
 			b sc_out
 sc_0x4D3C:
-			mov r4, #0x4D3C
-			mov r5, #0x593C
+			mov r1, #0x4D3C
+			mov r2, #0x593C
 			b sc_out
 sc_0x4D3D:
-			mov r4, #0x4D3D
-			mov r5, #0x593D
+			mov r1, #0x4D3D
+			mov r2, #0x593D
 			b sc_out
 sc_0x4D3E:
-			mov r4, #0x4D3E
-			mov r5, #0x593E
+			mov r1, #0x4D3E
+			mov r2, #0x593E
 			b sc_out
 sc_0x4D3F:
-			mov r4, #0x4D3F
-			mov r5, #0x593F
+			mov r1, #0x4D3F
+			mov r2, #0x593F
 			b sc_out
 sc_0x4E20:
-			mov r4, #0x4E20
-			mov r5, #0x5920
+			mov r1, #0x4E20
+			mov r2, #0x5920
 			b sc_out
 sc_0x4E21:
-			mov r4, #0x4E21
-			mov r5, #0x5921
+			mov r1, #0x4E21
+			mov r2, #0x5921
 			b sc_out
 sc_0x4E22:
-			mov r4, #0x4E22
-			mov r5, #0x5922
+			mov r1, #0x4E22
+			mov r2, #0x5922
 			b sc_out
 sc_0x4E23:
-			mov r4, #0x4E23
-			mov r5, #0x5923
+			mov r1, #0x4E23
+			mov r2, #0x5923
 			b sc_out
 sc_0x4E24:
-			mov r4, #0x4E24
-			mov r5, #0x5924
+			mov r1, #0x4E24
+			mov r2, #0x5924
 			b sc_out
 sc_0x4E25:
-			mov r4, #0x4E25
-			mov r5, #0x5925
+			mov r1, #0x4E25
+			mov r2, #0x5925
 			b sc_out
 sc_0x4E26:
-			mov r4, #0x4E26
-			mov r5, #0x5926
+			mov r1, #0x4E26
+			mov r2, #0x5926
 			b sc_out
 sc_0x4E27:
-			mov r4, #0x4E27
-			mov r5, #0x5927
+			mov r1, #0x4E27
+			mov r2, #0x5927
 			b sc_out
 sc_0x4E28:
-			mov r4, #0x4E28
-			mov r5, #0x5928
+			mov r1, #0x4E28
+			mov r2, #0x5928
 			b sc_out
 sc_0x4E29:
-			mov r4, #0x4E29
-			mov r5, #0x5929
+			mov r1, #0x4E29
+			mov r2, #0x5929
 			b sc_out
 sc_0x4E2A:
-			mov r4, #0x4E2A
-			mov r5, #0x592A
+			mov r1, #0x4E2A
+			mov r2, #0x592A
 			b sc_out
 sc_0x4E2B:
-			mov r4, #0x4E2B
-			mov r5, #0x592B
+			mov r1, #0x4E2B
+			mov r2, #0x592B
 			b sc_out
 sc_0x4E2C:
-			mov r4, #0x4E2C
-			mov r5, #0x592C
+			mov r1, #0x4E2C
+			mov r2, #0x592C
 			b sc_out
 sc_0x4E2D:
-			mov r4, #0x4E2D
-			mov r5, #0x592D
+			mov r1, #0x4E2D
+			mov r2, #0x592D
 			b sc_out
 sc_0x4E2E:
-			mov r4, #0x4E2E
-			mov r5, #0x592E
+			mov r1, #0x4E2E
+			mov r2, #0x592E
 			b sc_out
 sc_0x4E2F:
-			mov r4, #0x4E2F
-			mov r5, #0x592F
+			mov r1, #0x4E2F
+			mov r2, #0x592F
 			b sc_out
 sc_0x4E30:
-			mov r4, #0x4E30
-			mov r5, #0x5930
+			mov r1, #0x4E30
+			mov r2, #0x5930
 			b sc_out
 sc_0x4E31:
-			mov r4, #0x4E31
-			mov r5, #0x5931
+			mov r1, #0x4E31
+			mov r2, #0x5931
 			b sc_out
 sc_0x4E32:
-			mov r4, #0x4E32
-			mov r5, #0x5932
+			mov r1, #0x4E32
+			mov r2, #0x5932
 			b sc_out
 sc_0x4E33:
-			mov r4, #0x4E33
-			mov r5, #0x5933
+			mov r1, #0x4E33
+			mov r2, #0x5933
 			b sc_out
 sc_0x4E34:
-			mov r4, #0x4E34
-			mov r5, #0x5934
+			mov r1, #0x4E34
+			mov r2, #0x5934
 			b sc_out
 sc_0x4E35:
-			mov r4, #0x4E35
-			mov r5, #0x5935
+			mov r1, #0x4E35
+			mov r2, #0x5935
 			b sc_out
 sc_0x4E36:
-			mov r4, #0x4E36
-			mov r5, #0x5936
+			mov r1, #0x4E36
+			mov r2, #0x5936
 			b sc_out
 sc_0x4E37:
-			mov r4, #0x4E37
-			mov r5, #0x5937
+			mov r1, #0x4E37
+			mov r2, #0x5937
 			b sc_out
 sc_0x4E38:
-			mov r4, #0x4E38
-			mov r5, #0x5938
+			mov r1, #0x4E38
+			mov r2, #0x5938
 			b sc_out
 sc_0x4E39:
-			mov r4, #0x4E39
-			mov r5, #0x5939
+			mov r1, #0x4E39
+			mov r2, #0x5939
 			b sc_out
 sc_0x4E3A:
-			mov r4, #0x4E3A
-			mov r5, #0x593A
+			mov r1, #0x4E3A
+			mov r2, #0x593A
 			b sc_out
 sc_0x4E3B:
-			mov r4, #0x4E3B
-			mov r5, #0x593B
+			mov r1, #0x4E3B
+			mov r2, #0x593B
 			b sc_out
 sc_0x4E3C:
-			mov r4, #0x4E3C
-			mov r5, #0x593C
+			mov r1, #0x4E3C
+			mov r2, #0x593C
 			b sc_out
 sc_0x4E3D:
-			mov r4, #0x4E3D
-			mov r5, #0x593D
+			mov r1, #0x4E3D
+			mov r2, #0x593D
 			b sc_out
 sc_0x4E3E:
-			mov r4, #0x4E3E
-			mov r5, #0x593E
+			mov r1, #0x4E3E
+			mov r2, #0x593E
 			b sc_out
 sc_0x4E3F:
-			mov r4, #0x4E3F
-			mov r5, #0x593F
+			mov r1, #0x4E3F
+			mov r2, #0x593F
 			b sc_out
 sc_0x4F20:
-			mov r4, #0x4F20
-			mov r5, #0x5920
+			mov r1, #0x4F20
+			mov r2, #0x5920
 			b sc_out
 sc_0x4F21:
-			mov r4, #0x4F21
-			mov r5, #0x5921
+			mov r1, #0x4F21
+			mov r2, #0x5921
 			b sc_out
 sc_0x4F22:
-			mov r4, #0x4F22
-			mov r5, #0x5922
+			mov r1, #0x4F22
+			mov r2, #0x5922
 			b sc_out
 sc_0x4F23:
-			mov r4, #0x4F23
-			mov r5, #0x5923
+			mov r1, #0x4F23
+			mov r2, #0x5923
 			b sc_out
 sc_0x4F24:
-			mov r4, #0x4F24
-			mov r5, #0x5924
+			mov r1, #0x4F24
+			mov r2, #0x5924
 			b sc_out
 sc_0x4F25:
-			mov r4, #0x4F25
-			mov r5, #0x5925
+			mov r1, #0x4F25
+			mov r2, #0x5925
 			b sc_out
 sc_0x4F26:
-			mov r4, #0x4F26
-			mov r5, #0x5926
+			mov r1, #0x4F26
+			mov r2, #0x5926
 			b sc_out
 sc_0x4F27:
-			mov r4, #0x4F27
-			mov r5, #0x5927
+			mov r1, #0x4F27
+			mov r2, #0x5927
 			b sc_out
 sc_0x4F28:
-			mov r4, #0x4F28
-			mov r5, #0x5928
+			mov r1, #0x4F28
+			mov r2, #0x5928
 			b sc_out
 sc_0x4F29:
-			mov r4, #0x4F29
-			mov r5, #0x5929
+			mov r1, #0x4F29
+			mov r2, #0x5929
 			b sc_out
 sc_0x4F2A:
-			mov r4, #0x4F2A
-			mov r5, #0x592A
+			mov r1, #0x4F2A
+			mov r2, #0x592A
 			b sc_out
 sc_0x4F2B:
-			mov r4, #0x4F2B
-			mov r5, #0x592B
+			mov r1, #0x4F2B
+			mov r2, #0x592B
 			b sc_out
 sc_0x4F2C:
-			mov r4, #0x4F2C
-			mov r5, #0x592C
+			mov r1, #0x4F2C
+			mov r2, #0x592C
 			b sc_out
 sc_0x4F2D:
-			mov r4, #0x4F2D
-			mov r5, #0x592D
+			mov r1, #0x4F2D
+			mov r2, #0x592D
 			b sc_out
 sc_0x4F2E:
-			mov r4, #0x4F2E
-			mov r5, #0x592E
+			mov r1, #0x4F2E
+			mov r2, #0x592E
 			b sc_out
 sc_0x4F2F:
-			mov r4, #0x4F2F
-			mov r5, #0x592F
+			mov r1, #0x4F2F
+			mov r2, #0x592F
 			b sc_out
 sc_0x4F30:
-			mov r4, #0x4F30
-			mov r5, #0x5930
+			mov r1, #0x4F30
+			mov r2, #0x5930
 			b sc_out
 sc_0x4F31:
-			mov r4, #0x4F31
-			mov r5, #0x5931
+			mov r1, #0x4F31
+			mov r2, #0x5931
 			b sc_out
 sc_0x4F32:
-			mov r4, #0x4F32
-			mov r5, #0x5932
+			mov r1, #0x4F32
+			mov r2, #0x5932
 			b sc_out
 sc_0x4F33:
-			mov r4, #0x4F33
-			mov r5, #0x5933
+			mov r1, #0x4F33
+			mov r2, #0x5933
 			b sc_out
 sc_0x4F34:
-			mov r4, #0x4F34
-			mov r5, #0x5934
+			mov r1, #0x4F34
+			mov r2, #0x5934
 			b sc_out
 sc_0x4F35:
-			mov r4, #0x4F35
-			mov r5, #0x5935
+			mov r1, #0x4F35
+			mov r2, #0x5935
 			b sc_out
 sc_0x4F36:
-			mov r4, #0x4F36
-			mov r5, #0x5936
+			mov r1, #0x4F36
+			mov r2, #0x5936
 			b sc_out
 sc_0x4F37:
-			mov r4, #0x4F37
-			mov r5, #0x5937
+			mov r1, #0x4F37
+			mov r2, #0x5937
 			b sc_out
 sc_0x4F38:
-			mov r4, #0x4F38
-			mov r5, #0x5938
+			mov r1, #0x4F38
+			mov r2, #0x5938
 			b sc_out
 sc_0x4F39:
-			mov r4, #0x4F39
-			mov r5, #0x5939
+			mov r1, #0x4F39
+			mov r2, #0x5939
 			b sc_out
 sc_0x4F3A:
-			mov r4, #0x4F3A
-			mov r5, #0x593A
+			mov r1, #0x4F3A
+			mov r2, #0x593A
 			b sc_out
 sc_0x4F3B:
-			mov r4, #0x4F3B
-			mov r5, #0x593B
+			mov r1, #0x4F3B
+			mov r2, #0x593B
 			b sc_out
 sc_0x4F3C:
-			mov r4, #0x4F3C
-			mov r5, #0x593C
+			mov r1, #0x4F3C
+			mov r2, #0x593C
 			b sc_out
 sc_0x4F3D:
-			mov r4, #0x4F3D
-			mov r5, #0x593D
+			mov r1, #0x4F3D
+			mov r2, #0x593D
 			b sc_out
 sc_0x4F3E:
-			mov r4, #0x4F3E
-			mov r5, #0x593E
+			mov r1, #0x4F3E
+			mov r2, #0x593E
 			b sc_out
 sc_0x4F3F:
-			mov r4, #0x4F3F
-			mov r5, #0x593F
+			mov r1, #0x4F3F
+			mov r2, #0x593F
 			b sc_out
 sc_0x4840:
-			mov r4, #0x4840
-			mov r5, #0x5940
+			mov r1, #0x4840
+			mov r2, #0x5940
 			b sc_out
 sc_0x4841:
-			mov r4, #0x4841
-			mov r5, #0x5941
+			mov r1, #0x4841
+			mov r2, #0x5941
 			b sc_out
 sc_0x4842:
-			mov r4, #0x4842
-			mov r5, #0x5942
+			mov r1, #0x4842
+			mov r2, #0x5942
 			b sc_out
 sc_0x4843:
-			mov r4, #0x4843
-			mov r5, #0x5943
+			mov r1, #0x4843
+			mov r2, #0x5943
 			b sc_out
 sc_0x4844:
-			mov r4, #0x4844
-			mov r5, #0x5944
+			mov r1, #0x4844
+			mov r2, #0x5944
 			b sc_out
 sc_0x4845:
-			mov r4, #0x4845
-			mov r5, #0x5945
+			mov r1, #0x4845
+			mov r2, #0x5945
 			b sc_out
 sc_0x4846:
-			mov r4, #0x4846
-			mov r5, #0x5946
+			mov r1, #0x4846
+			mov r2, #0x5946
 			b sc_out
 sc_0x4847:
-			mov r4, #0x4847
-			mov r5, #0x5947
+			mov r1, #0x4847
+			mov r2, #0x5947
 			b sc_out
 sc_0x4848:
-			mov r4, #0x4848
-			mov r5, #0x5948
+			mov r1, #0x4848
+			mov r2, #0x5948
 			b sc_out
 sc_0x4849:
-			mov r4, #0x4849
-			mov r5, #0x5949
+			mov r1, #0x4849
+			mov r2, #0x5949
 			b sc_out
 sc_0x484A:
-			mov r4, #0x484A
-			mov r5, #0x594A
+			mov r1, #0x484A
+			mov r2, #0x594A
 			b sc_out
 sc_0x484B:
-			mov r4, #0x484B
-			mov r5, #0x594B
+			mov r1, #0x484B
+			mov r2, #0x594B
 			b sc_out
 sc_0x484C:
-			mov r4, #0x484C
-			mov r5, #0x594C
+			mov r1, #0x484C
+			mov r2, #0x594C
 			b sc_out
 sc_0x484D:
-			mov r4, #0x484D
-			mov r5, #0x594D
+			mov r1, #0x484D
+			mov r2, #0x594D
 			b sc_out
 sc_0x484E:
-			mov r4, #0x484E
-			mov r5, #0x594E
+			mov r1, #0x484E
+			mov r2, #0x594E
 			b sc_out
 sc_0x484F:
-			mov r4, #0x484F
-			mov r5, #0x594F
+			mov r1, #0x484F
+			mov r2, #0x594F
 			b sc_out
 sc_0x4850:
-			mov r4, #0x4850
-			mov r5, #0x5950
+			mov r1, #0x4850
+			mov r2, #0x5950
 			b sc_out
 sc_0x4851:
-			mov r4, #0x4851
-			mov r5, #0x5951
+			mov r1, #0x4851
+			mov r2, #0x5951
 			b sc_out
 sc_0x4852:
-			mov r4, #0x4852
-			mov r5, #0x5952
+			mov r1, #0x4852
+			mov r2, #0x5952
 			b sc_out
 sc_0x4853:
-			mov r4, #0x4853
-			mov r5, #0x5953
+			mov r1, #0x4853
+			mov r2, #0x5953
 			b sc_out
 sc_0x4854:
-			mov r4, #0x4854
-			mov r5, #0x5954
+			mov r1, #0x4854
+			mov r2, #0x5954
 			b sc_out
 sc_0x4855:
-			mov r4, #0x4855
-			mov r5, #0x5955
+			mov r1, #0x4855
+			mov r2, #0x5955
 			b sc_out
 sc_0x4856:
-			mov r4, #0x4856
-			mov r5, #0x5956
+			mov r1, #0x4856
+			mov r2, #0x5956
 			b sc_out
 sc_0x4857:
-			mov r4, #0x4857
-			mov r5, #0x5957
+			mov r1, #0x4857
+			mov r2, #0x5957
 			b sc_out
 sc_0x4858:
-			mov r4, #0x4858
-			mov r5, #0x5958
+			mov r1, #0x4858
+			mov r2, #0x5958
 			b sc_out
 sc_0x4859:
-			mov r4, #0x4859
-			mov r5, #0x5959
+			mov r1, #0x4859
+			mov r2, #0x5959
 			b sc_out
 sc_0x485A:
-			mov r4, #0x485A
-			mov r5, #0x595A
+			mov r1, #0x485A
+			mov r2, #0x595A
 			b sc_out
 sc_0x485B:
-			mov r4, #0x485B
-			mov r5, #0x595B
+			mov r1, #0x485B
+			mov r2, #0x595B
 			b sc_out
 sc_0x485C:
-			mov r4, #0x485C
-			mov r5, #0x595C
+			mov r1, #0x485C
+			mov r2, #0x595C
 			b sc_out
 sc_0x485D:
-			mov r4, #0x485D
-			mov r5, #0x595D
+			mov r1, #0x485D
+			mov r2, #0x595D
 			b sc_out
 sc_0x485E:
-			mov r4, #0x485E
-			mov r5, #0x595E
+			mov r1, #0x485E
+			mov r2, #0x595E
 			b sc_out
 sc_0x485F:
-			mov r4, #0x485F
-			mov r5, #0x595F
+			mov r1, #0x485F
+			mov r2, #0x595F
 			b sc_out
 sc_0x4940:
-			mov r4, #0x4940
-			mov r5, #0x5940
+			mov r1, #0x4940
+			mov r2, #0x5940
 			b sc_out
 sc_0x4941:
-			mov r4, #0x4941
-			mov r5, #0x5941
+			mov r1, #0x4941
+			mov r2, #0x5941
 			b sc_out
 sc_0x4942:
-			mov r4, #0x4942
-			mov r5, #0x5942
+			mov r1, #0x4942
+			mov r2, #0x5942
 			b sc_out
 sc_0x4943:
-			mov r4, #0x4943
-			mov r5, #0x5943
+			mov r1, #0x4943
+			mov r2, #0x5943
 			b sc_out
 sc_0x4944:
-			mov r4, #0x4944
-			mov r5, #0x5944
+			mov r1, #0x4944
+			mov r2, #0x5944
 			b sc_out
 sc_0x4945:
-			mov r4, #0x4945
-			mov r5, #0x5945
+			mov r1, #0x4945
+			mov r2, #0x5945
 			b sc_out
 sc_0x4946:
-			mov r4, #0x4946
-			mov r5, #0x5946
+			mov r1, #0x4946
+			mov r2, #0x5946
 			b sc_out
 sc_0x4947:
-			mov r4, #0x4947
-			mov r5, #0x5947
+			mov r1, #0x4947
+			mov r2, #0x5947
 			b sc_out
 sc_0x4948:
-			mov r4, #0x4948
-			mov r5, #0x5948
+			mov r1, #0x4948
+			mov r2, #0x5948
 			b sc_out
 sc_0x4949:
-			mov r4, #0x4949
-			mov r5, #0x5949
+			mov r1, #0x4949
+			mov r2, #0x5949
 			b sc_out
 sc_0x494A:
-			mov r4, #0x494A
-			mov r5, #0x594A
+			mov r1, #0x494A
+			mov r2, #0x594A
 			b sc_out
 sc_0x494B:
-			mov r4, #0x494B
-			mov r5, #0x594B
+			mov r1, #0x494B
+			mov r2, #0x594B
 			b sc_out
 sc_0x494C:
-			mov r4, #0x494C
-			mov r5, #0x594C
+			mov r1, #0x494C
+			mov r2, #0x594C
 			b sc_out
 sc_0x494D:
-			mov r4, #0x494D
-			mov r5, #0x594D
+			mov r1, #0x494D
+			mov r2, #0x594D
 			b sc_out
 sc_0x494E:
-			mov r4, #0x494E
-			mov r5, #0x594E
+			mov r1, #0x494E
+			mov r2, #0x594E
 			b sc_out
 sc_0x494F:
-			mov r4, #0x494F
-			mov r5, #0x594F
+			mov r1, #0x494F
+			mov r2, #0x594F
 			b sc_out
 sc_0x4950:
-			mov r4, #0x4950
-			mov r5, #0x5950
+			mov r1, #0x4950
+			mov r2, #0x5950
 			b sc_out
 sc_0x4951:
-			mov r4, #0x4951
-			mov r5, #0x5951
+			mov r1, #0x4951
+			mov r2, #0x5951
 			b sc_out
 sc_0x4952:
-			mov r4, #0x4952
-			mov r5, #0x5952
+			mov r1, #0x4952
+			mov r2, #0x5952
 			b sc_out
 sc_0x4953:
-			mov r4, #0x4953
-			mov r5, #0x5953
+			mov r1, #0x4953
+			mov r2, #0x5953
 			b sc_out
 sc_0x4954:
-			mov r4, #0x4954
-			mov r5, #0x5954
+			mov r1, #0x4954
+			mov r2, #0x5954
 			b sc_out
 sc_0x4955:
-			mov r4, #0x4955
-			mov r5, #0x5955
+			mov r1, #0x4955
+			mov r2, #0x5955
 			b sc_out
 sc_0x4956:
-			mov r4, #0x4956
-			mov r5, #0x5956
+			mov r1, #0x4956
+			mov r2, #0x5956
 			b sc_out
 sc_0x4957:
-			mov r4, #0x4957
-			mov r5, #0x5957
+			mov r1, #0x4957
+			mov r2, #0x5957
 			b sc_out
 sc_0x4958:
-			mov r4, #0x4958
-			mov r5, #0x5958
+			mov r1, #0x4958
+			mov r2, #0x5958
 			b sc_out
 sc_0x4959:
-			mov r4, #0x4959
-			mov r5, #0x5959
+			mov r1, #0x4959
+			mov r2, #0x5959
 			b sc_out
 sc_0x495A:
-			mov r4, #0x495A
-			mov r5, #0x595A
+			mov r1, #0x495A
+			mov r2, #0x595A
 			b sc_out
 sc_0x495B:
-			mov r4, #0x495B
-			mov r5, #0x595B
+			mov r1, #0x495B
+			mov r2, #0x595B
 			b sc_out
 sc_0x495C:
-			mov r4, #0x495C
-			mov r5, #0x595C
+			mov r1, #0x495C
+			mov r2, #0x595C
 			b sc_out
 sc_0x495D:
-			mov r4, #0x495D
-			mov r5, #0x595D
+			mov r1, #0x495D
+			mov r2, #0x595D
 			b sc_out
 sc_0x495E:
-			mov r4, #0x495E
-			mov r5, #0x595E
+			mov r1, #0x495E
+			mov r2, #0x595E
 			b sc_out
 sc_0x495F:
-			mov r4, #0x495F
-			mov r5, #0x595F
+			mov r1, #0x495F
+			mov r2, #0x595F
 			b sc_out
 sc_0x4A40:
-			mov r4, #0x4A40
-			mov r5, #0x5940
+			mov r1, #0x4A40
+			mov r2, #0x5940
 			b sc_out
 sc_0x4A41:
-			mov r4, #0x4A41
-			mov r5, #0x5941
+			mov r1, #0x4A41
+			mov r2, #0x5941
 			b sc_out
 sc_0x4A42:
-			mov r4, #0x4A42
-			mov r5, #0x5942
+			mov r1, #0x4A42
+			mov r2, #0x5942
 			b sc_out
 sc_0x4A43:
-			mov r4, #0x4A43
-			mov r5, #0x5943
+			mov r1, #0x4A43
+			mov r2, #0x5943
 			b sc_out
 sc_0x4A44:
-			mov r4, #0x4A44
-			mov r5, #0x5944
+			mov r1, #0x4A44
+			mov r2, #0x5944
 			b sc_out
 sc_0x4A45:
-			mov r4, #0x4A45
-			mov r5, #0x5945
+			mov r1, #0x4A45
+			mov r2, #0x5945
 			b sc_out
 sc_0x4A46:
-			mov r4, #0x4A46
-			mov r5, #0x5946
+			mov r1, #0x4A46
+			mov r2, #0x5946
 			b sc_out
 sc_0x4A47:
-			mov r4, #0x4A47
-			mov r5, #0x5947
+			mov r1, #0x4A47
+			mov r2, #0x5947
 			b sc_out
 sc_0x4A48:
-			mov r4, #0x4A48
-			mov r5, #0x5948
+			mov r1, #0x4A48
+			mov r2, #0x5948
 			b sc_out
 sc_0x4A49:
-			mov r4, #0x4A49
-			mov r5, #0x5949
+			mov r1, #0x4A49
+			mov r2, #0x5949
 			b sc_out
 sc_0x4A4A:
-			mov r4, #0x4A4A
-			mov r5, #0x594A
+			mov r1, #0x4A4A
+			mov r2, #0x594A
 			b sc_out
 sc_0x4A4B:
-			mov r4, #0x4A4B
-			mov r5, #0x594B
+			mov r1, #0x4A4B
+			mov r2, #0x594B
 			b sc_out
 sc_0x4A4C:
-			mov r4, #0x4A4C
-			mov r5, #0x594C
+			mov r1, #0x4A4C
+			mov r2, #0x594C
 			b sc_out
 sc_0x4A4D:
-			mov r4, #0x4A4D
-			mov r5, #0x594D
+			mov r1, #0x4A4D
+			mov r2, #0x594D
 			b sc_out
 sc_0x4A4E:
-			mov r4, #0x4A4E
-			mov r5, #0x594E
+			mov r1, #0x4A4E
+			mov r2, #0x594E
 			b sc_out
 sc_0x4A4F:
-			mov r4, #0x4A4F
-			mov r5, #0x594F
+			mov r1, #0x4A4F
+			mov r2, #0x594F
 			b sc_out
 sc_0x4A50:
-			mov r4, #0x4A50
-			mov r5, #0x5950
+			mov r1, #0x4A50
+			mov r2, #0x5950
 			b sc_out
 sc_0x4A51:
-			mov r4, #0x4A51
-			mov r5, #0x5951
+			mov r1, #0x4A51
+			mov r2, #0x5951
 			b sc_out
 sc_0x4A52:
-			mov r4, #0x4A52
-			mov r5, #0x5952
+			mov r1, #0x4A52
+			mov r2, #0x5952
 			b sc_out
 sc_0x4A53:
-			mov r4, #0x4A53
-			mov r5, #0x5953
+			mov r1, #0x4A53
+			mov r2, #0x5953
 			b sc_out
 sc_0x4A54:
-			mov r4, #0x4A54
-			mov r5, #0x5954
+			mov r1, #0x4A54
+			mov r2, #0x5954
 			b sc_out
 sc_0x4A55:
-			mov r4, #0x4A55
-			mov r5, #0x5955
+			mov r1, #0x4A55
+			mov r2, #0x5955
 			b sc_out
 sc_0x4A56:
-			mov r4, #0x4A56
-			mov r5, #0x5956
+			mov r1, #0x4A56
+			mov r2, #0x5956
 			b sc_out
 sc_0x4A57:
-			mov r4, #0x4A57
-			mov r5, #0x5957
+			mov r1, #0x4A57
+			mov r2, #0x5957
 			b sc_out
 sc_0x4A58:
-			mov r4, #0x4A58
-			mov r5, #0x5958
+			mov r1, #0x4A58
+			mov r2, #0x5958
 			b sc_out
 sc_0x4A59:
-			mov r4, #0x4A59
-			mov r5, #0x5959
+			mov r1, #0x4A59
+			mov r2, #0x5959
 			b sc_out
 sc_0x4A5A:
-			mov r4, #0x4A5A
-			mov r5, #0x595A
+			mov r1, #0x4A5A
+			mov r2, #0x595A
 			b sc_out
 sc_0x4A5B:
-			mov r4, #0x4A5B
-			mov r5, #0x595B
+			mov r1, #0x4A5B
+			mov r2, #0x595B
 			b sc_out
 sc_0x4A5C:
-			mov r4, #0x4A5C
-			mov r5, #0x595C
+			mov r1, #0x4A5C
+			mov r2, #0x595C
 			b sc_out
 sc_0x4A5D:
-			mov r4, #0x4A5D
-			mov r5, #0x595D
+			mov r1, #0x4A5D
+			mov r2, #0x595D
 			b sc_out
 sc_0x4A5E:
-			mov r4, #0x4A5E
-			mov r5, #0x595E
+			mov r1, #0x4A5E
+			mov r2, #0x595E
 			b sc_out
 sc_0x4A5F:
-			mov r4, #0x4A5F
-			mov r5, #0x595F
+			mov r1, #0x4A5F
+			mov r2, #0x595F
 			b sc_out
 sc_0x4B40:
-			mov r4, #0x4B40
-			mov r5, #0x5940
+			mov r1, #0x4B40
+			mov r2, #0x5940
 			b sc_out
 sc_0x4B41:
-			mov r4, #0x4B41
-			mov r5, #0x5941
+			mov r1, #0x4B41
+			mov r2, #0x5941
 			b sc_out
 sc_0x4B42:
-			mov r4, #0x4B42
-			mov r5, #0x5942
+			mov r1, #0x4B42
+			mov r2, #0x5942
 			b sc_out
 sc_0x4B43:
-			mov r4, #0x4B43
-			mov r5, #0x5943
+			mov r1, #0x4B43
+			mov r2, #0x5943
 			b sc_out
 sc_0x4B44:
-			mov r4, #0x4B44
-			mov r5, #0x5944
+			mov r1, #0x4B44
+			mov r2, #0x5944
 			b sc_out
 sc_0x4B45:
-			mov r4, #0x4B45
-			mov r5, #0x5945
+			mov r1, #0x4B45
+			mov r2, #0x5945
 			b sc_out
 sc_0x4B46:
-			mov r4, #0x4B46
-			mov r5, #0x5946
+			mov r1, #0x4B46
+			mov r2, #0x5946
 			b sc_out
 sc_0x4B47:
-			mov r4, #0x4B47
-			mov r5, #0x5947
+			mov r1, #0x4B47
+			mov r2, #0x5947
 			b sc_out
 sc_0x4B48:
-			mov r4, #0x4B48
-			mov r5, #0x5948
+			mov r1, #0x4B48
+			mov r2, #0x5948
 			b sc_out
 sc_0x4B49:
-			mov r4, #0x4B49
-			mov r5, #0x5949
+			mov r1, #0x4B49
+			mov r2, #0x5949
 			b sc_out
 sc_0x4B4A:
-			mov r4, #0x4B4A
-			mov r5, #0x594A
+			mov r1, #0x4B4A
+			mov r2, #0x594A
 			b sc_out
 sc_0x4B4B:
-			mov r4, #0x4B4B
-			mov r5, #0x594B
+			mov r1, #0x4B4B
+			mov r2, #0x594B
 			b sc_out
 sc_0x4B4C:
-			mov r4, #0x4B4C
-			mov r5, #0x594C
+			mov r1, #0x4B4C
+			mov r2, #0x594C
 			b sc_out
 sc_0x4B4D:
-			mov r4, #0x4B4D
-			mov r5, #0x594D
+			mov r1, #0x4B4D
+			mov r2, #0x594D
 			b sc_out
 sc_0x4B4E:
-			mov r4, #0x4B4E
-			mov r5, #0x594E
+			mov r1, #0x4B4E
+			mov r2, #0x594E
 			b sc_out
 sc_0x4B4F:
-			mov r4, #0x4B4F
-			mov r5, #0x594F
+			mov r1, #0x4B4F
+			mov r2, #0x594F
 			b sc_out
 sc_0x4B50:
-			mov r4, #0x4B50
-			mov r5, #0x5950
+			mov r1, #0x4B50
+			mov r2, #0x5950
 			b sc_out
 sc_0x4B51:
-			mov r4, #0x4B51
-			mov r5, #0x5951
+			mov r1, #0x4B51
+			mov r2, #0x5951
 			b sc_out
 sc_0x4B52:
-			mov r4, #0x4B52
-			mov r5, #0x5952
+			mov r1, #0x4B52
+			mov r2, #0x5952
 			b sc_out
 sc_0x4B53:
-			mov r4, #0x4B53
-			mov r5, #0x5953
+			mov r1, #0x4B53
+			mov r2, #0x5953
 			b sc_out
 sc_0x4B54:
-			mov r4, #0x4B54
-			mov r5, #0x5954
+			mov r1, #0x4B54
+			mov r2, #0x5954
 			b sc_out
 sc_0x4B55:
-			mov r4, #0x4B55
-			mov r5, #0x5955
+			mov r1, #0x4B55
+			mov r2, #0x5955
 			b sc_out
 sc_0x4B56:
-			mov r4, #0x4B56
-			mov r5, #0x5956
+			mov r1, #0x4B56
+			mov r2, #0x5956
 			b sc_out
 sc_0x4B57:
-			mov r4, #0x4B57
-			mov r5, #0x5957
+			mov r1, #0x4B57
+			mov r2, #0x5957
 			b sc_out
 sc_0x4B58:
-			mov r4, #0x4B58
-			mov r5, #0x5958
+			mov r1, #0x4B58
+			mov r2, #0x5958
 			b sc_out
 sc_0x4B59:
-			mov r4, #0x4B59
-			mov r5, #0x5959
+			mov r1, #0x4B59
+			mov r2, #0x5959
 			b sc_out
 sc_0x4B5A:
-			mov r4, #0x4B5A
-			mov r5, #0x595A
+			mov r1, #0x4B5A
+			mov r2, #0x595A
 			b sc_out
 sc_0x4B5B:
-			mov r4, #0x4B5B
-			mov r5, #0x595B
+			mov r1, #0x4B5B
+			mov r2, #0x595B
 			b sc_out
 sc_0x4B5C:
-			mov r4, #0x4B5C
-			mov r5, #0x595C
+			mov r1, #0x4B5C
+			mov r2, #0x595C
 			b sc_out
 sc_0x4B5D:
-			mov r4, #0x4B5D
-			mov r5, #0x595D
+			mov r1, #0x4B5D
+			mov r2, #0x595D
 			b sc_out
 sc_0x4B5E:
-			mov r4, #0x4B5E
-			mov r5, #0x595E
+			mov r1, #0x4B5E
+			mov r2, #0x595E
 			b sc_out
 sc_0x4B5F:
-			mov r4, #0x4B5F
-			mov r5, #0x595F
+			mov r1, #0x4B5F
+			mov r2, #0x595F
 			b sc_out
 sc_0x4C40:
-			mov r4, #0x4C40
-			mov r5, #0x5940
+			mov r1, #0x4C40
+			mov r2, #0x5940
 			b sc_out
 sc_0x4C41:
-			mov r4, #0x4C41
-			mov r5, #0x5941
+			mov r1, #0x4C41
+			mov r2, #0x5941
 			b sc_out
 sc_0x4C42:
-			mov r4, #0x4C42
-			mov r5, #0x5942
+			mov r1, #0x4C42
+			mov r2, #0x5942
 			b sc_out
 sc_0x4C43:
-			mov r4, #0x4C43
-			mov r5, #0x5943
+			mov r1, #0x4C43
+			mov r2, #0x5943
 			b sc_out
 sc_0x4C44:
-			mov r4, #0x4C44
-			mov r5, #0x5944
+			mov r1, #0x4C44
+			mov r2, #0x5944
 			b sc_out
 sc_0x4C45:
-			mov r4, #0x4C45
-			mov r5, #0x5945
+			mov r1, #0x4C45
+			mov r2, #0x5945
 			b sc_out
 sc_0x4C46:
-			mov r4, #0x4C46
-			mov r5, #0x5946
+			mov r1, #0x4C46
+			mov r2, #0x5946
 			b sc_out
 sc_0x4C47:
-			mov r4, #0x4C47
-			mov r5, #0x5947
+			mov r1, #0x4C47
+			mov r2, #0x5947
 			b sc_out
 sc_0x4C48:
-			mov r4, #0x4C48
-			mov r5, #0x5948
+			mov r1, #0x4C48
+			mov r2, #0x5948
 			b sc_out
 sc_0x4C49:
-			mov r4, #0x4C49
-			mov r5, #0x5949
+			mov r1, #0x4C49
+			mov r2, #0x5949
 			b sc_out
 sc_0x4C4A:
-			mov r4, #0x4C4A
-			mov r5, #0x594A
+			mov r1, #0x4C4A
+			mov r2, #0x594A
 			b sc_out
 sc_0x4C4B:
-			mov r4, #0x4C4B
-			mov r5, #0x594B
+			mov r1, #0x4C4B
+			mov r2, #0x594B
 			b sc_out
 sc_0x4C4C:
-			mov r4, #0x4C4C
-			mov r5, #0x594C
+			mov r1, #0x4C4C
+			mov r2, #0x594C
 			b sc_out
 sc_0x4C4D:
-			mov r4, #0x4C4D
-			mov r5, #0x594D
+			mov r1, #0x4C4D
+			mov r2, #0x594D
 			b sc_out
 sc_0x4C4E:
-			mov r4, #0x4C4E
-			mov r5, #0x594E
+			mov r1, #0x4C4E
+			mov r2, #0x594E
 			b sc_out
 sc_0x4C4F:
-			mov r4, #0x4C4F
-			mov r5, #0x594F
+			mov r1, #0x4C4F
+			mov r2, #0x594F
 			b sc_out
 sc_0x4C50:
-			mov r4, #0x4C50
-			mov r5, #0x5950
+			mov r1, #0x4C50
+			mov r2, #0x5950
 			b sc_out
 sc_0x4C51:
-			mov r4, #0x4C51
-			mov r5, #0x5951
+			mov r1, #0x4C51
+			mov r2, #0x5951
 			b sc_out
 sc_0x4C52:
-			mov r4, #0x4C52
-			mov r5, #0x5952
+			mov r1, #0x4C52
+			mov r2, #0x5952
 			b sc_out
 sc_0x4C53:
-			mov r4, #0x4C53
-			mov r5, #0x5953
+			mov r1, #0x4C53
+			mov r2, #0x5953
 			b sc_out
 sc_0x4C54:
-			mov r4, #0x4C54
-			mov r5, #0x5954
+			mov r1, #0x4C54
+			mov r2, #0x5954
 			b sc_out
 sc_0x4C55:
-			mov r4, #0x4C55
-			mov r5, #0x5955
+			mov r1, #0x4C55
+			mov r2, #0x5955
 			b sc_out
 sc_0x4C56:
-			mov r4, #0x4C56
-			mov r5, #0x5956
+			mov r1, #0x4C56
+			mov r2, #0x5956
 			b sc_out
 sc_0x4C57:
-			mov r4, #0x4C57
-			mov r5, #0x5957
+			mov r1, #0x4C57
+			mov r2, #0x5957
 			b sc_out
 sc_0x4C58:
-			mov r4, #0x4C58
-			mov r5, #0x5958
+			mov r1, #0x4C58
+			mov r2, #0x5958
 			b sc_out
 sc_0x4C59:
-			mov r4, #0x4C59
-			mov r5, #0x5959
+			mov r1, #0x4C59
+			mov r2, #0x5959
 			b sc_out
 sc_0x4C5A:
-			mov r4, #0x4C5A
-			mov r5, #0x595A
+			mov r1, #0x4C5A
+			mov r2, #0x595A
 			b sc_out
 sc_0x4C5B:
-			mov r4, #0x4C5B
-			mov r5, #0x595B
+			mov r1, #0x4C5B
+			mov r2, #0x595B
 			b sc_out
 sc_0x4C5C:
-			mov r4, #0x4C5C
-			mov r5, #0x595C
+			mov r1, #0x4C5C
+			mov r2, #0x595C
 			b sc_out
 sc_0x4C5D:
-			mov r4, #0x4C5D
-			mov r5, #0x595D
+			mov r1, #0x4C5D
+			mov r2, #0x595D
 			b sc_out
 sc_0x4C5E:
-			mov r4, #0x4C5E
-			mov r5, #0x595E
+			mov r1, #0x4C5E
+			mov r2, #0x595E
 			b sc_out
 sc_0x4C5F:
-			mov r4, #0x4C5F
-			mov r5, #0x595F
+			mov r1, #0x4C5F
+			mov r2, #0x595F
 			b sc_out
 sc_0x4D40:
-			mov r4, #0x4D40
-			mov r5, #0x5940
+			mov r1, #0x4D40
+			mov r2, #0x5940
 			b sc_out
 sc_0x4D41:
-			mov r4, #0x4D41
-			mov r5, #0x5941
+			mov r1, #0x4D41
+			mov r2, #0x5941
 			b sc_out
 sc_0x4D42:
-			mov r4, #0x4D42
-			mov r5, #0x5942
+			mov r1, #0x4D42
+			mov r2, #0x5942
 			b sc_out
 sc_0x4D43:
-			mov r4, #0x4D43
-			mov r5, #0x5943
+			mov r1, #0x4D43
+			mov r2, #0x5943
 			b sc_out
 sc_0x4D44:
-			mov r4, #0x4D44
-			mov r5, #0x5944
+			mov r1, #0x4D44
+			mov r2, #0x5944
 			b sc_out
 sc_0x4D45:
-			mov r4, #0x4D45
-			mov r5, #0x5945
+			mov r1, #0x4D45
+			mov r2, #0x5945
 			b sc_out
 sc_0x4D46:
-			mov r4, #0x4D46
-			mov r5, #0x5946
+			mov r1, #0x4D46
+			mov r2, #0x5946
 			b sc_out
 sc_0x4D47:
-			mov r4, #0x4D47
-			mov r5, #0x5947
+			mov r1, #0x4D47
+			mov r2, #0x5947
 			b sc_out
 sc_0x4D48:
-			mov r4, #0x4D48
-			mov r5, #0x5948
+			mov r1, #0x4D48
+			mov r2, #0x5948
 			b sc_out
 sc_0x4D49:
-			mov r4, #0x4D49
-			mov r5, #0x5949
+			mov r1, #0x4D49
+			mov r2, #0x5949
 			b sc_out
 sc_0x4D4A:
-			mov r4, #0x4D4A
-			mov r5, #0x594A
+			mov r1, #0x4D4A
+			mov r2, #0x594A
 			b sc_out
 sc_0x4D4B:
-			mov r4, #0x4D4B
-			mov r5, #0x594B
+			mov r1, #0x4D4B
+			mov r2, #0x594B
 			b sc_out
 sc_0x4D4C:
-			mov r4, #0x4D4C
-			mov r5, #0x594C
+			mov r1, #0x4D4C
+			mov r2, #0x594C
 			b sc_out
 sc_0x4D4D:
-			mov r4, #0x4D4D
-			mov r5, #0x594D
+			mov r1, #0x4D4D
+			mov r2, #0x594D
 			b sc_out
 sc_0x4D4E:
-			mov r4, #0x4D4E
-			mov r5, #0x594E
+			mov r1, #0x4D4E
+			mov r2, #0x594E
 			b sc_out
 sc_0x4D4F:
-			mov r4, #0x4D4F
-			mov r5, #0x594F
+			mov r1, #0x4D4F
+			mov r2, #0x594F
 			b sc_out
 sc_0x4D50:
-			mov r4, #0x4D50
-			mov r5, #0x5950
+			mov r1, #0x4D50
+			mov r2, #0x5950
 			b sc_out
 sc_0x4D51:
-			mov r4, #0x4D51
-			mov r5, #0x5951
+			mov r1, #0x4D51
+			mov r2, #0x5951
 			b sc_out
 sc_0x4D52:
-			mov r4, #0x4D52
-			mov r5, #0x5952
+			mov r1, #0x4D52
+			mov r2, #0x5952
 			b sc_out
 sc_0x4D53:
-			mov r4, #0x4D53
-			mov r5, #0x5953
+			mov r1, #0x4D53
+			mov r2, #0x5953
 			b sc_out
 sc_0x4D54:
-			mov r4, #0x4D54
-			mov r5, #0x5954
+			mov r1, #0x4D54
+			mov r2, #0x5954
 			b sc_out
 sc_0x4D55:
-			mov r4, #0x4D55
-			mov r5, #0x5955
+			mov r1, #0x4D55
+			mov r2, #0x5955
 			b sc_out
 sc_0x4D56:
-			mov r4, #0x4D56
-			mov r5, #0x5956
+			mov r1, #0x4D56
+			mov r2, #0x5956
 			b sc_out
 sc_0x4D57:
-			mov r4, #0x4D57
-			mov r5, #0x5957
+			mov r1, #0x4D57
+			mov r2, #0x5957
 			b sc_out
 sc_0x4D58:
-			mov r4, #0x4D58
-			mov r5, #0x5958
+			mov r1, #0x4D58
+			mov r2, #0x5958
 			b sc_out
 sc_0x4D59:
-			mov r4, #0x4D59
-			mov r5, #0x5959
+			mov r1, #0x4D59
+			mov r2, #0x5959
 			b sc_out
 sc_0x4D5A:
-			mov r4, #0x4D5A
-			mov r5, #0x595A
+			mov r1, #0x4D5A
+			mov r2, #0x595A
 			b sc_out
 sc_0x4D5B:
-			mov r4, #0x4D5B
-			mov r5, #0x595B
+			mov r1, #0x4D5B
+			mov r2, #0x595B
 			b sc_out
 sc_0x4D5C:
-			mov r4, #0x4D5C
-			mov r5, #0x595C
+			mov r1, #0x4D5C
+			mov r2, #0x595C
 			b sc_out
 sc_0x4D5D:
-			mov r4, #0x4D5D
-			mov r5, #0x595D
+			mov r1, #0x4D5D
+			mov r2, #0x595D
 			b sc_out
 sc_0x4D5E:
-			mov r4, #0x4D5E
-			mov r5, #0x595E
+			mov r1, #0x4D5E
+			mov r2, #0x595E
 			b sc_out
 sc_0x4D5F:
-			mov r4, #0x4D5F
-			mov r5, #0x595F
+			mov r1, #0x4D5F
+			mov r2, #0x595F
 			b sc_out
 sc_0x4E40:
-			mov r4, #0x4E40
-			mov r5, #0x5940
+			mov r1, #0x4E40
+			mov r2, #0x5940
 			b sc_out
 sc_0x4E41:
-			mov r4, #0x4E41
-			mov r5, #0x5941
+			mov r1, #0x4E41
+			mov r2, #0x5941
 			b sc_out
 sc_0x4E42:
-			mov r4, #0x4E42
-			mov r5, #0x5942
+			mov r1, #0x4E42
+			mov r2, #0x5942
 			b sc_out
 sc_0x4E43:
-			mov r4, #0x4E43
-			mov r5, #0x5943
+			mov r1, #0x4E43
+			mov r2, #0x5943
 			b sc_out
 sc_0x4E44:
-			mov r4, #0x4E44
-			mov r5, #0x5944
+			mov r1, #0x4E44
+			mov r2, #0x5944
 			b sc_out
 sc_0x4E45:
-			mov r4, #0x4E45
-			mov r5, #0x5945
+			mov r1, #0x4E45
+			mov r2, #0x5945
 			b sc_out
 sc_0x4E46:
-			mov r4, #0x4E46
-			mov r5, #0x5946
+			mov r1, #0x4E46
+			mov r2, #0x5946
 			b sc_out
 sc_0x4E47:
-			mov r4, #0x4E47
-			mov r5, #0x5947
+			mov r1, #0x4E47
+			mov r2, #0x5947
 			b sc_out
 sc_0x4E48:
-			mov r4, #0x4E48
-			mov r5, #0x5948
+			mov r1, #0x4E48
+			mov r2, #0x5948
 			b sc_out
 sc_0x4E49:
-			mov r4, #0x4E49
-			mov r5, #0x5949
+			mov r1, #0x4E49
+			mov r2, #0x5949
 			b sc_out
 sc_0x4E4A:
-			mov r4, #0x4E4A
-			mov r5, #0x594A
+			mov r1, #0x4E4A
+			mov r2, #0x594A
 			b sc_out
 sc_0x4E4B:
-			mov r4, #0x4E4B
-			mov r5, #0x594B
+			mov r1, #0x4E4B
+			mov r2, #0x594B
 			b sc_out
 sc_0x4E4C:
-			mov r4, #0x4E4C
-			mov r5, #0x594C
+			mov r1, #0x4E4C
+			mov r2, #0x594C
 			b sc_out
 sc_0x4E4D:
-			mov r4, #0x4E4D
-			mov r5, #0x594D
+			mov r1, #0x4E4D
+			mov r2, #0x594D
 			b sc_out
 sc_0x4E4E:
-			mov r4, #0x4E4E
-			mov r5, #0x594E
+			mov r1, #0x4E4E
+			mov r2, #0x594E
 			b sc_out
 sc_0x4E4F:
-			mov r4, #0x4E4F
-			mov r5, #0x594F
+			mov r1, #0x4E4F
+			mov r2, #0x594F
 			b sc_out
 sc_0x4E50:
-			mov r4, #0x4E50
-			mov r5, #0x5950
+			mov r1, #0x4E50
+			mov r2, #0x5950
 			b sc_out
 sc_0x4E51:
-			mov r4, #0x4E51
-			mov r5, #0x5951
+			mov r1, #0x4E51
+			mov r2, #0x5951
 			b sc_out
 sc_0x4E52:
-			mov r4, #0x4E52
-			mov r5, #0x5952
+			mov r1, #0x4E52
+			mov r2, #0x5952
 			b sc_out
 sc_0x4E53:
-			mov r4, #0x4E53
-			mov r5, #0x5953
+			mov r1, #0x4E53
+			mov r2, #0x5953
 			b sc_out
 sc_0x4E54:
-			mov r4, #0x4E54
-			mov r5, #0x5954
+			mov r1, #0x4E54
+			mov r2, #0x5954
 			b sc_out
 sc_0x4E55:
-			mov r4, #0x4E55
-			mov r5, #0x5955
+			mov r1, #0x4E55
+			mov r2, #0x5955
 			b sc_out
 sc_0x4E56:
-			mov r4, #0x4E56
-			mov r5, #0x5956
+			mov r1, #0x4E56
+			mov r2, #0x5956
 			b sc_out
 sc_0x4E57:
-			mov r4, #0x4E57
-			mov r5, #0x5957
+			mov r1, #0x4E57
+			mov r2, #0x5957
 			b sc_out
 sc_0x4E58:
-			mov r4, #0x4E58
-			mov r5, #0x5958
+			mov r1, #0x4E58
+			mov r2, #0x5958
 			b sc_out
 sc_0x4E59:
-			mov r4, #0x4E59
-			mov r5, #0x5959
+			mov r1, #0x4E59
+			mov r2, #0x5959
 			b sc_out
 sc_0x4E5A:
-			mov r4, #0x4E5A
-			mov r5, #0x595A
+			mov r1, #0x4E5A
+			mov r2, #0x595A
 			b sc_out
 sc_0x4E5B:
-			mov r4, #0x4E5B
-			mov r5, #0x595B
+			mov r1, #0x4E5B
+			mov r2, #0x595B
 			b sc_out
 sc_0x4E5C:
-			mov r4, #0x4E5C
-			mov r5, #0x595C
+			mov r1, #0x4E5C
+			mov r2, #0x595C
 			b sc_out
 sc_0x4E5D:
-			mov r4, #0x4E5D
-			mov r5, #0x595D
+			mov r1, #0x4E5D
+			mov r2, #0x595D
 			b sc_out
 sc_0x4E5E:
-			mov r4, #0x4E5E
-			mov r5, #0x595E
+			mov r1, #0x4E5E
+			mov r2, #0x595E
 			b sc_out
 sc_0x4E5F:
-			mov r4, #0x4E5F
-			mov r5, #0x595F
+			mov r1, #0x4E5F
+			mov r2, #0x595F
 			b sc_out
 sc_0x4F40:
-			mov r4, #0x4F40
-			mov r5, #0x5940
+			mov r1, #0x4F40
+			mov r2, #0x5940
 			b sc_out
 sc_0x4F41:
-			mov r4, #0x4F41
-			mov r5, #0x5941
+			mov r1, #0x4F41
+			mov r2, #0x5941
 			b sc_out
 sc_0x4F42:
-			mov r4, #0x4F42
-			mov r5, #0x5942
+			mov r1, #0x4F42
+			mov r2, #0x5942
 			b sc_out
 sc_0x4F43:
-			mov r4, #0x4F43
-			mov r5, #0x5943
+			mov r1, #0x4F43
+			mov r2, #0x5943
 			b sc_out
 sc_0x4F44:
-			mov r4, #0x4F44
-			mov r5, #0x5944
+			mov r1, #0x4F44
+			mov r2, #0x5944
 			b sc_out
 sc_0x4F45:
-			mov r4, #0x4F45
-			mov r5, #0x5945
+			mov r1, #0x4F45
+			mov r2, #0x5945
 			b sc_out
 sc_0x4F46:
-			mov r4, #0x4F46
-			mov r5, #0x5946
+			mov r1, #0x4F46
+			mov r2, #0x5946
 			b sc_out
 sc_0x4F47:
-			mov r4, #0x4F47
-			mov r5, #0x5947
+			mov r1, #0x4F47
+			mov r2, #0x5947
 			b sc_out
 sc_0x4F48:
-			mov r4, #0x4F48
-			mov r5, #0x5948
+			mov r1, #0x4F48
+			mov r2, #0x5948
 			b sc_out
 sc_0x4F49:
-			mov r4, #0x4F49
-			mov r5, #0x5949
+			mov r1, #0x4F49
+			mov r2, #0x5949
 			b sc_out
 sc_0x4F4A:
-			mov r4, #0x4F4A
-			mov r5, #0x594A
+			mov r1, #0x4F4A
+			mov r2, #0x594A
 			b sc_out
 sc_0x4F4B:
-			mov r4, #0x4F4B
-			mov r5, #0x594B
+			mov r1, #0x4F4B
+			mov r2, #0x594B
 			b sc_out
 sc_0x4F4C:
-			mov r4, #0x4F4C
-			mov r5, #0x594C
+			mov r1, #0x4F4C
+			mov r2, #0x594C
 			b sc_out
 sc_0x4F4D:
-			mov r4, #0x4F4D
-			mov r5, #0x594D
+			mov r1, #0x4F4D
+			mov r2, #0x594D
 			b sc_out
 sc_0x4F4E:
-			mov r4, #0x4F4E
-			mov r5, #0x594E
+			mov r1, #0x4F4E
+			mov r2, #0x594E
 			b sc_out
 sc_0x4F4F:
-			mov r4, #0x4F4F
-			mov r5, #0x594F
+			mov r1, #0x4F4F
+			mov r2, #0x594F
 			b sc_out
 sc_0x4F50:
-			mov r4, #0x4F50
-			mov r5, #0x5950
+			mov r1, #0x4F50
+			mov r2, #0x5950
 			b sc_out
 sc_0x4F51:
-			mov r4, #0x4F51
-			mov r5, #0x5951
+			mov r1, #0x4F51
+			mov r2, #0x5951
 			b sc_out
 sc_0x4F52:
-			mov r4, #0x4F52
-			mov r5, #0x5952
+			mov r1, #0x4F52
+			mov r2, #0x5952
 			b sc_out
 sc_0x4F53:
-			mov r4, #0x4F53
-			mov r5, #0x5953
+			mov r1, #0x4F53
+			mov r2, #0x5953
 			b sc_out
 sc_0x4F54:
-			mov r4, #0x4F54
-			mov r5, #0x5954
+			mov r1, #0x4F54
+			mov r2, #0x5954
 			b sc_out
 sc_0x4F55:
-			mov r4, #0x4F55
-			mov r5, #0x5955
+			mov r1, #0x4F55
+			mov r2, #0x5955
 			b sc_out
 sc_0x4F56:
-			mov r4, #0x4F56
-			mov r5, #0x5956
+			mov r1, #0x4F56
+			mov r2, #0x5956
 			b sc_out
 sc_0x4F57:
-			mov r4, #0x4F57
-			mov r5, #0x5957
+			mov r1, #0x4F57
+			mov r2, #0x5957
 			b sc_out
 sc_0x4F58:
-			mov r4, #0x4F58
-			mov r5, #0x5958
+			mov r1, #0x4F58
+			mov r2, #0x5958
 			b sc_out
 sc_0x4F59:
-			mov r4, #0x4F59
-			mov r5, #0x5959
+			mov r1, #0x4F59
+			mov r2, #0x5959
 			b sc_out
 sc_0x4F5A:
-			mov r4, #0x4F5A
-			mov r5, #0x595A
+			mov r1, #0x4F5A
+			mov r2, #0x595A
 			b sc_out
 sc_0x4F5B:
-			mov r4, #0x4F5B
-			mov r5, #0x595B
+			mov r1, #0x4F5B
+			mov r2, #0x595B
 			b sc_out
 sc_0x4F5C:
-			mov r4, #0x4F5C
-			mov r5, #0x595C
+			mov r1, #0x4F5C
+			mov r2, #0x595C
 			b sc_out
 sc_0x4F5D:
-			mov r4, #0x4F5D
-			mov r5, #0x595D
+			mov r1, #0x4F5D
+			mov r2, #0x595D
 			b sc_out
 sc_0x4F5E:
-			mov r4, #0x4F5E
-			mov r5, #0x595E
+			mov r1, #0x4F5E
+			mov r2, #0x595E
 			b sc_out
 sc_0x4F5F:
-			mov r4, #0x4F5F
-			mov r5, #0x595F
+			mov r1, #0x4F5F
+			mov r2, #0x595F
 			b sc_out
 sc_0x4860:
-			mov r4, #0x4860
-			mov r5, #0x5960
+			mov r1, #0x4860
+			mov r2, #0x5960
 			b sc_out
 sc_0x4861:
-			mov r4, #0x4861
-			mov r5, #0x5961
+			mov r1, #0x4861
+			mov r2, #0x5961
 			b sc_out
 sc_0x4862:
-			mov r4, #0x4862
-			mov r5, #0x5962
+			mov r1, #0x4862
+			mov r2, #0x5962
 			b sc_out
 sc_0x4863:
-			mov r4, #0x4863
-			mov r5, #0x5963
+			mov r1, #0x4863
+			mov r2, #0x5963
 			b sc_out
 sc_0x4864:
-			mov r4, #0x4864
-			mov r5, #0x5964
+			mov r1, #0x4864
+			mov r2, #0x5964
 			b sc_out
 sc_0x4865:
-			mov r4, #0x4865
-			mov r5, #0x5965
+			mov r1, #0x4865
+			mov r2, #0x5965
 			b sc_out
 sc_0x4866:
-			mov r4, #0x4866
-			mov r5, #0x5966
+			mov r1, #0x4866
+			mov r2, #0x5966
 			b sc_out
 sc_0x4867:
-			mov r4, #0x4867
-			mov r5, #0x5967
+			mov r1, #0x4867
+			mov r2, #0x5967
 			b sc_out
 sc_0x4868:
-			mov r4, #0x4868
-			mov r5, #0x5968
+			mov r1, #0x4868
+			mov r2, #0x5968
 			b sc_out
 sc_0x4869:
-			mov r4, #0x4869
-			mov r5, #0x5969
+			mov r1, #0x4869
+			mov r2, #0x5969
 			b sc_out
 sc_0x486A:
-			mov r4, #0x486A
-			mov r5, #0x596A
+			mov r1, #0x486A
+			mov r2, #0x596A
 			b sc_out
 sc_0x486B:
-			mov r4, #0x486B
-			mov r5, #0x596B
+			mov r1, #0x486B
+			mov r2, #0x596B
 			b sc_out
 sc_0x486C:
-			mov r4, #0x486C
-			mov r5, #0x596C
+			mov r1, #0x486C
+			mov r2, #0x596C
 			b sc_out
 sc_0x486D:
-			mov r4, #0x486D
-			mov r5, #0x596D
+			mov r1, #0x486D
+			mov r2, #0x596D
 			b sc_out
 sc_0x486E:
-			mov r4, #0x486E
-			mov r5, #0x596E
+			mov r1, #0x486E
+			mov r2, #0x596E
 			b sc_out
 sc_0x486F:
-			mov r4, #0x486F
-			mov r5, #0x596F
+			mov r1, #0x486F
+			mov r2, #0x596F
 			b sc_out
 sc_0x4870:
-			mov r4, #0x4870
-			mov r5, #0x5970
+			mov r1, #0x4870
+			mov r2, #0x5970
 			b sc_out
 sc_0x4871:
-			mov r4, #0x4871
-			mov r5, #0x5971
+			mov r1, #0x4871
+			mov r2, #0x5971
 			b sc_out
 sc_0x4872:
-			mov r4, #0x4872
-			mov r5, #0x5972
+			mov r1, #0x4872
+			mov r2, #0x5972
 			b sc_out
 sc_0x4873:
-			mov r4, #0x4873
-			mov r5, #0x5973
+			mov r1, #0x4873
+			mov r2, #0x5973
 			b sc_out
 sc_0x4874:
-			mov r4, #0x4874
-			mov r5, #0x5974
+			mov r1, #0x4874
+			mov r2, #0x5974
 			b sc_out
 sc_0x4875:
-			mov r4, #0x4875
-			mov r5, #0x5975
+			mov r1, #0x4875
+			mov r2, #0x5975
 			b sc_out
 sc_0x4876:
-			mov r4, #0x4876
-			mov r5, #0x5976
+			mov r1, #0x4876
+			mov r2, #0x5976
 			b sc_out
 sc_0x4877:
-			mov r4, #0x4877
-			mov r5, #0x5977
+			mov r1, #0x4877
+			mov r2, #0x5977
 			b sc_out
 sc_0x4878:
-			mov r4, #0x4878
-			mov r5, #0x5978
+			mov r1, #0x4878
+			mov r2, #0x5978
 			b sc_out
 sc_0x4879:
-			mov r4, #0x4879
-			mov r5, #0x5979
+			mov r1, #0x4879
+			mov r2, #0x5979
 			b sc_out
 sc_0x487A:
-			mov r4, #0x487A
-			mov r5, #0x597A
+			mov r1, #0x487A
+			mov r2, #0x597A
 			b sc_out
 sc_0x487B:
-			mov r4, #0x487B
-			mov r5, #0x597B
+			mov r1, #0x487B
+			mov r2, #0x597B
 			b sc_out
 sc_0x487C:
-			mov r4, #0x487C
-			mov r5, #0x597C
+			mov r1, #0x487C
+			mov r2, #0x597C
 			b sc_out
 sc_0x487D:
-			mov r4, #0x487D
-			mov r5, #0x597D
+			mov r1, #0x487D
+			mov r2, #0x597D
 			b sc_out
 sc_0x487E:
-			mov r4, #0x487E
-			mov r5, #0x597E
+			mov r1, #0x487E
+			mov r2, #0x597E
 			b sc_out
 sc_0x487F:
-			mov r4, #0x487F
-			mov r5, #0x597F
+			mov r1, #0x487F
+			mov r2, #0x597F
 			b sc_out
 sc_0x4960:
-			mov r4, #0x4960
-			mov r5, #0x5960
+			mov r1, #0x4960
+			mov r2, #0x5960
 			b sc_out
 sc_0x4961:
-			mov r4, #0x4961
-			mov r5, #0x5961
+			mov r1, #0x4961
+			mov r2, #0x5961
 			b sc_out
 sc_0x4962:
-			mov r4, #0x4962
-			mov r5, #0x5962
+			mov r1, #0x4962
+			mov r2, #0x5962
 			b sc_out
 sc_0x4963:
-			mov r4, #0x4963
-			mov r5, #0x5963
+			mov r1, #0x4963
+			mov r2, #0x5963
 			b sc_out
 sc_0x4964:
-			mov r4, #0x4964
-			mov r5, #0x5964
+			mov r1, #0x4964
+			mov r2, #0x5964
 			b sc_out
 sc_0x4965:
-			mov r4, #0x4965
-			mov r5, #0x5965
+			mov r1, #0x4965
+			mov r2, #0x5965
 			b sc_out
 sc_0x4966:
-			mov r4, #0x4966
-			mov r5, #0x5966
+			mov r1, #0x4966
+			mov r2, #0x5966
 			b sc_out
 sc_0x4967:
-			mov r4, #0x4967
-			mov r5, #0x5967
+			mov r1, #0x4967
+			mov r2, #0x5967
 			b sc_out
 sc_0x4968:
-			mov r4, #0x4968
-			mov r5, #0x5968
+			mov r1, #0x4968
+			mov r2, #0x5968
 			b sc_out
 sc_0x4969:
-			mov r4, #0x4969
-			mov r5, #0x5969
+			mov r1, #0x4969
+			mov r2, #0x5969
 			b sc_out
 sc_0x496A:
-			mov r4, #0x496A
-			mov r5, #0x596A
+			mov r1, #0x496A
+			mov r2, #0x596A
 			b sc_out
 sc_0x496B:
-			mov r4, #0x496B
-			mov r5, #0x596B
+			mov r1, #0x496B
+			mov r2, #0x596B
 			b sc_out
 sc_0x496C:
-			mov r4, #0x496C
-			mov r5, #0x596C
+			mov r1, #0x496C
+			mov r2, #0x596C
 			b sc_out
 sc_0x496D:
-			mov r4, #0x496D
-			mov r5, #0x596D
+			mov r1, #0x496D
+			mov r2, #0x596D
 			b sc_out
 sc_0x496E:
-			mov r4, #0x496E
-			mov r5, #0x596E
+			mov r1, #0x496E
+			mov r2, #0x596E
 			b sc_out
 sc_0x496F:
-			mov r4, #0x496F
-			mov r5, #0x596F
+			mov r1, #0x496F
+			mov r2, #0x596F
 			b sc_out
 sc_0x4970:
-			mov r4, #0x4970
-			mov r5, #0x5970
+			mov r1, #0x4970
+			mov r2, #0x5970
 			b sc_out
 sc_0x4971:
-			mov r4, #0x4971
-			mov r5, #0x5971
+			mov r1, #0x4971
+			mov r2, #0x5971
 			b sc_out
 sc_0x4972:
-			mov r4, #0x4972
-			mov r5, #0x5972
+			mov r1, #0x4972
+			mov r2, #0x5972
 			b sc_out
 sc_0x4973:
-			mov r4, #0x4973
-			mov r5, #0x5973
+			mov r1, #0x4973
+			mov r2, #0x5973
 			b sc_out
 sc_0x4974:
-			mov r4, #0x4974
-			mov r5, #0x5974
+			mov r1, #0x4974
+			mov r2, #0x5974
 			b sc_out
 sc_0x4975:
-			mov r4, #0x4975
-			mov r5, #0x5975
+			mov r1, #0x4975
+			mov r2, #0x5975
 			b sc_out
 sc_0x4976:
-			mov r4, #0x4976
-			mov r5, #0x5976
+			mov r1, #0x4976
+			mov r2, #0x5976
 			b sc_out
 sc_0x4977:
-			mov r4, #0x4977
-			mov r5, #0x5977
+			mov r1, #0x4977
+			mov r2, #0x5977
 			b sc_out
 sc_0x4978:
-			mov r4, #0x4978
-			mov r5, #0x5978
+			mov r1, #0x4978
+			mov r2, #0x5978
 			b sc_out
 sc_0x4979:
-			mov r4, #0x4979
-			mov r5, #0x5979
+			mov r1, #0x4979
+			mov r2, #0x5979
 			b sc_out
 sc_0x497A:
-			mov r4, #0x497A
-			mov r5, #0x597A
+			mov r1, #0x497A
+			mov r2, #0x597A
 			b sc_out
 sc_0x497B:
-			mov r4, #0x497B
-			mov r5, #0x597B
+			mov r1, #0x497B
+			mov r2, #0x597B
 			b sc_out
 sc_0x497C:
-			mov r4, #0x497C
-			mov r5, #0x597C
+			mov r1, #0x497C
+			mov r2, #0x597C
 			b sc_out
 sc_0x497D:
-			mov r4, #0x497D
-			mov r5, #0x597D
+			mov r1, #0x497D
+			mov r2, #0x597D
 			b sc_out
 sc_0x497E:
-			mov r4, #0x497E
-			mov r5, #0x597E
+			mov r1, #0x497E
+			mov r2, #0x597E
 			b sc_out
 sc_0x497F:
-			mov r4, #0x497F
-			mov r5, #0x597F
+			mov r1, #0x497F
+			mov r2, #0x597F
 			b sc_out
 sc_0x4A60:
-			mov r4, #0x4A60
-			mov r5, #0x5960
+			mov r1, #0x4A60
+			mov r2, #0x5960
 			b sc_out
 sc_0x4A61:
-			mov r4, #0x4A61
-			mov r5, #0x5961
+			mov r1, #0x4A61
+			mov r2, #0x5961
 			b sc_out
 sc_0x4A62:
-			mov r4, #0x4A62
-			mov r5, #0x5962
+			mov r1, #0x4A62
+			mov r2, #0x5962
 			b sc_out
 sc_0x4A63:
-			mov r4, #0x4A63
-			mov r5, #0x5963
+			mov r1, #0x4A63
+			mov r2, #0x5963
 			b sc_out
 sc_0x4A64:
-			mov r4, #0x4A64
-			mov r5, #0x5964
+			mov r1, #0x4A64
+			mov r2, #0x5964
 			b sc_out
 sc_0x4A65:
-			mov r4, #0x4A65
-			mov r5, #0x5965
+			mov r1, #0x4A65
+			mov r2, #0x5965
 			b sc_out
 sc_0x4A66:
-			mov r4, #0x4A66
-			mov r5, #0x5966
+			mov r1, #0x4A66
+			mov r2, #0x5966
 			b sc_out
 sc_0x4A67:
-			mov r4, #0x4A67
-			mov r5, #0x5967
+			mov r1, #0x4A67
+			mov r2, #0x5967
 			b sc_out
 sc_0x4A68:
-			mov r4, #0x4A68
-			mov r5, #0x5968
+			mov r1, #0x4A68
+			mov r2, #0x5968
 			b sc_out
 sc_0x4A69:
-			mov r4, #0x4A69
-			mov r5, #0x5969
+			mov r1, #0x4A69
+			mov r2, #0x5969
 			b sc_out
 sc_0x4A6A:
-			mov r4, #0x4A6A
-			mov r5, #0x596A
+			mov r1, #0x4A6A
+			mov r2, #0x596A
 			b sc_out
 sc_0x4A6B:
-			mov r4, #0x4A6B
-			mov r5, #0x596B
+			mov r1, #0x4A6B
+			mov r2, #0x596B
 			b sc_out
 sc_0x4A6C:
-			mov r4, #0x4A6C
-			mov r5, #0x596C
+			mov r1, #0x4A6C
+			mov r2, #0x596C
 			b sc_out
 sc_0x4A6D:
-			mov r4, #0x4A6D
-			mov r5, #0x596D
+			mov r1, #0x4A6D
+			mov r2, #0x596D
 			b sc_out
 sc_0x4A6E:
-			mov r4, #0x4A6E
-			mov r5, #0x596E
+			mov r1, #0x4A6E
+			mov r2, #0x596E
 			b sc_out
 sc_0x4A6F:
-			mov r4, #0x4A6F
-			mov r5, #0x596F
+			mov r1, #0x4A6F
+			mov r2, #0x596F
 			b sc_out
 sc_0x4A70:
-			mov r4, #0x4A70
-			mov r5, #0x5970
+			mov r1, #0x4A70
+			mov r2, #0x5970
 			b sc_out
 sc_0x4A71:
-			mov r4, #0x4A71
-			mov r5, #0x5971
+			mov r1, #0x4A71
+			mov r2, #0x5971
 			b sc_out
 sc_0x4A72:
-			mov r4, #0x4A72
-			mov r5, #0x5972
+			mov r1, #0x4A72
+			mov r2, #0x5972
 			b sc_out
 sc_0x4A73:
-			mov r4, #0x4A73
-			mov r5, #0x5973
+			mov r1, #0x4A73
+			mov r2, #0x5973
 			b sc_out
 sc_0x4A74:
-			mov r4, #0x4A74
-			mov r5, #0x5974
+			mov r1, #0x4A74
+			mov r2, #0x5974
 			b sc_out
 sc_0x4A75:
-			mov r4, #0x4A75
-			mov r5, #0x5975
+			mov r1, #0x4A75
+			mov r2, #0x5975
 			b sc_out
 sc_0x4A76:
-			mov r4, #0x4A76
-			mov r5, #0x5976
+			mov r1, #0x4A76
+			mov r2, #0x5976
 			b sc_out
 sc_0x4A77:
-			mov r4, #0x4A77
-			mov r5, #0x5977
+			mov r1, #0x4A77
+			mov r2, #0x5977
 			b sc_out
 sc_0x4A78:
-			mov r4, #0x4A78
-			mov r5, #0x5978
+			mov r1, #0x4A78
+			mov r2, #0x5978
 			b sc_out
 sc_0x4A79:
-			mov r4, #0x4A79
-			mov r5, #0x5979
+			mov r1, #0x4A79
+			mov r2, #0x5979
 			b sc_out
 sc_0x4A7A:
-			mov r4, #0x4A7A
-			mov r5, #0x597A
+			mov r1, #0x4A7A
+			mov r2, #0x597A
 			b sc_out
 sc_0x4A7B:
-			mov r4, #0x4A7B
-			mov r5, #0x597B
+			mov r1, #0x4A7B
+			mov r2, #0x597B
 			b sc_out
 sc_0x4A7C:
-			mov r4, #0x4A7C
-			mov r5, #0x597C
+			mov r1, #0x4A7C
+			mov r2, #0x597C
 			b sc_out
 sc_0x4A7D:
-			mov r4, #0x4A7D
-			mov r5, #0x597D
+			mov r1, #0x4A7D
+			mov r2, #0x597D
 			b sc_out
 sc_0x4A7E:
-			mov r4, #0x4A7E
-			mov r5, #0x597E
+			mov r1, #0x4A7E
+			mov r2, #0x597E
 			b sc_out
 sc_0x4A7F:
-			mov r4, #0x4A7F
-			mov r5, #0x597F
+			mov r1, #0x4A7F
+			mov r2, #0x597F
 			b sc_out
 sc_0x4B60:
-			mov r4, #0x4B60
-			mov r5, #0x5960
+			mov r1, #0x4B60
+			mov r2, #0x5960
 			b sc_out
 sc_0x4B61:
-			mov r4, #0x4B61
-			mov r5, #0x5961
+			mov r1, #0x4B61
+			mov r2, #0x5961
 			b sc_out
 sc_0x4B62:
-			mov r4, #0x4B62
-			mov r5, #0x5962
+			mov r1, #0x4B62
+			mov r2, #0x5962
 			b sc_out
 sc_0x4B63:
-			mov r4, #0x4B63
-			mov r5, #0x5963
+			mov r1, #0x4B63
+			mov r2, #0x5963
 			b sc_out
 sc_0x4B64:
-			mov r4, #0x4B64
-			mov r5, #0x5964
+			mov r1, #0x4B64
+			mov r2, #0x5964
 			b sc_out
 sc_0x4B65:
-			mov r4, #0x4B65
-			mov r5, #0x5965
+			mov r1, #0x4B65
+			mov r2, #0x5965
 			b sc_out
 sc_0x4B66:
-			mov r4, #0x4B66
-			mov r5, #0x5966
+			mov r1, #0x4B66
+			mov r2, #0x5966
 			b sc_out
 sc_0x4B67:
-			mov r4, #0x4B67
-			mov r5, #0x5967
+			mov r1, #0x4B67
+			mov r2, #0x5967
 			b sc_out
 sc_0x4B68:
-			mov r4, #0x4B68
-			mov r5, #0x5968
+			mov r1, #0x4B68
+			mov r2, #0x5968
 			b sc_out
 sc_0x4B69:
-			mov r4, #0x4B69
-			mov r5, #0x5969
+			mov r1, #0x4B69
+			mov r2, #0x5969
 			b sc_out
 sc_0x4B6A:
-			mov r4, #0x4B6A
-			mov r5, #0x596A
+			mov r1, #0x4B6A
+			mov r2, #0x596A
 			b sc_out
 sc_0x4B6B:
-			mov r4, #0x4B6B
-			mov r5, #0x596B
+			mov r1, #0x4B6B
+			mov r2, #0x596B
 			b sc_out
 sc_0x4B6C:
-			mov r4, #0x4B6C
-			mov r5, #0x596C
+			mov r1, #0x4B6C
+			mov r2, #0x596C
 			b sc_out
 sc_0x4B6D:
-			mov r4, #0x4B6D
-			mov r5, #0x596D
+			mov r1, #0x4B6D
+			mov r2, #0x596D
 			b sc_out
 sc_0x4B6E:
-			mov r4, #0x4B6E
-			mov r5, #0x596E
+			mov r1, #0x4B6E
+			mov r2, #0x596E
 			b sc_out
 sc_0x4B6F:
-			mov r4, #0x4B6F
-			mov r5, #0x596F
+			mov r1, #0x4B6F
+			mov r2, #0x596F
 			b sc_out
 sc_0x4B70:
-			mov r4, #0x4B70
-			mov r5, #0x5970
+			mov r1, #0x4B70
+			mov r2, #0x5970
 			b sc_out
 sc_0x4B71:
-			mov r4, #0x4B71
-			mov r5, #0x5971
+			mov r1, #0x4B71
+			mov r2, #0x5971
 			b sc_out
 sc_0x4B72:
-			mov r4, #0x4B72
-			mov r5, #0x5972
+			mov r1, #0x4B72
+			mov r2, #0x5972
 			b sc_out
 sc_0x4B73:
-			mov r4, #0x4B73
-			mov r5, #0x5973
+			mov r1, #0x4B73
+			mov r2, #0x5973
 			b sc_out
 sc_0x4B74:
-			mov r4, #0x4B74
-			mov r5, #0x5974
+			mov r1, #0x4B74
+			mov r2, #0x5974
 			b sc_out
 sc_0x4B75:
-			mov r4, #0x4B75
-			mov r5, #0x5975
+			mov r1, #0x4B75
+			mov r2, #0x5975
 			b sc_out
 sc_0x4B76:
-			mov r4, #0x4B76
-			mov r5, #0x5976
+			mov r1, #0x4B76
+			mov r2, #0x5976
 			b sc_out
 sc_0x4B77:
-			mov r4, #0x4B77
-			mov r5, #0x5977
+			mov r1, #0x4B77
+			mov r2, #0x5977
 			b sc_out
 sc_0x4B78:
-			mov r4, #0x4B78
-			mov r5, #0x5978
+			mov r1, #0x4B78
+			mov r2, #0x5978
 			b sc_out
 sc_0x4B79:
-			mov r4, #0x4B79
-			mov r5, #0x5979
+			mov r1, #0x4B79
+			mov r2, #0x5979
 			b sc_out
 sc_0x4B7A:
-			mov r4, #0x4B7A
-			mov r5, #0x597A
+			mov r1, #0x4B7A
+			mov r2, #0x597A
 			b sc_out
 sc_0x4B7B:
-			mov r4, #0x4B7B
-			mov r5, #0x597B
+			mov r1, #0x4B7B
+			mov r2, #0x597B
 			b sc_out
 sc_0x4B7C:
-			mov r4, #0x4B7C
-			mov r5, #0x597C
+			mov r1, #0x4B7C
+			mov r2, #0x597C
 			b sc_out
 sc_0x4B7D:
-			mov r4, #0x4B7D
-			mov r5, #0x597D
+			mov r1, #0x4B7D
+			mov r2, #0x597D
 			b sc_out
 sc_0x4B7E:
-			mov r4, #0x4B7E
-			mov r5, #0x597E
+			mov r1, #0x4B7E
+			mov r2, #0x597E
 			b sc_out
 sc_0x4B7F:
-			mov r4, #0x4B7F
-			mov r5, #0x597F
+			mov r1, #0x4B7F
+			mov r2, #0x597F
 			b sc_out
 sc_0x4C60:
-			mov r4, #0x4C60
-			mov r5, #0x5960
+			mov r1, #0x4C60
+			mov r2, #0x5960
 			b sc_out
 sc_0x4C61:
-			mov r4, #0x4C61
-			mov r5, #0x5961
+			mov r1, #0x4C61
+			mov r2, #0x5961
 			b sc_out
 sc_0x4C62:
-			mov r4, #0x4C62
-			mov r5, #0x5962
+			mov r1, #0x4C62
+			mov r2, #0x5962
 			b sc_out
 sc_0x4C63:
-			mov r4, #0x4C63
-			mov r5, #0x5963
+			mov r1, #0x4C63
+			mov r2, #0x5963
 			b sc_out
 sc_0x4C64:
-			mov r4, #0x4C64
-			mov r5, #0x5964
+			mov r1, #0x4C64
+			mov r2, #0x5964
 			b sc_out
 sc_0x4C65:
-			mov r4, #0x4C65
-			mov r5, #0x5965
+			mov r1, #0x4C65
+			mov r2, #0x5965
 			b sc_out
 sc_0x4C66:
-			mov r4, #0x4C66
-			mov r5, #0x5966
+			mov r1, #0x4C66
+			mov r2, #0x5966
 			b sc_out
 sc_0x4C67:
-			mov r4, #0x4C67
-			mov r5, #0x5967
+			mov r1, #0x4C67
+			mov r2, #0x5967
 			b sc_out
 sc_0x4C68:
-			mov r4, #0x4C68
-			mov r5, #0x5968
+			mov r1, #0x4C68
+			mov r2, #0x5968
 			b sc_out
 sc_0x4C69:
-			mov r4, #0x4C69
-			mov r5, #0x5969
+			mov r1, #0x4C69
+			mov r2, #0x5969
 			b sc_out
 sc_0x4C6A:
-			mov r4, #0x4C6A
-			mov r5, #0x596A
+			mov r1, #0x4C6A
+			mov r2, #0x596A
 			b sc_out
 sc_0x4C6B:
-			mov r4, #0x4C6B
-			mov r5, #0x596B
+			mov r1, #0x4C6B
+			mov r2, #0x596B
 			b sc_out
 sc_0x4C6C:
-			mov r4, #0x4C6C
-			mov r5, #0x596C
+			mov r1, #0x4C6C
+			mov r2, #0x596C
 			b sc_out
 sc_0x4C6D:
-			mov r4, #0x4C6D
-			mov r5, #0x596D
+			mov r1, #0x4C6D
+			mov r2, #0x596D
 			b sc_out
 sc_0x4C6E:
-			mov r4, #0x4C6E
-			mov r5, #0x596E
+			mov r1, #0x4C6E
+			mov r2, #0x596E
 			b sc_out
 sc_0x4C6F:
-			mov r4, #0x4C6F
-			mov r5, #0x596F
+			mov r1, #0x4C6F
+			mov r2, #0x596F
 			b sc_out
 sc_0x4C70:
-			mov r4, #0x4C70
-			mov r5, #0x5970
+			mov r1, #0x4C70
+			mov r2, #0x5970
 			b sc_out
 sc_0x4C71:
-			mov r4, #0x4C71
-			mov r5, #0x5971
+			mov r1, #0x4C71
+			mov r2, #0x5971
 			b sc_out
 sc_0x4C72:
-			mov r4, #0x4C72
-			mov r5, #0x5972
+			mov r1, #0x4C72
+			mov r2, #0x5972
 			b sc_out
 sc_0x4C73:
-			mov r4, #0x4C73
-			mov r5, #0x5973
+			mov r1, #0x4C73
+			mov r2, #0x5973
 			b sc_out
 sc_0x4C74:
-			mov r4, #0x4C74
-			mov r5, #0x5974
+			mov r1, #0x4C74
+			mov r2, #0x5974
 			b sc_out
 sc_0x4C75:
-			mov r4, #0x4C75
-			mov r5, #0x5975
+			mov r1, #0x4C75
+			mov r2, #0x5975
 			b sc_out
 sc_0x4C76:
-			mov r4, #0x4C76
-			mov r5, #0x5976
+			mov r1, #0x4C76
+			mov r2, #0x5976
 			b sc_out
 sc_0x4C77:
-			mov r4, #0x4C77
-			mov r5, #0x5977
+			mov r1, #0x4C77
+			mov r2, #0x5977
 			b sc_out
 sc_0x4C78:
-			mov r4, #0x4C78
-			mov r5, #0x5978
+			mov r1, #0x4C78
+			mov r2, #0x5978
 			b sc_out
 sc_0x4C79:
-			mov r4, #0x4C79
-			mov r5, #0x5979
+			mov r1, #0x4C79
+			mov r2, #0x5979
 			b sc_out
 sc_0x4C7A:
-			mov r4, #0x4C7A
-			mov r5, #0x597A
+			mov r1, #0x4C7A
+			mov r2, #0x597A
 			b sc_out
 sc_0x4C7B:
-			mov r4, #0x4C7B
-			mov r5, #0x597B
+			mov r1, #0x4C7B
+			mov r2, #0x597B
 			b sc_out
 sc_0x4C7C:
-			mov r4, #0x4C7C
-			mov r5, #0x597C
+			mov r1, #0x4C7C
+			mov r2, #0x597C
 			b sc_out
 sc_0x4C7D:
-			mov r4, #0x4C7D
-			mov r5, #0x597D
+			mov r1, #0x4C7D
+			mov r2, #0x597D
 			b sc_out
 sc_0x4C7E:
-			mov r4, #0x4C7E
-			mov r5, #0x597E
+			mov r1, #0x4C7E
+			mov r2, #0x597E
 			b sc_out
 sc_0x4C7F:
-			mov r4, #0x4C7F
-			mov r5, #0x597F
+			mov r1, #0x4C7F
+			mov r2, #0x597F
 			b sc_out
 sc_0x4D60:
-			mov r4, #0x4D60
-			mov r5, #0x5960
+			mov r1, #0x4D60
+			mov r2, #0x5960
 			b sc_out
 sc_0x4D61:
-			mov r4, #0x4D61
-			mov r5, #0x5961
+			mov r1, #0x4D61
+			mov r2, #0x5961
 			b sc_out
 sc_0x4D62:
-			mov r4, #0x4D62
-			mov r5, #0x5962
+			mov r1, #0x4D62
+			mov r2, #0x5962
 			b sc_out
 sc_0x4D63:
-			mov r4, #0x4D63
-			mov r5, #0x5963
+			mov r1, #0x4D63
+			mov r2, #0x5963
 			b sc_out
 sc_0x4D64:
-			mov r4, #0x4D64
-			mov r5, #0x5964
+			mov r1, #0x4D64
+			mov r2, #0x5964
 			b sc_out
 sc_0x4D65:
-			mov r4, #0x4D65
-			mov r5, #0x5965
+			mov r1, #0x4D65
+			mov r2, #0x5965
 			b sc_out
 sc_0x4D66:
-			mov r4, #0x4D66
-			mov r5, #0x5966
+			mov r1, #0x4D66
+			mov r2, #0x5966
 			b sc_out
 sc_0x4D67:
-			mov r4, #0x4D67
-			mov r5, #0x5967
+			mov r1, #0x4D67
+			mov r2, #0x5967
 			b sc_out
 sc_0x4D68:
-			mov r4, #0x4D68
-			mov r5, #0x5968
+			mov r1, #0x4D68
+			mov r2, #0x5968
 			b sc_out
 sc_0x4D69:
-			mov r4, #0x4D69
-			mov r5, #0x5969
+			mov r1, #0x4D69
+			mov r2, #0x5969
 			b sc_out
 sc_0x4D6A:
-			mov r4, #0x4D6A
-			mov r5, #0x596A
+			mov r1, #0x4D6A
+			mov r2, #0x596A
 			b sc_out
 sc_0x4D6B:
-			mov r4, #0x4D6B
-			mov r5, #0x596B
+			mov r1, #0x4D6B
+			mov r2, #0x596B
 			b sc_out
 sc_0x4D6C:
-			mov r4, #0x4D6C
-			mov r5, #0x596C
+			mov r1, #0x4D6C
+			mov r2, #0x596C
 			b sc_out
 sc_0x4D6D:
-			mov r4, #0x4D6D
-			mov r5, #0x596D
+			mov r1, #0x4D6D
+			mov r2, #0x596D
 			b sc_out
 sc_0x4D6E:
-			mov r4, #0x4D6E
-			mov r5, #0x596E
+			mov r1, #0x4D6E
+			mov r2, #0x596E
 			b sc_out
 sc_0x4D6F:
-			mov r4, #0x4D6F
-			mov r5, #0x596F
+			mov r1, #0x4D6F
+			mov r2, #0x596F
 			b sc_out
 sc_0x4D70:
-			mov r4, #0x4D70
-			mov r5, #0x5970
+			mov r1, #0x4D70
+			mov r2, #0x5970
 			b sc_out
 sc_0x4D71:
-			mov r4, #0x4D71
-			mov r5, #0x5971
+			mov r1, #0x4D71
+			mov r2, #0x5971
 			b sc_out
 sc_0x4D72:
-			mov r4, #0x4D72
-			mov r5, #0x5972
+			mov r1, #0x4D72
+			mov r2, #0x5972
 			b sc_out
 sc_0x4D73:
-			mov r4, #0x4D73
-			mov r5, #0x5973
+			mov r1, #0x4D73
+			mov r2, #0x5973
 			b sc_out
 sc_0x4D74:
-			mov r4, #0x4D74
-			mov r5, #0x5974
+			mov r1, #0x4D74
+			mov r2, #0x5974
 			b sc_out
 sc_0x4D75:
-			mov r4, #0x4D75
-			mov r5, #0x5975
+			mov r1, #0x4D75
+			mov r2, #0x5975
 			b sc_out
 sc_0x4D76:
-			mov r4, #0x4D76
-			mov r5, #0x5976
+			mov r1, #0x4D76
+			mov r2, #0x5976
 			b sc_out
 sc_0x4D77:
-			mov r4, #0x4D77
-			mov r5, #0x5977
+			mov r1, #0x4D77
+			mov r2, #0x5977
 			b sc_out
 sc_0x4D78:
-			mov r4, #0x4D78
-			mov r5, #0x5978
+			mov r1, #0x4D78
+			mov r2, #0x5978
 			b sc_out
 sc_0x4D79:
-			mov r4, #0x4D79
-			mov r5, #0x5979
+			mov r1, #0x4D79
+			mov r2, #0x5979
 			b sc_out
 sc_0x4D7A:
-			mov r4, #0x4D7A
-			mov r5, #0x597A
+			mov r1, #0x4D7A
+			mov r2, #0x597A
 			b sc_out
 sc_0x4D7B:
-			mov r4, #0x4D7B
-			mov r5, #0x597B
+			mov r1, #0x4D7B
+			mov r2, #0x597B
 			b sc_out
 sc_0x4D7C:
-			mov r4, #0x4D7C
-			mov r5, #0x597C
+			mov r1, #0x4D7C
+			mov r2, #0x597C
 			b sc_out
 sc_0x4D7D:
-			mov r4, #0x4D7D
-			mov r5, #0x597D
+			mov r1, #0x4D7D
+			mov r2, #0x597D
 			b sc_out
 sc_0x4D7E:
-			mov r4, #0x4D7E
-			mov r5, #0x597E
+			mov r1, #0x4D7E
+			mov r2, #0x597E
 			b sc_out
 sc_0x4D7F:
-			mov r4, #0x4D7F
-			mov r5, #0x597F
+			mov r1, #0x4D7F
+			mov r2, #0x597F
 			b sc_out
 sc_0x4E60:
-			mov r4, #0x4E60
-			mov r5, #0x5960
+			mov r1, #0x4E60
+			mov r2, #0x5960
 			b sc_out
 sc_0x4E61:
-			mov r4, #0x4E61
-			mov r5, #0x5961
+			mov r1, #0x4E61
+			mov r2, #0x5961
 			b sc_out
 sc_0x4E62:
-			mov r4, #0x4E62
-			mov r5, #0x5962
+			mov r1, #0x4E62
+			mov r2, #0x5962
 			b sc_out
 sc_0x4E63:
-			mov r4, #0x4E63
-			mov r5, #0x5963
+			mov r1, #0x4E63
+			mov r2, #0x5963
 			b sc_out
 sc_0x4E64:
-			mov r4, #0x4E64
-			mov r5, #0x5964
+			mov r1, #0x4E64
+			mov r2, #0x5964
 			b sc_out
 sc_0x4E65:
-			mov r4, #0x4E65
-			mov r5, #0x5965
+			mov r1, #0x4E65
+			mov r2, #0x5965
 			b sc_out
 sc_0x4E66:
-			mov r4, #0x4E66
-			mov r5, #0x5966
+			mov r1, #0x4E66
+			mov r2, #0x5966
 			b sc_out
 sc_0x4E67:
-			mov r4, #0x4E67
-			mov r5, #0x5967
+			mov r1, #0x4E67
+			mov r2, #0x5967
 			b sc_out
 sc_0x4E68:
-			mov r4, #0x4E68
-			mov r5, #0x5968
+			mov r1, #0x4E68
+			mov r2, #0x5968
 			b sc_out
 sc_0x4E69:
-			mov r4, #0x4E69
-			mov r5, #0x5969
+			mov r1, #0x4E69
+			mov r2, #0x5969
 			b sc_out
 sc_0x4E6A:
-			mov r4, #0x4E6A
-			mov r5, #0x596A
+			mov r1, #0x4E6A
+			mov r2, #0x596A
 			b sc_out
 sc_0x4E6B:
-			mov r4, #0x4E6B
-			mov r5, #0x596B
+			mov r1, #0x4E6B
+			mov r2, #0x596B
 			b sc_out
 sc_0x4E6C:
-			mov r4, #0x4E6C
-			mov r5, #0x596C
+			mov r1, #0x4E6C
+			mov r2, #0x596C
 			b sc_out
 sc_0x4E6D:
-			mov r4, #0x4E6D
-			mov r5, #0x596D
+			mov r1, #0x4E6D
+			mov r2, #0x596D
 			b sc_out
 sc_0x4E6E:
-			mov r4, #0x4E6E
-			mov r5, #0x596E
+			mov r1, #0x4E6E
+			mov r2, #0x596E
 			b sc_out
 sc_0x4E6F:
-			mov r4, #0x4E6F
-			mov r5, #0x596F
+			mov r1, #0x4E6F
+			mov r2, #0x596F
 			b sc_out
 sc_0x4E70:
-			mov r4, #0x4E70
-			mov r5, #0x5970
+			mov r1, #0x4E70
+			mov r2, #0x5970
 			b sc_out
 sc_0x4E71:
-			mov r4, #0x4E71
-			mov r5, #0x5971
+			mov r1, #0x4E71
+			mov r2, #0x5971
 			b sc_out
 sc_0x4E72:
-			mov r4, #0x4E72
-			mov r5, #0x5972
+			mov r1, #0x4E72
+			mov r2, #0x5972
 			b sc_out
 sc_0x4E73:
-			mov r4, #0x4E73
-			mov r5, #0x5973
+			mov r1, #0x4E73
+			mov r2, #0x5973
 			b sc_out
 sc_0x4E74:
-			mov r4, #0x4E74
-			mov r5, #0x5974
+			mov r1, #0x4E74
+			mov r2, #0x5974
 			b sc_out
 sc_0x4E75:
-			mov r4, #0x4E75
-			mov r5, #0x5975
+			mov r1, #0x4E75
+			mov r2, #0x5975
 			b sc_out
 sc_0x4E76:
-			mov r4, #0x4E76
-			mov r5, #0x5976
+			mov r1, #0x4E76
+			mov r2, #0x5976
 			b sc_out
 sc_0x4E77:
-			mov r4, #0x4E77
-			mov r5, #0x5977
+			mov r1, #0x4E77
+			mov r2, #0x5977
 			b sc_out
 sc_0x4E78:
-			mov r4, #0x4E78
-			mov r5, #0x5978
+			mov r1, #0x4E78
+			mov r2, #0x5978
 			b sc_out
 sc_0x4E79:
-			mov r4, #0x4E79
-			mov r5, #0x5979
+			mov r1, #0x4E79
+			mov r2, #0x5979
 			b sc_out
 sc_0x4E7A:
-			mov r4, #0x4E7A
-			mov r5, #0x597A
+			mov r1, #0x4E7A
+			mov r2, #0x597A
 			b sc_out
 sc_0x4E7B:
-			mov r4, #0x4E7B
-			mov r5, #0x597B
+			mov r1, #0x4E7B
+			mov r2, #0x597B
 			b sc_out
 sc_0x4E7C:
-			mov r4, #0x4E7C
-			mov r5, #0x597C
+			mov r1, #0x4E7C
+			mov r2, #0x597C
 			b sc_out
 sc_0x4E7D:
-			mov r4, #0x4E7D
-			mov r5, #0x597D
+			mov r1, #0x4E7D
+			mov r2, #0x597D
 			b sc_out
 sc_0x4E7E:
-			mov r4, #0x4E7E
-			mov r5, #0x597E
+			mov r1, #0x4E7E
+			mov r2, #0x597E
 			b sc_out
 sc_0x4E7F:
-			mov r4, #0x4E7F
-			mov r5, #0x597F
+			mov r1, #0x4E7F
+			mov r2, #0x597F
 			b sc_out
 sc_0x4F60:
-			mov r4, #0x4F60
-			mov r5, #0x5960
+			mov r1, #0x4F60
+			mov r2, #0x5960
 			b sc_out
 sc_0x4F61:
-			mov r4, #0x4F61
-			mov r5, #0x5961
+			mov r1, #0x4F61
+			mov r2, #0x5961
 			b sc_out
 sc_0x4F62:
-			mov r4, #0x4F62
-			mov r5, #0x5962
+			mov r1, #0x4F62
+			mov r2, #0x5962
 			b sc_out
 sc_0x4F63:
-			mov r4, #0x4F63
-			mov r5, #0x5963
+			mov r1, #0x4F63
+			mov r2, #0x5963
 			b sc_out
 sc_0x4F64:
-			mov r4, #0x4F64
-			mov r5, #0x5964
+			mov r1, #0x4F64
+			mov r2, #0x5964
 			b sc_out
 sc_0x4F65:
-			mov r4, #0x4F65
-			mov r5, #0x5965
+			mov r1, #0x4F65
+			mov r2, #0x5965
 			b sc_out
 sc_0x4F66:
-			mov r4, #0x4F66
-			mov r5, #0x5966
+			mov r1, #0x4F66
+			mov r2, #0x5966
 			b sc_out
 sc_0x4F67:
-			mov r4, #0x4F67
-			mov r5, #0x5967
+			mov r1, #0x4F67
+			mov r2, #0x5967
 			b sc_out
 sc_0x4F68:
-			mov r4, #0x4F68
-			mov r5, #0x5968
+			mov r1, #0x4F68
+			mov r2, #0x5968
 			b sc_out
 sc_0x4F69:
-			mov r4, #0x4F69
-			mov r5, #0x5969
+			mov r1, #0x4F69
+			mov r2, #0x5969
 			b sc_out
 sc_0x4F6A:
-			mov r4, #0x4F6A
-			mov r5, #0x596A
+			mov r1, #0x4F6A
+			mov r2, #0x596A
 			b sc_out
 sc_0x4F6B:
-			mov r4, #0x4F6B
-			mov r5, #0x596B
+			mov r1, #0x4F6B
+			mov r2, #0x596B
 			b sc_out
 sc_0x4F6C:
-			mov r4, #0x4F6C
-			mov r5, #0x596C
+			mov r1, #0x4F6C
+			mov r2, #0x596C
 			b sc_out
 sc_0x4F6D:
-			mov r4, #0x4F6D
-			mov r5, #0x596D
+			mov r1, #0x4F6D
+			mov r2, #0x596D
 			b sc_out
 sc_0x4F6E:
-			mov r4, #0x4F6E
-			mov r5, #0x596E
+			mov r1, #0x4F6E
+			mov r2, #0x596E
 			b sc_out
 sc_0x4F6F:
-			mov r4, #0x4F6F
-			mov r5, #0x596F
+			mov r1, #0x4F6F
+			mov r2, #0x596F
 			b sc_out
 sc_0x4F70:
-			mov r4, #0x4F70
-			mov r5, #0x5970
+			mov r1, #0x4F70
+			mov r2, #0x5970
 			b sc_out
 sc_0x4F71:
-			mov r4, #0x4F71
-			mov r5, #0x5971
+			mov r1, #0x4F71
+			mov r2, #0x5971
 			b sc_out
 sc_0x4F72:
-			mov r4, #0x4F72
-			mov r5, #0x5972
+			mov r1, #0x4F72
+			mov r2, #0x5972
 			b sc_out
 sc_0x4F73:
-			mov r4, #0x4F73
-			mov r5, #0x5973
+			mov r1, #0x4F73
+			mov r2, #0x5973
 			b sc_out
 sc_0x4F74:
-			mov r4, #0x4F74
-			mov r5, #0x5974
+			mov r1, #0x4F74
+			mov r2, #0x5974
 			b sc_out
 sc_0x4F75:
-			mov r4, #0x4F75
-			mov r5, #0x5975
+			mov r1, #0x4F75
+			mov r2, #0x5975
 			b sc_out
 sc_0x4F76:
-			mov r4, #0x4F76
-			mov r5, #0x5976
+			mov r1, #0x4F76
+			mov r2, #0x5976
 			b sc_out
 sc_0x4F77:
-			mov r4, #0x4F77
-			mov r5, #0x5977
+			mov r1, #0x4F77
+			mov r2, #0x5977
 			b sc_out
 sc_0x4F78:
-			mov r4, #0x4F78
-			mov r5, #0x5978
+			mov r1, #0x4F78
+			mov r2, #0x5978
 			b sc_out
 sc_0x4F79:
-			mov r4, #0x4F79
-			mov r5, #0x5979
+			mov r1, #0x4F79
+			mov r2, #0x5979
 			b sc_out
 sc_0x4F7A:
-			mov r4, #0x4F7A
-			mov r5, #0x597A
+			mov r1, #0x4F7A
+			mov r2, #0x597A
 			b sc_out
 sc_0x4F7B:
-			mov r4, #0x4F7B
-			mov r5, #0x597B
+			mov r1, #0x4F7B
+			mov r2, #0x597B
 			b sc_out
 sc_0x4F7C:
-			mov r4, #0x4F7C
-			mov r5, #0x597C
+			mov r1, #0x4F7C
+			mov r2, #0x597C
 			b sc_out
 sc_0x4F7D:
-			mov r4, #0x4F7D
-			mov r5, #0x597D
+			mov r1, #0x4F7D
+			mov r2, #0x597D
 			b sc_out
 sc_0x4F7E:
-			mov r4, #0x4F7E
-			mov r5, #0x597E
+			mov r1, #0x4F7E
+			mov r2, #0x597E
 			b sc_out
 sc_0x4F7F:
-			mov r4, #0x4F7F
-			mov r5, #0x597F
+			mov r1, #0x4F7F
+			mov r2, #0x597F
 			b sc_out
 sc_0x4880:
-			mov r4, #0x4880
-			mov r5, #0x5980
+			mov r1, #0x4880
+			mov r2, #0x5980
 			b sc_out
 sc_0x4881:
-			mov r4, #0x4881
-			mov r5, #0x5981
+			mov r1, #0x4881
+			mov r2, #0x5981
 			b sc_out
 sc_0x4882:
-			mov r4, #0x4882
-			mov r5, #0x5982
+			mov r1, #0x4882
+			mov r2, #0x5982
 			b sc_out
 sc_0x4883:
-			mov r4, #0x4883
-			mov r5, #0x5983
+			mov r1, #0x4883
+			mov r2, #0x5983
 			b sc_out
 sc_0x4884:
-			mov r4, #0x4884
-			mov r5, #0x5984
+			mov r1, #0x4884
+			mov r2, #0x5984
 			b sc_out
 sc_0x4885:
-			mov r4, #0x4885
-			mov r5, #0x5985
+			mov r1, #0x4885
+			mov r2, #0x5985
 			b sc_out
 sc_0x4886:
-			mov r4, #0x4886
-			mov r5, #0x5986
+			mov r1, #0x4886
+			mov r2, #0x5986
 			b sc_out
 sc_0x4887:
-			mov r4, #0x4887
-			mov r5, #0x5987
+			mov r1, #0x4887
+			mov r2, #0x5987
 			b sc_out
 sc_0x4888:
-			mov r4, #0x4888
-			mov r5, #0x5988
+			mov r1, #0x4888
+			mov r2, #0x5988
 			b sc_out
 sc_0x4889:
-			mov r4, #0x4889
-			mov r5, #0x5989
+			mov r1, #0x4889
+			mov r2, #0x5989
 			b sc_out
 sc_0x488A:
-			mov r4, #0x488A
-			mov r5, #0x598A
+			mov r1, #0x488A
+			mov r2, #0x598A
 			b sc_out
 sc_0x488B:
-			mov r4, #0x488B
-			mov r5, #0x598B
+			mov r1, #0x488B
+			mov r2, #0x598B
 			b sc_out
 sc_0x488C:
-			mov r4, #0x488C
-			mov r5, #0x598C
+			mov r1, #0x488C
+			mov r2, #0x598C
 			b sc_out
 sc_0x488D:
-			mov r4, #0x488D
-			mov r5, #0x598D
+			mov r1, #0x488D
+			mov r2, #0x598D
 			b sc_out
 sc_0x488E:
-			mov r4, #0x488E
-			mov r5, #0x598E
+			mov r1, #0x488E
+			mov r2, #0x598E
 			b sc_out
 sc_0x488F:
-			mov r4, #0x488F
-			mov r5, #0x598F
+			mov r1, #0x488F
+			mov r2, #0x598F
 			b sc_out
 sc_0x4890:
-			mov r4, #0x4890
-			mov r5, #0x5990
+			mov r1, #0x4890
+			mov r2, #0x5990
 			b sc_out
 sc_0x4891:
-			mov r4, #0x4891
-			mov r5, #0x5991
+			mov r1, #0x4891
+			mov r2, #0x5991
 			b sc_out
 sc_0x4892:
-			mov r4, #0x4892
-			mov r5, #0x5992
+			mov r1, #0x4892
+			mov r2, #0x5992
 			b sc_out
 sc_0x4893:
-			mov r4, #0x4893
-			mov r5, #0x5993
+			mov r1, #0x4893
+			mov r2, #0x5993
 			b sc_out
 sc_0x4894:
-			mov r4, #0x4894
-			mov r5, #0x5994
+			mov r1, #0x4894
+			mov r2, #0x5994
 			b sc_out
 sc_0x4895:
-			mov r4, #0x4895
-			mov r5, #0x5995
+			mov r1, #0x4895
+			mov r2, #0x5995
 			b sc_out
 sc_0x4896:
-			mov r4, #0x4896
-			mov r5, #0x5996
+			mov r1, #0x4896
+			mov r2, #0x5996
 			b sc_out
 sc_0x4897:
-			mov r4, #0x4897
-			mov r5, #0x5997
+			mov r1, #0x4897
+			mov r2, #0x5997
 			b sc_out
 sc_0x4898:
-			mov r4, #0x4898
-			mov r5, #0x5998
+			mov r1, #0x4898
+			mov r2, #0x5998
 			b sc_out
 sc_0x4899:
-			mov r4, #0x4899
-			mov r5, #0x5999
+			mov r1, #0x4899
+			mov r2, #0x5999
 			b sc_out
 sc_0x489A:
-			mov r4, #0x489A
-			mov r5, #0x599A
+			mov r1, #0x489A
+			mov r2, #0x599A
 			b sc_out
 sc_0x489B:
-			mov r4, #0x489B
-			mov r5, #0x599B
+			mov r1, #0x489B
+			mov r2, #0x599B
 			b sc_out
 sc_0x489C:
-			mov r4, #0x489C
-			mov r5, #0x599C
+			mov r1, #0x489C
+			mov r2, #0x599C
 			b sc_out
 sc_0x489D:
-			mov r4, #0x489D
-			mov r5, #0x599D
+			mov r1, #0x489D
+			mov r2, #0x599D
 			b sc_out
 sc_0x489E:
-			mov r4, #0x489E
-			mov r5, #0x599E
+			mov r1, #0x489E
+			mov r2, #0x599E
 			b sc_out
 sc_0x489F:
-			mov r4, #0x489F
-			mov r5, #0x599F
+			mov r1, #0x489F
+			mov r2, #0x599F
 			b sc_out
 sc_0x4980:
-			mov r4, #0x4980
-			mov r5, #0x5980
+			mov r1, #0x4980
+			mov r2, #0x5980
 			b sc_out
 sc_0x4981:
-			mov r4, #0x4981
-			mov r5, #0x5981
+			mov r1, #0x4981
+			mov r2, #0x5981
 			b sc_out
 sc_0x4982:
-			mov r4, #0x4982
-			mov r5, #0x5982
+			mov r1, #0x4982
+			mov r2, #0x5982
 			b sc_out
 sc_0x4983:
-			mov r4, #0x4983
-			mov r5, #0x5983
+			mov r1, #0x4983
+			mov r2, #0x5983
 			b sc_out
 sc_0x4984:
-			mov r4, #0x4984
-			mov r5, #0x5984
+			mov r1, #0x4984
+			mov r2, #0x5984
 			b sc_out
 sc_0x4985:
-			mov r4, #0x4985
-			mov r5, #0x5985
+			mov r1, #0x4985
+			mov r2, #0x5985
 			b sc_out
 sc_0x4986:
-			mov r4, #0x4986
-			mov r5, #0x5986
+			mov r1, #0x4986
+			mov r2, #0x5986
 			b sc_out
 sc_0x4987:
-			mov r4, #0x4987
-			mov r5, #0x5987
+			mov r1, #0x4987
+			mov r2, #0x5987
 			b sc_out
 sc_0x4988:
-			mov r4, #0x4988
-			mov r5, #0x5988
+			mov r1, #0x4988
+			mov r2, #0x5988
 			b sc_out
 sc_0x4989:
-			mov r4, #0x4989
-			mov r5, #0x5989
+			mov r1, #0x4989
+			mov r2, #0x5989
 			b sc_out
 sc_0x498A:
-			mov r4, #0x498A
-			mov r5, #0x598A
+			mov r1, #0x498A
+			mov r2, #0x598A
 			b sc_out
 sc_0x498B:
-			mov r4, #0x498B
-			mov r5, #0x598B
+			mov r1, #0x498B
+			mov r2, #0x598B
 			b sc_out
 sc_0x498C:
-			mov r4, #0x498C
-			mov r5, #0x598C
+			mov r1, #0x498C
+			mov r2, #0x598C
 			b sc_out
 sc_0x498D:
-			mov r4, #0x498D
-			mov r5, #0x598D
+			mov r1, #0x498D
+			mov r2, #0x598D
 			b sc_out
 sc_0x498E:
-			mov r4, #0x498E
-			mov r5, #0x598E
+			mov r1, #0x498E
+			mov r2, #0x598E
 			b sc_out
 sc_0x498F:
-			mov r4, #0x498F
-			mov r5, #0x598F
+			mov r1, #0x498F
+			mov r2, #0x598F
 			b sc_out
 sc_0x4990:
-			mov r4, #0x4990
-			mov r5, #0x5990
+			mov r1, #0x4990
+			mov r2, #0x5990
 			b sc_out
 sc_0x4991:
-			mov r4, #0x4991
-			mov r5, #0x5991
+			mov r1, #0x4991
+			mov r2, #0x5991
 			b sc_out
 sc_0x4992:
-			mov r4, #0x4992
-			mov r5, #0x5992
+			mov r1, #0x4992
+			mov r2, #0x5992
 			b sc_out
 sc_0x4993:
-			mov r4, #0x4993
-			mov r5, #0x5993
+			mov r1, #0x4993
+			mov r2, #0x5993
 			b sc_out
 sc_0x4994:
-			mov r4, #0x4994
-			mov r5, #0x5994
+			mov r1, #0x4994
+			mov r2, #0x5994
 			b sc_out
 sc_0x4995:
-			mov r4, #0x4995
-			mov r5, #0x5995
+			mov r1, #0x4995
+			mov r2, #0x5995
 			b sc_out
 sc_0x4996:
-			mov r4, #0x4996
-			mov r5, #0x5996
+			mov r1, #0x4996
+			mov r2, #0x5996
 			b sc_out
 sc_0x4997:
-			mov r4, #0x4997
-			mov r5, #0x5997
+			mov r1, #0x4997
+			mov r2, #0x5997
 			b sc_out
 sc_0x4998:
-			mov r4, #0x4998
-			mov r5, #0x5998
+			mov r1, #0x4998
+			mov r2, #0x5998
 			b sc_out
 sc_0x4999:
-			mov r4, #0x4999
-			mov r5, #0x5999
+			mov r1, #0x4999
+			mov r2, #0x5999
 			b sc_out
 sc_0x499A:
-			mov r4, #0x499A
-			mov r5, #0x599A
+			mov r1, #0x499A
+			mov r2, #0x599A
 			b sc_out
 sc_0x499B:
-			mov r4, #0x499B
-			mov r5, #0x599B
+			mov r1, #0x499B
+			mov r2, #0x599B
 			b sc_out
 sc_0x499C:
-			mov r4, #0x499C
-			mov r5, #0x599C
+			mov r1, #0x499C
+			mov r2, #0x599C
 			b sc_out
 sc_0x499D:
-			mov r4, #0x499D
-			mov r5, #0x599D
+			mov r1, #0x499D
+			mov r2, #0x599D
 			b sc_out
 sc_0x499E:
-			mov r4, #0x499E
-			mov r5, #0x599E
+			mov r1, #0x499E
+			mov r2, #0x599E
 			b sc_out
 sc_0x499F:
-			mov r4, #0x499F
-			mov r5, #0x599F
+			mov r1, #0x499F
+			mov r2, #0x599F
 			b sc_out
 sc_0x4A80:
-			mov r4, #0x4A80
-			mov r5, #0x5980
+			mov r1, #0x4A80
+			mov r2, #0x5980
 			b sc_out
 sc_0x4A81:
-			mov r4, #0x4A81
-			mov r5, #0x5981
+			mov r1, #0x4A81
+			mov r2, #0x5981
 			b sc_out
 sc_0x4A82:
-			mov r4, #0x4A82
-			mov r5, #0x5982
+			mov r1, #0x4A82
+			mov r2, #0x5982
 			b sc_out
 sc_0x4A83:
-			mov r4, #0x4A83
-			mov r5, #0x5983
+			mov r1, #0x4A83
+			mov r2, #0x5983
 			b sc_out
 sc_0x4A84:
-			mov r4, #0x4A84
-			mov r5, #0x5984
+			mov r1, #0x4A84
+			mov r2, #0x5984
 			b sc_out
 sc_0x4A85:
-			mov r4, #0x4A85
-			mov r5, #0x5985
+			mov r1, #0x4A85
+			mov r2, #0x5985
 			b sc_out
 sc_0x4A86:
-			mov r4, #0x4A86
-			mov r5, #0x5986
+			mov r1, #0x4A86
+			mov r2, #0x5986
 			b sc_out
 sc_0x4A87:
-			mov r4, #0x4A87
-			mov r5, #0x5987
+			mov r1, #0x4A87
+			mov r2, #0x5987
 			b sc_out
 sc_0x4A88:
-			mov r4, #0x4A88
-			mov r5, #0x5988
+			mov r1, #0x4A88
+			mov r2, #0x5988
 			b sc_out
 sc_0x4A89:
-			mov r4, #0x4A89
-			mov r5, #0x5989
+			mov r1, #0x4A89
+			mov r2, #0x5989
 			b sc_out
 sc_0x4A8A:
-			mov r4, #0x4A8A
-			mov r5, #0x598A
+			mov r1, #0x4A8A
+			mov r2, #0x598A
 			b sc_out
 sc_0x4A8B:
-			mov r4, #0x4A8B
-			mov r5, #0x598B
+			mov r1, #0x4A8B
+			mov r2, #0x598B
 			b sc_out
 sc_0x4A8C:
-			mov r4, #0x4A8C
-			mov r5, #0x598C
+			mov r1, #0x4A8C
+			mov r2, #0x598C
 			b sc_out
 sc_0x4A8D:
-			mov r4, #0x4A8D
-			mov r5, #0x598D
+			mov r1, #0x4A8D
+			mov r2, #0x598D
 			b sc_out
 sc_0x4A8E:
-			mov r4, #0x4A8E
-			mov r5, #0x598E
+			mov r1, #0x4A8E
+			mov r2, #0x598E
 			b sc_out
 sc_0x4A8F:
-			mov r4, #0x4A8F
-			mov r5, #0x598F
+			mov r1, #0x4A8F
+			mov r2, #0x598F
 			b sc_out
 sc_0x4A90:
-			mov r4, #0x4A90
-			mov r5, #0x5990
+			mov r1, #0x4A90
+			mov r2, #0x5990
 			b sc_out
 sc_0x4A91:
-			mov r4, #0x4A91
-			mov r5, #0x5991
+			mov r1, #0x4A91
+			mov r2, #0x5991
 			b sc_out
 sc_0x4A92:
-			mov r4, #0x4A92
-			mov r5, #0x5992
+			mov r1, #0x4A92
+			mov r2, #0x5992
 			b sc_out
 sc_0x4A93:
-			mov r4, #0x4A93
-			mov r5, #0x5993
+			mov r1, #0x4A93
+			mov r2, #0x5993
 			b sc_out
 sc_0x4A94:
-			mov r4, #0x4A94
-			mov r5, #0x5994
+			mov r1, #0x4A94
+			mov r2, #0x5994
 			b sc_out
 sc_0x4A95:
-			mov r4, #0x4A95
-			mov r5, #0x5995
+			mov r1, #0x4A95
+			mov r2, #0x5995
 			b sc_out
 sc_0x4A96:
-			mov r4, #0x4A96
-			mov r5, #0x5996
+			mov r1, #0x4A96
+			mov r2, #0x5996
 			b sc_out
 sc_0x4A97:
-			mov r4, #0x4A97
-			mov r5, #0x5997
+			mov r1, #0x4A97
+			mov r2, #0x5997
 			b sc_out
 sc_0x4A98:
-			mov r4, #0x4A98
-			mov r5, #0x5998
+			mov r1, #0x4A98
+			mov r2, #0x5998
 			b sc_out
 sc_0x4A99:
-			mov r4, #0x4A99
-			mov r5, #0x5999
+			mov r1, #0x4A99
+			mov r2, #0x5999
 			b sc_out
 sc_0x4A9A:
-			mov r4, #0x4A9A
-			mov r5, #0x599A
+			mov r1, #0x4A9A
+			mov r2, #0x599A
 			b sc_out
 sc_0x4A9B:
-			mov r4, #0x4A9B
-			mov r5, #0x599B
+			mov r1, #0x4A9B
+			mov r2, #0x599B
 			b sc_out
 sc_0x4A9C:
-			mov r4, #0x4A9C
-			mov r5, #0x599C
+			mov r1, #0x4A9C
+			mov r2, #0x599C
 			b sc_out
 sc_0x4A9D:
-			mov r4, #0x4A9D
-			mov r5, #0x599D
+			mov r1, #0x4A9D
+			mov r2, #0x599D
 			b sc_out
 sc_0x4A9E:
-			mov r4, #0x4A9E
-			mov r5, #0x599E
+			mov r1, #0x4A9E
+			mov r2, #0x599E
 			b sc_out
 sc_0x4A9F:
-			mov r4, #0x4A9F
-			mov r5, #0x599F
+			mov r1, #0x4A9F
+			mov r2, #0x599F
 			b sc_out
 sc_0x4B80:
-			mov r4, #0x4B80
-			mov r5, #0x5980
+			mov r1, #0x4B80
+			mov r2, #0x5980
 			b sc_out
 sc_0x4B81:
-			mov r4, #0x4B81
-			mov r5, #0x5981
+			mov r1, #0x4B81
+			mov r2, #0x5981
 			b sc_out
 sc_0x4B82:
-			mov r4, #0x4B82
-			mov r5, #0x5982
+			mov r1, #0x4B82
+			mov r2, #0x5982
 			b sc_out
 sc_0x4B83:
-			mov r4, #0x4B83
-			mov r5, #0x5983
+			mov r1, #0x4B83
+			mov r2, #0x5983
 			b sc_out
 sc_0x4B84:
-			mov r4, #0x4B84
-			mov r5, #0x5984
+			mov r1, #0x4B84
+			mov r2, #0x5984
 			b sc_out
 sc_0x4B85:
-			mov r4, #0x4B85
-			mov r5, #0x5985
+			mov r1, #0x4B85
+			mov r2, #0x5985
 			b sc_out
 sc_0x4B86:
-			mov r4, #0x4B86
-			mov r5, #0x5986
+			mov r1, #0x4B86
+			mov r2, #0x5986
 			b sc_out
 sc_0x4B87:
-			mov r4, #0x4B87
-			mov r5, #0x5987
+			mov r1, #0x4B87
+			mov r2, #0x5987
 			b sc_out
 sc_0x4B88:
-			mov r4, #0x4B88
-			mov r5, #0x5988
+			mov r1, #0x4B88
+			mov r2, #0x5988
 			b sc_out
 sc_0x4B89:
-			mov r4, #0x4B89
-			mov r5, #0x5989
+			mov r1, #0x4B89
+			mov r2, #0x5989
 			b sc_out
 sc_0x4B8A:
-			mov r4, #0x4B8A
-			mov r5, #0x598A
+			mov r1, #0x4B8A
+			mov r2, #0x598A
 			b sc_out
 sc_0x4B8B:
-			mov r4, #0x4B8B
-			mov r5, #0x598B
+			mov r1, #0x4B8B
+			mov r2, #0x598B
 			b sc_out
 sc_0x4B8C:
-			mov r4, #0x4B8C
-			mov r5, #0x598C
+			mov r1, #0x4B8C
+			mov r2, #0x598C
 			b sc_out
 sc_0x4B8D:
-			mov r4, #0x4B8D
-			mov r5, #0x598D
+			mov r1, #0x4B8D
+			mov r2, #0x598D
 			b sc_out
 sc_0x4B8E:
-			mov r4, #0x4B8E
-			mov r5, #0x598E
+			mov r1, #0x4B8E
+			mov r2, #0x598E
 			b sc_out
 sc_0x4B8F:
-			mov r4, #0x4B8F
-			mov r5, #0x598F
+			mov r1, #0x4B8F
+			mov r2, #0x598F
 			b sc_out
 sc_0x4B90:
-			mov r4, #0x4B90
-			mov r5, #0x5990
+			mov r1, #0x4B90
+			mov r2, #0x5990
 			b sc_out
 sc_0x4B91:
-			mov r4, #0x4B91
-			mov r5, #0x5991
+			mov r1, #0x4B91
+			mov r2, #0x5991
 			b sc_out
 sc_0x4B92:
-			mov r4, #0x4B92
-			mov r5, #0x5992
+			mov r1, #0x4B92
+			mov r2, #0x5992
 			b sc_out
 sc_0x4B93:
-			mov r4, #0x4B93
-			mov r5, #0x5993
+			mov r1, #0x4B93
+			mov r2, #0x5993
 			b sc_out
 sc_0x4B94:
-			mov r4, #0x4B94
-			mov r5, #0x5994
+			mov r1, #0x4B94
+			mov r2, #0x5994
 			b sc_out
 sc_0x4B95:
-			mov r4, #0x4B95
-			mov r5, #0x5995
+			mov r1, #0x4B95
+			mov r2, #0x5995
 			b sc_out
 sc_0x4B96:
-			mov r4, #0x4B96
-			mov r5, #0x5996
+			mov r1, #0x4B96
+			mov r2, #0x5996
 			b sc_out
 sc_0x4B97:
-			mov r4, #0x4B97
-			mov r5, #0x5997
+			mov r1, #0x4B97
+			mov r2, #0x5997
 			b sc_out
 sc_0x4B98:
-			mov r4, #0x4B98
-			mov r5, #0x5998
+			mov r1, #0x4B98
+			mov r2, #0x5998
 			b sc_out
 sc_0x4B99:
-			mov r4, #0x4B99
-			mov r5, #0x5999
+			mov r1, #0x4B99
+			mov r2, #0x5999
 			b sc_out
 sc_0x4B9A:
-			mov r4, #0x4B9A
-			mov r5, #0x599A
+			mov r1, #0x4B9A
+			mov r2, #0x599A
 			b sc_out
 sc_0x4B9B:
-			mov r4, #0x4B9B
-			mov r5, #0x599B
+			mov r1, #0x4B9B
+			mov r2, #0x599B
 			b sc_out
 sc_0x4B9C:
-			mov r4, #0x4B9C
-			mov r5, #0x599C
+			mov r1, #0x4B9C
+			mov r2, #0x599C
 			b sc_out
 sc_0x4B9D:
-			mov r4, #0x4B9D
-			mov r5, #0x599D
+			mov r1, #0x4B9D
+			mov r2, #0x599D
 			b sc_out
 sc_0x4B9E:
-			mov r4, #0x4B9E
-			mov r5, #0x599E
+			mov r1, #0x4B9E
+			mov r2, #0x599E
 			b sc_out
 sc_0x4B9F:
-			mov r4, #0x4B9F
-			mov r5, #0x599F
+			mov r1, #0x4B9F
+			mov r2, #0x599F
 			b sc_out
 sc_0x4C80:
-			mov r4, #0x4C80
-			mov r5, #0x5980
+			mov r1, #0x4C80
+			mov r2, #0x5980
 			b sc_out
 sc_0x4C81:
-			mov r4, #0x4C81
-			mov r5, #0x5981
+			mov r1, #0x4C81
+			mov r2, #0x5981
 			b sc_out
 sc_0x4C82:
-			mov r4, #0x4C82
-			mov r5, #0x5982
+			mov r1, #0x4C82
+			mov r2, #0x5982
 			b sc_out
 sc_0x4C83:
-			mov r4, #0x4C83
-			mov r5, #0x5983
+			mov r1, #0x4C83
+			mov r2, #0x5983
 			b sc_out
 sc_0x4C84:
-			mov r4, #0x4C84
-			mov r5, #0x5984
+			mov r1, #0x4C84
+			mov r2, #0x5984
 			b sc_out
 sc_0x4C85:
-			mov r4, #0x4C85
-			mov r5, #0x5985
+			mov r1, #0x4C85
+			mov r2, #0x5985
 			b sc_out
 sc_0x4C86:
-			mov r4, #0x4C86
-			mov r5, #0x5986
+			mov r1, #0x4C86
+			mov r2, #0x5986
 			b sc_out
 sc_0x4C87:
-			mov r4, #0x4C87
-			mov r5, #0x5987
+			mov r1, #0x4C87
+			mov r2, #0x5987
 			b sc_out
 sc_0x4C88:
-			mov r4, #0x4C88
-			mov r5, #0x5988
+			mov r1, #0x4C88
+			mov r2, #0x5988
 			b sc_out
 sc_0x4C89:
-			mov r4, #0x4C89
-			mov r5, #0x5989
+			mov r1, #0x4C89
+			mov r2, #0x5989
 			b sc_out
 sc_0x4C8A:
-			mov r4, #0x4C8A
-			mov r5, #0x598A
+			mov r1, #0x4C8A
+			mov r2, #0x598A
 			b sc_out
 sc_0x4C8B:
-			mov r4, #0x4C8B
-			mov r5, #0x598B
+			mov r1, #0x4C8B
+			mov r2, #0x598B
 			b sc_out
 sc_0x4C8C:
-			mov r4, #0x4C8C
-			mov r5, #0x598C
+			mov r1, #0x4C8C
+			mov r2, #0x598C
 			b sc_out
 sc_0x4C8D:
-			mov r4, #0x4C8D
-			mov r5, #0x598D
+			mov r1, #0x4C8D
+			mov r2, #0x598D
 			b sc_out
 sc_0x4C8E:
-			mov r4, #0x4C8E
-			mov r5, #0x598E
+			mov r1, #0x4C8E
+			mov r2, #0x598E
 			b sc_out
 sc_0x4C8F:
-			mov r4, #0x4C8F
-			mov r5, #0x598F
+			mov r1, #0x4C8F
+			mov r2, #0x598F
 			b sc_out
 sc_0x4C90:
-			mov r4, #0x4C90
-			mov r5, #0x5990
+			mov r1, #0x4C90
+			mov r2, #0x5990
 			b sc_out
 sc_0x4C91:
-			mov r4, #0x4C91
-			mov r5, #0x5991
+			mov r1, #0x4C91
+			mov r2, #0x5991
 			b sc_out
 sc_0x4C92:
-			mov r4, #0x4C92
-			mov r5, #0x5992
+			mov r1, #0x4C92
+			mov r2, #0x5992
 			b sc_out
 sc_0x4C93:
-			mov r4, #0x4C93
-			mov r5, #0x5993
+			mov r1, #0x4C93
+			mov r2, #0x5993
 			b sc_out
 sc_0x4C94:
-			mov r4, #0x4C94
-			mov r5, #0x5994
+			mov r1, #0x4C94
+			mov r2, #0x5994
 			b sc_out
 sc_0x4C95:
-			mov r4, #0x4C95
-			mov r5, #0x5995
+			mov r1, #0x4C95
+			mov r2, #0x5995
 			b sc_out
 sc_0x4C96:
-			mov r4, #0x4C96
-			mov r5, #0x5996
+			mov r1, #0x4C96
+			mov r2, #0x5996
 			b sc_out
 sc_0x4C97:
-			mov r4, #0x4C97
-			mov r5, #0x5997
+			mov r1, #0x4C97
+			mov r2, #0x5997
 			b sc_out
 sc_0x4C98:
-			mov r4, #0x4C98
-			mov r5, #0x5998
+			mov r1, #0x4C98
+			mov r2, #0x5998
 			b sc_out
 sc_0x4C99:
-			mov r4, #0x4C99
-			mov r5, #0x5999
+			mov r1, #0x4C99
+			mov r2, #0x5999
 			b sc_out
 sc_0x4C9A:
-			mov r4, #0x4C9A
-			mov r5, #0x599A
+			mov r1, #0x4C9A
+			mov r2, #0x599A
 			b sc_out
 sc_0x4C9B:
-			mov r4, #0x4C9B
-			mov r5, #0x599B
+			mov r1, #0x4C9B
+			mov r2, #0x599B
 			b sc_out
 sc_0x4C9C:
-			mov r4, #0x4C9C
-			mov r5, #0x599C
+			mov r1, #0x4C9C
+			mov r2, #0x599C
 			b sc_out
 sc_0x4C9D:
-			mov r4, #0x4C9D
-			mov r5, #0x599D
+			mov r1, #0x4C9D
+			mov r2, #0x599D
 			b sc_out
 sc_0x4C9E:
-			mov r4, #0x4C9E
-			mov r5, #0x599E
+			mov r1, #0x4C9E
+			mov r2, #0x599E
 			b sc_out
 sc_0x4C9F:
-			mov r4, #0x4C9F
-			mov r5, #0x599F
+			mov r1, #0x4C9F
+			mov r2, #0x599F
 			b sc_out
 sc_0x4D80:
-			mov r4, #0x4D80
-			mov r5, #0x5980
+			mov r1, #0x4D80
+			mov r2, #0x5980
 			b sc_out
 sc_0x4D81:
-			mov r4, #0x4D81
-			mov r5, #0x5981
+			mov r1, #0x4D81
+			mov r2, #0x5981
 			b sc_out
 sc_0x4D82:
-			mov r4, #0x4D82
-			mov r5, #0x5982
+			mov r1, #0x4D82
+			mov r2, #0x5982
 			b sc_out
 sc_0x4D83:
-			mov r4, #0x4D83
-			mov r5, #0x5983
+			mov r1, #0x4D83
+			mov r2, #0x5983
 			b sc_out
 sc_0x4D84:
-			mov r4, #0x4D84
-			mov r5, #0x5984
+			mov r1, #0x4D84
+			mov r2, #0x5984
 			b sc_out
 sc_0x4D85:
-			mov r4, #0x4D85
-			mov r5, #0x5985
+			mov r1, #0x4D85
+			mov r2, #0x5985
 			b sc_out
 sc_0x4D86:
-			mov r4, #0x4D86
-			mov r5, #0x5986
+			mov r1, #0x4D86
+			mov r2, #0x5986
 			b sc_out
 sc_0x4D87:
-			mov r4, #0x4D87
-			mov r5, #0x5987
+			mov r1, #0x4D87
+			mov r2, #0x5987
 			b sc_out
 sc_0x4D88:
-			mov r4, #0x4D88
-			mov r5, #0x5988
+			mov r1, #0x4D88
+			mov r2, #0x5988
 			b sc_out
 sc_0x4D89:
-			mov r4, #0x4D89
-			mov r5, #0x5989
+			mov r1, #0x4D89
+			mov r2, #0x5989
 			b sc_out
 sc_0x4D8A:
-			mov r4, #0x4D8A
-			mov r5, #0x598A
+			mov r1, #0x4D8A
+			mov r2, #0x598A
 			b sc_out
 sc_0x4D8B:
-			mov r4, #0x4D8B
-			mov r5, #0x598B
+			mov r1, #0x4D8B
+			mov r2, #0x598B
 			b sc_out
 sc_0x4D8C:
-			mov r4, #0x4D8C
-			mov r5, #0x598C
+			mov r1, #0x4D8C
+			mov r2, #0x598C
 			b sc_out
 sc_0x4D8D:
-			mov r4, #0x4D8D
-			mov r5, #0x598D
+			mov r1, #0x4D8D
+			mov r2, #0x598D
 			b sc_out
 sc_0x4D8E:
-			mov r4, #0x4D8E
-			mov r5, #0x598E
+			mov r1, #0x4D8E
+			mov r2, #0x598E
 			b sc_out
 sc_0x4D8F:
-			mov r4, #0x4D8F
-			mov r5, #0x598F
+			mov r1, #0x4D8F
+			mov r2, #0x598F
 			b sc_out
 sc_0x4D90:
-			mov r4, #0x4D90
-			mov r5, #0x5990
+			mov r1, #0x4D90
+			mov r2, #0x5990
 			b sc_out
 sc_0x4D91:
-			mov r4, #0x4D91
-			mov r5, #0x5991
+			mov r1, #0x4D91
+			mov r2, #0x5991
 			b sc_out
 sc_0x4D92:
-			mov r4, #0x4D92
-			mov r5, #0x5992
+			mov r1, #0x4D92
+			mov r2, #0x5992
 			b sc_out
 sc_0x4D93:
-			mov r4, #0x4D93
-			mov r5, #0x5993
+			mov r1, #0x4D93
+			mov r2, #0x5993
 			b sc_out
 sc_0x4D94:
-			mov r4, #0x4D94
-			mov r5, #0x5994
+			mov r1, #0x4D94
+			mov r2, #0x5994
 			b sc_out
 sc_0x4D95:
-			mov r4, #0x4D95
-			mov r5, #0x5995
+			mov r1, #0x4D95
+			mov r2, #0x5995
 			b sc_out
 sc_0x4D96:
-			mov r4, #0x4D96
-			mov r5, #0x5996
+			mov r1, #0x4D96
+			mov r2, #0x5996
 			b sc_out
 sc_0x4D97:
-			mov r4, #0x4D97
-			mov r5, #0x5997
+			mov r1, #0x4D97
+			mov r2, #0x5997
 			b sc_out
 sc_0x4D98:
-			mov r4, #0x4D98
-			mov r5, #0x5998
+			mov r1, #0x4D98
+			mov r2, #0x5998
 			b sc_out
 sc_0x4D99:
-			mov r4, #0x4D99
-			mov r5, #0x5999
+			mov r1, #0x4D99
+			mov r2, #0x5999
 			b sc_out
 sc_0x4D9A:
-			mov r4, #0x4D9A
-			mov r5, #0x599A
+			mov r1, #0x4D9A
+			mov r2, #0x599A
 			b sc_out
 sc_0x4D9B:
-			mov r4, #0x4D9B
-			mov r5, #0x599B
+			mov r1, #0x4D9B
+			mov r2, #0x599B
 			b sc_out
 sc_0x4D9C:
-			mov r4, #0x4D9C
-			mov r5, #0x599C
+			mov r1, #0x4D9C
+			mov r2, #0x599C
 			b sc_out
 sc_0x4D9D:
-			mov r4, #0x4D9D
-			mov r5, #0x599D
+			mov r1, #0x4D9D
+			mov r2, #0x599D
 			b sc_out
 sc_0x4D9E:
-			mov r4, #0x4D9E
-			mov r5, #0x599E
+			mov r1, #0x4D9E
+			mov r2, #0x599E
 			b sc_out
 sc_0x4D9F:
-			mov r4, #0x4D9F
-			mov r5, #0x599F
+			mov r1, #0x4D9F
+			mov r2, #0x599F
 			b sc_out
 sc_0x4E80:
-			mov r4, #0x4E80
-			mov r5, #0x5980
+			mov r1, #0x4E80
+			mov r2, #0x5980
 			b sc_out
 sc_0x4E81:
-			mov r4, #0x4E81
-			mov r5, #0x5981
+			mov r1, #0x4E81
+			mov r2, #0x5981
 			b sc_out
 sc_0x4E82:
-			mov r4, #0x4E82
-			mov r5, #0x5982
+			mov r1, #0x4E82
+			mov r2, #0x5982
 			b sc_out
 sc_0x4E83:
-			mov r4, #0x4E83
-			mov r5, #0x5983
+			mov r1, #0x4E83
+			mov r2, #0x5983
 			b sc_out
 sc_0x4E84:
-			mov r4, #0x4E84
-			mov r5, #0x5984
+			mov r1, #0x4E84
+			mov r2, #0x5984
 			b sc_out
 sc_0x4E85:
-			mov r4, #0x4E85
-			mov r5, #0x5985
+			mov r1, #0x4E85
+			mov r2, #0x5985
 			b sc_out
 sc_0x4E86:
-			mov r4, #0x4E86
-			mov r5, #0x5986
+			mov r1, #0x4E86
+			mov r2, #0x5986
 			b sc_out
 sc_0x4E87:
-			mov r4, #0x4E87
-			mov r5, #0x5987
+			mov r1, #0x4E87
+			mov r2, #0x5987
 			b sc_out
 sc_0x4E88:
-			mov r4, #0x4E88
-			mov r5, #0x5988
+			mov r1, #0x4E88
+			mov r2, #0x5988
 			b sc_out
 sc_0x4E89:
-			mov r4, #0x4E89
-			mov r5, #0x5989
+			mov r1, #0x4E89
+			mov r2, #0x5989
 			b sc_out
 sc_0x4E8A:
-			mov r4, #0x4E8A
-			mov r5, #0x598A
+			mov r1, #0x4E8A
+			mov r2, #0x598A
 			b sc_out
 sc_0x4E8B:
-			mov r4, #0x4E8B
-			mov r5, #0x598B
+			mov r1, #0x4E8B
+			mov r2, #0x598B
 			b sc_out
 sc_0x4E8C:
-			mov r4, #0x4E8C
-			mov r5, #0x598C
+			mov r1, #0x4E8C
+			mov r2, #0x598C
 			b sc_out
 sc_0x4E8D:
-			mov r4, #0x4E8D
-			mov r5, #0x598D
+			mov r1, #0x4E8D
+			mov r2, #0x598D
 			b sc_out
 sc_0x4E8E:
-			mov r4, #0x4E8E
-			mov r5, #0x598E
+			mov r1, #0x4E8E
+			mov r2, #0x598E
 			b sc_out
 sc_0x4E8F:
-			mov r4, #0x4E8F
-			mov r5, #0x598F
+			mov r1, #0x4E8F
+			mov r2, #0x598F
 			b sc_out
 sc_0x4E90:
-			mov r4, #0x4E90
-			mov r5, #0x5990
+			mov r1, #0x4E90
+			mov r2, #0x5990
 			b sc_out
 sc_0x4E91:
-			mov r4, #0x4E91
-			mov r5, #0x5991
+			mov r1, #0x4E91
+			mov r2, #0x5991
 			b sc_out
 sc_0x4E92:
-			mov r4, #0x4E92
-			mov r5, #0x5992
+			mov r1, #0x4E92
+			mov r2, #0x5992
 			b sc_out
 sc_0x4E93:
-			mov r4, #0x4E93
-			mov r5, #0x5993
+			mov r1, #0x4E93
+			mov r2, #0x5993
 			b sc_out
 sc_0x4E94:
-			mov r4, #0x4E94
-			mov r5, #0x5994
+			mov r1, #0x4E94
+			mov r2, #0x5994
 			b sc_out
 sc_0x4E95:
-			mov r4, #0x4E95
-			mov r5, #0x5995
+			mov r1, #0x4E95
+			mov r2, #0x5995
 			b sc_out
 sc_0x4E96:
-			mov r4, #0x4E96
-			mov r5, #0x5996
+			mov r1, #0x4E96
+			mov r2, #0x5996
 			b sc_out
 sc_0x4E97:
-			mov r4, #0x4E97
-			mov r5, #0x5997
+			mov r1, #0x4E97
+			mov r2, #0x5997
 			b sc_out
 sc_0x4E98:
-			mov r4, #0x4E98
-			mov r5, #0x5998
+			mov r1, #0x4E98
+			mov r2, #0x5998
 			b sc_out
 sc_0x4E99:
-			mov r4, #0x4E99
-			mov r5, #0x5999
+			mov r1, #0x4E99
+			mov r2, #0x5999
 			b sc_out
 sc_0x4E9A:
-			mov r4, #0x4E9A
-			mov r5, #0x599A
+			mov r1, #0x4E9A
+			mov r2, #0x599A
 			b sc_out
 sc_0x4E9B:
-			mov r4, #0x4E9B
-			mov r5, #0x599B
+			mov r1, #0x4E9B
+			mov r2, #0x599B
 			b sc_out
 sc_0x4E9C:
-			mov r4, #0x4E9C
-			mov r5, #0x599C
+			mov r1, #0x4E9C
+			mov r2, #0x599C
 			b sc_out
 sc_0x4E9D:
-			mov r4, #0x4E9D
-			mov r5, #0x599D
+			mov r1, #0x4E9D
+			mov r2, #0x599D
 			b sc_out
 sc_0x4E9E:
-			mov r4, #0x4E9E
-			mov r5, #0x599E
+			mov r1, #0x4E9E
+			mov r2, #0x599E
 			b sc_out
 sc_0x4E9F:
-			mov r4, #0x4E9F
-			mov r5, #0x599F
+			mov r1, #0x4E9F
+			mov r2, #0x599F
 			b sc_out
 sc_0x4F80:
-			mov r4, #0x4F80
-			mov r5, #0x5980
+			mov r1, #0x4F80
+			mov r2, #0x5980
 			b sc_out
 sc_0x4F81:
-			mov r4, #0x4F81
-			mov r5, #0x5981
+			mov r1, #0x4F81
+			mov r2, #0x5981
 			b sc_out
 sc_0x4F82:
-			mov r4, #0x4F82
-			mov r5, #0x5982
+			mov r1, #0x4F82
+			mov r2, #0x5982
 			b sc_out
 sc_0x4F83:
-			mov r4, #0x4F83
-			mov r5, #0x5983
+			mov r1, #0x4F83
+			mov r2, #0x5983
 			b sc_out
 sc_0x4F84:
-			mov r4, #0x4F84
-			mov r5, #0x5984
+			mov r1, #0x4F84
+			mov r2, #0x5984
 			b sc_out
 sc_0x4F85:
-			mov r4, #0x4F85
-			mov r5, #0x5985
+			mov r1, #0x4F85
+			mov r2, #0x5985
 			b sc_out
 sc_0x4F86:
-			mov r4, #0x4F86
-			mov r5, #0x5986
+			mov r1, #0x4F86
+			mov r2, #0x5986
 			b sc_out
 sc_0x4F87:
-			mov r4, #0x4F87
-			mov r5, #0x5987
+			mov r1, #0x4F87
+			mov r2, #0x5987
 			b sc_out
 sc_0x4F88:
-			mov r4, #0x4F88
-			mov r5, #0x5988
+			mov r1, #0x4F88
+			mov r2, #0x5988
 			b sc_out
 sc_0x4F89:
-			mov r4, #0x4F89
-			mov r5, #0x5989
+			mov r1, #0x4F89
+			mov r2, #0x5989
 			b sc_out
 sc_0x4F8A:
-			mov r4, #0x4F8A
-			mov r5, #0x598A
+			mov r1, #0x4F8A
+			mov r2, #0x598A
 			b sc_out
 sc_0x4F8B:
-			mov r4, #0x4F8B
-			mov r5, #0x598B
+			mov r1, #0x4F8B
+			mov r2, #0x598B
 			b sc_out
 sc_0x4F8C:
-			mov r4, #0x4F8C
-			mov r5, #0x598C
+			mov r1, #0x4F8C
+			mov r2, #0x598C
 			b sc_out
 sc_0x4F8D:
-			mov r4, #0x4F8D
-			mov r5, #0x598D
+			mov r1, #0x4F8D
+			mov r2, #0x598D
 			b sc_out
 sc_0x4F8E:
-			mov r4, #0x4F8E
-			mov r5, #0x598E
+			mov r1, #0x4F8E
+			mov r2, #0x598E
 			b sc_out
 sc_0x4F8F:
-			mov r4, #0x4F8F
-			mov r5, #0x598F
+			mov r1, #0x4F8F
+			mov r2, #0x598F
 			b sc_out
 sc_0x4F90:
-			mov r4, #0x4F90
-			mov r5, #0x5990
+			mov r1, #0x4F90
+			mov r2, #0x5990
 			b sc_out
 sc_0x4F91:
-			mov r4, #0x4F91
-			mov r5, #0x5991
+			mov r1, #0x4F91
+			mov r2, #0x5991
 			b sc_out
 sc_0x4F92:
-			mov r4, #0x4F92
-			mov r5, #0x5992
+			mov r1, #0x4F92
+			mov r2, #0x5992
 			b sc_out
 sc_0x4F93:
-			mov r4, #0x4F93
-			mov r5, #0x5993
+			mov r1, #0x4F93
+			mov r2, #0x5993
 			b sc_out
 sc_0x4F94:
-			mov r4, #0x4F94
-			mov r5, #0x5994
+			mov r1, #0x4F94
+			mov r2, #0x5994
 			b sc_out
 sc_0x4F95:
-			mov r4, #0x4F95
-			mov r5, #0x5995
+			mov r1, #0x4F95
+			mov r2, #0x5995
 			b sc_out
 sc_0x4F96:
-			mov r4, #0x4F96
-			mov r5, #0x5996
+			mov r1, #0x4F96
+			mov r2, #0x5996
 			b sc_out
 sc_0x4F97:
-			mov r4, #0x4F97
-			mov r5, #0x5997
+			mov r1, #0x4F97
+			mov r2, #0x5997
 			b sc_out
 sc_0x4F98:
-			mov r4, #0x4F98
-			mov r5, #0x5998
+			mov r1, #0x4F98
+			mov r2, #0x5998
 			b sc_out
 sc_0x4F99:
-			mov r4, #0x4F99
-			mov r5, #0x5999
+			mov r1, #0x4F99
+			mov r2, #0x5999
 			b sc_out
 sc_0x4F9A:
-			mov r4, #0x4F9A
-			mov r5, #0x599A
+			mov r1, #0x4F9A
+			mov r2, #0x599A
 			b sc_out
 sc_0x4F9B:
-			mov r4, #0x4F9B
-			mov r5, #0x599B
+			mov r1, #0x4F9B
+			mov r2, #0x599B
 			b sc_out
 sc_0x4F9C:
-			mov r4, #0x4F9C
-			mov r5, #0x599C
+			mov r1, #0x4F9C
+			mov r2, #0x599C
 			b sc_out
 sc_0x4F9D:
-			mov r4, #0x4F9D
-			mov r5, #0x599D
+			mov r1, #0x4F9D
+			mov r2, #0x599D
 			b sc_out
 sc_0x4F9E:
-			mov r4, #0x4F9E
-			mov r5, #0x599E
+			mov r1, #0x4F9E
+			mov r2, #0x599E
 			b sc_out
 sc_0x4F9F:
-			mov r4, #0x4F9F
-			mov r5, #0x599F
+			mov r1, #0x4F9F
+			mov r2, #0x599F
 			b sc_out
 sc_0x48A0:
-			mov r4, #0x48A0
-			mov r5, #0x59A0
+			mov r1, #0x48A0
+			mov r2, #0x59A0
 			b sc_out
 sc_0x48A1:
-			mov r4, #0x48A1
-			mov r5, #0x59A1
+			mov r1, #0x48A1
+			mov r2, #0x59A1
 			b sc_out
 sc_0x48A2:
-			mov r4, #0x48A2
-			mov r5, #0x59A2
+			mov r1, #0x48A2
+			mov r2, #0x59A2
 			b sc_out
 sc_0x48A3:
-			mov r4, #0x48A3
-			mov r5, #0x59A3
+			mov r1, #0x48A3
+			mov r2, #0x59A3
 			b sc_out
 sc_0x48A4:
-			mov r4, #0x48A4
-			mov r5, #0x59A4
+			mov r1, #0x48A4
+			mov r2, #0x59A4
 			b sc_out
 sc_0x48A5:
-			mov r4, #0x48A5
-			mov r5, #0x59A5
+			mov r1, #0x48A5
+			mov r2, #0x59A5
 			b sc_out
 sc_0x48A6:
-			mov r4, #0x48A6
-			mov r5, #0x59A6
+			mov r1, #0x48A6
+			mov r2, #0x59A6
 			b sc_out
 sc_0x48A7:
-			mov r4, #0x48A7
-			mov r5, #0x59A7
+			mov r1, #0x48A7
+			mov r2, #0x59A7
 			b sc_out
 sc_0x48A8:
-			mov r4, #0x48A8
-			mov r5, #0x59A8
+			mov r1, #0x48A8
+			mov r2, #0x59A8
 			b sc_out
 sc_0x48A9:
-			mov r4, #0x48A9
-			mov r5, #0x59A9
+			mov r1, #0x48A9
+			mov r2, #0x59A9
 			b sc_out
 sc_0x48AA:
-			mov r4, #0x48AA
-			mov r5, #0x59AA
+			mov r1, #0x48AA
+			mov r2, #0x59AA
 			b sc_out
 sc_0x48AB:
-			mov r4, #0x48AB
-			mov r5, #0x59AB
+			mov r1, #0x48AB
+			mov r2, #0x59AB
 			b sc_out
 sc_0x48AC:
-			mov r4, #0x48AC
-			mov r5, #0x59AC
+			mov r1, #0x48AC
+			mov r2, #0x59AC
 			b sc_out
 sc_0x48AD:
-			mov r4, #0x48AD
-			mov r5, #0x59AD
+			mov r1, #0x48AD
+			mov r2, #0x59AD
 			b sc_out
 sc_0x48AE:
-			mov r4, #0x48AE
-			mov r5, #0x59AE
+			mov r1, #0x48AE
+			mov r2, #0x59AE
 			b sc_out
 sc_0x48AF:
-			mov r4, #0x48AF
-			mov r5, #0x59AF
+			mov r1, #0x48AF
+			mov r2, #0x59AF
 			b sc_out
 sc_0x48B0:
-			mov r4, #0x48B0
-			mov r5, #0x59B0
+			mov r1, #0x48B0
+			mov r2, #0x59B0
 			b sc_out
 sc_0x48B1:
-			mov r4, #0x48B1
-			mov r5, #0x59B1
+			mov r1, #0x48B1
+			mov r2, #0x59B1
 			b sc_out
 sc_0x48B2:
-			mov r4, #0x48B2
-			mov r5, #0x59B2
+			mov r1, #0x48B2
+			mov r2, #0x59B2
 			b sc_out
 sc_0x48B3:
-			mov r4, #0x48B3
-			mov r5, #0x59B3
+			mov r1, #0x48B3
+			mov r2, #0x59B3
 			b sc_out
 sc_0x48B4:
-			mov r4, #0x48B4
-			mov r5, #0x59B4
+			mov r1, #0x48B4
+			mov r2, #0x59B4
 			b sc_out
 sc_0x48B5:
-			mov r4, #0x48B5
-			mov r5, #0x59B5
+			mov r1, #0x48B5
+			mov r2, #0x59B5
 			b sc_out
 sc_0x48B6:
-			mov r4, #0x48B6
-			mov r5, #0x59B6
+			mov r1, #0x48B6
+			mov r2, #0x59B6
 			b sc_out
 sc_0x48B7:
-			mov r4, #0x48B7
-			mov r5, #0x59B7
+			mov r1, #0x48B7
+			mov r2, #0x59B7
 			b sc_out
 sc_0x48B8:
-			mov r4, #0x48B8
-			mov r5, #0x59B8
+			mov r1, #0x48B8
+			mov r2, #0x59B8
 			b sc_out
 sc_0x48B9:
-			mov r4, #0x48B9
-			mov r5, #0x59B9
+			mov r1, #0x48B9
+			mov r2, #0x59B9
 			b sc_out
 sc_0x48BA:
-			mov r4, #0x48BA
-			mov r5, #0x59BA
+			mov r1, #0x48BA
+			mov r2, #0x59BA
 			b sc_out
 sc_0x48BB:
-			mov r4, #0x48BB
-			mov r5, #0x59BB
+			mov r1, #0x48BB
+			mov r2, #0x59BB
 			b sc_out
 sc_0x48BC:
-			mov r4, #0x48BC
-			mov r5, #0x59BC
+			mov r1, #0x48BC
+			mov r2, #0x59BC
 			b sc_out
 sc_0x48BD:
-			mov r4, #0x48BD
-			mov r5, #0x59BD
+			mov r1, #0x48BD
+			mov r2, #0x59BD
 			b sc_out
 sc_0x48BE:
-			mov r4, #0x48BE
-			mov r5, #0x59BE
+			mov r1, #0x48BE
+			mov r2, #0x59BE
 			b sc_out
 sc_0x48BF:
-			mov r4, #0x48BF
-			mov r5, #0x59BF
+			mov r1, #0x48BF
+			mov r2, #0x59BF
 			b sc_out
 sc_0x49A0:
-			mov r4, #0x49A0
-			mov r5, #0x59A0
+			mov r1, #0x49A0
+			mov r2, #0x59A0
 			b sc_out
 sc_0x49A1:
-			mov r4, #0x49A1
-			mov r5, #0x59A1
+			mov r1, #0x49A1
+			mov r2, #0x59A1
 			b sc_out
 sc_0x49A2:
-			mov r4, #0x49A2
-			mov r5, #0x59A2
+			mov r1, #0x49A2
+			mov r2, #0x59A2
 			b sc_out
 sc_0x49A3:
-			mov r4, #0x49A3
-			mov r5, #0x59A3
+			mov r1, #0x49A3
+			mov r2, #0x59A3
 			b sc_out
 sc_0x49A4:
-			mov r4, #0x49A4
-			mov r5, #0x59A4
+			mov r1, #0x49A4
+			mov r2, #0x59A4
 			b sc_out
 sc_0x49A5:
-			mov r4, #0x49A5
-			mov r5, #0x59A5
+			mov r1, #0x49A5
+			mov r2, #0x59A5
 			b sc_out
 sc_0x49A6:
-			mov r4, #0x49A6
-			mov r5, #0x59A6
+			mov r1, #0x49A6
+			mov r2, #0x59A6
 			b sc_out
 sc_0x49A7:
-			mov r4, #0x49A7
-			mov r5, #0x59A7
+			mov r1, #0x49A7
+			mov r2, #0x59A7
 			b sc_out
 sc_0x49A8:
-			mov r4, #0x49A8
-			mov r5, #0x59A8
+			mov r1, #0x49A8
+			mov r2, #0x59A8
 			b sc_out
 sc_0x49A9:
-			mov r4, #0x49A9
-			mov r5, #0x59A9
+			mov r1, #0x49A9
+			mov r2, #0x59A9
 			b sc_out
 sc_0x49AA:
-			mov r4, #0x49AA
-			mov r5, #0x59AA
+			mov r1, #0x49AA
+			mov r2, #0x59AA
 			b sc_out
 sc_0x49AB:
-			mov r4, #0x49AB
-			mov r5, #0x59AB
+			mov r1, #0x49AB
+			mov r2, #0x59AB
 			b sc_out
 sc_0x49AC:
-			mov r4, #0x49AC
-			mov r5, #0x59AC
+			mov r1, #0x49AC
+			mov r2, #0x59AC
 			b sc_out
 sc_0x49AD:
-			mov r4, #0x49AD
-			mov r5, #0x59AD
+			mov r1, #0x49AD
+			mov r2, #0x59AD
 			b sc_out
 sc_0x49AE:
-			mov r4, #0x49AE
-			mov r5, #0x59AE
+			mov r1, #0x49AE
+			mov r2, #0x59AE
 			b sc_out
 sc_0x49AF:
-			mov r4, #0x49AF
-			mov r5, #0x59AF
+			mov r1, #0x49AF
+			mov r2, #0x59AF
 			b sc_out
 sc_0x49B0:
-			mov r4, #0x49B0
-			mov r5, #0x59B0
+			mov r1, #0x49B0
+			mov r2, #0x59B0
 			b sc_out
 sc_0x49B1:
-			mov r4, #0x49B1
-			mov r5, #0x59B1
+			mov r1, #0x49B1
+			mov r2, #0x59B1
 			b sc_out
 sc_0x49B2:
-			mov r4, #0x49B2
-			mov r5, #0x59B2
+			mov r1, #0x49B2
+			mov r2, #0x59B2
 			b sc_out
 sc_0x49B3:
-			mov r4, #0x49B3
-			mov r5, #0x59B3
+			mov r1, #0x49B3
+			mov r2, #0x59B3
 			b sc_out
 sc_0x49B4:
-			mov r4, #0x49B4
-			mov r5, #0x59B4
+			mov r1, #0x49B4
+			mov r2, #0x59B4
 			b sc_out
 sc_0x49B5:
-			mov r4, #0x49B5
-			mov r5, #0x59B5
+			mov r1, #0x49B5
+			mov r2, #0x59B5
 			b sc_out
 sc_0x49B6:
-			mov r4, #0x49B6
-			mov r5, #0x59B6
+			mov r1, #0x49B6
+			mov r2, #0x59B6
 			b sc_out
 sc_0x49B7:
-			mov r4, #0x49B7
-			mov r5, #0x59B7
+			mov r1, #0x49B7
+			mov r2, #0x59B7
 			b sc_out
 sc_0x49B8:
-			mov r4, #0x49B8
-			mov r5, #0x59B8
+			mov r1, #0x49B8
+			mov r2, #0x59B8
 			b sc_out
 sc_0x49B9:
-			mov r4, #0x49B9
-			mov r5, #0x59B9
+			mov r1, #0x49B9
+			mov r2, #0x59B9
 			b sc_out
 sc_0x49BA:
-			mov r4, #0x49BA
-			mov r5, #0x59BA
+			mov r1, #0x49BA
+			mov r2, #0x59BA
 			b sc_out
 sc_0x49BB:
-			mov r4, #0x49BB
-			mov r5, #0x59BB
+			mov r1, #0x49BB
+			mov r2, #0x59BB
 			b sc_out
 sc_0x49BC:
-			mov r4, #0x49BC
-			mov r5, #0x59BC
+			mov r1, #0x49BC
+			mov r2, #0x59BC
 			b sc_out
 sc_0x49BD:
-			mov r4, #0x49BD
-			mov r5, #0x59BD
+			mov r1, #0x49BD
+			mov r2, #0x59BD
 			b sc_out
 sc_0x49BE:
-			mov r4, #0x49BE
-			mov r5, #0x59BE
+			mov r1, #0x49BE
+			mov r2, #0x59BE
 			b sc_out
 sc_0x49BF:
-			mov r4, #0x49BF
-			mov r5, #0x59BF
+			mov r1, #0x49BF
+			mov r2, #0x59BF
 			b sc_out
 sc_0x4AA0:
-			mov r4, #0x4AA0
-			mov r5, #0x59A0
+			mov r1, #0x4AA0
+			mov r2, #0x59A0
 			b sc_out
 sc_0x4AA1:
-			mov r4, #0x4AA1
-			mov r5, #0x59A1
+			mov r1, #0x4AA1
+			mov r2, #0x59A1
 			b sc_out
 sc_0x4AA2:
-			mov r4, #0x4AA2
-			mov r5, #0x59A2
+			mov r1, #0x4AA2
+			mov r2, #0x59A2
 			b sc_out
 sc_0x4AA3:
-			mov r4, #0x4AA3
-			mov r5, #0x59A3
+			mov r1, #0x4AA3
+			mov r2, #0x59A3
 			b sc_out
 sc_0x4AA4:
-			mov r4, #0x4AA4
-			mov r5, #0x59A4
+			mov r1, #0x4AA4
+			mov r2, #0x59A4
 			b sc_out
 sc_0x4AA5:
-			mov r4, #0x4AA5
-			mov r5, #0x59A5
+			mov r1, #0x4AA5
+			mov r2, #0x59A5
 			b sc_out
 sc_0x4AA6:
-			mov r4, #0x4AA6
-			mov r5, #0x59A6
+			mov r1, #0x4AA6
+			mov r2, #0x59A6
 			b sc_out
 sc_0x4AA7:
-			mov r4, #0x4AA7
-			mov r5, #0x59A7
+			mov r1, #0x4AA7
+			mov r2, #0x59A7
 			b sc_out
 sc_0x4AA8:
-			mov r4, #0x4AA8
-			mov r5, #0x59A8
+			mov r1, #0x4AA8
+			mov r2, #0x59A8
 			b sc_out
 sc_0x4AA9:
-			mov r4, #0x4AA9
-			mov r5, #0x59A9
+			mov r1, #0x4AA9
+			mov r2, #0x59A9
 			b sc_out
 sc_0x4AAA:
-			mov r4, #0x4AAA
-			mov r5, #0x59AA
+			mov r1, #0x4AAA
+			mov r2, #0x59AA
 			b sc_out
 sc_0x4AAB:
-			mov r4, #0x4AAB
-			mov r5, #0x59AB
+			mov r1, #0x4AAB
+			mov r2, #0x59AB
 			b sc_out
 sc_0x4AAC:
-			mov r4, #0x4AAC
-			mov r5, #0x59AC
+			mov r1, #0x4AAC
+			mov r2, #0x59AC
 			b sc_out
 sc_0x4AAD:
-			mov r4, #0x4AAD
-			mov r5, #0x59AD
+			mov r1, #0x4AAD
+			mov r2, #0x59AD
 			b sc_out
 sc_0x4AAE:
-			mov r4, #0x4AAE
-			mov r5, #0x59AE
+			mov r1, #0x4AAE
+			mov r2, #0x59AE
 			b sc_out
 sc_0x4AAF:
-			mov r4, #0x4AAF
-			mov r5, #0x59AF
+			mov r1, #0x4AAF
+			mov r2, #0x59AF
 			b sc_out
 sc_0x4AB0:
-			mov r4, #0x4AB0
-			mov r5, #0x59B0
+			mov r1, #0x4AB0
+			mov r2, #0x59B0
 			b sc_out
 sc_0x4AB1:
-			mov r4, #0x4AB1
-			mov r5, #0x59B1
+			mov r1, #0x4AB1
+			mov r2, #0x59B1
 			b sc_out
 sc_0x4AB2:
-			mov r4, #0x4AB2
-			mov r5, #0x59B2
+			mov r1, #0x4AB2
+			mov r2, #0x59B2
 			b sc_out
 sc_0x4AB3:
-			mov r4, #0x4AB3
-			mov r5, #0x59B3
+			mov r1, #0x4AB3
+			mov r2, #0x59B3
 			b sc_out
 sc_0x4AB4:
-			mov r4, #0x4AB4
-			mov r5, #0x59B4
+			mov r1, #0x4AB4
+			mov r2, #0x59B4
 			b sc_out
 sc_0x4AB5:
-			mov r4, #0x4AB5
-			mov r5, #0x59B5
+			mov r1, #0x4AB5
+			mov r2, #0x59B5
 			b sc_out
 sc_0x4AB6:
-			mov r4, #0x4AB6
-			mov r5, #0x59B6
+			mov r1, #0x4AB6
+			mov r2, #0x59B6
 			b sc_out
 sc_0x4AB7:
-			mov r4, #0x4AB7
-			mov r5, #0x59B7
+			mov r1, #0x4AB7
+			mov r2, #0x59B7
 			b sc_out
 sc_0x4AB8:
-			mov r4, #0x4AB8
-			mov r5, #0x59B8
+			mov r1, #0x4AB8
+			mov r2, #0x59B8
 			b sc_out
 sc_0x4AB9:
-			mov r4, #0x4AB9
-			mov r5, #0x59B9
+			mov r1, #0x4AB9
+			mov r2, #0x59B9
 			b sc_out
 sc_0x4ABA:
-			mov r4, #0x4ABA
-			mov r5, #0x59BA
+			mov r1, #0x4ABA
+			mov r2, #0x59BA
 			b sc_out
 sc_0x4ABB:
-			mov r4, #0x4ABB
-			mov r5, #0x59BB
+			mov r1, #0x4ABB
+			mov r2, #0x59BB
 			b sc_out
 sc_0x4ABC:
-			mov r4, #0x4ABC
-			mov r5, #0x59BC
+			mov r1, #0x4ABC
+			mov r2, #0x59BC
 			b sc_out
 sc_0x4ABD:
-			mov r4, #0x4ABD
-			mov r5, #0x59BD
+			mov r1, #0x4ABD
+			mov r2, #0x59BD
 			b sc_out
 sc_0x4ABE:
-			mov r4, #0x4ABE
-			mov r5, #0x59BE
+			mov r1, #0x4ABE
+			mov r2, #0x59BE
 			b sc_out
 sc_0x4ABF:
-			mov r4, #0x4ABF
-			mov r5, #0x59BF
+			mov r1, #0x4ABF
+			mov r2, #0x59BF
 			b sc_out
 sc_0x4BA0:
-			mov r4, #0x4BA0
-			mov r5, #0x59A0
+			mov r1, #0x4BA0
+			mov r2, #0x59A0
 			b sc_out
 sc_0x4BA1:
-			mov r4, #0x4BA1
-			mov r5, #0x59A1
+			mov r1, #0x4BA1
+			mov r2, #0x59A1
 			b sc_out
 sc_0x4BA2:
-			mov r4, #0x4BA2
-			mov r5, #0x59A2
+			mov r1, #0x4BA2
+			mov r2, #0x59A2
 			b sc_out
 sc_0x4BA3:
-			mov r4, #0x4BA3
-			mov r5, #0x59A3
+			mov r1, #0x4BA3
+			mov r2, #0x59A3
 			b sc_out
 sc_0x4BA4:
-			mov r4, #0x4BA4
-			mov r5, #0x59A4
+			mov r1, #0x4BA4
+			mov r2, #0x59A4
 			b sc_out
 sc_0x4BA5:
-			mov r4, #0x4BA5
-			mov r5, #0x59A5
+			mov r1, #0x4BA5
+			mov r2, #0x59A5
 			b sc_out
 sc_0x4BA6:
-			mov r4, #0x4BA6
-			mov r5, #0x59A6
+			mov r1, #0x4BA6
+			mov r2, #0x59A6
 			b sc_out
 sc_0x4BA7:
-			mov r4, #0x4BA7
-			mov r5, #0x59A7
+			mov r1, #0x4BA7
+			mov r2, #0x59A7
 			b sc_out
 sc_0x4BA8:
-			mov r4, #0x4BA8
-			mov r5, #0x59A8
+			mov r1, #0x4BA8
+			mov r2, #0x59A8
 			b sc_out
 sc_0x4BA9:
-			mov r4, #0x4BA9
-			mov r5, #0x59A9
+			mov r1, #0x4BA9
+			mov r2, #0x59A9
 			b sc_out
 sc_0x4BAA:
-			mov r4, #0x4BAA
-			mov r5, #0x59AA
+			mov r1, #0x4BAA
+			mov r2, #0x59AA
 			b sc_out
 sc_0x4BAB:
-			mov r4, #0x4BAB
-			mov r5, #0x59AB
+			mov r1, #0x4BAB
+			mov r2, #0x59AB
 			b sc_out
 sc_0x4BAC:
-			mov r4, #0x4BAC
-			mov r5, #0x59AC
+			mov r1, #0x4BAC
+			mov r2, #0x59AC
 			b sc_out
 sc_0x4BAD:
-			mov r4, #0x4BAD
-			mov r5, #0x59AD
+			mov r1, #0x4BAD
+			mov r2, #0x59AD
 			b sc_out
 sc_0x4BAE:
-			mov r4, #0x4BAE
-			mov r5, #0x59AE
+			mov r1, #0x4BAE
+			mov r2, #0x59AE
 			b sc_out
 sc_0x4BAF:
-			mov r4, #0x4BAF
-			mov r5, #0x59AF
+			mov r1, #0x4BAF
+			mov r2, #0x59AF
 			b sc_out
 sc_0x4BB0:
-			mov r4, #0x4BB0
-			mov r5, #0x59B0
+			mov r1, #0x4BB0
+			mov r2, #0x59B0
 			b sc_out
 sc_0x4BB1:
-			mov r4, #0x4BB1
-			mov r5, #0x59B1
+			mov r1, #0x4BB1
+			mov r2, #0x59B1
 			b sc_out
 sc_0x4BB2:
-			mov r4, #0x4BB2
-			mov r5, #0x59B2
+			mov r1, #0x4BB2
+			mov r2, #0x59B2
 			b sc_out
 sc_0x4BB3:
-			mov r4, #0x4BB3
-			mov r5, #0x59B3
+			mov r1, #0x4BB3
+			mov r2, #0x59B3
 			b sc_out
 sc_0x4BB4:
-			mov r4, #0x4BB4
-			mov r5, #0x59B4
+			mov r1, #0x4BB4
+			mov r2, #0x59B4
 			b sc_out
 sc_0x4BB5:
-			mov r4, #0x4BB5
-			mov r5, #0x59B5
+			mov r1, #0x4BB5
+			mov r2, #0x59B5
 			b sc_out
 sc_0x4BB6:
-			mov r4, #0x4BB6
-			mov r5, #0x59B6
+			mov r1, #0x4BB6
+			mov r2, #0x59B6
 			b sc_out
 sc_0x4BB7:
-			mov r4, #0x4BB7
-			mov r5, #0x59B7
+			mov r1, #0x4BB7
+			mov r2, #0x59B7
 			b sc_out
 sc_0x4BB8:
-			mov r4, #0x4BB8
-			mov r5, #0x59B8
+			mov r1, #0x4BB8
+			mov r2, #0x59B8
 			b sc_out
 sc_0x4BB9:
-			mov r4, #0x4BB9
-			mov r5, #0x59B9
+			mov r1, #0x4BB9
+			mov r2, #0x59B9
 			b sc_out
 sc_0x4BBA:
-			mov r4, #0x4BBA
-			mov r5, #0x59BA
+			mov r1, #0x4BBA
+			mov r2, #0x59BA
 			b sc_out
 sc_0x4BBB:
-			mov r4, #0x4BBB
-			mov r5, #0x59BB
+			mov r1, #0x4BBB
+			mov r2, #0x59BB
 			b sc_out
 sc_0x4BBC:
-			mov r4, #0x4BBC
-			mov r5, #0x59BC
+			mov r1, #0x4BBC
+			mov r2, #0x59BC
 			b sc_out
 sc_0x4BBD:
-			mov r4, #0x4BBD
-			mov r5, #0x59BD
+			mov r1, #0x4BBD
+			mov r2, #0x59BD
 			b sc_out
 sc_0x4BBE:
-			mov r4, #0x4BBE
-			mov r5, #0x59BE
+			mov r1, #0x4BBE
+			mov r2, #0x59BE
 			b sc_out
 sc_0x4BBF:
-			mov r4, #0x4BBF
-			mov r5, #0x59BF
+			mov r1, #0x4BBF
+			mov r2, #0x59BF
 			b sc_out
 sc_0x4CA0:
-			mov r4, #0x4CA0
-			mov r5, #0x59A0
+			mov r1, #0x4CA0
+			mov r2, #0x59A0
 			b sc_out
 sc_0x4CA1:
-			mov r4, #0x4CA1
-			mov r5, #0x59A1
+			mov r1, #0x4CA1
+			mov r2, #0x59A1
 			b sc_out
 sc_0x4CA2:
-			mov r4, #0x4CA2
-			mov r5, #0x59A2
+			mov r1, #0x4CA2
+			mov r2, #0x59A2
 			b sc_out
 sc_0x4CA3:
-			mov r4, #0x4CA3
-			mov r5, #0x59A3
+			mov r1, #0x4CA3
+			mov r2, #0x59A3
 			b sc_out
 sc_0x4CA4:
-			mov r4, #0x4CA4
-			mov r5, #0x59A4
+			mov r1, #0x4CA4
+			mov r2, #0x59A4
 			b sc_out
 sc_0x4CA5:
-			mov r4, #0x4CA5
-			mov r5, #0x59A5
+			mov r1, #0x4CA5
+			mov r2, #0x59A5
 			b sc_out
 sc_0x4CA6:
-			mov r4, #0x4CA6
-			mov r5, #0x59A6
+			mov r1, #0x4CA6
+			mov r2, #0x59A6
 			b sc_out
 sc_0x4CA7:
-			mov r4, #0x4CA7
-			mov r5, #0x59A7
+			mov r1, #0x4CA7
+			mov r2, #0x59A7
 			b sc_out
 sc_0x4CA8:
-			mov r4, #0x4CA8
-			mov r5, #0x59A8
+			mov r1, #0x4CA8
+			mov r2, #0x59A8
 			b sc_out
 sc_0x4CA9:
-			mov r4, #0x4CA9
-			mov r5, #0x59A9
+			mov r1, #0x4CA9
+			mov r2, #0x59A9
 			b sc_out
 sc_0x4CAA:
-			mov r4, #0x4CAA
-			mov r5, #0x59AA
+			mov r1, #0x4CAA
+			mov r2, #0x59AA
 			b sc_out
 sc_0x4CAB:
-			mov r4, #0x4CAB
-			mov r5, #0x59AB
+			mov r1, #0x4CAB
+			mov r2, #0x59AB
 			b sc_out
 sc_0x4CAC:
-			mov r4, #0x4CAC
-			mov r5, #0x59AC
+			mov r1, #0x4CAC
+			mov r2, #0x59AC
 			b sc_out
 sc_0x4CAD:
-			mov r4, #0x4CAD
-			mov r5, #0x59AD
+			mov r1, #0x4CAD
+			mov r2, #0x59AD
 			b sc_out
 sc_0x4CAE:
-			mov r4, #0x4CAE
-			mov r5, #0x59AE
+			mov r1, #0x4CAE
+			mov r2, #0x59AE
 			b sc_out
 sc_0x4CAF:
-			mov r4, #0x4CAF
-			mov r5, #0x59AF
+			mov r1, #0x4CAF
+			mov r2, #0x59AF
 			b sc_out
 sc_0x4CB0:
-			mov r4, #0x4CB0
-			mov r5, #0x59B0
+			mov r1, #0x4CB0
+			mov r2, #0x59B0
 			b sc_out
 sc_0x4CB1:
-			mov r4, #0x4CB1
-			mov r5, #0x59B1
+			mov r1, #0x4CB1
+			mov r2, #0x59B1
 			b sc_out
 sc_0x4CB2:
-			mov r4, #0x4CB2
-			mov r5, #0x59B2
+			mov r1, #0x4CB2
+			mov r2, #0x59B2
 			b sc_out
 sc_0x4CB3:
-			mov r4, #0x4CB3
-			mov r5, #0x59B3
+			mov r1, #0x4CB3
+			mov r2, #0x59B3
 			b sc_out
 sc_0x4CB4:
-			mov r4, #0x4CB4
-			mov r5, #0x59B4
+			mov r1, #0x4CB4
+			mov r2, #0x59B4
 			b sc_out
 sc_0x4CB5:
-			mov r4, #0x4CB5
-			mov r5, #0x59B5
+			mov r1, #0x4CB5
+			mov r2, #0x59B5
 			b sc_out
 sc_0x4CB6:
-			mov r4, #0x4CB6
-			mov r5, #0x59B6
+			mov r1, #0x4CB6
+			mov r2, #0x59B6
 			b sc_out
 sc_0x4CB7:
-			mov r4, #0x4CB7
-			mov r5, #0x59B7
+			mov r1, #0x4CB7
+			mov r2, #0x59B7
 			b sc_out
 sc_0x4CB8:
-			mov r4, #0x4CB8
-			mov r5, #0x59B8
+			mov r1, #0x4CB8
+			mov r2, #0x59B8
 			b sc_out
 sc_0x4CB9:
-			mov r4, #0x4CB9
-			mov r5, #0x59B9
+			mov r1, #0x4CB9
+			mov r2, #0x59B9
 			b sc_out
 sc_0x4CBA:
-			mov r4, #0x4CBA
-			mov r5, #0x59BA
+			mov r1, #0x4CBA
+			mov r2, #0x59BA
 			b sc_out
 sc_0x4CBB:
-			mov r4, #0x4CBB
-			mov r5, #0x59BB
+			mov r1, #0x4CBB
+			mov r2, #0x59BB
 			b sc_out
 sc_0x4CBC:
-			mov r4, #0x4CBC
-			mov r5, #0x59BC
+			mov r1, #0x4CBC
+			mov r2, #0x59BC
 			b sc_out
 sc_0x4CBD:
-			mov r4, #0x4CBD
-			mov r5, #0x59BD
+			mov r1, #0x4CBD
+			mov r2, #0x59BD
 			b sc_out
 sc_0x4CBE:
-			mov r4, #0x4CBE
-			mov r5, #0x59BE
+			mov r1, #0x4CBE
+			mov r2, #0x59BE
 			b sc_out
 sc_0x4CBF:
-			mov r4, #0x4CBF
-			mov r5, #0x59BF
+			mov r1, #0x4CBF
+			mov r2, #0x59BF
 			b sc_out
 sc_0x4DA0:
-			mov r4, #0x4DA0
-			mov r5, #0x59A0
+			mov r1, #0x4DA0
+			mov r2, #0x59A0
 			b sc_out
 sc_0x4DA1:
-			mov r4, #0x4DA1
-			mov r5, #0x59A1
+			mov r1, #0x4DA1
+			mov r2, #0x59A1
 			b sc_out
 sc_0x4DA2:
-			mov r4, #0x4DA2
-			mov r5, #0x59A2
+			mov r1, #0x4DA2
+			mov r2, #0x59A2
 			b sc_out
 sc_0x4DA3:
-			mov r4, #0x4DA3
-			mov r5, #0x59A3
+			mov r1, #0x4DA3
+			mov r2, #0x59A3
 			b sc_out
 sc_0x4DA4:
-			mov r4, #0x4DA4
-			mov r5, #0x59A4
+			mov r1, #0x4DA4
+			mov r2, #0x59A4
 			b sc_out
 sc_0x4DA5:
-			mov r4, #0x4DA5
-			mov r5, #0x59A5
+			mov r1, #0x4DA5
+			mov r2, #0x59A5
 			b sc_out
 sc_0x4DA6:
-			mov r4, #0x4DA6
-			mov r5, #0x59A6
+			mov r1, #0x4DA6
+			mov r2, #0x59A6
 			b sc_out
 sc_0x4DA7:
-			mov r4, #0x4DA7
-			mov r5, #0x59A7
+			mov r1, #0x4DA7
+			mov r2, #0x59A7
 			b sc_out
 sc_0x4DA8:
-			mov r4, #0x4DA8
-			mov r5, #0x59A8
+			mov r1, #0x4DA8
+			mov r2, #0x59A8
 			b sc_out
 sc_0x4DA9:
-			mov r4, #0x4DA9
-			mov r5, #0x59A9
+			mov r1, #0x4DA9
+			mov r2, #0x59A9
 			b sc_out
 sc_0x4DAA:
-			mov r4, #0x4DAA
-			mov r5, #0x59AA
+			mov r1, #0x4DAA
+			mov r2, #0x59AA
 			b sc_out
 sc_0x4DAB:
-			mov r4, #0x4DAB
-			mov r5, #0x59AB
+			mov r1, #0x4DAB
+			mov r2, #0x59AB
 			b sc_out
 sc_0x4DAC:
-			mov r4, #0x4DAC
-			mov r5, #0x59AC
+			mov r1, #0x4DAC
+			mov r2, #0x59AC
 			b sc_out
 sc_0x4DAD:
-			mov r4, #0x4DAD
-			mov r5, #0x59AD
+			mov r1, #0x4DAD
+			mov r2, #0x59AD
 			b sc_out
 sc_0x4DAE:
-			mov r4, #0x4DAE
-			mov r5, #0x59AE
+			mov r1, #0x4DAE
+			mov r2, #0x59AE
 			b sc_out
 sc_0x4DAF:
-			mov r4, #0x4DAF
-			mov r5, #0x59AF
+			mov r1, #0x4DAF
+			mov r2, #0x59AF
 			b sc_out
 sc_0x4DB0:
-			mov r4, #0x4DB0
-			mov r5, #0x59B0
+			mov r1, #0x4DB0
+			mov r2, #0x59B0
 			b sc_out
 sc_0x4DB1:
-			mov r4, #0x4DB1
-			mov r5, #0x59B1
+			mov r1, #0x4DB1
+			mov r2, #0x59B1
 			b sc_out
 sc_0x4DB2:
-			mov r4, #0x4DB2
-			mov r5, #0x59B2
+			mov r1, #0x4DB2
+			mov r2, #0x59B2
 			b sc_out
 sc_0x4DB3:
-			mov r4, #0x4DB3
-			mov r5, #0x59B3
+			mov r1, #0x4DB3
+			mov r2, #0x59B3
 			b sc_out
 sc_0x4DB4:
-			mov r4, #0x4DB4
-			mov r5, #0x59B4
+			mov r1, #0x4DB4
+			mov r2, #0x59B4
 			b sc_out
 sc_0x4DB5:
-			mov r4, #0x4DB5
-			mov r5, #0x59B5
+			mov r1, #0x4DB5
+			mov r2, #0x59B5
 			b sc_out
 sc_0x4DB6:
-			mov r4, #0x4DB6
-			mov r5, #0x59B6
+			mov r1, #0x4DB6
+			mov r2, #0x59B6
 			b sc_out
 sc_0x4DB7:
-			mov r4, #0x4DB7
-			mov r5, #0x59B7
+			mov r1, #0x4DB7
+			mov r2, #0x59B7
 			b sc_out
 sc_0x4DB8:
-			mov r4, #0x4DB8
-			mov r5, #0x59B8
+			mov r1, #0x4DB8
+			mov r2, #0x59B8
 			b sc_out
 sc_0x4DB9:
-			mov r4, #0x4DB9
-			mov r5, #0x59B9
+			mov r1, #0x4DB9
+			mov r2, #0x59B9
 			b sc_out
 sc_0x4DBA:
-			mov r4, #0x4DBA
-			mov r5, #0x59BA
+			mov r1, #0x4DBA
+			mov r2, #0x59BA
 			b sc_out
 sc_0x4DBB:
-			mov r4, #0x4DBB
-			mov r5, #0x59BB
+			mov r1, #0x4DBB
+			mov r2, #0x59BB
 			b sc_out
 sc_0x4DBC:
-			mov r4, #0x4DBC
-			mov r5, #0x59BC
+			mov r1, #0x4DBC
+			mov r2, #0x59BC
 			b sc_out
 sc_0x4DBD:
-			mov r4, #0x4DBD
-			mov r5, #0x59BD
+			mov r1, #0x4DBD
+			mov r2, #0x59BD
 			b sc_out
 sc_0x4DBE:
-			mov r4, #0x4DBE
-			mov r5, #0x59BE
+			mov r1, #0x4DBE
+			mov r2, #0x59BE
 			b sc_out
 sc_0x4DBF:
-			mov r4, #0x4DBF
-			mov r5, #0x59BF
+			mov r1, #0x4DBF
+			mov r2, #0x59BF
 			b sc_out
 sc_0x4EA0:
-			mov r4, #0x4EA0
-			mov r5, #0x59A0
+			mov r1, #0x4EA0
+			mov r2, #0x59A0
 			b sc_out
 sc_0x4EA1:
-			mov r4, #0x4EA1
-			mov r5, #0x59A1
+			mov r1, #0x4EA1
+			mov r2, #0x59A1
 			b sc_out
 sc_0x4EA2:
-			mov r4, #0x4EA2
-			mov r5, #0x59A2
+			mov r1, #0x4EA2
+			mov r2, #0x59A2
 			b sc_out
 sc_0x4EA3:
-			mov r4, #0x4EA3
-			mov r5, #0x59A3
+			mov r1, #0x4EA3
+			mov r2, #0x59A3
 			b sc_out
 sc_0x4EA4:
-			mov r4, #0x4EA4
-			mov r5, #0x59A4
+			mov r1, #0x4EA4
+			mov r2, #0x59A4
 			b sc_out
 sc_0x4EA5:
-			mov r4, #0x4EA5
-			mov r5, #0x59A5
+			mov r1, #0x4EA5
+			mov r2, #0x59A5
 			b sc_out
 sc_0x4EA6:
-			mov r4, #0x4EA6
-			mov r5, #0x59A6
+			mov r1, #0x4EA6
+			mov r2, #0x59A6
 			b sc_out
 sc_0x4EA7:
-			mov r4, #0x4EA7
-			mov r5, #0x59A7
+			mov r1, #0x4EA7
+			mov r2, #0x59A7
 			b sc_out
 sc_0x4EA8:
-			mov r4, #0x4EA8
-			mov r5, #0x59A8
+			mov r1, #0x4EA8
+			mov r2, #0x59A8
 			b sc_out
 sc_0x4EA9:
-			mov r4, #0x4EA9
-			mov r5, #0x59A9
+			mov r1, #0x4EA9
+			mov r2, #0x59A9
 			b sc_out
 sc_0x4EAA:
-			mov r4, #0x4EAA
-			mov r5, #0x59AA
+			mov r1, #0x4EAA
+			mov r2, #0x59AA
 			b sc_out
 sc_0x4EAB:
-			mov r4, #0x4EAB
-			mov r5, #0x59AB
+			mov r1, #0x4EAB
+			mov r2, #0x59AB
 			b sc_out
 sc_0x4EAC:
-			mov r4, #0x4EAC
-			mov r5, #0x59AC
+			mov r1, #0x4EAC
+			mov r2, #0x59AC
 			b sc_out
 sc_0x4EAD:
-			mov r4, #0x4EAD
-			mov r5, #0x59AD
+			mov r1, #0x4EAD
+			mov r2, #0x59AD
 			b sc_out
 sc_0x4EAE:
-			mov r4, #0x4EAE
-			mov r5, #0x59AE
+			mov r1, #0x4EAE
+			mov r2, #0x59AE
 			b sc_out
 sc_0x4EAF:
-			mov r4, #0x4EAF
-			mov r5, #0x59AF
+			mov r1, #0x4EAF
+			mov r2, #0x59AF
 			b sc_out
 sc_0x4EB0:
-			mov r4, #0x4EB0
-			mov r5, #0x59B0
+			mov r1, #0x4EB0
+			mov r2, #0x59B0
 			b sc_out
 sc_0x4EB1:
-			mov r4, #0x4EB1
-			mov r5, #0x59B1
+			mov r1, #0x4EB1
+			mov r2, #0x59B1
 			b sc_out
 sc_0x4EB2:
-			mov r4, #0x4EB2
-			mov r5, #0x59B2
+			mov r1, #0x4EB2
+			mov r2, #0x59B2
 			b sc_out
 sc_0x4EB3:
-			mov r4, #0x4EB3
-			mov r5, #0x59B3
+			mov r1, #0x4EB3
+			mov r2, #0x59B3
 			b sc_out
 sc_0x4EB4:
-			mov r4, #0x4EB4
-			mov r5, #0x59B4
+			mov r1, #0x4EB4
+			mov r2, #0x59B4
 			b sc_out
 sc_0x4EB5:
-			mov r4, #0x4EB5
-			mov r5, #0x59B5
+			mov r1, #0x4EB5
+			mov r2, #0x59B5
 			b sc_out
 sc_0x4EB6:
-			mov r4, #0x4EB6
-			mov r5, #0x59B6
+			mov r1, #0x4EB6
+			mov r2, #0x59B6
 			b sc_out
 sc_0x4EB7:
-			mov r4, #0x4EB7
-			mov r5, #0x59B7
+			mov r1, #0x4EB7
+			mov r2, #0x59B7
 			b sc_out
 sc_0x4EB8:
-			mov r4, #0x4EB8
-			mov r5, #0x59B8
+			mov r1, #0x4EB8
+			mov r2, #0x59B8
 			b sc_out
 sc_0x4EB9:
-			mov r4, #0x4EB9
-			mov r5, #0x59B9
+			mov r1, #0x4EB9
+			mov r2, #0x59B9
 			b sc_out
 sc_0x4EBA:
-			mov r4, #0x4EBA
-			mov r5, #0x59BA
+			mov r1, #0x4EBA
+			mov r2, #0x59BA
 			b sc_out
 sc_0x4EBB:
-			mov r4, #0x4EBB
-			mov r5, #0x59BB
+			mov r1, #0x4EBB
+			mov r2, #0x59BB
 			b sc_out
 sc_0x4EBC:
-			mov r4, #0x4EBC
-			mov r5, #0x59BC
+			mov r1, #0x4EBC
+			mov r2, #0x59BC
 			b sc_out
 sc_0x4EBD:
-			mov r4, #0x4EBD
-			mov r5, #0x59BD
+			mov r1, #0x4EBD
+			mov r2, #0x59BD
 			b sc_out
 sc_0x4EBE:
-			mov r4, #0x4EBE
-			mov r5, #0x59BE
+			mov r1, #0x4EBE
+			mov r2, #0x59BE
 			b sc_out
 sc_0x4EBF:
-			mov r4, #0x4EBF
-			mov r5, #0x59BF
+			mov r1, #0x4EBF
+			mov r2, #0x59BF
 			b sc_out
 sc_0x4FA0:
-			mov r4, #0x4FA0
-			mov r5, #0x59A0
+			mov r1, #0x4FA0
+			mov r2, #0x59A0
 			b sc_out
 sc_0x4FA1:
-			mov r4, #0x4FA1
-			mov r5, #0x59A1
+			mov r1, #0x4FA1
+			mov r2, #0x59A1
 			b sc_out
 sc_0x4FA2:
-			mov r4, #0x4FA2
-			mov r5, #0x59A2
+			mov r1, #0x4FA2
+			mov r2, #0x59A2
 			b sc_out
 sc_0x4FA3:
-			mov r4, #0x4FA3
-			mov r5, #0x59A3
+			mov r1, #0x4FA3
+			mov r2, #0x59A3
 			b sc_out
 sc_0x4FA4:
-			mov r4, #0x4FA4
-			mov r5, #0x59A4
+			mov r1, #0x4FA4
+			mov r2, #0x59A4
 			b sc_out
 sc_0x4FA5:
-			mov r4, #0x4FA5
-			mov r5, #0x59A5
+			mov r1, #0x4FA5
+			mov r2, #0x59A5
 			b sc_out
 sc_0x4FA6:
-			mov r4, #0x4FA6
-			mov r5, #0x59A6
+			mov r1, #0x4FA6
+			mov r2, #0x59A6
 			b sc_out
 sc_0x4FA7:
-			mov r4, #0x4FA7
-			mov r5, #0x59A7
+			mov r1, #0x4FA7
+			mov r2, #0x59A7
 			b sc_out
 sc_0x4FA8:
-			mov r4, #0x4FA8
-			mov r5, #0x59A8
+			mov r1, #0x4FA8
+			mov r2, #0x59A8
 			b sc_out
 sc_0x4FA9:
-			mov r4, #0x4FA9
-			mov r5, #0x59A9
+			mov r1, #0x4FA9
+			mov r2, #0x59A9
 			b sc_out
 sc_0x4FAA:
-			mov r4, #0x4FAA
-			mov r5, #0x59AA
+			mov r1, #0x4FAA
+			mov r2, #0x59AA
 			b sc_out
 sc_0x4FAB:
-			mov r4, #0x4FAB
-			mov r5, #0x59AB
+			mov r1, #0x4FAB
+			mov r2, #0x59AB
 			b sc_out
 sc_0x4FAC:
-			mov r4, #0x4FAC
-			mov r5, #0x59AC
+			mov r1, #0x4FAC
+			mov r2, #0x59AC
 			b sc_out
 sc_0x4FAD:
-			mov r4, #0x4FAD
-			mov r5, #0x59AD
+			mov r1, #0x4FAD
+			mov r2, #0x59AD
 			b sc_out
 sc_0x4FAE:
-			mov r4, #0x4FAE
-			mov r5, #0x59AE
+			mov r1, #0x4FAE
+			mov r2, #0x59AE
 			b sc_out
 sc_0x4FAF:
-			mov r4, #0x4FAF
-			mov r5, #0x59AF
+			mov r1, #0x4FAF
+			mov r2, #0x59AF
 			b sc_out
 sc_0x4FB0:
-			mov r4, #0x4FB0
-			mov r5, #0x59B0
+			mov r1, #0x4FB0
+			mov r2, #0x59B0
 			b sc_out
 sc_0x4FB1:
-			mov r4, #0x4FB1
-			mov r5, #0x59B1
+			mov r1, #0x4FB1
+			mov r2, #0x59B1
 			b sc_out
 sc_0x4FB2:
-			mov r4, #0x4FB2
-			mov r5, #0x59B2
+			mov r1, #0x4FB2
+			mov r2, #0x59B2
 			b sc_out
 sc_0x4FB3:
-			mov r4, #0x4FB3
-			mov r5, #0x59B3
+			mov r1, #0x4FB3
+			mov r2, #0x59B3
 			b sc_out
 sc_0x4FB4:
-			mov r4, #0x4FB4
-			mov r5, #0x59B4
+			mov r1, #0x4FB4
+			mov r2, #0x59B4
 			b sc_out
 sc_0x4FB5:
-			mov r4, #0x4FB5
-			mov r5, #0x59B5
+			mov r1, #0x4FB5
+			mov r2, #0x59B5
 			b sc_out
 sc_0x4FB6:
-			mov r4, #0x4FB6
-			mov r5, #0x59B6
+			mov r1, #0x4FB6
+			mov r2, #0x59B6
 			b sc_out
 sc_0x4FB7:
-			mov r4, #0x4FB7
-			mov r5, #0x59B7
+			mov r1, #0x4FB7
+			mov r2, #0x59B7
 			b sc_out
 sc_0x4FB8:
-			mov r4, #0x4FB8
-			mov r5, #0x59B8
+			mov r1, #0x4FB8
+			mov r2, #0x59B8
 			b sc_out
 sc_0x4FB9:
-			mov r4, #0x4FB9
-			mov r5, #0x59B9
+			mov r1, #0x4FB9
+			mov r2, #0x59B9
 			b sc_out
 sc_0x4FBA:
-			mov r4, #0x4FBA
-			mov r5, #0x59BA
+			mov r1, #0x4FBA
+			mov r2, #0x59BA
 			b sc_out
 sc_0x4FBB:
-			mov r4, #0x4FBB
-			mov r5, #0x59BB
+			mov r1, #0x4FBB
+			mov r2, #0x59BB
 			b sc_out
 sc_0x4FBC:
-			mov r4, #0x4FBC
-			mov r5, #0x59BC
+			mov r1, #0x4FBC
+			mov r2, #0x59BC
 			b sc_out
 sc_0x4FBD:
-			mov r4, #0x4FBD
-			mov r5, #0x59BD
+			mov r1, #0x4FBD
+			mov r2, #0x59BD
 			b sc_out
 sc_0x4FBE:
-			mov r4, #0x4FBE
-			mov r5, #0x59BE
+			mov r1, #0x4FBE
+			mov r2, #0x59BE
 			b sc_out
 sc_0x4FBF:
-			mov r4, #0x4FBF
-			mov r5, #0x59BF
+			mov r1, #0x4FBF
+			mov r2, #0x59BF
 			b sc_out
 sc_0x48C0:
-			mov r4, #0x48C0
-			mov r5, #0x59C0
+			mov r1, #0x48C0
+			mov r2, #0x59C0
 			b sc_out
 sc_0x48C1:
-			mov r4, #0x48C1
-			mov r5, #0x59C1
+			mov r1, #0x48C1
+			mov r2, #0x59C1
 			b sc_out
 sc_0x48C2:
-			mov r4, #0x48C2
-			mov r5, #0x59C2
+			mov r1, #0x48C2
+			mov r2, #0x59C2
 			b sc_out
 sc_0x48C3:
-			mov r4, #0x48C3
-			mov r5, #0x59C3
+			mov r1, #0x48C3
+			mov r2, #0x59C3
 			b sc_out
 sc_0x48C4:
-			mov r4, #0x48C4
-			mov r5, #0x59C4
+			mov r1, #0x48C4
+			mov r2, #0x59C4
 			b sc_out
 sc_0x48C5:
-			mov r4, #0x48C5
-			mov r5, #0x59C5
+			mov r1, #0x48C5
+			mov r2, #0x59C5
 			b sc_out
 sc_0x48C6:
-			mov r4, #0x48C6
-			mov r5, #0x59C6
+			mov r1, #0x48C6
+			mov r2, #0x59C6
 			b sc_out
 sc_0x48C7:
-			mov r4, #0x48C7
-			mov r5, #0x59C7
+			mov r1, #0x48C7
+			mov r2, #0x59C7
 			b sc_out
 sc_0x48C8:
-			mov r4, #0x48C8
-			mov r5, #0x59C8
+			mov r1, #0x48C8
+			mov r2, #0x59C8
 			b sc_out
 sc_0x48C9:
-			mov r4, #0x48C9
-			mov r5, #0x59C9
+			mov r1, #0x48C9
+			mov r2, #0x59C9
 			b sc_out
 sc_0x48CA:
-			mov r4, #0x48CA
-			mov r5, #0x59CA
+			mov r1, #0x48CA
+			mov r2, #0x59CA
 			b sc_out
 sc_0x48CB:
-			mov r4, #0x48CB
-			mov r5, #0x59CB
+			mov r1, #0x48CB
+			mov r2, #0x59CB
 			b sc_out
 sc_0x48CC:
-			mov r4, #0x48CC
-			mov r5, #0x59CC
+			mov r1, #0x48CC
+			mov r2, #0x59CC
 			b sc_out
 sc_0x48CD:
-			mov r4, #0x48CD
-			mov r5, #0x59CD
+			mov r1, #0x48CD
+			mov r2, #0x59CD
 			b sc_out
 sc_0x48CE:
-			mov r4, #0x48CE
-			mov r5, #0x59CE
+			mov r1, #0x48CE
+			mov r2, #0x59CE
 			b sc_out
 sc_0x48CF:
-			mov r4, #0x48CF
-			mov r5, #0x59CF
+			mov r1, #0x48CF
+			mov r2, #0x59CF
 			b sc_out
 sc_0x48D0:
-			mov r4, #0x48D0
-			mov r5, #0x59D0
+			mov r1, #0x48D0
+			mov r2, #0x59D0
 			b sc_out
 sc_0x48D1:
-			mov r4, #0x48D1
-			mov r5, #0x59D1
+			mov r1, #0x48D1
+			mov r2, #0x59D1
 			b sc_out
 sc_0x48D2:
-			mov r4, #0x48D2
-			mov r5, #0x59D2
+			mov r1, #0x48D2
+			mov r2, #0x59D2
 			b sc_out
 sc_0x48D3:
-			mov r4, #0x48D3
-			mov r5, #0x59D3
+			mov r1, #0x48D3
+			mov r2, #0x59D3
 			b sc_out
 sc_0x48D4:
-			mov r4, #0x48D4
-			mov r5, #0x59D4
+			mov r1, #0x48D4
+			mov r2, #0x59D4
 			b sc_out
 sc_0x48D5:
-			mov r4, #0x48D5
-			mov r5, #0x59D5
+			mov r1, #0x48D5
+			mov r2, #0x59D5
 			b sc_out
 sc_0x48D6:
-			mov r4, #0x48D6
-			mov r5, #0x59D6
+			mov r1, #0x48D6
+			mov r2, #0x59D6
 			b sc_out
 sc_0x48D7:
-			mov r4, #0x48D7
-			mov r5, #0x59D7
+			mov r1, #0x48D7
+			mov r2, #0x59D7
 			b sc_out
 sc_0x48D8:
-			mov r4, #0x48D8
-			mov r5, #0x59D8
+			mov r1, #0x48D8
+			mov r2, #0x59D8
 			b sc_out
 sc_0x48D9:
-			mov r4, #0x48D9
-			mov r5, #0x59D9
+			mov r1, #0x48D9
+			mov r2, #0x59D9
 			b sc_out
 sc_0x48DA:
-			mov r4, #0x48DA
-			mov r5, #0x59DA
+			mov r1, #0x48DA
+			mov r2, #0x59DA
 			b sc_out
 sc_0x48DB:
-			mov r4, #0x48DB
-			mov r5, #0x59DB
+			mov r1, #0x48DB
+			mov r2, #0x59DB
 			b sc_out
 sc_0x48DC:
-			mov r4, #0x48DC
-			mov r5, #0x59DC
+			mov r1, #0x48DC
+			mov r2, #0x59DC
 			b sc_out
 sc_0x48DD:
-			mov r4, #0x48DD
-			mov r5, #0x59DD
+			mov r1, #0x48DD
+			mov r2, #0x59DD
 			b sc_out
 sc_0x48DE:
-			mov r4, #0x48DE
-			mov r5, #0x59DE
+			mov r1, #0x48DE
+			mov r2, #0x59DE
 			b sc_out
 sc_0x48DF:
-			mov r4, #0x48DF
-			mov r5, #0x59DF
+			mov r1, #0x48DF
+			mov r2, #0x59DF
 			b sc_out
 sc_0x49C0:
-			mov r4, #0x49C0
-			mov r5, #0x59C0
+			mov r1, #0x49C0
+			mov r2, #0x59C0
 			b sc_out
 sc_0x49C1:
-			mov r4, #0x49C1
-			mov r5, #0x59C1
+			mov r1, #0x49C1
+			mov r2, #0x59C1
 			b sc_out
 sc_0x49C2:
-			mov r4, #0x49C2
-			mov r5, #0x59C2
+			mov r1, #0x49C2
+			mov r2, #0x59C2
 			b sc_out
 sc_0x49C3:
-			mov r4, #0x49C3
-			mov r5, #0x59C3
+			mov r1, #0x49C3
+			mov r2, #0x59C3
 			b sc_out
 sc_0x49C4:
-			mov r4, #0x49C4
-			mov r5, #0x59C4
+			mov r1, #0x49C4
+			mov r2, #0x59C4
 			b sc_out
 sc_0x49C5:
-			mov r4, #0x49C5
-			mov r5, #0x59C5
+			mov r1, #0x49C5
+			mov r2, #0x59C5
 			b sc_out
 sc_0x49C6:
-			mov r4, #0x49C6
-			mov r5, #0x59C6
+			mov r1, #0x49C6
+			mov r2, #0x59C6
 			b sc_out
 sc_0x49C7:
-			mov r4, #0x49C7
-			mov r5, #0x59C7
+			mov r1, #0x49C7
+			mov r2, #0x59C7
 			b sc_out
 sc_0x49C8:
-			mov r4, #0x49C8
-			mov r5, #0x59C8
+			mov r1, #0x49C8
+			mov r2, #0x59C8
 			b sc_out
 sc_0x49C9:
-			mov r4, #0x49C9
-			mov r5, #0x59C9
+			mov r1, #0x49C9
+			mov r2, #0x59C9
 			b sc_out
 sc_0x49CA:
-			mov r4, #0x49CA
-			mov r5, #0x59CA
+			mov r1, #0x49CA
+			mov r2, #0x59CA
 			b sc_out
 sc_0x49CB:
-			mov r4, #0x49CB
-			mov r5, #0x59CB
+			mov r1, #0x49CB
+			mov r2, #0x59CB
 			b sc_out
 sc_0x49CC:
-			mov r4, #0x49CC
-			mov r5, #0x59CC
+			mov r1, #0x49CC
+			mov r2, #0x59CC
 			b sc_out
 sc_0x49CD:
-			mov r4, #0x49CD
-			mov r5, #0x59CD
+			mov r1, #0x49CD
+			mov r2, #0x59CD
 			b sc_out
 sc_0x49CE:
-			mov r4, #0x49CE
-			mov r5, #0x59CE
+			mov r1, #0x49CE
+			mov r2, #0x59CE
 			b sc_out
 sc_0x49CF:
-			mov r4, #0x49CF
-			mov r5, #0x59CF
+			mov r1, #0x49CF
+			mov r2, #0x59CF
 			b sc_out
 sc_0x49D0:
-			mov r4, #0x49D0
-			mov r5, #0x59D0
+			mov r1, #0x49D0
+			mov r2, #0x59D0
 			b sc_out
 sc_0x49D1:
-			mov r4, #0x49D1
-			mov r5, #0x59D1
+			mov r1, #0x49D1
+			mov r2, #0x59D1
 			b sc_out
 sc_0x49D2:
-			mov r4, #0x49D2
-			mov r5, #0x59D2
+			mov r1, #0x49D2
+			mov r2, #0x59D2
 			b sc_out
 sc_0x49D3:
-			mov r4, #0x49D3
-			mov r5, #0x59D3
+			mov r1, #0x49D3
+			mov r2, #0x59D3
 			b sc_out
 sc_0x49D4:
-			mov r4, #0x49D4
-			mov r5, #0x59D4
+			mov r1, #0x49D4
+			mov r2, #0x59D4
 			b sc_out
 sc_0x49D5:
-			mov r4, #0x49D5
-			mov r5, #0x59D5
+			mov r1, #0x49D5
+			mov r2, #0x59D5
 			b sc_out
 sc_0x49D6:
-			mov r4, #0x49D6
-			mov r5, #0x59D6
+			mov r1, #0x49D6
+			mov r2, #0x59D6
 			b sc_out
 sc_0x49D7:
-			mov r4, #0x49D7
-			mov r5, #0x59D7
+			mov r1, #0x49D7
+			mov r2, #0x59D7
 			b sc_out
 sc_0x49D8:
-			mov r4, #0x49D8
-			mov r5, #0x59D8
+			mov r1, #0x49D8
+			mov r2, #0x59D8
 			b sc_out
 sc_0x49D9:
-			mov r4, #0x49D9
-			mov r5, #0x59D9
+			mov r1, #0x49D9
+			mov r2, #0x59D9
 			b sc_out
 sc_0x49DA:
-			mov r4, #0x49DA
-			mov r5, #0x59DA
+			mov r1, #0x49DA
+			mov r2, #0x59DA
 			b sc_out
 sc_0x49DB:
-			mov r4, #0x49DB
-			mov r5, #0x59DB
+			mov r1, #0x49DB
+			mov r2, #0x59DB
 			b sc_out
 sc_0x49DC:
-			mov r4, #0x49DC
-			mov r5, #0x59DC
+			mov r1, #0x49DC
+			mov r2, #0x59DC
 			b sc_out
 sc_0x49DD:
-			mov r4, #0x49DD
-			mov r5, #0x59DD
+			mov r1, #0x49DD
+			mov r2, #0x59DD
 			b sc_out
 sc_0x49DE:
-			mov r4, #0x49DE
-			mov r5, #0x59DE
+			mov r1, #0x49DE
+			mov r2, #0x59DE
 			b sc_out
 sc_0x49DF:
-			mov r4, #0x49DF
-			mov r5, #0x59DF
+			mov r1, #0x49DF
+			mov r2, #0x59DF
 			b sc_out
 sc_0x4AC0:
-			mov r4, #0x4AC0
-			mov r5, #0x59C0
+			mov r1, #0x4AC0
+			mov r2, #0x59C0
 			b sc_out
 sc_0x4AC1:
-			mov r4, #0x4AC1
-			mov r5, #0x59C1
+			mov r1, #0x4AC1
+			mov r2, #0x59C1
 			b sc_out
 sc_0x4AC2:
-			mov r4, #0x4AC2
-			mov r5, #0x59C2
+			mov r1, #0x4AC2
+			mov r2, #0x59C2
 			b sc_out
 sc_0x4AC3:
-			mov r4, #0x4AC3
-			mov r5, #0x59C3
+			mov r1, #0x4AC3
+			mov r2, #0x59C3
 			b sc_out
 sc_0x4AC4:
-			mov r4, #0x4AC4
-			mov r5, #0x59C4
+			mov r1, #0x4AC4
+			mov r2, #0x59C4
 			b sc_out
 sc_0x4AC5:
-			mov r4, #0x4AC5
-			mov r5, #0x59C5
+			mov r1, #0x4AC5
+			mov r2, #0x59C5
 			b sc_out
 sc_0x4AC6:
-			mov r4, #0x4AC6
-			mov r5, #0x59C6
+			mov r1, #0x4AC6
+			mov r2, #0x59C6
 			b sc_out
 sc_0x4AC7:
-			mov r4, #0x4AC7
-			mov r5, #0x59C7
+			mov r1, #0x4AC7
+			mov r2, #0x59C7
 			b sc_out
 sc_0x4AC8:
-			mov r4, #0x4AC8
-			mov r5, #0x59C8
+			mov r1, #0x4AC8
+			mov r2, #0x59C8
 			b sc_out
 sc_0x4AC9:
-			mov r4, #0x4AC9
-			mov r5, #0x59C9
+			mov r1, #0x4AC9
+			mov r2, #0x59C9
 			b sc_out
 sc_0x4ACA:
-			mov r4, #0x4ACA
-			mov r5, #0x59CA
+			mov r1, #0x4ACA
+			mov r2, #0x59CA
 			b sc_out
 sc_0x4ACB:
-			mov r4, #0x4ACB
-			mov r5, #0x59CB
+			mov r1, #0x4ACB
+			mov r2, #0x59CB
 			b sc_out
 sc_0x4ACC:
-			mov r4, #0x4ACC
-			mov r5, #0x59CC
+			mov r1, #0x4ACC
+			mov r2, #0x59CC
 			b sc_out
 sc_0x4ACD:
-			mov r4, #0x4ACD
-			mov r5, #0x59CD
+			mov r1, #0x4ACD
+			mov r2, #0x59CD
 			b sc_out
 sc_0x4ACE:
-			mov r4, #0x4ACE
-			mov r5, #0x59CE
+			mov r1, #0x4ACE
+			mov r2, #0x59CE
 			b sc_out
 sc_0x4ACF:
-			mov r4, #0x4ACF
-			mov r5, #0x59CF
+			mov r1, #0x4ACF
+			mov r2, #0x59CF
 			b sc_out
 sc_0x4AD0:
-			mov r4, #0x4AD0
-			mov r5, #0x59D0
+			mov r1, #0x4AD0
+			mov r2, #0x59D0
 			b sc_out
 sc_0x4AD1:
-			mov r4, #0x4AD1
-			mov r5, #0x59D1
+			mov r1, #0x4AD1
+			mov r2, #0x59D1
 			b sc_out
 sc_0x4AD2:
-			mov r4, #0x4AD2
-			mov r5, #0x59D2
+			mov r1, #0x4AD2
+			mov r2, #0x59D2
 			b sc_out
 sc_0x4AD3:
-			mov r4, #0x4AD3
-			mov r5, #0x59D3
+			mov r1, #0x4AD3
+			mov r2, #0x59D3
 			b sc_out
 sc_0x4AD4:
-			mov r4, #0x4AD4
-			mov r5, #0x59D4
+			mov r1, #0x4AD4
+			mov r2, #0x59D4
 			b sc_out
 sc_0x4AD5:
-			mov r4, #0x4AD5
-			mov r5, #0x59D5
+			mov r1, #0x4AD5
+			mov r2, #0x59D5
 			b sc_out
 sc_0x4AD6:
-			mov r4, #0x4AD6
-			mov r5, #0x59D6
+			mov r1, #0x4AD6
+			mov r2, #0x59D6
 			b sc_out
 sc_0x4AD7:
-			mov r4, #0x4AD7
-			mov r5, #0x59D7
+			mov r1, #0x4AD7
+			mov r2, #0x59D7
 			b sc_out
 sc_0x4AD8:
-			mov r4, #0x4AD8
-			mov r5, #0x59D8
+			mov r1, #0x4AD8
+			mov r2, #0x59D8
 			b sc_out
 sc_0x4AD9:
-			mov r4, #0x4AD9
-			mov r5, #0x59D9
+			mov r1, #0x4AD9
+			mov r2, #0x59D9
 			b sc_out
 sc_0x4ADA:
-			mov r4, #0x4ADA
-			mov r5, #0x59DA
+			mov r1, #0x4ADA
+			mov r2, #0x59DA
 			b sc_out
 sc_0x4ADB:
-			mov r4, #0x4ADB
-			mov r5, #0x59DB
+			mov r1, #0x4ADB
+			mov r2, #0x59DB
 			b sc_out
 sc_0x4ADC:
-			mov r4, #0x4ADC
-			mov r5, #0x59DC
+			mov r1, #0x4ADC
+			mov r2, #0x59DC
 			b sc_out
 sc_0x4ADD:
-			mov r4, #0x4ADD
-			mov r5, #0x59DD
+			mov r1, #0x4ADD
+			mov r2, #0x59DD
 			b sc_out
 sc_0x4ADE:
-			mov r4, #0x4ADE
-			mov r5, #0x59DE
+			mov r1, #0x4ADE
+			mov r2, #0x59DE
 			b sc_out
 sc_0x4ADF:
-			mov r4, #0x4ADF
-			mov r5, #0x59DF
+			mov r1, #0x4ADF
+			mov r2, #0x59DF
 			b sc_out
 sc_0x4BC0:
-			mov r4, #0x4BC0
-			mov r5, #0x59C0
+			mov r1, #0x4BC0
+			mov r2, #0x59C0
 			b sc_out
 sc_0x4BC1:
-			mov r4, #0x4BC1
-			mov r5, #0x59C1
+			mov r1, #0x4BC1
+			mov r2, #0x59C1
 			b sc_out
 sc_0x4BC2:
-			mov r4, #0x4BC2
-			mov r5, #0x59C2
+			mov r1, #0x4BC2
+			mov r2, #0x59C2
 			b sc_out
 sc_0x4BC3:
-			mov r4, #0x4BC3
-			mov r5, #0x59C3
+			mov r1, #0x4BC3
+			mov r2, #0x59C3
 			b sc_out
 sc_0x4BC4:
-			mov r4, #0x4BC4
-			mov r5, #0x59C4
+			mov r1, #0x4BC4
+			mov r2, #0x59C4
 			b sc_out
 sc_0x4BC5:
-			mov r4, #0x4BC5
-			mov r5, #0x59C5
+			mov r1, #0x4BC5
+			mov r2, #0x59C5
 			b sc_out
 sc_0x4BC6:
-			mov r4, #0x4BC6
-			mov r5, #0x59C6
+			mov r1, #0x4BC6
+			mov r2, #0x59C6
 			b sc_out
 sc_0x4BC7:
-			mov r4, #0x4BC7
-			mov r5, #0x59C7
+			mov r1, #0x4BC7
+			mov r2, #0x59C7
 			b sc_out
 sc_0x4BC8:
-			mov r4, #0x4BC8
-			mov r5, #0x59C8
+			mov r1, #0x4BC8
+			mov r2, #0x59C8
 			b sc_out
 sc_0x4BC9:
-			mov r4, #0x4BC9
-			mov r5, #0x59C9
+			mov r1, #0x4BC9
+			mov r2, #0x59C9
 			b sc_out
 sc_0x4BCA:
-			mov r4, #0x4BCA
-			mov r5, #0x59CA
+			mov r1, #0x4BCA
+			mov r2, #0x59CA
 			b sc_out
 sc_0x4BCB:
-			mov r4, #0x4BCB
-			mov r5, #0x59CB
+			mov r1, #0x4BCB
+			mov r2, #0x59CB
 			b sc_out
 sc_0x4BCC:
-			mov r4, #0x4BCC
-			mov r5, #0x59CC
+			mov r1, #0x4BCC
+			mov r2, #0x59CC
 			b sc_out
 sc_0x4BCD:
-			mov r4, #0x4BCD
-			mov r5, #0x59CD
+			mov r1, #0x4BCD
+			mov r2, #0x59CD
 			b sc_out
 sc_0x4BCE:
-			mov r4, #0x4BCE
-			mov r5, #0x59CE
+			mov r1, #0x4BCE
+			mov r2, #0x59CE
 			b sc_out
 sc_0x4BCF:
-			mov r4, #0x4BCF
-			mov r5, #0x59CF
+			mov r1, #0x4BCF
+			mov r2, #0x59CF
 			b sc_out
 sc_0x4BD0:
-			mov r4, #0x4BD0
-			mov r5, #0x59D0
+			mov r1, #0x4BD0
+			mov r2, #0x59D0
 			b sc_out
 sc_0x4BD1:
-			mov r4, #0x4BD1
-			mov r5, #0x59D1
+			mov r1, #0x4BD1
+			mov r2, #0x59D1
 			b sc_out
 sc_0x4BD2:
-			mov r4, #0x4BD2
-			mov r5, #0x59D2
+			mov r1, #0x4BD2
+			mov r2, #0x59D2
 			b sc_out
 sc_0x4BD3:
-			mov r4, #0x4BD3
-			mov r5, #0x59D3
+			mov r1, #0x4BD3
+			mov r2, #0x59D3
 			b sc_out
 sc_0x4BD4:
-			mov r4, #0x4BD4
-			mov r5, #0x59D4
+			mov r1, #0x4BD4
+			mov r2, #0x59D4
 			b sc_out
 sc_0x4BD5:
-			mov r4, #0x4BD5
-			mov r5, #0x59D5
+			mov r1, #0x4BD5
+			mov r2, #0x59D5
 			b sc_out
 sc_0x4BD6:
-			mov r4, #0x4BD6
-			mov r5, #0x59D6
+			mov r1, #0x4BD6
+			mov r2, #0x59D6
 			b sc_out
 sc_0x4BD7:
-			mov r4, #0x4BD7
-			mov r5, #0x59D7
+			mov r1, #0x4BD7
+			mov r2, #0x59D7
 			b sc_out
 sc_0x4BD8:
-			mov r4, #0x4BD8
-			mov r5, #0x59D8
+			mov r1, #0x4BD8
+			mov r2, #0x59D8
 			b sc_out
 sc_0x4BD9:
-			mov r4, #0x4BD9
-			mov r5, #0x59D9
+			mov r1, #0x4BD9
+			mov r2, #0x59D9
 			b sc_out
 sc_0x4BDA:
-			mov r4, #0x4BDA
-			mov r5, #0x59DA
+			mov r1, #0x4BDA
+			mov r2, #0x59DA
 			b sc_out
 sc_0x4BDB:
-			mov r4, #0x4BDB
-			mov r5, #0x59DB
+			mov r1, #0x4BDB
+			mov r2, #0x59DB
 			b sc_out
 sc_0x4BDC:
-			mov r4, #0x4BDC
-			mov r5, #0x59DC
+			mov r1, #0x4BDC
+			mov r2, #0x59DC
 			b sc_out
 sc_0x4BDD:
-			mov r4, #0x4BDD
-			mov r5, #0x59DD
+			mov r1, #0x4BDD
+			mov r2, #0x59DD
 			b sc_out
 sc_0x4BDE:
-			mov r4, #0x4BDE
-			mov r5, #0x59DE
+			mov r1, #0x4BDE
+			mov r2, #0x59DE
 			b sc_out
 sc_0x4BDF:
-			mov r4, #0x4BDF
-			mov r5, #0x59DF
+			mov r1, #0x4BDF
+			mov r2, #0x59DF
 			b sc_out
 sc_0x4CC0:
-			mov r4, #0x4CC0
-			mov r5, #0x59C0
+			mov r1, #0x4CC0
+			mov r2, #0x59C0
 			b sc_out
 sc_0x4CC1:
-			mov r4, #0x4CC1
-			mov r5, #0x59C1
+			mov r1, #0x4CC1
+			mov r2, #0x59C1
 			b sc_out
 sc_0x4CC2:
-			mov r4, #0x4CC2
-			mov r5, #0x59C2
+			mov r1, #0x4CC2
+			mov r2, #0x59C2
 			b sc_out
 sc_0x4CC3:
-			mov r4, #0x4CC3
-			mov r5, #0x59C3
+			mov r1, #0x4CC3
+			mov r2, #0x59C3
 			b sc_out
 sc_0x4CC4:
-			mov r4, #0x4CC4
-			mov r5, #0x59C4
+			mov r1, #0x4CC4
+			mov r2, #0x59C4
 			b sc_out
 sc_0x4CC5:
-			mov r4, #0x4CC5
-			mov r5, #0x59C5
+			mov r1, #0x4CC5
+			mov r2, #0x59C5
 			b sc_out
 sc_0x4CC6:
-			mov r4, #0x4CC6
-			mov r5, #0x59C6
+			mov r1, #0x4CC6
+			mov r2, #0x59C6
 			b sc_out
 sc_0x4CC7:
-			mov r4, #0x4CC7
-			mov r5, #0x59C7
+			mov r1, #0x4CC7
+			mov r2, #0x59C7
 			b sc_out
 sc_0x4CC8:
-			mov r4, #0x4CC8
-			mov r5, #0x59C8
+			mov r1, #0x4CC8
+			mov r2, #0x59C8
 			b sc_out
 sc_0x4CC9:
-			mov r4, #0x4CC9
-			mov r5, #0x59C9
+			mov r1, #0x4CC9
+			mov r2, #0x59C9
 			b sc_out
 sc_0x4CCA:
-			mov r4, #0x4CCA
-			mov r5, #0x59CA
+			mov r1, #0x4CCA
+			mov r2, #0x59CA
 			b sc_out
 sc_0x4CCB:
-			mov r4, #0x4CCB
-			mov r5, #0x59CB
+			mov r1, #0x4CCB
+			mov r2, #0x59CB
 			b sc_out
 sc_0x4CCC:
-			mov r4, #0x4CCC
-			mov r5, #0x59CC
+			mov r1, #0x4CCC
+			mov r2, #0x59CC
 			b sc_out
 sc_0x4CCD:
-			mov r4, #0x4CCD
-			mov r5, #0x59CD
+			mov r1, #0x4CCD
+			mov r2, #0x59CD
 			b sc_out
 sc_0x4CCE:
-			mov r4, #0x4CCE
-			mov r5, #0x59CE
+			mov r1, #0x4CCE
+			mov r2, #0x59CE
 			b sc_out
 sc_0x4CCF:
-			mov r4, #0x4CCF
-			mov r5, #0x59CF
+			mov r1, #0x4CCF
+			mov r2, #0x59CF
 			b sc_out
 sc_0x4CD0:
-			mov r4, #0x4CD0
-			mov r5, #0x59D0
+			mov r1, #0x4CD0
+			mov r2, #0x59D0
 			b sc_out
 sc_0x4CD1:
-			mov r4, #0x4CD1
-			mov r5, #0x59D1
+			mov r1, #0x4CD1
+			mov r2, #0x59D1
 			b sc_out
 sc_0x4CD2:
-			mov r4, #0x4CD2
-			mov r5, #0x59D2
+			mov r1, #0x4CD2
+			mov r2, #0x59D2
 			b sc_out
 sc_0x4CD3:
-			mov r4, #0x4CD3
-			mov r5, #0x59D3
+			mov r1, #0x4CD3
+			mov r2, #0x59D3
 			b sc_out
 sc_0x4CD4:
-			mov r4, #0x4CD4
-			mov r5, #0x59D4
+			mov r1, #0x4CD4
+			mov r2, #0x59D4
 			b sc_out
 sc_0x4CD5:
-			mov r4, #0x4CD5
-			mov r5, #0x59D5
+			mov r1, #0x4CD5
+			mov r2, #0x59D5
 			b sc_out
 sc_0x4CD6:
-			mov r4, #0x4CD6
-			mov r5, #0x59D6
+			mov r1, #0x4CD6
+			mov r2, #0x59D6
 			b sc_out
 sc_0x4CD7:
-			mov r4, #0x4CD7
-			mov r5, #0x59D7
+			mov r1, #0x4CD7
+			mov r2, #0x59D7
 			b sc_out
 sc_0x4CD8:
-			mov r4, #0x4CD8
-			mov r5, #0x59D8
+			mov r1, #0x4CD8
+			mov r2, #0x59D8
 			b sc_out
 sc_0x4CD9:
-			mov r4, #0x4CD9
-			mov r5, #0x59D9
+			mov r1, #0x4CD9
+			mov r2, #0x59D9
 			b sc_out
 sc_0x4CDA:
-			mov r4, #0x4CDA
-			mov r5, #0x59DA
+			mov r1, #0x4CDA
+			mov r2, #0x59DA
 			b sc_out
 sc_0x4CDB:
-			mov r4, #0x4CDB
-			mov r5, #0x59DB
+			mov r1, #0x4CDB
+			mov r2, #0x59DB
 			b sc_out
 sc_0x4CDC:
-			mov r4, #0x4CDC
-			mov r5, #0x59DC
+			mov r1, #0x4CDC
+			mov r2, #0x59DC
 			b sc_out
 sc_0x4CDD:
-			mov r4, #0x4CDD
-			mov r5, #0x59DD
+			mov r1, #0x4CDD
+			mov r2, #0x59DD
 			b sc_out
 sc_0x4CDE:
-			mov r4, #0x4CDE
-			mov r5, #0x59DE
+			mov r1, #0x4CDE
+			mov r2, #0x59DE
 			b sc_out
 sc_0x4CDF:
-			mov r4, #0x4CDF
-			mov r5, #0x59DF
+			mov r1, #0x4CDF
+			mov r2, #0x59DF
 			b sc_out
 sc_0x4DC0:
-			mov r4, #0x4DC0
-			mov r5, #0x59C0
+			mov r1, #0x4DC0
+			mov r2, #0x59C0
 			b sc_out
 sc_0x4DC1:
-			mov r4, #0x4DC1
-			mov r5, #0x59C1
+			mov r1, #0x4DC1
+			mov r2, #0x59C1
 			b sc_out
 sc_0x4DC2:
-			mov r4, #0x4DC2
-			mov r5, #0x59C2
+			mov r1, #0x4DC2
+			mov r2, #0x59C2
 			b sc_out
 sc_0x4DC3:
-			mov r4, #0x4DC3
-			mov r5, #0x59C3
+			mov r1, #0x4DC3
+			mov r2, #0x59C3
 			b sc_out
 sc_0x4DC4:
-			mov r4, #0x4DC4
-			mov r5, #0x59C4
+			mov r1, #0x4DC4
+			mov r2, #0x59C4
 			b sc_out
 sc_0x4DC5:
-			mov r4, #0x4DC5
-			mov r5, #0x59C5
+			mov r1, #0x4DC5
+			mov r2, #0x59C5
 			b sc_out
 sc_0x4DC6:
-			mov r4, #0x4DC6
-			mov r5, #0x59C6
+			mov r1, #0x4DC6
+			mov r2, #0x59C6
 			b sc_out
 sc_0x4DC7:
-			mov r4, #0x4DC7
-			mov r5, #0x59C7
+			mov r1, #0x4DC7
+			mov r2, #0x59C7
 			b sc_out
 sc_0x4DC8:
-			mov r4, #0x4DC8
-			mov r5, #0x59C8
+			mov r1, #0x4DC8
+			mov r2, #0x59C8
 			b sc_out
 sc_0x4DC9:
-			mov r4, #0x4DC9
-			mov r5, #0x59C9
+			mov r1, #0x4DC9
+			mov r2, #0x59C9
 			b sc_out
 sc_0x4DCA:
-			mov r4, #0x4DCA
-			mov r5, #0x59CA
+			mov r1, #0x4DCA
+			mov r2, #0x59CA
 			b sc_out
 sc_0x4DCB:
-			mov r4, #0x4DCB
-			mov r5, #0x59CB
+			mov r1, #0x4DCB
+			mov r2, #0x59CB
 			b sc_out
 sc_0x4DCC:
-			mov r4, #0x4DCC
-			mov r5, #0x59CC
+			mov r1, #0x4DCC
+			mov r2, #0x59CC
 			b sc_out
 sc_0x4DCD:
-			mov r4, #0x4DCD
-			mov r5, #0x59CD
+			mov r1, #0x4DCD
+			mov r2, #0x59CD
 			b sc_out
 sc_0x4DCE:
-			mov r4, #0x4DCE
-			mov r5, #0x59CE
+			mov r1, #0x4DCE
+			mov r2, #0x59CE
 			b sc_out
 sc_0x4DCF:
-			mov r4, #0x4DCF
-			mov r5, #0x59CF
+			mov r1, #0x4DCF
+			mov r2, #0x59CF
 			b sc_out
 sc_0x4DD0:
-			mov r4, #0x4DD0
-			mov r5, #0x59D0
+			mov r1, #0x4DD0
+			mov r2, #0x59D0
 			b sc_out
 sc_0x4DD1:
-			mov r4, #0x4DD1
-			mov r5, #0x59D1
+			mov r1, #0x4DD1
+			mov r2, #0x59D1
 			b sc_out
 sc_0x4DD2:
-			mov r4, #0x4DD2
-			mov r5, #0x59D2
+			mov r1, #0x4DD2
+			mov r2, #0x59D2
 			b sc_out
 sc_0x4DD3:
-			mov r4, #0x4DD3
-			mov r5, #0x59D3
+			mov r1, #0x4DD3
+			mov r2, #0x59D3
 			b sc_out
 sc_0x4DD4:
-			mov r4, #0x4DD4
-			mov r5, #0x59D4
+			mov r1, #0x4DD4
+			mov r2, #0x59D4
 			b sc_out
 sc_0x4DD5:
-			mov r4, #0x4DD5
-			mov r5, #0x59D5
+			mov r1, #0x4DD5
+			mov r2, #0x59D5
 			b sc_out
 sc_0x4DD6:
-			mov r4, #0x4DD6
-			mov r5, #0x59D6
+			mov r1, #0x4DD6
+			mov r2, #0x59D6
 			b sc_out
 sc_0x4DD7:
-			mov r4, #0x4DD7
-			mov r5, #0x59D7
+			mov r1, #0x4DD7
+			mov r2, #0x59D7
 			b sc_out
 sc_0x4DD8:
-			mov r4, #0x4DD8
-			mov r5, #0x59D8
+			mov r1, #0x4DD8
+			mov r2, #0x59D8
 			b sc_out
 sc_0x4DD9:
-			mov r4, #0x4DD9
-			mov r5, #0x59D9
+			mov r1, #0x4DD9
+			mov r2, #0x59D9
 			b sc_out
 sc_0x4DDA:
-			mov r4, #0x4DDA
-			mov r5, #0x59DA
+			mov r1, #0x4DDA
+			mov r2, #0x59DA
 			b sc_out
 sc_0x4DDB:
-			mov r4, #0x4DDB
-			mov r5, #0x59DB
+			mov r1, #0x4DDB
+			mov r2, #0x59DB
 			b sc_out
 sc_0x4DDC:
-			mov r4, #0x4DDC
-			mov r5, #0x59DC
+			mov r1, #0x4DDC
+			mov r2, #0x59DC
 			b sc_out
 sc_0x4DDD:
-			mov r4, #0x4DDD
-			mov r5, #0x59DD
+			mov r1, #0x4DDD
+			mov r2, #0x59DD
 			b sc_out
 sc_0x4DDE:
-			mov r4, #0x4DDE
-			mov r5, #0x59DE
+			mov r1, #0x4DDE
+			mov r2, #0x59DE
 			b sc_out
 sc_0x4DDF:
-			mov r4, #0x4DDF
-			mov r5, #0x59DF
+			mov r1, #0x4DDF
+			mov r2, #0x59DF
 			b sc_out
 sc_0x4EC0:
-			mov r4, #0x4EC0
-			mov r5, #0x59C0
+			mov r1, #0x4EC0
+			mov r2, #0x59C0
 			b sc_out
 sc_0x4EC1:
-			mov r4, #0x4EC1
-			mov r5, #0x59C1
+			mov r1, #0x4EC1
+			mov r2, #0x59C1
 			b sc_out
 sc_0x4EC2:
-			mov r4, #0x4EC2
-			mov r5, #0x59C2
+			mov r1, #0x4EC2
+			mov r2, #0x59C2
 			b sc_out
 sc_0x4EC3:
-			mov r4, #0x4EC3
-			mov r5, #0x59C3
+			mov r1, #0x4EC3
+			mov r2, #0x59C3
 			b sc_out
 sc_0x4EC4:
-			mov r4, #0x4EC4
-			mov r5, #0x59C4
+			mov r1, #0x4EC4
+			mov r2, #0x59C4
 			b sc_out
 sc_0x4EC5:
-			mov r4, #0x4EC5
-			mov r5, #0x59C5
+			mov r1, #0x4EC5
+			mov r2, #0x59C5
 			b sc_out
 sc_0x4EC6:
-			mov r4, #0x4EC6
-			mov r5, #0x59C6
+			mov r1, #0x4EC6
+			mov r2, #0x59C6
 			b sc_out
 sc_0x4EC7:
-			mov r4, #0x4EC7
-			mov r5, #0x59C7
+			mov r1, #0x4EC7
+			mov r2, #0x59C7
 			b sc_out
 sc_0x4EC8:
-			mov r4, #0x4EC8
-			mov r5, #0x59C8
+			mov r1, #0x4EC8
+			mov r2, #0x59C8
 			b sc_out
 sc_0x4EC9:
-			mov r4, #0x4EC9
-			mov r5, #0x59C9
+			mov r1, #0x4EC9
+			mov r2, #0x59C9
 			b sc_out
 sc_0x4ECA:
-			mov r4, #0x4ECA
-			mov r5, #0x59CA
+			mov r1, #0x4ECA
+			mov r2, #0x59CA
 			b sc_out
 sc_0x4ECB:
-			mov r4, #0x4ECB
-			mov r5, #0x59CB
+			mov r1, #0x4ECB
+			mov r2, #0x59CB
 			b sc_out
 sc_0x4ECC:
-			mov r4, #0x4ECC
-			mov r5, #0x59CC
+			mov r1, #0x4ECC
+			mov r2, #0x59CC
 			b sc_out
 sc_0x4ECD:
-			mov r4, #0x4ECD
-			mov r5, #0x59CD
+			mov r1, #0x4ECD
+			mov r2, #0x59CD
 			b sc_out
 sc_0x4ECE:
-			mov r4, #0x4ECE
-			mov r5, #0x59CE
+			mov r1, #0x4ECE
+			mov r2, #0x59CE
 			b sc_out
 sc_0x4ECF:
-			mov r4, #0x4ECF
-			mov r5, #0x59CF
+			mov r1, #0x4ECF
+			mov r2, #0x59CF
 			b sc_out
 sc_0x4ED0:
-			mov r4, #0x4ED0
-			mov r5, #0x59D0
+			mov r1, #0x4ED0
+			mov r2, #0x59D0
 			b sc_out
 sc_0x4ED1:
-			mov r4, #0x4ED1
-			mov r5, #0x59D1
+			mov r1, #0x4ED1
+			mov r2, #0x59D1
 			b sc_out
 sc_0x4ED2:
-			mov r4, #0x4ED2
-			mov r5, #0x59D2
+			mov r1, #0x4ED2
+			mov r2, #0x59D2
 			b sc_out
 sc_0x4ED3:
-			mov r4, #0x4ED3
-			mov r5, #0x59D3
+			mov r1, #0x4ED3
+			mov r2, #0x59D3
 			b sc_out
 sc_0x4ED4:
-			mov r4, #0x4ED4
-			mov r5, #0x59D4
+			mov r1, #0x4ED4
+			mov r2, #0x59D4
 			b sc_out
 sc_0x4ED5:
-			mov r4, #0x4ED5
-			mov r5, #0x59D5
+			mov r1, #0x4ED5
+			mov r2, #0x59D5
 			b sc_out
 sc_0x4ED6:
-			mov r4, #0x4ED6
-			mov r5, #0x59D6
+			mov r1, #0x4ED6
+			mov r2, #0x59D6
 			b sc_out
 sc_0x4ED7:
-			mov r4, #0x4ED7
-			mov r5, #0x59D7
+			mov r1, #0x4ED7
+			mov r2, #0x59D7
 			b sc_out
 sc_0x4ED8:
-			mov r4, #0x4ED8
-			mov r5, #0x59D8
+			mov r1, #0x4ED8
+			mov r2, #0x59D8
 			b sc_out
 sc_0x4ED9:
-			mov r4, #0x4ED9
-			mov r5, #0x59D9
+			mov r1, #0x4ED9
+			mov r2, #0x59D9
 			b sc_out
 sc_0x4EDA:
-			mov r4, #0x4EDA
-			mov r5, #0x59DA
+			mov r1, #0x4EDA
+			mov r2, #0x59DA
 			b sc_out
 sc_0x4EDB:
-			mov r4, #0x4EDB
-			mov r5, #0x59DB
+			mov r1, #0x4EDB
+			mov r2, #0x59DB
 			b sc_out
 sc_0x4EDC:
-			mov r4, #0x4EDC
-			mov r5, #0x59DC
+			mov r1, #0x4EDC
+			mov r2, #0x59DC
 			b sc_out
 sc_0x4EDD:
-			mov r4, #0x4EDD
-			mov r5, #0x59DD
+			mov r1, #0x4EDD
+			mov r2, #0x59DD
 			b sc_out
 sc_0x4EDE:
-			mov r4, #0x4EDE
-			mov r5, #0x59DE
+			mov r1, #0x4EDE
+			mov r2, #0x59DE
 			b sc_out
 sc_0x4EDF:
-			mov r4, #0x4EDF
-			mov r5, #0x59DF
+			mov r1, #0x4EDF
+			mov r2, #0x59DF
 			b sc_out
 sc_0x4FC0:
-			mov r4, #0x4FC0
-			mov r5, #0x59C0
+			mov r1, #0x4FC0
+			mov r2, #0x59C0
 			b sc_out
 sc_0x4FC1:
-			mov r4, #0x4FC1
-			mov r5, #0x59C1
+			mov r1, #0x4FC1
+			mov r2, #0x59C1
 			b sc_out
 sc_0x4FC2:
-			mov r4, #0x4FC2
-			mov r5, #0x59C2
+			mov r1, #0x4FC2
+			mov r2, #0x59C2
 			b sc_out
 sc_0x4FC3:
-			mov r4, #0x4FC3
-			mov r5, #0x59C3
+			mov r1, #0x4FC3
+			mov r2, #0x59C3
 			b sc_out
 sc_0x4FC4:
-			mov r4, #0x4FC4
-			mov r5, #0x59C4
+			mov r1, #0x4FC4
+			mov r2, #0x59C4
 			b sc_out
 sc_0x4FC5:
-			mov r4, #0x4FC5
-			mov r5, #0x59C5
+			mov r1, #0x4FC5
+			mov r2, #0x59C5
 			b sc_out
 sc_0x4FC6:
-			mov r4, #0x4FC6
-			mov r5, #0x59C6
+			mov r1, #0x4FC6
+			mov r2, #0x59C6
 			b sc_out
 sc_0x4FC7:
-			mov r4, #0x4FC7
-			mov r5, #0x59C7
+			mov r1, #0x4FC7
+			mov r2, #0x59C7
 			b sc_out
 sc_0x4FC8:
-			mov r4, #0x4FC8
-			mov r5, #0x59C8
+			mov r1, #0x4FC8
+			mov r2, #0x59C8
 			b sc_out
 sc_0x4FC9:
-			mov r4, #0x4FC9
-			mov r5, #0x59C9
+			mov r1, #0x4FC9
+			mov r2, #0x59C9
 			b sc_out
 sc_0x4FCA:
-			mov r4, #0x4FCA
-			mov r5, #0x59CA
+			mov r1, #0x4FCA
+			mov r2, #0x59CA
 			b sc_out
 sc_0x4FCB:
-			mov r4, #0x4FCB
-			mov r5, #0x59CB
+			mov r1, #0x4FCB
+			mov r2, #0x59CB
 			b sc_out
 sc_0x4FCC:
-			mov r4, #0x4FCC
-			mov r5, #0x59CC
+			mov r1, #0x4FCC
+			mov r2, #0x59CC
 			b sc_out
 sc_0x4FCD:
-			mov r4, #0x4FCD
-			mov r5, #0x59CD
+			mov r1, #0x4FCD
+			mov r2, #0x59CD
 			b sc_out
 sc_0x4FCE:
-			mov r4, #0x4FCE
-			mov r5, #0x59CE
+			mov r1, #0x4FCE
+			mov r2, #0x59CE
 			b sc_out
 sc_0x4FCF:
-			mov r4, #0x4FCF
-			mov r5, #0x59CF
+			mov r1, #0x4FCF
+			mov r2, #0x59CF
 			b sc_out
 sc_0x4FD0:
-			mov r4, #0x4FD0
-			mov r5, #0x59D0
+			mov r1, #0x4FD0
+			mov r2, #0x59D0
 			b sc_out
 sc_0x4FD1:
-			mov r4, #0x4FD1
-			mov r5, #0x59D1
+			mov r1, #0x4FD1
+			mov r2, #0x59D1
 			b sc_out
 sc_0x4FD2:
-			mov r4, #0x4FD2
-			mov r5, #0x59D2
+			mov r1, #0x4FD2
+			mov r2, #0x59D2
 			b sc_out
 sc_0x4FD3:
-			mov r4, #0x4FD3
-			mov r5, #0x59D3
+			mov r1, #0x4FD3
+			mov r2, #0x59D3
 			b sc_out
 sc_0x4FD4:
-			mov r4, #0x4FD4
-			mov r5, #0x59D4
+			mov r1, #0x4FD4
+			mov r2, #0x59D4
 			b sc_out
 sc_0x4FD5:
-			mov r4, #0x4FD5
-			mov r5, #0x59D5
+			mov r1, #0x4FD5
+			mov r2, #0x59D5
 			b sc_out
 sc_0x4FD6:
-			mov r4, #0x4FD6
-			mov r5, #0x59D6
+			mov r1, #0x4FD6
+			mov r2, #0x59D6
 			b sc_out
 sc_0x4FD7:
-			mov r4, #0x4FD7
-			mov r5, #0x59D7
+			mov r1, #0x4FD7
+			mov r2, #0x59D7
 			b sc_out
 sc_0x4FD8:
-			mov r4, #0x4FD8
-			mov r5, #0x59D8
+			mov r1, #0x4FD8
+			mov r2, #0x59D8
 			b sc_out
 sc_0x4FD9:
-			mov r4, #0x4FD9
-			mov r5, #0x59D9
+			mov r1, #0x4FD9
+			mov r2, #0x59D9
 			b sc_out
 sc_0x4FDA:
-			mov r4, #0x4FDA
-			mov r5, #0x59DA
+			mov r1, #0x4FDA
+			mov r2, #0x59DA
 			b sc_out
 sc_0x4FDB:
-			mov r4, #0x4FDB
-			mov r5, #0x59DB
+			mov r1, #0x4FDB
+			mov r2, #0x59DB
 			b sc_out
 sc_0x4FDC:
-			mov r4, #0x4FDC
-			mov r5, #0x59DC
+			mov r1, #0x4FDC
+			mov r2, #0x59DC
 			b sc_out
 sc_0x4FDD:
-			mov r4, #0x4FDD
-			mov r5, #0x59DD
+			mov r1, #0x4FDD
+			mov r2, #0x59DD
 			b sc_out
 sc_0x4FDE:
-			mov r4, #0x4FDE
-			mov r5, #0x59DE
+			mov r1, #0x4FDE
+			mov r2, #0x59DE
 			b sc_out
 sc_0x4FDF:
-			mov r4, #0x4FDF
-			mov r5, #0x59DF
+			mov r1, #0x4FDF
+			mov r2, #0x59DF
 			b sc_out
 sc_0x48E0:
-			mov r4, #0x48E0
-			mov r5, #0x59E0
+			mov r1, #0x48E0
+			mov r2, #0x59E0
 			b sc_out
 sc_0x48E1:
-			mov r4, #0x48E1
-			mov r5, #0x59E1
+			mov r1, #0x48E1
+			mov r2, #0x59E1
 			b sc_out
 sc_0x48E2:
-			mov r4, #0x48E2
-			mov r5, #0x59E2
+			mov r1, #0x48E2
+			mov r2, #0x59E2
 			b sc_out
 sc_0x48E3:
-			mov r4, #0x48E3
-			mov r5, #0x59E3
+			mov r1, #0x48E3
+			mov r2, #0x59E3
 			b sc_out
 sc_0x48E4:
-			mov r4, #0x48E4
-			mov r5, #0x59E4
+			mov r1, #0x48E4
+			mov r2, #0x59E4
 			b sc_out
 sc_0x48E5:
-			mov r4, #0x48E5
-			mov r5, #0x59E5
+			mov r1, #0x48E5
+			mov r2, #0x59E5
 			b sc_out
 sc_0x48E6:
-			mov r4, #0x48E6
-			mov r5, #0x59E6
+			mov r1, #0x48E6
+			mov r2, #0x59E6
 			b sc_out
 sc_0x48E7:
-			mov r4, #0x48E7
-			mov r5, #0x59E7
+			mov r1, #0x48E7
+			mov r2, #0x59E7
 			b sc_out
 sc_0x48E8:
-			mov r4, #0x48E8
-			mov r5, #0x59E8
+			mov r1, #0x48E8
+			mov r2, #0x59E8
 			b sc_out
 sc_0x48E9:
-			mov r4, #0x48E9
-			mov r5, #0x59E9
+			mov r1, #0x48E9
+			mov r2, #0x59E9
 			b sc_out
 sc_0x48EA:
-			mov r4, #0x48EA
-			mov r5, #0x59EA
+			mov r1, #0x48EA
+			mov r2, #0x59EA
 			b sc_out
 sc_0x48EB:
-			mov r4, #0x48EB
-			mov r5, #0x59EB
+			mov r1, #0x48EB
+			mov r2, #0x59EB
 			b sc_out
 sc_0x48EC:
-			mov r4, #0x48EC
-			mov r5, #0x59EC
+			mov r1, #0x48EC
+			mov r2, #0x59EC
 			b sc_out
 sc_0x48ED:
-			mov r4, #0x48ED
-			mov r5, #0x59ED
+			mov r1, #0x48ED
+			mov r2, #0x59ED
 			b sc_out
 sc_0x48EE:
-			mov r4, #0x48EE
-			mov r5, #0x59EE
+			mov r1, #0x48EE
+			mov r2, #0x59EE
 			b sc_out
 sc_0x48EF:
-			mov r4, #0x48EF
-			mov r5, #0x59EF
+			mov r1, #0x48EF
+			mov r2, #0x59EF
 			b sc_out
 sc_0x48F0:
-			mov r4, #0x48F0
-			mov r5, #0x59F0
+			mov r1, #0x48F0
+			mov r2, #0x59F0
 			b sc_out
 sc_0x48F1:
-			mov r4, #0x48F1
-			mov r5, #0x59F1
+			mov r1, #0x48F1
+			mov r2, #0x59F1
 			b sc_out
 sc_0x48F2:
-			mov r4, #0x48F2
-			mov r5, #0x59F2
+			mov r1, #0x48F2
+			mov r2, #0x59F2
 			b sc_out
 sc_0x48F3:
-			mov r4, #0x48F3
-			mov r5, #0x59F3
+			mov r1, #0x48F3
+			mov r2, #0x59F3
 			b sc_out
 sc_0x48F4:
-			mov r4, #0x48F4
-			mov r5, #0x59F4
+			mov r1, #0x48F4
+			mov r2, #0x59F4
 			b sc_out
 sc_0x48F5:
-			mov r4, #0x48F5
-			mov r5, #0x59F5
+			mov r1, #0x48F5
+			mov r2, #0x59F5
 			b sc_out
 sc_0x48F6:
-			mov r4, #0x48F6
-			mov r5, #0x59F6
+			mov r1, #0x48F6
+			mov r2, #0x59F6
 			b sc_out
 sc_0x48F7:
-			mov r4, #0x48F7
-			mov r5, #0x59F7
+			mov r1, #0x48F7
+			mov r2, #0x59F7
 			b sc_out
 sc_0x48F8:
-			mov r4, #0x48F8
-			mov r5, #0x59F8
+			mov r1, #0x48F8
+			mov r2, #0x59F8
 			b sc_out
 sc_0x48F9:
-			mov r4, #0x48F9
-			mov r5, #0x59F9
+			mov r1, #0x48F9
+			mov r2, #0x59F9
 			b sc_out
 sc_0x48FA:
-			mov r4, #0x48FA
-			mov r5, #0x59FA
+			mov r1, #0x48FA
+			mov r2, #0x59FA
 			b sc_out
 sc_0x48FB:
-			mov r4, #0x48FB
-			mov r5, #0x59FB
+			mov r1, #0x48FB
+			mov r2, #0x59FB
 			b sc_out
 sc_0x48FC:
-			mov r4, #0x48FC
-			mov r5, #0x59FC
+			mov r1, #0x48FC
+			mov r2, #0x59FC
 			b sc_out
 sc_0x48FD:
-			mov r4, #0x48FD
-			mov r5, #0x59FD
+			mov r1, #0x48FD
+			mov r2, #0x59FD
 			b sc_out
 sc_0x48FE:
-			mov r4, #0x48FE
-			mov r5, #0x59FE
+			mov r1, #0x48FE
+			mov r2, #0x59FE
 			b sc_out
 sc_0x48FF:
-			mov r4, #0x48FF
-			mov r5, #0x59FF
+			mov r1, #0x48FF
+			mov r2, #0x59FF
 			b sc_out
 sc_0x49E0:
-			mov r4, #0x49E0
-			mov r5, #0x59E0
+			mov r1, #0x49E0
+			mov r2, #0x59E0
 			b sc_out
 sc_0x49E1:
-			mov r4, #0x49E1
-			mov r5, #0x59E1
+			mov r1, #0x49E1
+			mov r2, #0x59E1
 			b sc_out
 sc_0x49E2:
-			mov r4, #0x49E2
-			mov r5, #0x59E2
+			mov r1, #0x49E2
+			mov r2, #0x59E2
 			b sc_out
 sc_0x49E3:
-			mov r4, #0x49E3
-			mov r5, #0x59E3
+			mov r1, #0x49E3
+			mov r2, #0x59E3
 			b sc_out
 sc_0x49E4:
-			mov r4, #0x49E4
-			mov r5, #0x59E4
+			mov r1, #0x49E4
+			mov r2, #0x59E4
 			b sc_out
 sc_0x49E5:
-			mov r4, #0x49E5
-			mov r5, #0x59E5
+			mov r1, #0x49E5
+			mov r2, #0x59E5
 			b sc_out
 sc_0x49E6:
-			mov r4, #0x49E6
-			mov r5, #0x59E6
+			mov r1, #0x49E6
+			mov r2, #0x59E6
 			b sc_out
 sc_0x49E7:
-			mov r4, #0x49E7
-			mov r5, #0x59E7
+			mov r1, #0x49E7
+			mov r2, #0x59E7
 			b sc_out
 sc_0x49E8:
-			mov r4, #0x49E8
-			mov r5, #0x59E8
+			mov r1, #0x49E8
+			mov r2, #0x59E8
 			b sc_out
 sc_0x49E9:
-			mov r4, #0x49E9
-			mov r5, #0x59E9
+			mov r1, #0x49E9
+			mov r2, #0x59E9
 			b sc_out
 sc_0x49EA:
-			mov r4, #0x49EA
-			mov r5, #0x59EA
+			mov r1, #0x49EA
+			mov r2, #0x59EA
 			b sc_out
 sc_0x49EB:
-			mov r4, #0x49EB
-			mov r5, #0x59EB
+			mov r1, #0x49EB
+			mov r2, #0x59EB
 			b sc_out
 sc_0x49EC:
-			mov r4, #0x49EC
-			mov r5, #0x59EC
+			mov r1, #0x49EC
+			mov r2, #0x59EC
 			b sc_out
 sc_0x49ED:
-			mov r4, #0x49ED
-			mov r5, #0x59ED
+			mov r1, #0x49ED
+			mov r2, #0x59ED
 			b sc_out
 sc_0x49EE:
-			mov r4, #0x49EE
-			mov r5, #0x59EE
+			mov r1, #0x49EE
+			mov r2, #0x59EE
 			b sc_out
 sc_0x49EF:
-			mov r4, #0x49EF
-			mov r5, #0x59EF
+			mov r1, #0x49EF
+			mov r2, #0x59EF
 			b sc_out
 sc_0x49F0:
-			mov r4, #0x49F0
-			mov r5, #0x59F0
+			mov r1, #0x49F0
+			mov r2, #0x59F0
 			b sc_out
 sc_0x49F1:
-			mov r4, #0x49F1
-			mov r5, #0x59F1
+			mov r1, #0x49F1
+			mov r2, #0x59F1
 			b sc_out
 sc_0x49F2:
-			mov r4, #0x49F2
-			mov r5, #0x59F2
+			mov r1, #0x49F2
+			mov r2, #0x59F2
 			b sc_out
 sc_0x49F3:
-			mov r4, #0x49F3
-			mov r5, #0x59F3
+			mov r1, #0x49F3
+			mov r2, #0x59F3
 			b sc_out
 sc_0x49F4:
-			mov r4, #0x49F4
-			mov r5, #0x59F4
+			mov r1, #0x49F4
+			mov r2, #0x59F4
 			b sc_out
 sc_0x49F5:
-			mov r4, #0x49F5
-			mov r5, #0x59F5
+			mov r1, #0x49F5
+			mov r2, #0x59F5
 			b sc_out
 sc_0x49F6:
-			mov r4, #0x49F6
-			mov r5, #0x59F6
+			mov r1, #0x49F6
+			mov r2, #0x59F6
 			b sc_out
 sc_0x49F7:
-			mov r4, #0x49F7
-			mov r5, #0x59F7
+			mov r1, #0x49F7
+			mov r2, #0x59F7
 			b sc_out
 sc_0x49F8:
-			mov r4, #0x49F8
-			mov r5, #0x59F8
+			mov r1, #0x49F8
+			mov r2, #0x59F8
 			b sc_out
 sc_0x49F9:
-			mov r4, #0x49F9
-			mov r5, #0x59F9
+			mov r1, #0x49F9
+			mov r2, #0x59F9
 			b sc_out
 sc_0x49FA:
-			mov r4, #0x49FA
-			mov r5, #0x59FA
+			mov r1, #0x49FA
+			mov r2, #0x59FA
 			b sc_out
 sc_0x49FB:
-			mov r4, #0x49FB
-			mov r5, #0x59FB
+			mov r1, #0x49FB
+			mov r2, #0x59FB
 			b sc_out
 sc_0x49FC:
-			mov r4, #0x49FC
-			mov r5, #0x59FC
+			mov r1, #0x49FC
+			mov r2, #0x59FC
 			b sc_out
 sc_0x49FD:
-			mov r4, #0x49FD
-			mov r5, #0x59FD
+			mov r1, #0x49FD
+			mov r2, #0x59FD
 			b sc_out
 sc_0x49FE:
-			mov r4, #0x49FE
-			mov r5, #0x59FE
+			mov r1, #0x49FE
+			mov r2, #0x59FE
 			b sc_out
 sc_0x49FF:
-			mov r4, #0x49FF
-			mov r5, #0x59FF
+			mov r1, #0x49FF
+			mov r2, #0x59FF
 			b sc_out
 sc_0x4AE0:
-			mov r4, #0x4AE0
-			mov r5, #0x59E0
+			mov r1, #0x4AE0
+			mov r2, #0x59E0
 			b sc_out
 sc_0x4AE1:
-			mov r4, #0x4AE1
-			mov r5, #0x59E1
+			mov r1, #0x4AE1
+			mov r2, #0x59E1
 			b sc_out
 sc_0x4AE2:
-			mov r4, #0x4AE2
-			mov r5, #0x59E2
+			mov r1, #0x4AE2
+			mov r2, #0x59E2
 			b sc_out
 sc_0x4AE3:
-			mov r4, #0x4AE3
-			mov r5, #0x59E3
+			mov r1, #0x4AE3
+			mov r2, #0x59E3
 			b sc_out
 sc_0x4AE4:
-			mov r4, #0x4AE4
-			mov r5, #0x59E4
+			mov r1, #0x4AE4
+			mov r2, #0x59E4
 			b sc_out
 sc_0x4AE5:
-			mov r4, #0x4AE5
-			mov r5, #0x59E5
+			mov r1, #0x4AE5
+			mov r2, #0x59E5
 			b sc_out
 sc_0x4AE6:
-			mov r4, #0x4AE6
-			mov r5, #0x59E6
+			mov r1, #0x4AE6
+			mov r2, #0x59E6
 			b sc_out
 sc_0x4AE7:
-			mov r4, #0x4AE7
-			mov r5, #0x59E7
+			mov r1, #0x4AE7
+			mov r2, #0x59E7
 			b sc_out
 sc_0x4AE8:
-			mov r4, #0x4AE8
-			mov r5, #0x59E8
+			mov r1, #0x4AE8
+			mov r2, #0x59E8
 			b sc_out
 sc_0x4AE9:
-			mov r4, #0x4AE9
-			mov r5, #0x59E9
+			mov r1, #0x4AE9
+			mov r2, #0x59E9
 			b sc_out
 sc_0x4AEA:
-			mov r4, #0x4AEA
-			mov r5, #0x59EA
+			mov r1, #0x4AEA
+			mov r2, #0x59EA
 			b sc_out
 sc_0x4AEB:
-			mov r4, #0x4AEB
-			mov r5, #0x59EB
+			mov r1, #0x4AEB
+			mov r2, #0x59EB
 			b sc_out
 sc_0x4AEC:
-			mov r4, #0x4AEC
-			mov r5, #0x59EC
+			mov r1, #0x4AEC
+			mov r2, #0x59EC
 			b sc_out
 sc_0x4AED:
-			mov r4, #0x4AED
-			mov r5, #0x59ED
+			mov r1, #0x4AED
+			mov r2, #0x59ED
 			b sc_out
 sc_0x4AEE:
-			mov r4, #0x4AEE
-			mov r5, #0x59EE
+			mov r1, #0x4AEE
+			mov r2, #0x59EE
 			b sc_out
 sc_0x4AEF:
-			mov r4, #0x4AEF
-			mov r5, #0x59EF
+			mov r1, #0x4AEF
+			mov r2, #0x59EF
 			b sc_out
 sc_0x4AF0:
-			mov r4, #0x4AF0
-			mov r5, #0x59F0
+			mov r1, #0x4AF0
+			mov r2, #0x59F0
 			b sc_out
 sc_0x4AF1:
-			mov r4, #0x4AF1
-			mov r5, #0x59F1
+			mov r1, #0x4AF1
+			mov r2, #0x59F1
 			b sc_out
 sc_0x4AF2:
-			mov r4, #0x4AF2
-			mov r5, #0x59F2
+			mov r1, #0x4AF2
+			mov r2, #0x59F2
 			b sc_out
 sc_0x4AF3:
-			mov r4, #0x4AF3
-			mov r5, #0x59F3
+			mov r1, #0x4AF3
+			mov r2, #0x59F3
 			b sc_out
 sc_0x4AF4:
-			mov r4, #0x4AF4
-			mov r5, #0x59F4
+			mov r1, #0x4AF4
+			mov r2, #0x59F4
 			b sc_out
 sc_0x4AF5:
-			mov r4, #0x4AF5
-			mov r5, #0x59F5
+			mov r1, #0x4AF5
+			mov r2, #0x59F5
 			b sc_out
 sc_0x4AF6:
-			mov r4, #0x4AF6
-			mov r5, #0x59F6
+			mov r1, #0x4AF6
+			mov r2, #0x59F6
 			b sc_out
 sc_0x4AF7:
-			mov r4, #0x4AF7
-			mov r5, #0x59F7
+			mov r1, #0x4AF7
+			mov r2, #0x59F7
 			b sc_out
 sc_0x4AF8:
-			mov r4, #0x4AF8
-			mov r5, #0x59F8
+			mov r1, #0x4AF8
+			mov r2, #0x59F8
 			b sc_out
 sc_0x4AF9:
-			mov r4, #0x4AF9
-			mov r5, #0x59F9
+			mov r1, #0x4AF9
+			mov r2, #0x59F9
 			b sc_out
 sc_0x4AFA:
-			mov r4, #0x4AFA
-			mov r5, #0x59FA
+			mov r1, #0x4AFA
+			mov r2, #0x59FA
 			b sc_out
 sc_0x4AFB:
-			mov r4, #0x4AFB
-			mov r5, #0x59FB
+			mov r1, #0x4AFB
+			mov r2, #0x59FB
 			b sc_out
 sc_0x4AFC:
-			mov r4, #0x4AFC
-			mov r5, #0x59FC
+			mov r1, #0x4AFC
+			mov r2, #0x59FC
 			b sc_out
 sc_0x4AFD:
-			mov r4, #0x4AFD
-			mov r5, #0x59FD
+			mov r1, #0x4AFD
+			mov r2, #0x59FD
 			b sc_out
 sc_0x4AFE:
-			mov r4, #0x4AFE
-			mov r5, #0x59FE
+			mov r1, #0x4AFE
+			mov r2, #0x59FE
 			b sc_out
 sc_0x4AFF:
-			mov r4, #0x4AFF
-			mov r5, #0x59FF
+			mov r1, #0x4AFF
+			mov r2, #0x59FF
 			b sc_out
 sc_0x4BE0:
-			mov r4, #0x4BE0
-			mov r5, #0x59E0
+			mov r1, #0x4BE0
+			mov r2, #0x59E0
 			b sc_out
 sc_0x4BE1:
-			mov r4, #0x4BE1
-			mov r5, #0x59E1
+			mov r1, #0x4BE1
+			mov r2, #0x59E1
 			b sc_out
 sc_0x4BE2:
-			mov r4, #0x4BE2
-			mov r5, #0x59E2
+			mov r1, #0x4BE2
+			mov r2, #0x59E2
 			b sc_out
 sc_0x4BE3:
-			mov r4, #0x4BE3
-			mov r5, #0x59E3
+			mov r1, #0x4BE3
+			mov r2, #0x59E3
 			b sc_out
 sc_0x4BE4:
-			mov r4, #0x4BE4
-			mov r5, #0x59E4
+			mov r1, #0x4BE4
+			mov r2, #0x59E4
 			b sc_out
 sc_0x4BE5:
-			mov r4, #0x4BE5
-			mov r5, #0x59E5
+			mov r1, #0x4BE5
+			mov r2, #0x59E5
 			b sc_out
 sc_0x4BE6:
-			mov r4, #0x4BE6
-			mov r5, #0x59E6
+			mov r1, #0x4BE6
+			mov r2, #0x59E6
 			b sc_out
 sc_0x4BE7:
-			mov r4, #0x4BE7
-			mov r5, #0x59E7
+			mov r1, #0x4BE7
+			mov r2, #0x59E7
 			b sc_out
 sc_0x4BE8:
-			mov r4, #0x4BE8
-			mov r5, #0x59E8
+			mov r1, #0x4BE8
+			mov r2, #0x59E8
 			b sc_out
 sc_0x4BE9:
-			mov r4, #0x4BE9
-			mov r5, #0x59E9
+			mov r1, #0x4BE9
+			mov r2, #0x59E9
 			b sc_out
 sc_0x4BEA:
-			mov r4, #0x4BEA
-			mov r5, #0x59EA
+			mov r1, #0x4BEA
+			mov r2, #0x59EA
 			b sc_out
 sc_0x4BEB:
-			mov r4, #0x4BEB
-			mov r5, #0x59EB
+			mov r1, #0x4BEB
+			mov r2, #0x59EB
 			b sc_out
 sc_0x4BEC:
-			mov r4, #0x4BEC
-			mov r5, #0x59EC
+			mov r1, #0x4BEC
+			mov r2, #0x59EC
 			b sc_out
 sc_0x4BED:
-			mov r4, #0x4BED
-			mov r5, #0x59ED
+			mov r1, #0x4BED
+			mov r2, #0x59ED
 			b sc_out
 sc_0x4BEE:
-			mov r4, #0x4BEE
-			mov r5, #0x59EE
+			mov r1, #0x4BEE
+			mov r2, #0x59EE
 			b sc_out
 sc_0x4BEF:
-			mov r4, #0x4BEF
-			mov r5, #0x59EF
+			mov r1, #0x4BEF
+			mov r2, #0x59EF
 			b sc_out
 sc_0x4BF0:
-			mov r4, #0x4BF0
-			mov r5, #0x59F0
+			mov r1, #0x4BF0
+			mov r2, #0x59F0
 			b sc_out
 sc_0x4BF1:
-			mov r4, #0x4BF1
-			mov r5, #0x59F1
+			mov r1, #0x4BF1
+			mov r2, #0x59F1
 			b sc_out
 sc_0x4BF2:
-			mov r4, #0x4BF2
-			mov r5, #0x59F2
+			mov r1, #0x4BF2
+			mov r2, #0x59F2
 			b sc_out
 sc_0x4BF3:
-			mov r4, #0x4BF3
-			mov r5, #0x59F3
+			mov r1, #0x4BF3
+			mov r2, #0x59F3
 			b sc_out
 sc_0x4BF4:
-			mov r4, #0x4BF4
-			mov r5, #0x59F4
+			mov r1, #0x4BF4
+			mov r2, #0x59F4
 			b sc_out
 sc_0x4BF5:
-			mov r4, #0x4BF5
-			mov r5, #0x59F5
+			mov r1, #0x4BF5
+			mov r2, #0x59F5
 			b sc_out
 sc_0x4BF6:
-			mov r4, #0x4BF6
-			mov r5, #0x59F6
+			mov r1, #0x4BF6
+			mov r2, #0x59F6
 			b sc_out
 sc_0x4BF7:
-			mov r4, #0x4BF7
-			mov r5, #0x59F7
+			mov r1, #0x4BF7
+			mov r2, #0x59F7
 			b sc_out
 sc_0x4BF8:
-			mov r4, #0x4BF8
-			mov r5, #0x59F8
+			mov r1, #0x4BF8
+			mov r2, #0x59F8
 			b sc_out
 sc_0x4BF9:
-			mov r4, #0x4BF9
-			mov r5, #0x59F9
+			mov r1, #0x4BF9
+			mov r2, #0x59F9
 			b sc_out
 sc_0x4BFA:
-			mov r4, #0x4BFA
-			mov r5, #0x59FA
+			mov r1, #0x4BFA
+			mov r2, #0x59FA
 			b sc_out
 sc_0x4BFB:
-			mov r4, #0x4BFB
-			mov r5, #0x59FB
+			mov r1, #0x4BFB
+			mov r2, #0x59FB
 			b sc_out
 sc_0x4BFC:
-			mov r4, #0x4BFC
-			mov r5, #0x59FC
+			mov r1, #0x4BFC
+			mov r2, #0x59FC
 			b sc_out
 sc_0x4BFD:
-			mov r4, #0x4BFD
-			mov r5, #0x59FD
+			mov r1, #0x4BFD
+			mov r2, #0x59FD
 			b sc_out
 sc_0x4BFE:
-			mov r4, #0x4BFE
-			mov r5, #0x59FE
+			mov r1, #0x4BFE
+			mov r2, #0x59FE
 			b sc_out
 sc_0x4BFF:
-			mov r4, #0x4BFF
-			mov r5, #0x59FF
+			mov r1, #0x4BFF
+			mov r2, #0x59FF
 			b sc_out
 sc_0x4CE0:
-			mov r4, #0x4CE0
-			mov r5, #0x59E0
+			mov r1, #0x4CE0
+			mov r2, #0x59E0
 			b sc_out
 sc_0x4CE1:
-			mov r4, #0x4CE1
-			mov r5, #0x59E1
+			mov r1, #0x4CE1
+			mov r2, #0x59E1
 			b sc_out
 sc_0x4CE2:
-			mov r4, #0x4CE2
-			mov r5, #0x59E2
+			mov r1, #0x4CE2
+			mov r2, #0x59E2
 			b sc_out
 sc_0x4CE3:
-			mov r4, #0x4CE3
-			mov r5, #0x59E3
+			mov r1, #0x4CE3
+			mov r2, #0x59E3
 			b sc_out
 sc_0x4CE4:
-			mov r4, #0x4CE4
-			mov r5, #0x59E4
+			mov r1, #0x4CE4
+			mov r2, #0x59E4
 			b sc_out
 sc_0x4CE5:
-			mov r4, #0x4CE5
-			mov r5, #0x59E5
+			mov r1, #0x4CE5
+			mov r2, #0x59E5
 			b sc_out
 sc_0x4CE6:
-			mov r4, #0x4CE6
-			mov r5, #0x59E6
+			mov r1, #0x4CE6
+			mov r2, #0x59E6
 			b sc_out
 sc_0x4CE7:
-			mov r4, #0x4CE7
-			mov r5, #0x59E7
+			mov r1, #0x4CE7
+			mov r2, #0x59E7
 			b sc_out
 sc_0x4CE8:
-			mov r4, #0x4CE8
-			mov r5, #0x59E8
+			mov r1, #0x4CE8
+			mov r2, #0x59E8
 			b sc_out
 sc_0x4CE9:
-			mov r4, #0x4CE9
-			mov r5, #0x59E9
+			mov r1, #0x4CE9
+			mov r2, #0x59E9
 			b sc_out
 sc_0x4CEA:
-			mov r4, #0x4CEA
-			mov r5, #0x59EA
+			mov r1, #0x4CEA
+			mov r2, #0x59EA
 			b sc_out
 sc_0x4CEB:
-			mov r4, #0x4CEB
-			mov r5, #0x59EB
+			mov r1, #0x4CEB
+			mov r2, #0x59EB
 			b sc_out
 sc_0x4CEC:
-			mov r4, #0x4CEC
-			mov r5, #0x59EC
+			mov r1, #0x4CEC
+			mov r2, #0x59EC
 			b sc_out
 sc_0x4CED:
-			mov r4, #0x4CED
-			mov r5, #0x59ED
+			mov r1, #0x4CED
+			mov r2, #0x59ED
 			b sc_out
 sc_0x4CEE:
-			mov r4, #0x4CEE
-			mov r5, #0x59EE
+			mov r1, #0x4CEE
+			mov r2, #0x59EE
 			b sc_out
 sc_0x4CEF:
-			mov r4, #0x4CEF
-			mov r5, #0x59EF
+			mov r1, #0x4CEF
+			mov r2, #0x59EF
 			b sc_out
 sc_0x4CF0:
-			mov r4, #0x4CF0
-			mov r5, #0x59F0
+			mov r1, #0x4CF0
+			mov r2, #0x59F0
 			b sc_out
 sc_0x4CF1:
-			mov r4, #0x4CF1
-			mov r5, #0x59F1
+			mov r1, #0x4CF1
+			mov r2, #0x59F1
 			b sc_out
 sc_0x4CF2:
-			mov r4, #0x4CF2
-			mov r5, #0x59F2
+			mov r1, #0x4CF2
+			mov r2, #0x59F2
 			b sc_out
 sc_0x4CF3:
-			mov r4, #0x4CF3
-			mov r5, #0x59F3
+			mov r1, #0x4CF3
+			mov r2, #0x59F3
 			b sc_out
 sc_0x4CF4:
-			mov r4, #0x4CF4
-			mov r5, #0x59F4
+			mov r1, #0x4CF4
+			mov r2, #0x59F4
 			b sc_out
 sc_0x4CF5:
-			mov r4, #0x4CF5
-			mov r5, #0x59F5
+			mov r1, #0x4CF5
+			mov r2, #0x59F5
 			b sc_out
 sc_0x4CF6:
-			mov r4, #0x4CF6
-			mov r5, #0x59F6
+			mov r1, #0x4CF6
+			mov r2, #0x59F6
 			b sc_out
 sc_0x4CF7:
-			mov r4, #0x4CF7
-			mov r5, #0x59F7
+			mov r1, #0x4CF7
+			mov r2, #0x59F7
 			b sc_out
 sc_0x4CF8:
-			mov r4, #0x4CF8
-			mov r5, #0x59F8
+			mov r1, #0x4CF8
+			mov r2, #0x59F8
 			b sc_out
 sc_0x4CF9:
-			mov r4, #0x4CF9
-			mov r5, #0x59F9
+			mov r1, #0x4CF9
+			mov r2, #0x59F9
 			b sc_out
 sc_0x4CFA:
-			mov r4, #0x4CFA
-			mov r5, #0x59FA
+			mov r1, #0x4CFA
+			mov r2, #0x59FA
 			b sc_out
 sc_0x4CFB:
-			mov r4, #0x4CFB
-			mov r5, #0x59FB
+			mov r1, #0x4CFB
+			mov r2, #0x59FB
 			b sc_out
 sc_0x4CFC:
-			mov r4, #0x4CFC
-			mov r5, #0x59FC
+			mov r1, #0x4CFC
+			mov r2, #0x59FC
 			b sc_out
 sc_0x4CFD:
-			mov r4, #0x4CFD
-			mov r5, #0x59FD
+			mov r1, #0x4CFD
+			mov r2, #0x59FD
 			b sc_out
 sc_0x4CFE:
-			mov r4, #0x4CFE
-			mov r5, #0x59FE
+			mov r1, #0x4CFE
+			mov r2, #0x59FE
 			b sc_out
 sc_0x4CFF:
-			mov r4, #0x4CFF
-			mov r5, #0x59FF
+			mov r1, #0x4CFF
+			mov r2, #0x59FF
 			b sc_out
 sc_0x4DE0:
-			mov r4, #0x4DE0
-			mov r5, #0x59E0
+			mov r1, #0x4DE0
+			mov r2, #0x59E0
 			b sc_out
 sc_0x4DE1:
-			mov r4, #0x4DE1
-			mov r5, #0x59E1
+			mov r1, #0x4DE1
+			mov r2, #0x59E1
 			b sc_out
 sc_0x4DE2:
-			mov r4, #0x4DE2
-			mov r5, #0x59E2
+			mov r1, #0x4DE2
+			mov r2, #0x59E2
 			b sc_out
 sc_0x4DE3:
-			mov r4, #0x4DE3
-			mov r5, #0x59E3
+			mov r1, #0x4DE3
+			mov r2, #0x59E3
 			b sc_out
 sc_0x4DE4:
-			mov r4, #0x4DE4
-			mov r5, #0x59E4
+			mov r1, #0x4DE4
+			mov r2, #0x59E4
 			b sc_out
 sc_0x4DE5:
-			mov r4, #0x4DE5
-			mov r5, #0x59E5
+			mov r1, #0x4DE5
+			mov r2, #0x59E5
 			b sc_out
 sc_0x4DE6:
-			mov r4, #0x4DE6
-			mov r5, #0x59E6
+			mov r1, #0x4DE6
+			mov r2, #0x59E6
 			b sc_out
 sc_0x4DE7:
-			mov r4, #0x4DE7
-			mov r5, #0x59E7
+			mov r1, #0x4DE7
+			mov r2, #0x59E7
 			b sc_out
 sc_0x4DE8:
-			mov r4, #0x4DE8
-			mov r5, #0x59E8
+			mov r1, #0x4DE8
+			mov r2, #0x59E8
 			b sc_out
 sc_0x4DE9:
-			mov r4, #0x4DE9
-			mov r5, #0x59E9
+			mov r1, #0x4DE9
+			mov r2, #0x59E9
 			b sc_out
 sc_0x4DEA:
-			mov r4, #0x4DEA
-			mov r5, #0x59EA
+			mov r1, #0x4DEA
+			mov r2, #0x59EA
 			b sc_out
 sc_0x4DEB:
-			mov r4, #0x4DEB
-			mov r5, #0x59EB
+			mov r1, #0x4DEB
+			mov r2, #0x59EB
 			b sc_out
 sc_0x4DEC:
-			mov r4, #0x4DEC
-			mov r5, #0x59EC
+			mov r1, #0x4DEC
+			mov r2, #0x59EC
 			b sc_out
 sc_0x4DED:
-			mov r4, #0x4DED
-			mov r5, #0x59ED
+			mov r1, #0x4DED
+			mov r2, #0x59ED
 			b sc_out
 sc_0x4DEE:
-			mov r4, #0x4DEE
-			mov r5, #0x59EE
+			mov r1, #0x4DEE
+			mov r2, #0x59EE
 			b sc_out
 sc_0x4DEF:
-			mov r4, #0x4DEF
-			mov r5, #0x59EF
+			mov r1, #0x4DEF
+			mov r2, #0x59EF
 			b sc_out
 sc_0x4DF0:
-			mov r4, #0x4DF0
-			mov r5, #0x59F0
+			mov r1, #0x4DF0
+			mov r2, #0x59F0
 			b sc_out
 sc_0x4DF1:
-			mov r4, #0x4DF1
-			mov r5, #0x59F1
+			mov r1, #0x4DF1
+			mov r2, #0x59F1
 			b sc_out
 sc_0x4DF2:
-			mov r4, #0x4DF2
-			mov r5, #0x59F2
+			mov r1, #0x4DF2
+			mov r2, #0x59F2
 			b sc_out
 sc_0x4DF3:
-			mov r4, #0x4DF3
-			mov r5, #0x59F3
+			mov r1, #0x4DF3
+			mov r2, #0x59F3
 			b sc_out
 sc_0x4DF4:
-			mov r4, #0x4DF4
-			mov r5, #0x59F4
+			mov r1, #0x4DF4
+			mov r2, #0x59F4
 			b sc_out
 sc_0x4DF5:
-			mov r4, #0x4DF5
-			mov r5, #0x59F5
+			mov r1, #0x4DF5
+			mov r2, #0x59F5
 			b sc_out
 sc_0x4DF6:
-			mov r4, #0x4DF6
-			mov r5, #0x59F6
+			mov r1, #0x4DF6
+			mov r2, #0x59F6
 			b sc_out
 sc_0x4DF7:
-			mov r4, #0x4DF7
-			mov r5, #0x59F7
+			mov r1, #0x4DF7
+			mov r2, #0x59F7
 			b sc_out
 sc_0x4DF8:
-			mov r4, #0x4DF8
-			mov r5, #0x59F8
+			mov r1, #0x4DF8
+			mov r2, #0x59F8
 			b sc_out
 sc_0x4DF9:
-			mov r4, #0x4DF9
-			mov r5, #0x59F9
+			mov r1, #0x4DF9
+			mov r2, #0x59F9
 			b sc_out
 sc_0x4DFA:
-			mov r4, #0x4DFA
-			mov r5, #0x59FA
+			mov r1, #0x4DFA
+			mov r2, #0x59FA
 			b sc_out
 sc_0x4DFB:
-			mov r4, #0x4DFB
-			mov r5, #0x59FB
+			mov r1, #0x4DFB
+			mov r2, #0x59FB
 			b sc_out
 sc_0x4DFC:
-			mov r4, #0x4DFC
-			mov r5, #0x59FC
+			mov r1, #0x4DFC
+			mov r2, #0x59FC
 			b sc_out
 sc_0x4DFD:
-			mov r4, #0x4DFD
-			mov r5, #0x59FD
+			mov r1, #0x4DFD
+			mov r2, #0x59FD
 			b sc_out
 sc_0x4DFE:
-			mov r4, #0x4DFE
-			mov r5, #0x59FE
+			mov r1, #0x4DFE
+			mov r2, #0x59FE
 			b sc_out
 sc_0x4DFF:
-			mov r4, #0x4DFF
-			mov r5, #0x59FF
+			mov r1, #0x4DFF
+			mov r2, #0x59FF
 			b sc_out
 sc_0x4EE0:
-			mov r4, #0x4EE0
-			mov r5, #0x59E0
+			mov r1, #0x4EE0
+			mov r2, #0x59E0
 			b sc_out
 sc_0x4EE1:
-			mov r4, #0x4EE1
-			mov r5, #0x59E1
+			mov r1, #0x4EE1
+			mov r2, #0x59E1
 			b sc_out
 sc_0x4EE2:
-			mov r4, #0x4EE2
-			mov r5, #0x59E2
+			mov r1, #0x4EE2
+			mov r2, #0x59E2
 			b sc_out
 sc_0x4EE3:
-			mov r4, #0x4EE3
-			mov r5, #0x59E3
+			mov r1, #0x4EE3
+			mov r2, #0x59E3
 			b sc_out
 sc_0x4EE4:
-			mov r4, #0x4EE4
-			mov r5, #0x59E4
+			mov r1, #0x4EE4
+			mov r2, #0x59E4
 			b sc_out
 sc_0x4EE5:
-			mov r4, #0x4EE5
-			mov r5, #0x59E5
+			mov r1, #0x4EE5
+			mov r2, #0x59E5
 			b sc_out
 sc_0x4EE6:
-			mov r4, #0x4EE6
-			mov r5, #0x59E6
+			mov r1, #0x4EE6
+			mov r2, #0x59E6
 			b sc_out
 sc_0x4EE7:
-			mov r4, #0x4EE7
-			mov r5, #0x59E7
+			mov r1, #0x4EE7
+			mov r2, #0x59E7
 			b sc_out
 sc_0x4EE8:
-			mov r4, #0x4EE8
-			mov r5, #0x59E8
+			mov r1, #0x4EE8
+			mov r2, #0x59E8
 			b sc_out
 sc_0x4EE9:
-			mov r4, #0x4EE9
-			mov r5, #0x59E9
+			mov r1, #0x4EE9
+			mov r2, #0x59E9
 			b sc_out
 sc_0x4EEA:
-			mov r4, #0x4EEA
-			mov r5, #0x59EA
+			mov r1, #0x4EEA
+			mov r2, #0x59EA
 			b sc_out
 sc_0x4EEB:
-			mov r4, #0x4EEB
-			mov r5, #0x59EB
+			mov r1, #0x4EEB
+			mov r2, #0x59EB
 			b sc_out
 sc_0x4EEC:
-			mov r4, #0x4EEC
-			mov r5, #0x59EC
+			mov r1, #0x4EEC
+			mov r2, #0x59EC
 			b sc_out
 sc_0x4EED:
-			mov r4, #0x4EED
-			mov r5, #0x59ED
+			mov r1, #0x4EED
+			mov r2, #0x59ED
 			b sc_out
 sc_0x4EEE:
-			mov r4, #0x4EEE
-			mov r5, #0x59EE
+			mov r1, #0x4EEE
+			mov r2, #0x59EE
 			b sc_out
 sc_0x4EEF:
-			mov r4, #0x4EEF
-			mov r5, #0x59EF
+			mov r1, #0x4EEF
+			mov r2, #0x59EF
 			b sc_out
 sc_0x4EF0:
-			mov r4, #0x4EF0
-			mov r5, #0x59F0
+			mov r1, #0x4EF0
+			mov r2, #0x59F0
 			b sc_out
 sc_0x4EF1:
-			mov r4, #0x4EF1
-			mov r5, #0x59F1
+			mov r1, #0x4EF1
+			mov r2, #0x59F1
 			b sc_out
 sc_0x4EF2:
-			mov r4, #0x4EF2
-			mov r5, #0x59F2
+			mov r1, #0x4EF2
+			mov r2, #0x59F2
 			b sc_out
 sc_0x4EF3:
-			mov r4, #0x4EF3
-			mov r5, #0x59F3
+			mov r1, #0x4EF3
+			mov r2, #0x59F3
 			b sc_out
 sc_0x4EF4:
-			mov r4, #0x4EF4
-			mov r5, #0x59F4
+			mov r1, #0x4EF4
+			mov r2, #0x59F4
 			b sc_out
 sc_0x4EF5:
-			mov r4, #0x4EF5
-			mov r5, #0x59F5
+			mov r1, #0x4EF5
+			mov r2, #0x59F5
 			b sc_out
 sc_0x4EF6:
-			mov r4, #0x4EF6
-			mov r5, #0x59F6
+			mov r1, #0x4EF6
+			mov r2, #0x59F6
 			b sc_out
 sc_0x4EF7:
-			mov r4, #0x4EF7
-			mov r5, #0x59F7
+			mov r1, #0x4EF7
+			mov r2, #0x59F7
 			b sc_out
 sc_0x4EF8:
-			mov r4, #0x4EF8
-			mov r5, #0x59F8
+			mov r1, #0x4EF8
+			mov r2, #0x59F8
 			b sc_out
 sc_0x4EF9:
-			mov r4, #0x4EF9
-			mov r5, #0x59F9
+			mov r1, #0x4EF9
+			mov r2, #0x59F9
 			b sc_out
 sc_0x4EFA:
-			mov r4, #0x4EFA
-			mov r5, #0x59FA
+			mov r1, #0x4EFA
+			mov r2, #0x59FA
 			b sc_out
 sc_0x4EFB:
-			mov r4, #0x4EFB
-			mov r5, #0x59FB
+			mov r1, #0x4EFB
+			mov r2, #0x59FB
 			b sc_out
 sc_0x4EFC:
-			mov r4, #0x4EFC
-			mov r5, #0x59FC
+			mov r1, #0x4EFC
+			mov r2, #0x59FC
 			b sc_out
 sc_0x4EFD:
-			mov r4, #0x4EFD
-			mov r5, #0x59FD
+			mov r1, #0x4EFD
+			mov r2, #0x59FD
 			b sc_out
 sc_0x4EFE:
-			mov r4, #0x4EFE
-			mov r5, #0x59FE
+			mov r1, #0x4EFE
+			mov r2, #0x59FE
 			b sc_out
 sc_0x4EFF:
-			mov r4, #0x4EFF
-			mov r5, #0x59FF
+			mov r1, #0x4EFF
+			mov r2, #0x59FF
 			b sc_out
 sc_0x4FE0:
-			mov r4, #0x4FE0
-			mov r5, #0x59E0
+			mov r1, #0x4FE0
+			mov r2, #0x59E0
 			b sc_out
 sc_0x4FE1:
-			mov r4, #0x4FE1
-			mov r5, #0x59E1
+			mov r1, #0x4FE1
+			mov r2, #0x59E1
 			b sc_out
 sc_0x4FE2:
-			mov r4, #0x4FE2
-			mov r5, #0x59E2
+			mov r1, #0x4FE2
+			mov r2, #0x59E2
 			b sc_out
 sc_0x4FE3:
-			mov r4, #0x4FE3
-			mov r5, #0x59E3
+			mov r1, #0x4FE3
+			mov r2, #0x59E3
 			b sc_out
 sc_0x4FE4:
-			mov r4, #0x4FE4
-			mov r5, #0x59E4
+			mov r1, #0x4FE4
+			mov r2, #0x59E4
 			b sc_out
 sc_0x4FE5:
-			mov r4, #0x4FE5
-			mov r5, #0x59E5
+			mov r1, #0x4FE5
+			mov r2, #0x59E5
 			b sc_out
 sc_0x4FE6:
-			mov r4, #0x4FE6
-			mov r5, #0x59E6
+			mov r1, #0x4FE6
+			mov r2, #0x59E6
 			b sc_out
 sc_0x4FE7:
-			mov r4, #0x4FE7
-			mov r5, #0x59E7
+			mov r1, #0x4FE7
+			mov r2, #0x59E7
 			b sc_out
 sc_0x4FE8:
-			mov r4, #0x4FE8
-			mov r5, #0x59E8
+			mov r1, #0x4FE8
+			mov r2, #0x59E8
 			b sc_out
 sc_0x4FE9:
-			mov r4, #0x4FE9
-			mov r5, #0x59E9
+			mov r1, #0x4FE9
+			mov r2, #0x59E9
 			b sc_out
 sc_0x4FEA:
-			mov r4, #0x4FEA
-			mov r5, #0x59EA
+			mov r1, #0x4FEA
+			mov r2, #0x59EA
 			b sc_out
 sc_0x4FEB:
-			mov r4, #0x4FEB
-			mov r5, #0x59EB
+			mov r1, #0x4FEB
+			mov r2, #0x59EB
 			b sc_out
 sc_0x4FEC:
-			mov r4, #0x4FEC
-			mov r5, #0x59EC
+			mov r1, #0x4FEC
+			mov r2, #0x59EC
 			b sc_out
 sc_0x4FED:
-			mov r4, #0x4FED
-			mov r5, #0x59ED
+			mov r1, #0x4FED
+			mov r2, #0x59ED
 			b sc_out
 sc_0x4FEE:
-			mov r4, #0x4FEE
-			mov r5, #0x59EE
+			mov r1, #0x4FEE
+			mov r2, #0x59EE
 			b sc_out
 sc_0x4FEF:
-			mov r4, #0x4FEF
-			mov r5, #0x59EF
+			mov r1, #0x4FEF
+			mov r2, #0x59EF
 			b sc_out
 sc_0x4FF0:
-			mov r4, #0x4FF0
-			mov r5, #0x59F0
+			mov r1, #0x4FF0
+			mov r2, #0x59F0
 			b sc_out
 sc_0x4FF1:
-			mov r4, #0x4FF1
-			mov r5, #0x59F1
+			mov r1, #0x4FF1
+			mov r2, #0x59F1
 			b sc_out
 sc_0x4FF2:
-			mov r4, #0x4FF2
-			mov r5, #0x59F2
+			mov r1, #0x4FF2
+			mov r2, #0x59F2
 			b sc_out
 sc_0x4FF3:
-			mov r4, #0x4FF3
-			mov r5, #0x59F3
+			mov r1, #0x4FF3
+			mov r2, #0x59F3
 			b sc_out
 sc_0x4FF4:
-			mov r4, #0x4FF4
-			mov r5, #0x59F4
+			mov r1, #0x4FF4
+			mov r2, #0x59F4
 			b sc_out
 sc_0x4FF5:
-			mov r4, #0x4FF5
-			mov r5, #0x59F5
+			mov r1, #0x4FF5
+			mov r2, #0x59F5
 			b sc_out
 sc_0x4FF6:
-			mov r4, #0x4FF6
-			mov r5, #0x59F6
+			mov r1, #0x4FF6
+			mov r2, #0x59F6
 			b sc_out
 sc_0x4FF7:
-			mov r4, #0x4FF7
-			mov r5, #0x59F7
+			mov r1, #0x4FF7
+			mov r2, #0x59F7
 			b sc_out
 sc_0x4FF8:
-			mov r4, #0x4FF8
-			mov r5, #0x59F8
+			mov r1, #0x4FF8
+			mov r2, #0x59F8
 			b sc_out
 sc_0x4FF9:
-			mov r4, #0x4FF9
-			mov r5, #0x59F9
+			mov r1, #0x4FF9
+			mov r2, #0x59F9
 			b sc_out
 sc_0x4FFA:
-			mov r4, #0x4FFA
-			mov r5, #0x59FA
+			mov r1, #0x4FFA
+			mov r2, #0x59FA
 			b sc_out
 sc_0x4FFB:
-			mov r4, #0x4FFB
-			mov r5, #0x59FB
+			mov r1, #0x4FFB
+			mov r2, #0x59FB
 			b sc_out
 sc_0x4FFC:
-			mov r4, #0x4FFC
-			mov r5, #0x59FC
+			mov r1, #0x4FFC
+			mov r2, #0x59FC
 			b sc_out
 sc_0x4FFD:
-			mov r4, #0x4FFD
-			mov r5, #0x59FD
+			mov r1, #0x4FFD
+			mov r2, #0x59FD
 			b sc_out
 sc_0x4FFE:
-			mov r4, #0x4FFE
-			mov r5, #0x59FE
+			mov r1, #0x4FFE
+			mov r2, #0x59FE
 			b sc_out
 sc_0x4FFF:
-			mov r4, #0x4FFF
-			mov r5, #0x59FF
+			mov r1, #0x4FFF
+			mov r2, #0x59FF
 			b sc_out
 sc_0x5000:
-			mov r4, #0x5000
-			mov r5, #0x5A00
+			mov r1, #0x5000
+			mov r2, #0x5A00
 			b sc_out
 sc_0x5001:
-			mov r4, #0x5001
-			mov r5, #0x5A01
+			mov r1, #0x5001
+			mov r2, #0x5A01
 			b sc_out
 sc_0x5002:
-			mov r4, #0x5002
-			mov r5, #0x5A02
+			mov r1, #0x5002
+			mov r2, #0x5A02
 			b sc_out
 sc_0x5003:
-			mov r4, #0x5003
-			mov r5, #0x5A03
+			mov r1, #0x5003
+			mov r2, #0x5A03
 			b sc_out
 sc_0x5004:
-			mov r4, #0x5004
-			mov r5, #0x5A04
+			mov r1, #0x5004
+			mov r2, #0x5A04
 			b sc_out
 sc_0x5005:
-			mov r4, #0x5005
-			mov r5, #0x5A05
+			mov r1, #0x5005
+			mov r2, #0x5A05
 			b sc_out
 sc_0x5006:
-			mov r4, #0x5006
-			mov r5, #0x5A06
+			mov r1, #0x5006
+			mov r2, #0x5A06
 			b sc_out
 sc_0x5007:
-			mov r4, #0x5007
-			mov r5, #0x5A07
+			mov r1, #0x5007
+			mov r2, #0x5A07
 			b sc_out
 sc_0x5008:
-			mov r4, #0x5008
-			mov r5, #0x5A08
+			mov r1, #0x5008
+			mov r2, #0x5A08
 			b sc_out
 sc_0x5009:
-			mov r4, #0x5009
-			mov r5, #0x5A09
+			mov r1, #0x5009
+			mov r2, #0x5A09
 			b sc_out
 sc_0x500A:
-			mov r4, #0x500A
-			mov r5, #0x5A0A
+			mov r1, #0x500A
+			mov r2, #0x5A0A
 			b sc_out
 sc_0x500B:
-			mov r4, #0x500B
-			mov r5, #0x5A0B
+			mov r1, #0x500B
+			mov r2, #0x5A0B
 			b sc_out
 sc_0x500C:
-			mov r4, #0x500C
-			mov r5, #0x5A0C
+			mov r1, #0x500C
+			mov r2, #0x5A0C
 			b sc_out
 sc_0x500D:
-			mov r4, #0x500D
-			mov r5, #0x5A0D
+			mov r1, #0x500D
+			mov r2, #0x5A0D
 			b sc_out
 sc_0x500E:
-			mov r4, #0x500E
-			mov r5, #0x5A0E
+			mov r1, #0x500E
+			mov r2, #0x5A0E
 			b sc_out
 sc_0x500F:
-			mov r4, #0x500F
-			mov r5, #0x5A0F
+			mov r1, #0x500F
+			mov r2, #0x5A0F
 			b sc_out
 sc_0x5010:
-			mov r4, #0x5010
-			mov r5, #0x5A10
+			mov r1, #0x5010
+			mov r2, #0x5A10
 			b sc_out
 sc_0x5011:
-			mov r4, #0x5011
-			mov r5, #0x5A11
+			mov r1, #0x5011
+			mov r2, #0x5A11
 			b sc_out
 sc_0x5012:
-			mov r4, #0x5012
-			mov r5, #0x5A12
+			mov r1, #0x5012
+			mov r2, #0x5A12
 			b sc_out
 sc_0x5013:
-			mov r4, #0x5013
-			mov r5, #0x5A13
+			mov r1, #0x5013
+			mov r2, #0x5A13
 			b sc_out
 sc_0x5014:
-			mov r4, #0x5014
-			mov r5, #0x5A14
+			mov r1, #0x5014
+			mov r2, #0x5A14
 			b sc_out
 sc_0x5015:
-			mov r4, #0x5015
-			mov r5, #0x5A15
+			mov r1, #0x5015
+			mov r2, #0x5A15
 			b sc_out
 sc_0x5016:
-			mov r4, #0x5016
-			mov r5, #0x5A16
+			mov r1, #0x5016
+			mov r2, #0x5A16
 			b sc_out
 sc_0x5017:
-			mov r4, #0x5017
-			mov r5, #0x5A17
+			mov r1, #0x5017
+			mov r2, #0x5A17
 			b sc_out
 sc_0x5018:
-			mov r4, #0x5018
-			mov r5, #0x5A18
+			mov r1, #0x5018
+			mov r2, #0x5A18
 			b sc_out
 sc_0x5019:
-			mov r4, #0x5019
-			mov r5, #0x5A19
+			mov r1, #0x5019
+			mov r2, #0x5A19
 			b sc_out
 sc_0x501A:
-			mov r4, #0x501A
-			mov r5, #0x5A1A
+			mov r1, #0x501A
+			mov r2, #0x5A1A
 			b sc_out
 sc_0x501B:
-			mov r4, #0x501B
-			mov r5, #0x5A1B
+			mov r1, #0x501B
+			mov r2, #0x5A1B
 			b sc_out
 sc_0x501C:
-			mov r4, #0x501C
-			mov r5, #0x5A1C
+			mov r1, #0x501C
+			mov r2, #0x5A1C
 			b sc_out
 sc_0x501D:
-			mov r4, #0x501D
-			mov r5, #0x5A1D
+			mov r1, #0x501D
+			mov r2, #0x5A1D
 			b sc_out
 sc_0x501E:
-			mov r4, #0x501E
-			mov r5, #0x5A1E
+			mov r1, #0x501E
+			mov r2, #0x5A1E
 			b sc_out
 sc_0x501F:
-			mov r4, #0x501F
-			mov r5, #0x5A1F
+			mov r1, #0x501F
+			mov r2, #0x5A1F
 			b sc_out
 sc_0x5100:
-			mov r4, #0x5100
-			mov r5, #0x5A00
+			mov r1, #0x5100
+			mov r2, #0x5A00
 			b sc_out
 sc_0x5101:
-			mov r4, #0x5101
-			mov r5, #0x5A01
+			mov r1, #0x5101
+			mov r2, #0x5A01
 			b sc_out
 sc_0x5102:
-			mov r4, #0x5102
-			mov r5, #0x5A02
+			mov r1, #0x5102
+			mov r2, #0x5A02
 			b sc_out
 sc_0x5103:
-			mov r4, #0x5103
-			mov r5, #0x5A03
+			mov r1, #0x5103
+			mov r2, #0x5A03
 			b sc_out
 sc_0x5104:
-			mov r4, #0x5104
-			mov r5, #0x5A04
+			mov r1, #0x5104
+			mov r2, #0x5A04
 			b sc_out
 sc_0x5105:
-			mov r4, #0x5105
-			mov r5, #0x5A05
+			mov r1, #0x5105
+			mov r2, #0x5A05
 			b sc_out
 sc_0x5106:
-			mov r4, #0x5106
-			mov r5, #0x5A06
+			mov r1, #0x5106
+			mov r2, #0x5A06
 			b sc_out
 sc_0x5107:
-			mov r4, #0x5107
-			mov r5, #0x5A07
+			mov r1, #0x5107
+			mov r2, #0x5A07
 			b sc_out
 sc_0x5108:
-			mov r4, #0x5108
-			mov r5, #0x5A08
+			mov r1, #0x5108
+			mov r2, #0x5A08
 			b sc_out
 sc_0x5109:
-			mov r4, #0x5109
-			mov r5, #0x5A09
+			mov r1, #0x5109
+			mov r2, #0x5A09
 			b sc_out
 sc_0x510A:
-			mov r4, #0x510A
-			mov r5, #0x5A0A
+			mov r1, #0x510A
+			mov r2, #0x5A0A
 			b sc_out
 sc_0x510B:
-			mov r4, #0x510B
-			mov r5, #0x5A0B
+			mov r1, #0x510B
+			mov r2, #0x5A0B
 			b sc_out
 sc_0x510C:
-			mov r4, #0x510C
-			mov r5, #0x5A0C
+			mov r1, #0x510C
+			mov r2, #0x5A0C
 			b sc_out
 sc_0x510D:
-			mov r4, #0x510D
-			mov r5, #0x5A0D
+			mov r1, #0x510D
+			mov r2, #0x5A0D
 			b sc_out
 sc_0x510E:
-			mov r4, #0x510E
-			mov r5, #0x5A0E
+			mov r1, #0x510E
+			mov r2, #0x5A0E
 			b sc_out
 sc_0x510F:
-			mov r4, #0x510F
-			mov r5, #0x5A0F
+			mov r1, #0x510F
+			mov r2, #0x5A0F
 			b sc_out
 sc_0x5110:
-			mov r4, #0x5110
-			mov r5, #0x5A10
+			mov r1, #0x5110
+			mov r2, #0x5A10
 			b sc_out
 sc_0x5111:
-			mov r4, #0x5111
-			mov r5, #0x5A11
+			mov r1, #0x5111
+			mov r2, #0x5A11
 			b sc_out
 sc_0x5112:
-			mov r4, #0x5112
-			mov r5, #0x5A12
+			mov r1, #0x5112
+			mov r2, #0x5A12
 			b sc_out
 sc_0x5113:
-			mov r4, #0x5113
-			mov r5, #0x5A13
+			mov r1, #0x5113
+			mov r2, #0x5A13
 			b sc_out
 sc_0x5114:
-			mov r4, #0x5114
-			mov r5, #0x5A14
+			mov r1, #0x5114
+			mov r2, #0x5A14
 			b sc_out
 sc_0x5115:
-			mov r4, #0x5115
-			mov r5, #0x5A15
+			mov r1, #0x5115
+			mov r2, #0x5A15
 			b sc_out
 sc_0x5116:
-			mov r4, #0x5116
-			mov r5, #0x5A16
+			mov r1, #0x5116
+			mov r2, #0x5A16
 			b sc_out
 sc_0x5117:
-			mov r4, #0x5117
-			mov r5, #0x5A17
+			mov r1, #0x5117
+			mov r2, #0x5A17
 			b sc_out
 sc_0x5118:
-			mov r4, #0x5118
-			mov r5, #0x5A18
+			mov r1, #0x5118
+			mov r2, #0x5A18
 			b sc_out
 sc_0x5119:
-			mov r4, #0x5119
-			mov r5, #0x5A19
+			mov r1, #0x5119
+			mov r2, #0x5A19
 			b sc_out
 sc_0x511A:
-			mov r4, #0x511A
-			mov r5, #0x5A1A
+			mov r1, #0x511A
+			mov r2, #0x5A1A
 			b sc_out
 sc_0x511B:
-			mov r4, #0x511B
-			mov r5, #0x5A1B
+			mov r1, #0x511B
+			mov r2, #0x5A1B
 			b sc_out
 sc_0x511C:
-			mov r4, #0x511C
-			mov r5, #0x5A1C
+			mov r1, #0x511C
+			mov r2, #0x5A1C
 			b sc_out
 sc_0x511D:
-			mov r4, #0x511D
-			mov r5, #0x5A1D
+			mov r1, #0x511D
+			mov r2, #0x5A1D
 			b sc_out
 sc_0x511E:
-			mov r4, #0x511E
-			mov r5, #0x5A1E
+			mov r1, #0x511E
+			mov r2, #0x5A1E
 			b sc_out
 sc_0x511F:
-			mov r4, #0x511F
-			mov r5, #0x5A1F
+			mov r1, #0x511F
+			mov r2, #0x5A1F
 			b sc_out
 sc_0x5200:
-			mov r4, #0x5200
-			mov r5, #0x5A00
+			mov r1, #0x5200
+			mov r2, #0x5A00
 			b sc_out
 sc_0x5201:
-			mov r4, #0x5201
-			mov r5, #0x5A01
+			mov r1, #0x5201
+			mov r2, #0x5A01
 			b sc_out
 sc_0x5202:
-			mov r4, #0x5202
-			mov r5, #0x5A02
+			mov r1, #0x5202
+			mov r2, #0x5A02
 			b sc_out
 sc_0x5203:
-			mov r4, #0x5203
-			mov r5, #0x5A03
+			mov r1, #0x5203
+			mov r2, #0x5A03
 			b sc_out
 sc_0x5204:
-			mov r4, #0x5204
-			mov r5, #0x5A04
+			mov r1, #0x5204
+			mov r2, #0x5A04
 			b sc_out
 sc_0x5205:
-			mov r4, #0x5205
-			mov r5, #0x5A05
+			mov r1, #0x5205
+			mov r2, #0x5A05
 			b sc_out
 sc_0x5206:
-			mov r4, #0x5206
-			mov r5, #0x5A06
+			mov r1, #0x5206
+			mov r2, #0x5A06
 			b sc_out
 sc_0x5207:
-			mov r4, #0x5207
-			mov r5, #0x5A07
+			mov r1, #0x5207
+			mov r2, #0x5A07
 			b sc_out
 sc_0x5208:
-			mov r4, #0x5208
-			mov r5, #0x5A08
+			mov r1, #0x5208
+			mov r2, #0x5A08
 			b sc_out
 sc_0x5209:
-			mov r4, #0x5209
-			mov r5, #0x5A09
+			mov r1, #0x5209
+			mov r2, #0x5A09
 			b sc_out
 sc_0x520A:
-			mov r4, #0x520A
-			mov r5, #0x5A0A
+			mov r1, #0x520A
+			mov r2, #0x5A0A
 			b sc_out
 sc_0x520B:
-			mov r4, #0x520B
-			mov r5, #0x5A0B
+			mov r1, #0x520B
+			mov r2, #0x5A0B
 			b sc_out
 sc_0x520C:
-			mov r4, #0x520C
-			mov r5, #0x5A0C
+			mov r1, #0x520C
+			mov r2, #0x5A0C
 			b sc_out
 sc_0x520D:
-			mov r4, #0x520D
-			mov r5, #0x5A0D
+			mov r1, #0x520D
+			mov r2, #0x5A0D
 			b sc_out
 sc_0x520E:
-			mov r4, #0x520E
-			mov r5, #0x5A0E
+			mov r1, #0x520E
+			mov r2, #0x5A0E
 			b sc_out
 sc_0x520F:
-			mov r4, #0x520F
-			mov r5, #0x5A0F
+			mov r1, #0x520F
+			mov r2, #0x5A0F
 			b sc_out
 sc_0x5210:
-			mov r4, #0x5210
-			mov r5, #0x5A10
+			mov r1, #0x5210
+			mov r2, #0x5A10
 			b sc_out
 sc_0x5211:
-			mov r4, #0x5211
-			mov r5, #0x5A11
+			mov r1, #0x5211
+			mov r2, #0x5A11
 			b sc_out
 sc_0x5212:
-			mov r4, #0x5212
-			mov r5, #0x5A12
+			mov r1, #0x5212
+			mov r2, #0x5A12
 			b sc_out
 sc_0x5213:
-			mov r4, #0x5213
-			mov r5, #0x5A13
+			mov r1, #0x5213
+			mov r2, #0x5A13
 			b sc_out
 sc_0x5214:
-			mov r4, #0x5214
-			mov r5, #0x5A14
+			mov r1, #0x5214
+			mov r2, #0x5A14
 			b sc_out
 sc_0x5215:
-			mov r4, #0x5215
-			mov r5, #0x5A15
+			mov r1, #0x5215
+			mov r2, #0x5A15
 			b sc_out
 sc_0x5216:
-			mov r4, #0x5216
-			mov r5, #0x5A16
+			mov r1, #0x5216
+			mov r2, #0x5A16
 			b sc_out
 sc_0x5217:
-			mov r4, #0x5217
-			mov r5, #0x5A17
+			mov r1, #0x5217
+			mov r2, #0x5A17
 			b sc_out
 sc_0x5218:
-			mov r4, #0x5218
-			mov r5, #0x5A18
+			mov r1, #0x5218
+			mov r2, #0x5A18
 			b sc_out
 sc_0x5219:
-			mov r4, #0x5219
-			mov r5, #0x5A19
+			mov r1, #0x5219
+			mov r2, #0x5A19
 			b sc_out
 sc_0x521A:
-			mov r4, #0x521A
-			mov r5, #0x5A1A
+			mov r1, #0x521A
+			mov r2, #0x5A1A
 			b sc_out
 sc_0x521B:
-			mov r4, #0x521B
-			mov r5, #0x5A1B
+			mov r1, #0x521B
+			mov r2, #0x5A1B
 			b sc_out
 sc_0x521C:
-			mov r4, #0x521C
-			mov r5, #0x5A1C
+			mov r1, #0x521C
+			mov r2, #0x5A1C
 			b sc_out
 sc_0x521D:
-			mov r4, #0x521D
-			mov r5, #0x5A1D
+			mov r1, #0x521D
+			mov r2, #0x5A1D
 			b sc_out
 sc_0x521E:
-			mov r4, #0x521E
-			mov r5, #0x5A1E
+			mov r1, #0x521E
+			mov r2, #0x5A1E
 			b sc_out
 sc_0x521F:
-			mov r4, #0x521F
-			mov r5, #0x5A1F
+			mov r1, #0x521F
+			mov r2, #0x5A1F
 			b sc_out
 sc_0x5300:
-			mov r4, #0x5300
-			mov r5, #0x5A00
+			mov r1, #0x5300
+			mov r2, #0x5A00
 			b sc_out
 sc_0x5301:
-			mov r4, #0x5301
-			mov r5, #0x5A01
+			mov r1, #0x5301
+			mov r2, #0x5A01
 			b sc_out
 sc_0x5302:
-			mov r4, #0x5302
-			mov r5, #0x5A02
+			mov r1, #0x5302
+			mov r2, #0x5A02
 			b sc_out
 sc_0x5303:
-			mov r4, #0x5303
-			mov r5, #0x5A03
+			mov r1, #0x5303
+			mov r2, #0x5A03
 			b sc_out
 sc_0x5304:
-			mov r4, #0x5304
-			mov r5, #0x5A04
+			mov r1, #0x5304
+			mov r2, #0x5A04
 			b sc_out
 sc_0x5305:
-			mov r4, #0x5305
-			mov r5, #0x5A05
+			mov r1, #0x5305
+			mov r2, #0x5A05
 			b sc_out
 sc_0x5306:
-			mov r4, #0x5306
-			mov r5, #0x5A06
+			mov r1, #0x5306
+			mov r2, #0x5A06
 			b sc_out
 sc_0x5307:
-			mov r4, #0x5307
-			mov r5, #0x5A07
+			mov r1, #0x5307
+			mov r2, #0x5A07
 			b sc_out
 sc_0x5308:
-			mov r4, #0x5308
-			mov r5, #0x5A08
+			mov r1, #0x5308
+			mov r2, #0x5A08
 			b sc_out
 sc_0x5309:
-			mov r4, #0x5309
-			mov r5, #0x5A09
+			mov r1, #0x5309
+			mov r2, #0x5A09
 			b sc_out
 sc_0x530A:
-			mov r4, #0x530A
-			mov r5, #0x5A0A
+			mov r1, #0x530A
+			mov r2, #0x5A0A
 			b sc_out
 sc_0x530B:
-			mov r4, #0x530B
-			mov r5, #0x5A0B
+			mov r1, #0x530B
+			mov r2, #0x5A0B
 			b sc_out
 sc_0x530C:
-			mov r4, #0x530C
-			mov r5, #0x5A0C
+			mov r1, #0x530C
+			mov r2, #0x5A0C
 			b sc_out
 sc_0x530D:
-			mov r4, #0x530D
-			mov r5, #0x5A0D
+			mov r1, #0x530D
+			mov r2, #0x5A0D
 			b sc_out
 sc_0x530E:
-			mov r4, #0x530E
-			mov r5, #0x5A0E
+			mov r1, #0x530E
+			mov r2, #0x5A0E
 			b sc_out
 sc_0x530F:
-			mov r4, #0x530F
-			mov r5, #0x5A0F
+			mov r1, #0x530F
+			mov r2, #0x5A0F
 			b sc_out
 sc_0x5310:
-			mov r4, #0x5310
-			mov r5, #0x5A10
+			mov r1, #0x5310
+			mov r2, #0x5A10
 			b sc_out
 sc_0x5311:
-			mov r4, #0x5311
-			mov r5, #0x5A11
+			mov r1, #0x5311
+			mov r2, #0x5A11
 			b sc_out
 sc_0x5312:
-			mov r4, #0x5312
-			mov r5, #0x5A12
+			mov r1, #0x5312
+			mov r2, #0x5A12
 			b sc_out
 sc_0x5313:
-			mov r4, #0x5313
-			mov r5, #0x5A13
+			mov r1, #0x5313
+			mov r2, #0x5A13
 			b sc_out
 sc_0x5314:
-			mov r4, #0x5314
-			mov r5, #0x5A14
+			mov r1, #0x5314
+			mov r2, #0x5A14
 			b sc_out
 sc_0x5315:
-			mov r4, #0x5315
-			mov r5, #0x5A15
+			mov r1, #0x5315
+			mov r2, #0x5A15
 			b sc_out
 sc_0x5316:
-			mov r4, #0x5316
-			mov r5, #0x5A16
+			mov r1, #0x5316
+			mov r2, #0x5A16
 			b sc_out
 sc_0x5317:
-			mov r4, #0x5317
-			mov r5, #0x5A17
+			mov r1, #0x5317
+			mov r2, #0x5A17
 			b sc_out
 sc_0x5318:
-			mov r4, #0x5318
-			mov r5, #0x5A18
+			mov r1, #0x5318
+			mov r2, #0x5A18
 			b sc_out
 sc_0x5319:
-			mov r4, #0x5319
-			mov r5, #0x5A19
+			mov r1, #0x5319
+			mov r2, #0x5A19
 			b sc_out
 sc_0x531A:
-			mov r4, #0x531A
-			mov r5, #0x5A1A
+			mov r1, #0x531A
+			mov r2, #0x5A1A
 			b sc_out
 sc_0x531B:
-			mov r4, #0x531B
-			mov r5, #0x5A1B
+			mov r1, #0x531B
+			mov r2, #0x5A1B
 			b sc_out
 sc_0x531C:
-			mov r4, #0x531C
-			mov r5, #0x5A1C
+			mov r1, #0x531C
+			mov r2, #0x5A1C
 			b sc_out
 sc_0x531D:
-			mov r4, #0x531D
-			mov r5, #0x5A1D
+			mov r1, #0x531D
+			mov r2, #0x5A1D
 			b sc_out
 sc_0x531E:
-			mov r4, #0x531E
-			mov r5, #0x5A1E
+			mov r1, #0x531E
+			mov r2, #0x5A1E
 			b sc_out
 sc_0x531F:
-			mov r4, #0x531F
-			mov r5, #0x5A1F
+			mov r1, #0x531F
+			mov r2, #0x5A1F
 			b sc_out
 sc_0x5400:
-			mov r4, #0x5400
-			mov r5, #0x5A00
+			mov r1, #0x5400
+			mov r2, #0x5A00
 			b sc_out
 sc_0x5401:
-			mov r4, #0x5401
-			mov r5, #0x5A01
+			mov r1, #0x5401
+			mov r2, #0x5A01
 			b sc_out
 sc_0x5402:
-			mov r4, #0x5402
-			mov r5, #0x5A02
+			mov r1, #0x5402
+			mov r2, #0x5A02
 			b sc_out
 sc_0x5403:
-			mov r4, #0x5403
-			mov r5, #0x5A03
+			mov r1, #0x5403
+			mov r2, #0x5A03
 			b sc_out
 sc_0x5404:
-			mov r4, #0x5404
-			mov r5, #0x5A04
+			mov r1, #0x5404
+			mov r2, #0x5A04
 			b sc_out
 sc_0x5405:
-			mov r4, #0x5405
-			mov r5, #0x5A05
+			mov r1, #0x5405
+			mov r2, #0x5A05
 			b sc_out
 sc_0x5406:
-			mov r4, #0x5406
-			mov r5, #0x5A06
+			mov r1, #0x5406
+			mov r2, #0x5A06
 			b sc_out
 sc_0x5407:
-			mov r4, #0x5407
-			mov r5, #0x5A07
+			mov r1, #0x5407
+			mov r2, #0x5A07
 			b sc_out
 sc_0x5408:
-			mov r4, #0x5408
-			mov r5, #0x5A08
+			mov r1, #0x5408
+			mov r2, #0x5A08
 			b sc_out
 sc_0x5409:
-			mov r4, #0x5409
-			mov r5, #0x5A09
+			mov r1, #0x5409
+			mov r2, #0x5A09
 			b sc_out
 sc_0x540A:
-			mov r4, #0x540A
-			mov r5, #0x5A0A
+			mov r1, #0x540A
+			mov r2, #0x5A0A
 			b sc_out
 sc_0x540B:
-			mov r4, #0x540B
-			mov r5, #0x5A0B
+			mov r1, #0x540B
+			mov r2, #0x5A0B
 			b sc_out
 sc_0x540C:
-			mov r4, #0x540C
-			mov r5, #0x5A0C
+			mov r1, #0x540C
+			mov r2, #0x5A0C
 			b sc_out
 sc_0x540D:
-			mov r4, #0x540D
-			mov r5, #0x5A0D
+			mov r1, #0x540D
+			mov r2, #0x5A0D
 			b sc_out
 sc_0x540E:
-			mov r4, #0x540E
-			mov r5, #0x5A0E
+			mov r1, #0x540E
+			mov r2, #0x5A0E
 			b sc_out
 sc_0x540F:
-			mov r4, #0x540F
-			mov r5, #0x5A0F
+			mov r1, #0x540F
+			mov r2, #0x5A0F
 			b sc_out
 sc_0x5410:
-			mov r4, #0x5410
-			mov r5, #0x5A10
+			mov r1, #0x5410
+			mov r2, #0x5A10
 			b sc_out
 sc_0x5411:
-			mov r4, #0x5411
-			mov r5, #0x5A11
+			mov r1, #0x5411
+			mov r2, #0x5A11
 			b sc_out
 sc_0x5412:
-			mov r4, #0x5412
-			mov r5, #0x5A12
+			mov r1, #0x5412
+			mov r2, #0x5A12
 			b sc_out
 sc_0x5413:
-			mov r4, #0x5413
-			mov r5, #0x5A13
+			mov r1, #0x5413
+			mov r2, #0x5A13
 			b sc_out
 sc_0x5414:
-			mov r4, #0x5414
-			mov r5, #0x5A14
+			mov r1, #0x5414
+			mov r2, #0x5A14
 			b sc_out
 sc_0x5415:
-			mov r4, #0x5415
-			mov r5, #0x5A15
+			mov r1, #0x5415
+			mov r2, #0x5A15
 			b sc_out
 sc_0x5416:
-			mov r4, #0x5416
-			mov r5, #0x5A16
+			mov r1, #0x5416
+			mov r2, #0x5A16
 			b sc_out
 sc_0x5417:
-			mov r4, #0x5417
-			mov r5, #0x5A17
+			mov r1, #0x5417
+			mov r2, #0x5A17
 			b sc_out
 sc_0x5418:
-			mov r4, #0x5418
-			mov r5, #0x5A18
+			mov r1, #0x5418
+			mov r2, #0x5A18
 			b sc_out
 sc_0x5419:
-			mov r4, #0x5419
-			mov r5, #0x5A19
+			mov r1, #0x5419
+			mov r2, #0x5A19
 			b sc_out
 sc_0x541A:
-			mov r4, #0x541A
-			mov r5, #0x5A1A
+			mov r1, #0x541A
+			mov r2, #0x5A1A
 			b sc_out
 sc_0x541B:
-			mov r4, #0x541B
-			mov r5, #0x5A1B
+			mov r1, #0x541B
+			mov r2, #0x5A1B
 			b sc_out
 sc_0x541C:
-			mov r4, #0x541C
-			mov r5, #0x5A1C
+			mov r1, #0x541C
+			mov r2, #0x5A1C
 			b sc_out
 sc_0x541D:
-			mov r4, #0x541D
-			mov r5, #0x5A1D
+			mov r1, #0x541D
+			mov r2, #0x5A1D
 			b sc_out
 sc_0x541E:
-			mov r4, #0x541E
-			mov r5, #0x5A1E
+			mov r1, #0x541E
+			mov r2, #0x5A1E
 			b sc_out
 sc_0x541F:
-			mov r4, #0x541F
-			mov r5, #0x5A1F
+			mov r1, #0x541F
+			mov r2, #0x5A1F
 			b sc_out
 sc_0x5500:
-			mov r4, #0x5500
-			mov r5, #0x5A00
+			mov r1, #0x5500
+			mov r2, #0x5A00
 			b sc_out
 sc_0x5501:
-			mov r4, #0x5501
-			mov r5, #0x5A01
+			mov r1, #0x5501
+			mov r2, #0x5A01
 			b sc_out
 sc_0x5502:
-			mov r4, #0x5502
-			mov r5, #0x5A02
+			mov r1, #0x5502
+			mov r2, #0x5A02
 			b sc_out
 sc_0x5503:
-			mov r4, #0x5503
-			mov r5, #0x5A03
+			mov r1, #0x5503
+			mov r2, #0x5A03
 			b sc_out
 sc_0x5504:
-			mov r4, #0x5504
-			mov r5, #0x5A04
+			mov r1, #0x5504
+			mov r2, #0x5A04
 			b sc_out
 sc_0x5505:
-			mov r4, #0x5505
-			mov r5, #0x5A05
+			mov r1, #0x5505
+			mov r2, #0x5A05
 			b sc_out
 sc_0x5506:
-			mov r4, #0x5506
-			mov r5, #0x5A06
+			mov r1, #0x5506
+			mov r2, #0x5A06
 			b sc_out
 sc_0x5507:
-			mov r4, #0x5507
-			mov r5, #0x5A07
+			mov r1, #0x5507
+			mov r2, #0x5A07
 			b sc_out
 sc_0x5508:
-			mov r4, #0x5508
-			mov r5, #0x5A08
+			mov r1, #0x5508
+			mov r2, #0x5A08
 			b sc_out
 sc_0x5509:
-			mov r4, #0x5509
-			mov r5, #0x5A09
+			mov r1, #0x5509
+			mov r2, #0x5A09
 			b sc_out
 sc_0x550A:
-			mov r4, #0x550A
-			mov r5, #0x5A0A
+			mov r1, #0x550A
+			mov r2, #0x5A0A
 			b sc_out
 sc_0x550B:
-			mov r4, #0x550B
-			mov r5, #0x5A0B
+			mov r1, #0x550B
+			mov r2, #0x5A0B
 			b sc_out
 sc_0x550C:
-			mov r4, #0x550C
-			mov r5, #0x5A0C
+			mov r1, #0x550C
+			mov r2, #0x5A0C
 			b sc_out
 sc_0x550D:
-			mov r4, #0x550D
-			mov r5, #0x5A0D
+			mov r1, #0x550D
+			mov r2, #0x5A0D
 			b sc_out
 sc_0x550E:
-			mov r4, #0x550E
-			mov r5, #0x5A0E
+			mov r1, #0x550E
+			mov r2, #0x5A0E
 			b sc_out
 sc_0x550F:
-			mov r4, #0x550F
-			mov r5, #0x5A0F
+			mov r1, #0x550F
+			mov r2, #0x5A0F
 			b sc_out
 sc_0x5510:
-			mov r4, #0x5510
-			mov r5, #0x5A10
+			mov r1, #0x5510
+			mov r2, #0x5A10
 			b sc_out
 sc_0x5511:
-			mov r4, #0x5511
-			mov r5, #0x5A11
+			mov r1, #0x5511
+			mov r2, #0x5A11
 			b sc_out
 sc_0x5512:
-			mov r4, #0x5512
-			mov r5, #0x5A12
+			mov r1, #0x5512
+			mov r2, #0x5A12
 			b sc_out
 sc_0x5513:
-			mov r4, #0x5513
-			mov r5, #0x5A13
+			mov r1, #0x5513
+			mov r2, #0x5A13
 			b sc_out
 sc_0x5514:
-			mov r4, #0x5514
-			mov r5, #0x5A14
+			mov r1, #0x5514
+			mov r2, #0x5A14
 			b sc_out
 sc_0x5515:
-			mov r4, #0x5515
-			mov r5, #0x5A15
+			mov r1, #0x5515
+			mov r2, #0x5A15
 			b sc_out
 sc_0x5516:
-			mov r4, #0x5516
-			mov r5, #0x5A16
+			mov r1, #0x5516
+			mov r2, #0x5A16
 			b sc_out
 sc_0x5517:
-			mov r4, #0x5517
-			mov r5, #0x5A17
+			mov r1, #0x5517
+			mov r2, #0x5A17
 			b sc_out
 sc_0x5518:
-			mov r4, #0x5518
-			mov r5, #0x5A18
+			mov r1, #0x5518
+			mov r2, #0x5A18
 			b sc_out
 sc_0x5519:
-			mov r4, #0x5519
-			mov r5, #0x5A19
+			mov r1, #0x5519
+			mov r2, #0x5A19
 			b sc_out
 sc_0x551A:
-			mov r4, #0x551A
-			mov r5, #0x5A1A
+			mov r1, #0x551A
+			mov r2, #0x5A1A
 			b sc_out
 sc_0x551B:
-			mov r4, #0x551B
-			mov r5, #0x5A1B
+			mov r1, #0x551B
+			mov r2, #0x5A1B
 			b sc_out
 sc_0x551C:
-			mov r4, #0x551C
-			mov r5, #0x5A1C
+			mov r1, #0x551C
+			mov r2, #0x5A1C
 			b sc_out
 sc_0x551D:
-			mov r4, #0x551D
-			mov r5, #0x5A1D
+			mov r1, #0x551D
+			mov r2, #0x5A1D
 			b sc_out
 sc_0x551E:
-			mov r4, #0x551E
-			mov r5, #0x5A1E
+			mov r1, #0x551E
+			mov r2, #0x5A1E
 			b sc_out
 sc_0x551F:
-			mov r4, #0x551F
-			mov r5, #0x5A1F
+			mov r1, #0x551F
+			mov r2, #0x5A1F
 			b sc_out
 sc_0x5600:
-			mov r4, #0x5600
-			mov r5, #0x5A00
+			mov r1, #0x5600
+			mov r2, #0x5A00
 			b sc_out
 sc_0x5601:
-			mov r4, #0x5601
-			mov r5, #0x5A01
+			mov r1, #0x5601
+			mov r2, #0x5A01
 			b sc_out
 sc_0x5602:
-			mov r4, #0x5602
-			mov r5, #0x5A02
+			mov r1, #0x5602
+			mov r2, #0x5A02
 			b sc_out
 sc_0x5603:
-			mov r4, #0x5603
-			mov r5, #0x5A03
+			mov r1, #0x5603
+			mov r2, #0x5A03
 			b sc_out
 sc_0x5604:
-			mov r4, #0x5604
-			mov r5, #0x5A04
+			mov r1, #0x5604
+			mov r2, #0x5A04
 			b sc_out
 sc_0x5605:
-			mov r4, #0x5605
-			mov r5, #0x5A05
+			mov r1, #0x5605
+			mov r2, #0x5A05
 			b sc_out
 sc_0x5606:
-			mov r4, #0x5606
-			mov r5, #0x5A06
+			mov r1, #0x5606
+			mov r2, #0x5A06
 			b sc_out
 sc_0x5607:
-			mov r4, #0x5607
-			mov r5, #0x5A07
+			mov r1, #0x5607
+			mov r2, #0x5A07
 			b sc_out
 sc_0x5608:
-			mov r4, #0x5608
-			mov r5, #0x5A08
+			mov r1, #0x5608
+			mov r2, #0x5A08
 			b sc_out
 sc_0x5609:
-			mov r4, #0x5609
-			mov r5, #0x5A09
+			mov r1, #0x5609
+			mov r2, #0x5A09
 			b sc_out
 sc_0x560A:
-			mov r4, #0x560A
-			mov r5, #0x5A0A
+			mov r1, #0x560A
+			mov r2, #0x5A0A
 			b sc_out
 sc_0x560B:
-			mov r4, #0x560B
-			mov r5, #0x5A0B
+			mov r1, #0x560B
+			mov r2, #0x5A0B
 			b sc_out
 sc_0x560C:
-			mov r4, #0x560C
-			mov r5, #0x5A0C
+			mov r1, #0x560C
+			mov r2, #0x5A0C
 			b sc_out
 sc_0x560D:
-			mov r4, #0x560D
-			mov r5, #0x5A0D
+			mov r1, #0x560D
+			mov r2, #0x5A0D
 			b sc_out
 sc_0x560E:
-			mov r4, #0x560E
-			mov r5, #0x5A0E
+			mov r1, #0x560E
+			mov r2, #0x5A0E
 			b sc_out
 sc_0x560F:
-			mov r4, #0x560F
-			mov r5, #0x5A0F
+			mov r1, #0x560F
+			mov r2, #0x5A0F
 			b sc_out
 sc_0x5610:
-			mov r4, #0x5610
-			mov r5, #0x5A10
+			mov r1, #0x5610
+			mov r2, #0x5A10
 			b sc_out
 sc_0x5611:
-			mov r4, #0x5611
-			mov r5, #0x5A11
+			mov r1, #0x5611
+			mov r2, #0x5A11
 			b sc_out
 sc_0x5612:
-			mov r4, #0x5612
-			mov r5, #0x5A12
+			mov r1, #0x5612
+			mov r2, #0x5A12
 			b sc_out
 sc_0x5613:
-			mov r4, #0x5613
-			mov r5, #0x5A13
+			mov r1, #0x5613
+			mov r2, #0x5A13
 			b sc_out
 sc_0x5614:
-			mov r4, #0x5614
-			mov r5, #0x5A14
+			mov r1, #0x5614
+			mov r2, #0x5A14
 			b sc_out
 sc_0x5615:
-			mov r4, #0x5615
-			mov r5, #0x5A15
+			mov r1, #0x5615
+			mov r2, #0x5A15
 			b sc_out
 sc_0x5616:
-			mov r4, #0x5616
-			mov r5, #0x5A16
+			mov r1, #0x5616
+			mov r2, #0x5A16
 			b sc_out
 sc_0x5617:
-			mov r4, #0x5617
-			mov r5, #0x5A17
+			mov r1, #0x5617
+			mov r2, #0x5A17
 			b sc_out
 sc_0x5618:
-			mov r4, #0x5618
-			mov r5, #0x5A18
+			mov r1, #0x5618
+			mov r2, #0x5A18
 			b sc_out
 sc_0x5619:
-			mov r4, #0x5619
-			mov r5, #0x5A19
+			mov r1, #0x5619
+			mov r2, #0x5A19
 			b sc_out
 sc_0x561A:
-			mov r4, #0x561A
-			mov r5, #0x5A1A
+			mov r1, #0x561A
+			mov r2, #0x5A1A
 			b sc_out
 sc_0x561B:
-			mov r4, #0x561B
-			mov r5, #0x5A1B
+			mov r1, #0x561B
+			mov r2, #0x5A1B
 			b sc_out
 sc_0x561C:
-			mov r4, #0x561C
-			mov r5, #0x5A1C
+			mov r1, #0x561C
+			mov r2, #0x5A1C
 			b sc_out
 sc_0x561D:
-			mov r4, #0x561D
-			mov r5, #0x5A1D
+			mov r1, #0x561D
+			mov r2, #0x5A1D
 			b sc_out
 sc_0x561E:
-			mov r4, #0x561E
-			mov r5, #0x5A1E
+			mov r1, #0x561E
+			mov r2, #0x5A1E
 			b sc_out
 sc_0x561F:
-			mov r4, #0x561F
-			mov r5, #0x5A1F
+			mov r1, #0x561F
+			mov r2, #0x5A1F
 			b sc_out
 sc_0x5700:
-			mov r4, #0x5700
-			mov r5, #0x5A00
+			mov r1, #0x5700
+			mov r2, #0x5A00
 			b sc_out
 sc_0x5701:
-			mov r4, #0x5701
-			mov r5, #0x5A01
+			mov r1, #0x5701
+			mov r2, #0x5A01
 			b sc_out
 sc_0x5702:
-			mov r4, #0x5702
-			mov r5, #0x5A02
+			mov r1, #0x5702
+			mov r2, #0x5A02
 			b sc_out
 sc_0x5703:
-			mov r4, #0x5703
-			mov r5, #0x5A03
+			mov r1, #0x5703
+			mov r2, #0x5A03
 			b sc_out
 sc_0x5704:
-			mov r4, #0x5704
-			mov r5, #0x5A04
+			mov r1, #0x5704
+			mov r2, #0x5A04
 			b sc_out
 sc_0x5705:
-			mov r4, #0x5705
-			mov r5, #0x5A05
+			mov r1, #0x5705
+			mov r2, #0x5A05
 			b sc_out
 sc_0x5706:
-			mov r4, #0x5706
-			mov r5, #0x5A06
+			mov r1, #0x5706
+			mov r2, #0x5A06
 			b sc_out
 sc_0x5707:
-			mov r4, #0x5707
-			mov r5, #0x5A07
+			mov r1, #0x5707
+			mov r2, #0x5A07
 			b sc_out
 sc_0x5708:
-			mov r4, #0x5708
-			mov r5, #0x5A08
+			mov r1, #0x5708
+			mov r2, #0x5A08
 			b sc_out
 sc_0x5709:
-			mov r4, #0x5709
-			mov r5, #0x5A09
+			mov r1, #0x5709
+			mov r2, #0x5A09
 			b sc_out
 sc_0x570A:
-			mov r4, #0x570A
-			mov r5, #0x5A0A
+			mov r1, #0x570A
+			mov r2, #0x5A0A
 			b sc_out
 sc_0x570B:
-			mov r4, #0x570B
-			mov r5, #0x5A0B
+			mov r1, #0x570B
+			mov r2, #0x5A0B
 			b sc_out
 sc_0x570C:
-			mov r4, #0x570C
-			mov r5, #0x5A0C
+			mov r1, #0x570C
+			mov r2, #0x5A0C
 			b sc_out
 sc_0x570D:
-			mov r4, #0x570D
-			mov r5, #0x5A0D
+			mov r1, #0x570D
+			mov r2, #0x5A0D
 			b sc_out
 sc_0x570E:
-			mov r4, #0x570E
-			mov r5, #0x5A0E
+			mov r1, #0x570E
+			mov r2, #0x5A0E
 			b sc_out
 sc_0x570F:
-			mov r4, #0x570F
-			mov r5, #0x5A0F
+			mov r1, #0x570F
+			mov r2, #0x5A0F
 			b sc_out
 sc_0x5710:
-			mov r4, #0x5710
-			mov r5, #0x5A10
+			mov r1, #0x5710
+			mov r2, #0x5A10
 			b sc_out
 sc_0x5711:
-			mov r4, #0x5711
-			mov r5, #0x5A11
+			mov r1, #0x5711
+			mov r2, #0x5A11
 			b sc_out
 sc_0x5712:
-			mov r4, #0x5712
-			mov r5, #0x5A12
+			mov r1, #0x5712
+			mov r2, #0x5A12
 			b sc_out
 sc_0x5713:
-			mov r4, #0x5713
-			mov r5, #0x5A13
+			mov r1, #0x5713
+			mov r2, #0x5A13
 			b sc_out
 sc_0x5714:
-			mov r4, #0x5714
-			mov r5, #0x5A14
+			mov r1, #0x5714
+			mov r2, #0x5A14
 			b sc_out
 sc_0x5715:
-			mov r4, #0x5715
-			mov r5, #0x5A15
+			mov r1, #0x5715
+			mov r2, #0x5A15
 			b sc_out
 sc_0x5716:
-			mov r4, #0x5716
-			mov r5, #0x5A16
+			mov r1, #0x5716
+			mov r2, #0x5A16
 			b sc_out
 sc_0x5717:
-			mov r4, #0x5717
-			mov r5, #0x5A17
+			mov r1, #0x5717
+			mov r2, #0x5A17
 			b sc_out
 sc_0x5718:
-			mov r4, #0x5718
-			mov r5, #0x5A18
+			mov r1, #0x5718
+			mov r2, #0x5A18
 			b sc_out
 sc_0x5719:
-			mov r4, #0x5719
-			mov r5, #0x5A19
+			mov r1, #0x5719
+			mov r2, #0x5A19
 			b sc_out
 sc_0x571A:
-			mov r4, #0x571A
-			mov r5, #0x5A1A
+			mov r1, #0x571A
+			mov r2, #0x5A1A
 			b sc_out
 sc_0x571B:
-			mov r4, #0x571B
-			mov r5, #0x5A1B
+			mov r1, #0x571B
+			mov r2, #0x5A1B
 			b sc_out
 sc_0x571C:
-			mov r4, #0x571C
-			mov r5, #0x5A1C
+			mov r1, #0x571C
+			mov r2, #0x5A1C
 			b sc_out
 sc_0x571D:
-			mov r4, #0x571D
-			mov r5, #0x5A1D
+			mov r1, #0x571D
+			mov r2, #0x5A1D
 			b sc_out
 sc_0x571E:
-			mov r4, #0x571E
-			mov r5, #0x5A1E
+			mov r1, #0x571E
+			mov r2, #0x5A1E
 			b sc_out
 sc_0x571F:
-			mov r4, #0x571F
-			mov r5, #0x5A1F
+			mov r1, #0x571F
+			mov r2, #0x5A1F
 			b sc_out
 sc_0x5020:
-			mov r4, #0x5020
-			mov r5, #0x5A20
+			mov r1, #0x5020
+			mov r2, #0x5A20
 			b sc_out
 sc_0x5021:
-			mov r4, #0x5021
-			mov r5, #0x5A21
+			mov r1, #0x5021
+			mov r2, #0x5A21
 			b sc_out
 sc_0x5022:
-			mov r4, #0x5022
-			mov r5, #0x5A22
+			mov r1, #0x5022
+			mov r2, #0x5A22
 			b sc_out
 sc_0x5023:
-			mov r4, #0x5023
-			mov r5, #0x5A23
+			mov r1, #0x5023
+			mov r2, #0x5A23
 			b sc_out
 sc_0x5024:
-			mov r4, #0x5024
-			mov r5, #0x5A24
+			mov r1, #0x5024
+			mov r2, #0x5A24
 			b sc_out
 sc_0x5025:
-			mov r4, #0x5025
-			mov r5, #0x5A25
+			mov r1, #0x5025
+			mov r2, #0x5A25
 			b sc_out
 sc_0x5026:
-			mov r4, #0x5026
-			mov r5, #0x5A26
+			mov r1, #0x5026
+			mov r2, #0x5A26
 			b sc_out
 sc_0x5027:
-			mov r4, #0x5027
-			mov r5, #0x5A27
+			mov r1, #0x5027
+			mov r2, #0x5A27
 			b sc_out
 sc_0x5028:
-			mov r4, #0x5028
-			mov r5, #0x5A28
+			mov r1, #0x5028
+			mov r2, #0x5A28
 			b sc_out
 sc_0x5029:
-			mov r4, #0x5029
-			mov r5, #0x5A29
+			mov r1, #0x5029
+			mov r2, #0x5A29
 			b sc_out
 sc_0x502A:
-			mov r4, #0x502A
-			mov r5, #0x5A2A
+			mov r1, #0x502A
+			mov r2, #0x5A2A
 			b sc_out
 sc_0x502B:
-			mov r4, #0x502B
-			mov r5, #0x5A2B
+			mov r1, #0x502B
+			mov r2, #0x5A2B
 			b sc_out
 sc_0x502C:
-			mov r4, #0x502C
-			mov r5, #0x5A2C
+			mov r1, #0x502C
+			mov r2, #0x5A2C
 			b sc_out
 sc_0x502D:
-			mov r4, #0x502D
-			mov r5, #0x5A2D
+			mov r1, #0x502D
+			mov r2, #0x5A2D
 			b sc_out
 sc_0x502E:
-			mov r4, #0x502E
-			mov r5, #0x5A2E
+			mov r1, #0x502E
+			mov r2, #0x5A2E
 			b sc_out
 sc_0x502F:
-			mov r4, #0x502F
-			mov r5, #0x5A2F
+			mov r1, #0x502F
+			mov r2, #0x5A2F
 			b sc_out
 sc_0x5030:
-			mov r4, #0x5030
-			mov r5, #0x5A30
+			mov r1, #0x5030
+			mov r2, #0x5A30
 			b sc_out
 sc_0x5031:
-			mov r4, #0x5031
-			mov r5, #0x5A31
+			mov r1, #0x5031
+			mov r2, #0x5A31
 			b sc_out
 sc_0x5032:
-			mov r4, #0x5032
-			mov r5, #0x5A32
+			mov r1, #0x5032
+			mov r2, #0x5A32
 			b sc_out
 sc_0x5033:
-			mov r4, #0x5033
-			mov r5, #0x5A33
+			mov r1, #0x5033
+			mov r2, #0x5A33
 			b sc_out
 sc_0x5034:
-			mov r4, #0x5034
-			mov r5, #0x5A34
+			mov r1, #0x5034
+			mov r2, #0x5A34
 			b sc_out
 sc_0x5035:
-			mov r4, #0x5035
-			mov r5, #0x5A35
+			mov r1, #0x5035
+			mov r2, #0x5A35
 			b sc_out
 sc_0x5036:
-			mov r4, #0x5036
-			mov r5, #0x5A36
+			mov r1, #0x5036
+			mov r2, #0x5A36
 			b sc_out
 sc_0x5037:
-			mov r4, #0x5037
-			mov r5, #0x5A37
+			mov r1, #0x5037
+			mov r2, #0x5A37
 			b sc_out
 sc_0x5038:
-			mov r4, #0x5038
-			mov r5, #0x5A38
+			mov r1, #0x5038
+			mov r2, #0x5A38
 			b sc_out
 sc_0x5039:
-			mov r4, #0x5039
-			mov r5, #0x5A39
+			mov r1, #0x5039
+			mov r2, #0x5A39
 			b sc_out
 sc_0x503A:
-			mov r4, #0x503A
-			mov r5, #0x5A3A
+			mov r1, #0x503A
+			mov r2, #0x5A3A
 			b sc_out
 sc_0x503B:
-			mov r4, #0x503B
-			mov r5, #0x5A3B
+			mov r1, #0x503B
+			mov r2, #0x5A3B
 			b sc_out
 sc_0x503C:
-			mov r4, #0x503C
-			mov r5, #0x5A3C
+			mov r1, #0x503C
+			mov r2, #0x5A3C
 			b sc_out
 sc_0x503D:
-			mov r4, #0x503D
-			mov r5, #0x5A3D
+			mov r1, #0x503D
+			mov r2, #0x5A3D
 			b sc_out
 sc_0x503E:
-			mov r4, #0x503E
-			mov r5, #0x5A3E
+			mov r1, #0x503E
+			mov r2, #0x5A3E
 			b sc_out
 sc_0x503F:
-			mov r4, #0x503F
-			mov r5, #0x5A3F
+			mov r1, #0x503F
+			mov r2, #0x5A3F
 			b sc_out
 sc_0x5120:
-			mov r4, #0x5120
-			mov r5, #0x5A20
+			mov r1, #0x5120
+			mov r2, #0x5A20
 			b sc_out
 sc_0x5121:
-			mov r4, #0x5121
-			mov r5, #0x5A21
+			mov r1, #0x5121
+			mov r2, #0x5A21
 			b sc_out
 sc_0x5122:
-			mov r4, #0x5122
-			mov r5, #0x5A22
+			mov r1, #0x5122
+			mov r2, #0x5A22
 			b sc_out
 sc_0x5123:
-			mov r4, #0x5123
-			mov r5, #0x5A23
+			mov r1, #0x5123
+			mov r2, #0x5A23
 			b sc_out
 sc_0x5124:
-			mov r4, #0x5124
-			mov r5, #0x5A24
+			mov r1, #0x5124
+			mov r2, #0x5A24
 			b sc_out
 sc_0x5125:
-			mov r4, #0x5125
-			mov r5, #0x5A25
+			mov r1, #0x5125
+			mov r2, #0x5A25
 			b sc_out
 sc_0x5126:
-			mov r4, #0x5126
-			mov r5, #0x5A26
+			mov r1, #0x5126
+			mov r2, #0x5A26
 			b sc_out
 sc_0x5127:
-			mov r4, #0x5127
-			mov r5, #0x5A27
+			mov r1, #0x5127
+			mov r2, #0x5A27
 			b sc_out
 sc_0x5128:
-			mov r4, #0x5128
-			mov r5, #0x5A28
+			mov r1, #0x5128
+			mov r2, #0x5A28
 			b sc_out
 sc_0x5129:
-			mov r4, #0x5129
-			mov r5, #0x5A29
+			mov r1, #0x5129
+			mov r2, #0x5A29
 			b sc_out
 sc_0x512A:
-			mov r4, #0x512A
-			mov r5, #0x5A2A
+			mov r1, #0x512A
+			mov r2, #0x5A2A
 			b sc_out
 sc_0x512B:
-			mov r4, #0x512B
-			mov r5, #0x5A2B
+			mov r1, #0x512B
+			mov r2, #0x5A2B
 			b sc_out
 sc_0x512C:
-			mov r4, #0x512C
-			mov r5, #0x5A2C
+			mov r1, #0x512C
+			mov r2, #0x5A2C
 			b sc_out
 sc_0x512D:
-			mov r4, #0x512D
-			mov r5, #0x5A2D
+			mov r1, #0x512D
+			mov r2, #0x5A2D
 			b sc_out
 sc_0x512E:
-			mov r4, #0x512E
-			mov r5, #0x5A2E
+			mov r1, #0x512E
+			mov r2, #0x5A2E
 			b sc_out
 sc_0x512F:
-			mov r4, #0x512F
-			mov r5, #0x5A2F
+			mov r1, #0x512F
+			mov r2, #0x5A2F
 			b sc_out
 sc_0x5130:
-			mov r4, #0x5130
-			mov r5, #0x5A30
+			mov r1, #0x5130
+			mov r2, #0x5A30
 			b sc_out
 sc_0x5131:
-			mov r4, #0x5131
-			mov r5, #0x5A31
+			mov r1, #0x5131
+			mov r2, #0x5A31
 			b sc_out
 sc_0x5132:
-			mov r4, #0x5132
-			mov r5, #0x5A32
+			mov r1, #0x5132
+			mov r2, #0x5A32
 			b sc_out
 sc_0x5133:
-			mov r4, #0x5133
-			mov r5, #0x5A33
+			mov r1, #0x5133
+			mov r2, #0x5A33
 			b sc_out
 sc_0x5134:
-			mov r4, #0x5134
-			mov r5, #0x5A34
+			mov r1, #0x5134
+			mov r2, #0x5A34
 			b sc_out
 sc_0x5135:
-			mov r4, #0x5135
-			mov r5, #0x5A35
+			mov r1, #0x5135
+			mov r2, #0x5A35
 			b sc_out
 sc_0x5136:
-			mov r4, #0x5136
-			mov r5, #0x5A36
+			mov r1, #0x5136
+			mov r2, #0x5A36
 			b sc_out
 sc_0x5137:
-			mov r4, #0x5137
-			mov r5, #0x5A37
+			mov r1, #0x5137
+			mov r2, #0x5A37
 			b sc_out
 sc_0x5138:
-			mov r4, #0x5138
-			mov r5, #0x5A38
+			mov r1, #0x5138
+			mov r2, #0x5A38
 			b sc_out
 sc_0x5139:
-			mov r4, #0x5139
-			mov r5, #0x5A39
+			mov r1, #0x5139
+			mov r2, #0x5A39
 			b sc_out
 sc_0x513A:
-			mov r4, #0x513A
-			mov r5, #0x5A3A
+			mov r1, #0x513A
+			mov r2, #0x5A3A
 			b sc_out
 sc_0x513B:
-			mov r4, #0x513B
-			mov r5, #0x5A3B
+			mov r1, #0x513B
+			mov r2, #0x5A3B
 			b sc_out
 sc_0x513C:
-			mov r4, #0x513C
-			mov r5, #0x5A3C
+			mov r1, #0x513C
+			mov r2, #0x5A3C
 			b sc_out
 sc_0x513D:
-			mov r4, #0x513D
-			mov r5, #0x5A3D
+			mov r1, #0x513D
+			mov r2, #0x5A3D
 			b sc_out
 sc_0x513E:
-			mov r4, #0x513E
-			mov r5, #0x5A3E
+			mov r1, #0x513E
+			mov r2, #0x5A3E
 			b sc_out
 sc_0x513F:
-			mov r4, #0x513F
-			mov r5, #0x5A3F
+			mov r1, #0x513F
+			mov r2, #0x5A3F
 			b sc_out
 sc_0x5220:
-			mov r4, #0x5220
-			mov r5, #0x5A20
+			mov r1, #0x5220
+			mov r2, #0x5A20
 			b sc_out
 sc_0x5221:
-			mov r4, #0x5221
-			mov r5, #0x5A21
+			mov r1, #0x5221
+			mov r2, #0x5A21
 			b sc_out
 sc_0x5222:
-			mov r4, #0x5222
-			mov r5, #0x5A22
+			mov r1, #0x5222
+			mov r2, #0x5A22
 			b sc_out
 sc_0x5223:
-			mov r4, #0x5223
-			mov r5, #0x5A23
+			mov r1, #0x5223
+			mov r2, #0x5A23
 			b sc_out
 sc_0x5224:
-			mov r4, #0x5224
-			mov r5, #0x5A24
+			mov r1, #0x5224
+			mov r2, #0x5A24
 			b sc_out
 sc_0x5225:
-			mov r4, #0x5225
-			mov r5, #0x5A25
+			mov r1, #0x5225
+			mov r2, #0x5A25
 			b sc_out
 sc_0x5226:
-			mov r4, #0x5226
-			mov r5, #0x5A26
+			mov r1, #0x5226
+			mov r2, #0x5A26
 			b sc_out
 sc_0x5227:
-			mov r4, #0x5227
-			mov r5, #0x5A27
+			mov r1, #0x5227
+			mov r2, #0x5A27
 			b sc_out
 sc_0x5228:
-			mov r4, #0x5228
-			mov r5, #0x5A28
+			mov r1, #0x5228
+			mov r2, #0x5A28
 			b sc_out
 sc_0x5229:
-			mov r4, #0x5229
-			mov r5, #0x5A29
+			mov r1, #0x5229
+			mov r2, #0x5A29
 			b sc_out
 sc_0x522A:
-			mov r4, #0x522A
-			mov r5, #0x5A2A
+			mov r1, #0x522A
+			mov r2, #0x5A2A
 			b sc_out
 sc_0x522B:
-			mov r4, #0x522B
-			mov r5, #0x5A2B
+			mov r1, #0x522B
+			mov r2, #0x5A2B
 			b sc_out
 sc_0x522C:
-			mov r4, #0x522C
-			mov r5, #0x5A2C
+			mov r1, #0x522C
+			mov r2, #0x5A2C
 			b sc_out
 sc_0x522D:
-			mov r4, #0x522D
-			mov r5, #0x5A2D
+			mov r1, #0x522D
+			mov r2, #0x5A2D
 			b sc_out
 sc_0x522E:
-			mov r4, #0x522E
-			mov r5, #0x5A2E
+			mov r1, #0x522E
+			mov r2, #0x5A2E
 			b sc_out
 sc_0x522F:
-			mov r4, #0x522F
-			mov r5, #0x5A2F
+			mov r1, #0x522F
+			mov r2, #0x5A2F
 			b sc_out
 sc_0x5230:
-			mov r4, #0x5230
-			mov r5, #0x5A30
+			mov r1, #0x5230
+			mov r2, #0x5A30
 			b sc_out
 sc_0x5231:
-			mov r4, #0x5231
-			mov r5, #0x5A31
+			mov r1, #0x5231
+			mov r2, #0x5A31
 			b sc_out
 sc_0x5232:
-			mov r4, #0x5232
-			mov r5, #0x5A32
+			mov r1, #0x5232
+			mov r2, #0x5A32
 			b sc_out
 sc_0x5233:
-			mov r4, #0x5233
-			mov r5, #0x5A33
+			mov r1, #0x5233
+			mov r2, #0x5A33
 			b sc_out
 sc_0x5234:
-			mov r4, #0x5234
-			mov r5, #0x5A34
+			mov r1, #0x5234
+			mov r2, #0x5A34
 			b sc_out
 sc_0x5235:
-			mov r4, #0x5235
-			mov r5, #0x5A35
+			mov r1, #0x5235
+			mov r2, #0x5A35
 			b sc_out
 sc_0x5236:
-			mov r4, #0x5236
-			mov r5, #0x5A36
+			mov r1, #0x5236
+			mov r2, #0x5A36
 			b sc_out
 sc_0x5237:
-			mov r4, #0x5237
-			mov r5, #0x5A37
+			mov r1, #0x5237
+			mov r2, #0x5A37
 			b sc_out
 sc_0x5238:
-			mov r4, #0x5238
-			mov r5, #0x5A38
+			mov r1, #0x5238
+			mov r2, #0x5A38
 			b sc_out
 sc_0x5239:
-			mov r4, #0x5239
-			mov r5, #0x5A39
+			mov r1, #0x5239
+			mov r2, #0x5A39
 			b sc_out
 sc_0x523A:
-			mov r4, #0x523A
-			mov r5, #0x5A3A
+			mov r1, #0x523A
+			mov r2, #0x5A3A
 			b sc_out
 sc_0x523B:
-			mov r4, #0x523B
-			mov r5, #0x5A3B
+			mov r1, #0x523B
+			mov r2, #0x5A3B
 			b sc_out
 sc_0x523C:
-			mov r4, #0x523C
-			mov r5, #0x5A3C
+			mov r1, #0x523C
+			mov r2, #0x5A3C
 			b sc_out
 sc_0x523D:
-			mov r4, #0x523D
-			mov r5, #0x5A3D
+			mov r1, #0x523D
+			mov r2, #0x5A3D
 			b sc_out
 sc_0x523E:
-			mov r4, #0x523E
-			mov r5, #0x5A3E
+			mov r1, #0x523E
+			mov r2, #0x5A3E
 			b sc_out
 sc_0x523F:
-			mov r4, #0x523F
-			mov r5, #0x5A3F
+			mov r1, #0x523F
+			mov r2, #0x5A3F
 			b sc_out
 sc_0x5320:
-			mov r4, #0x5320
-			mov r5, #0x5A20
+			mov r1, #0x5320
+			mov r2, #0x5A20
 			b sc_out
 sc_0x5321:
-			mov r4, #0x5321
-			mov r5, #0x5A21
+			mov r1, #0x5321
+			mov r2, #0x5A21
 			b sc_out
 sc_0x5322:
-			mov r4, #0x5322
-			mov r5, #0x5A22
+			mov r1, #0x5322
+			mov r2, #0x5A22
 			b sc_out
 sc_0x5323:
-			mov r4, #0x5323
-			mov r5, #0x5A23
+			mov r1, #0x5323
+			mov r2, #0x5A23
 			b sc_out
 sc_0x5324:
-			mov r4, #0x5324
-			mov r5, #0x5A24
+			mov r1, #0x5324
+			mov r2, #0x5A24
 			b sc_out
 sc_0x5325:
-			mov r4, #0x5325
-			mov r5, #0x5A25
+			mov r1, #0x5325
+			mov r2, #0x5A25
 			b sc_out
 sc_0x5326:
-			mov r4, #0x5326
-			mov r5, #0x5A26
+			mov r1, #0x5326
+			mov r2, #0x5A26
 			b sc_out
 sc_0x5327:
-			mov r4, #0x5327
-			mov r5, #0x5A27
+			mov r1, #0x5327
+			mov r2, #0x5A27
 			b sc_out
 sc_0x5328:
-			mov r4, #0x5328
-			mov r5, #0x5A28
+			mov r1, #0x5328
+			mov r2, #0x5A28
 			b sc_out
 sc_0x5329:
-			mov r4, #0x5329
-			mov r5, #0x5A29
+			mov r1, #0x5329
+			mov r2, #0x5A29
 			b sc_out
 sc_0x532A:
-			mov r4, #0x532A
-			mov r5, #0x5A2A
+			mov r1, #0x532A
+			mov r2, #0x5A2A
 			b sc_out
 sc_0x532B:
-			mov r4, #0x532B
-			mov r5, #0x5A2B
+			mov r1, #0x532B
+			mov r2, #0x5A2B
 			b sc_out
 sc_0x532C:
-			mov r4, #0x532C
-			mov r5, #0x5A2C
+			mov r1, #0x532C
+			mov r2, #0x5A2C
 			b sc_out
 sc_0x532D:
-			mov r4, #0x532D
-			mov r5, #0x5A2D
+			mov r1, #0x532D
+			mov r2, #0x5A2D
 			b sc_out
 sc_0x532E:
-			mov r4, #0x532E
-			mov r5, #0x5A2E
+			mov r1, #0x532E
+			mov r2, #0x5A2E
 			b sc_out
 sc_0x532F:
-			mov r4, #0x532F
-			mov r5, #0x5A2F
+			mov r1, #0x532F
+			mov r2, #0x5A2F
 			b sc_out
 sc_0x5330:
-			mov r4, #0x5330
-			mov r5, #0x5A30
+			mov r1, #0x5330
+			mov r2, #0x5A30
 			b sc_out
 sc_0x5331:
-			mov r4, #0x5331
-			mov r5, #0x5A31
+			mov r1, #0x5331
+			mov r2, #0x5A31
 			b sc_out
 sc_0x5332:
-			mov r4, #0x5332
-			mov r5, #0x5A32
+			mov r1, #0x5332
+			mov r2, #0x5A32
 			b sc_out
 sc_0x5333:
-			mov r4, #0x5333
-			mov r5, #0x5A33
+			mov r1, #0x5333
+			mov r2, #0x5A33
 			b sc_out
 sc_0x5334:
-			mov r4, #0x5334
-			mov r5, #0x5A34
+			mov r1, #0x5334
+			mov r2, #0x5A34
 			b sc_out
 sc_0x5335:
-			mov r4, #0x5335
-			mov r5, #0x5A35
+			mov r1, #0x5335
+			mov r2, #0x5A35
 			b sc_out
 sc_0x5336:
-			mov r4, #0x5336
-			mov r5, #0x5A36
+			mov r1, #0x5336
+			mov r2, #0x5A36
 			b sc_out
 sc_0x5337:
-			mov r4, #0x5337
-			mov r5, #0x5A37
+			mov r1, #0x5337
+			mov r2, #0x5A37
 			b sc_out
 sc_0x5338:
-			mov r4, #0x5338
-			mov r5, #0x5A38
+			mov r1, #0x5338
+			mov r2, #0x5A38
 			b sc_out
 sc_0x5339:
-			mov r4, #0x5339
-			mov r5, #0x5A39
+			mov r1, #0x5339
+			mov r2, #0x5A39
 			b sc_out
 sc_0x533A:
-			mov r4, #0x533A
-			mov r5, #0x5A3A
+			mov r1, #0x533A
+			mov r2, #0x5A3A
 			b sc_out
 sc_0x533B:
-			mov r4, #0x533B
-			mov r5, #0x5A3B
+			mov r1, #0x533B
+			mov r2, #0x5A3B
 			b sc_out
 sc_0x533C:
-			mov r4, #0x533C
-			mov r5, #0x5A3C
+			mov r1, #0x533C
+			mov r2, #0x5A3C
 			b sc_out
 sc_0x533D:
-			mov r4, #0x533D
-			mov r5, #0x5A3D
+			mov r1, #0x533D
+			mov r2, #0x5A3D
 			b sc_out
 sc_0x533E:
-			mov r4, #0x533E
-			mov r5, #0x5A3E
+			mov r1, #0x533E
+			mov r2, #0x5A3E
 			b sc_out
 sc_0x533F:
-			mov r4, #0x533F
-			mov r5, #0x5A3F
+			mov r1, #0x533F
+			mov r2, #0x5A3F
 			b sc_out
 sc_0x5420:
-			mov r4, #0x5420
-			mov r5, #0x5A20
+			mov r1, #0x5420
+			mov r2, #0x5A20
 			b sc_out
 sc_0x5421:
-			mov r4, #0x5421
-			mov r5, #0x5A21
+			mov r1, #0x5421
+			mov r2, #0x5A21
 			b sc_out
 sc_0x5422:
-			mov r4, #0x5422
-			mov r5, #0x5A22
+			mov r1, #0x5422
+			mov r2, #0x5A22
 			b sc_out
 sc_0x5423:
-			mov r4, #0x5423
-			mov r5, #0x5A23
+			mov r1, #0x5423
+			mov r2, #0x5A23
 			b sc_out
 sc_0x5424:
-			mov r4, #0x5424
-			mov r5, #0x5A24
+			mov r1, #0x5424
+			mov r2, #0x5A24
 			b sc_out
 sc_0x5425:
-			mov r4, #0x5425
-			mov r5, #0x5A25
+			mov r1, #0x5425
+			mov r2, #0x5A25
 			b sc_out
 sc_0x5426:
-			mov r4, #0x5426
-			mov r5, #0x5A26
+			mov r1, #0x5426
+			mov r2, #0x5A26
 			b sc_out
 sc_0x5427:
-			mov r4, #0x5427
-			mov r5, #0x5A27
+			mov r1, #0x5427
+			mov r2, #0x5A27
 			b sc_out
 sc_0x5428:
-			mov r4, #0x5428
-			mov r5, #0x5A28
+			mov r1, #0x5428
+			mov r2, #0x5A28
 			b sc_out
 sc_0x5429:
-			mov r4, #0x5429
-			mov r5, #0x5A29
+			mov r1, #0x5429
+			mov r2, #0x5A29
 			b sc_out
 sc_0x542A:
-			mov r4, #0x542A
-			mov r5, #0x5A2A
+			mov r1, #0x542A
+			mov r2, #0x5A2A
 			b sc_out
 sc_0x542B:
-			mov r4, #0x542B
-			mov r5, #0x5A2B
+			mov r1, #0x542B
+			mov r2, #0x5A2B
 			b sc_out
 sc_0x542C:
-			mov r4, #0x542C
-			mov r5, #0x5A2C
+			mov r1, #0x542C
+			mov r2, #0x5A2C
 			b sc_out
 sc_0x542D:
-			mov r4, #0x542D
-			mov r5, #0x5A2D
+			mov r1, #0x542D
+			mov r2, #0x5A2D
 			b sc_out
 sc_0x542E:
-			mov r4, #0x542E
-			mov r5, #0x5A2E
+			mov r1, #0x542E
+			mov r2, #0x5A2E
 			b sc_out
 sc_0x542F:
-			mov r4, #0x542F
-			mov r5, #0x5A2F
+			mov r1, #0x542F
+			mov r2, #0x5A2F
 			b sc_out
 sc_0x5430:
-			mov r4, #0x5430
-			mov r5, #0x5A30
+			mov r1, #0x5430
+			mov r2, #0x5A30
 			b sc_out
 sc_0x5431:
-			mov r4, #0x5431
-			mov r5, #0x5A31
+			mov r1, #0x5431
+			mov r2, #0x5A31
 			b sc_out
 sc_0x5432:
-			mov r4, #0x5432
-			mov r5, #0x5A32
+			mov r1, #0x5432
+			mov r2, #0x5A32
 			b sc_out
 sc_0x5433:
-			mov r4, #0x5433
-			mov r5, #0x5A33
+			mov r1, #0x5433
+			mov r2, #0x5A33
 			b sc_out
 sc_0x5434:
-			mov r4, #0x5434
-			mov r5, #0x5A34
+			mov r1, #0x5434
+			mov r2, #0x5A34
 			b sc_out
 sc_0x5435:
-			mov r4, #0x5435
-			mov r5, #0x5A35
+			mov r1, #0x5435
+			mov r2, #0x5A35
 			b sc_out
 sc_0x5436:
-			mov r4, #0x5436
-			mov r5, #0x5A36
+			mov r1, #0x5436
+			mov r2, #0x5A36
 			b sc_out
 sc_0x5437:
-			mov r4, #0x5437
-			mov r5, #0x5A37
+			mov r1, #0x5437
+			mov r2, #0x5A37
 			b sc_out
 sc_0x5438:
-			mov r4, #0x5438
-			mov r5, #0x5A38
+			mov r1, #0x5438
+			mov r2, #0x5A38
 			b sc_out
 sc_0x5439:
-			mov r4, #0x5439
-			mov r5, #0x5A39
+			mov r1, #0x5439
+			mov r2, #0x5A39
 			b sc_out
 sc_0x543A:
-			mov r4, #0x543A
-			mov r5, #0x5A3A
+			mov r1, #0x543A
+			mov r2, #0x5A3A
 			b sc_out
 sc_0x543B:
-			mov r4, #0x543B
-			mov r5, #0x5A3B
+			mov r1, #0x543B
+			mov r2, #0x5A3B
 			b sc_out
 sc_0x543C:
-			mov r4, #0x543C
-			mov r5, #0x5A3C
+			mov r1, #0x543C
+			mov r2, #0x5A3C
 			b sc_out
 sc_0x543D:
-			mov r4, #0x543D
-			mov r5, #0x5A3D
+			mov r1, #0x543D
+			mov r2, #0x5A3D
 			b sc_out
 sc_0x543E:
-			mov r4, #0x543E
-			mov r5, #0x5A3E
+			mov r1, #0x543E
+			mov r2, #0x5A3E
 			b sc_out
 sc_0x543F:
-			mov r4, #0x543F
-			mov r5, #0x5A3F
+			mov r1, #0x543F
+			mov r2, #0x5A3F
 			b sc_out
 sc_0x5520:
-			mov r4, #0x5520
-			mov r5, #0x5A20
+			mov r1, #0x5520
+			mov r2, #0x5A20
 			b sc_out
 sc_0x5521:
-			mov r4, #0x5521
-			mov r5, #0x5A21
+			mov r1, #0x5521
+			mov r2, #0x5A21
 			b sc_out
 sc_0x5522:
-			mov r4, #0x5522
-			mov r5, #0x5A22
+			mov r1, #0x5522
+			mov r2, #0x5A22
 			b sc_out
 sc_0x5523:
-			mov r4, #0x5523
-			mov r5, #0x5A23
+			mov r1, #0x5523
+			mov r2, #0x5A23
 			b sc_out
 sc_0x5524:
-			mov r4, #0x5524
-			mov r5, #0x5A24
+			mov r1, #0x5524
+			mov r2, #0x5A24
 			b sc_out
 sc_0x5525:
-			mov r4, #0x5525
-			mov r5, #0x5A25
+			mov r1, #0x5525
+			mov r2, #0x5A25
 			b sc_out
 sc_0x5526:
-			mov r4, #0x5526
-			mov r5, #0x5A26
+			mov r1, #0x5526
+			mov r2, #0x5A26
 			b sc_out
 sc_0x5527:
-			mov r4, #0x5527
-			mov r5, #0x5A27
+			mov r1, #0x5527
+			mov r2, #0x5A27
 			b sc_out
 sc_0x5528:
-			mov r4, #0x5528
-			mov r5, #0x5A28
+			mov r1, #0x5528
+			mov r2, #0x5A28
 			b sc_out
 sc_0x5529:
-			mov r4, #0x5529
-			mov r5, #0x5A29
+			mov r1, #0x5529
+			mov r2, #0x5A29
 			b sc_out
 sc_0x552A:
-			mov r4, #0x552A
-			mov r5, #0x5A2A
+			mov r1, #0x552A
+			mov r2, #0x5A2A
 			b sc_out
 sc_0x552B:
-			mov r4, #0x552B
-			mov r5, #0x5A2B
+			mov r1, #0x552B
+			mov r2, #0x5A2B
 			b sc_out
 sc_0x552C:
-			mov r4, #0x552C
-			mov r5, #0x5A2C
+			mov r1, #0x552C
+			mov r2, #0x5A2C
 			b sc_out
 sc_0x552D:
-			mov r4, #0x552D
-			mov r5, #0x5A2D
+			mov r1, #0x552D
+			mov r2, #0x5A2D
 			b sc_out
 sc_0x552E:
-			mov r4, #0x552E
-			mov r5, #0x5A2E
+			mov r1, #0x552E
+			mov r2, #0x5A2E
 			b sc_out
 sc_0x552F:
-			mov r4, #0x552F
-			mov r5, #0x5A2F
+			mov r1, #0x552F
+			mov r2, #0x5A2F
 			b sc_out
 sc_0x5530:
-			mov r4, #0x5530
-			mov r5, #0x5A30
+			mov r1, #0x5530
+			mov r2, #0x5A30
 			b sc_out
 sc_0x5531:
-			mov r4, #0x5531
-			mov r5, #0x5A31
+			mov r1, #0x5531
+			mov r2, #0x5A31
 			b sc_out
 sc_0x5532:
-			mov r4, #0x5532
-			mov r5, #0x5A32
+			mov r1, #0x5532
+			mov r2, #0x5A32
 			b sc_out
 sc_0x5533:
-			mov r4, #0x5533
-			mov r5, #0x5A33
+			mov r1, #0x5533
+			mov r2, #0x5A33
 			b sc_out
 sc_0x5534:
-			mov r4, #0x5534
-			mov r5, #0x5A34
+			mov r1, #0x5534
+			mov r2, #0x5A34
 			b sc_out
 sc_0x5535:
-			mov r4, #0x5535
-			mov r5, #0x5A35
+			mov r1, #0x5535
+			mov r2, #0x5A35
 			b sc_out
 sc_0x5536:
-			mov r4, #0x5536
-			mov r5, #0x5A36
+			mov r1, #0x5536
+			mov r2, #0x5A36
 			b sc_out
 sc_0x5537:
-			mov r4, #0x5537
-			mov r5, #0x5A37
+			mov r1, #0x5537
+			mov r2, #0x5A37
 			b sc_out
 sc_0x5538:
-			mov r4, #0x5538
-			mov r5, #0x5A38
+			mov r1, #0x5538
+			mov r2, #0x5A38
 			b sc_out
 sc_0x5539:
-			mov r4, #0x5539
-			mov r5, #0x5A39
+			mov r1, #0x5539
+			mov r2, #0x5A39
 			b sc_out
 sc_0x553A:
-			mov r4, #0x553A
-			mov r5, #0x5A3A
+			mov r1, #0x553A
+			mov r2, #0x5A3A
 			b sc_out
 sc_0x553B:
-			mov r4, #0x553B
-			mov r5, #0x5A3B
+			mov r1, #0x553B
+			mov r2, #0x5A3B
 			b sc_out
 sc_0x553C:
-			mov r4, #0x553C
-			mov r5, #0x5A3C
+			mov r1, #0x553C
+			mov r2, #0x5A3C
 			b sc_out
 sc_0x553D:
-			mov r4, #0x553D
-			mov r5, #0x5A3D
+			mov r1, #0x553D
+			mov r2, #0x5A3D
 			b sc_out
 sc_0x553E:
-			mov r4, #0x553E
-			mov r5, #0x5A3E
+			mov r1, #0x553E
+			mov r2, #0x5A3E
 			b sc_out
 sc_0x553F:
-			mov r4, #0x553F
-			mov r5, #0x5A3F
+			mov r1, #0x553F
+			mov r2, #0x5A3F
 			b sc_out
 sc_0x5620:
-			mov r4, #0x5620
-			mov r5, #0x5A20
+			mov r1, #0x5620
+			mov r2, #0x5A20
 			b sc_out
 sc_0x5621:
-			mov r4, #0x5621
-			mov r5, #0x5A21
+			mov r1, #0x5621
+			mov r2, #0x5A21
 			b sc_out
 sc_0x5622:
-			mov r4, #0x5622
-			mov r5, #0x5A22
+			mov r1, #0x5622
+			mov r2, #0x5A22
 			b sc_out
 sc_0x5623:
-			mov r4, #0x5623
-			mov r5, #0x5A23
+			mov r1, #0x5623
+			mov r2, #0x5A23
 			b sc_out
 sc_0x5624:
-			mov r4, #0x5624
-			mov r5, #0x5A24
+			mov r1, #0x5624
+			mov r2, #0x5A24
 			b sc_out
 sc_0x5625:
-			mov r4, #0x5625
-			mov r5, #0x5A25
+			mov r1, #0x5625
+			mov r2, #0x5A25
 			b sc_out
 sc_0x5626:
-			mov r4, #0x5626
-			mov r5, #0x5A26
+			mov r1, #0x5626
+			mov r2, #0x5A26
 			b sc_out
 sc_0x5627:
-			mov r4, #0x5627
-			mov r5, #0x5A27
+			mov r1, #0x5627
+			mov r2, #0x5A27
 			b sc_out
 sc_0x5628:
-			mov r4, #0x5628
-			mov r5, #0x5A28
+			mov r1, #0x5628
+			mov r2, #0x5A28
 			b sc_out
 sc_0x5629:
-			mov r4, #0x5629
-			mov r5, #0x5A29
+			mov r1, #0x5629
+			mov r2, #0x5A29
 			b sc_out
 sc_0x562A:
-			mov r4, #0x562A
-			mov r5, #0x5A2A
+			mov r1, #0x562A
+			mov r2, #0x5A2A
 			b sc_out
 sc_0x562B:
-			mov r4, #0x562B
-			mov r5, #0x5A2B
+			mov r1, #0x562B
+			mov r2, #0x5A2B
 			b sc_out
 sc_0x562C:
-			mov r4, #0x562C
-			mov r5, #0x5A2C
+			mov r1, #0x562C
+			mov r2, #0x5A2C
 			b sc_out
 sc_0x562D:
-			mov r4, #0x562D
-			mov r5, #0x5A2D
+			mov r1, #0x562D
+			mov r2, #0x5A2D
 			b sc_out
 sc_0x562E:
-			mov r4, #0x562E
-			mov r5, #0x5A2E
+			mov r1, #0x562E
+			mov r2, #0x5A2E
 			b sc_out
 sc_0x562F:
-			mov r4, #0x562F
-			mov r5, #0x5A2F
+			mov r1, #0x562F
+			mov r2, #0x5A2F
 			b sc_out
 sc_0x5630:
-			mov r4, #0x5630
-			mov r5, #0x5A30
+			mov r1, #0x5630
+			mov r2, #0x5A30
 			b sc_out
 sc_0x5631:
-			mov r4, #0x5631
-			mov r5, #0x5A31
+			mov r1, #0x5631
+			mov r2, #0x5A31
 			b sc_out
 sc_0x5632:
-			mov r4, #0x5632
-			mov r5, #0x5A32
+			mov r1, #0x5632
+			mov r2, #0x5A32
 			b sc_out
 sc_0x5633:
-			mov r4, #0x5633
-			mov r5, #0x5A33
+			mov r1, #0x5633
+			mov r2, #0x5A33
 			b sc_out
 sc_0x5634:
-			mov r4, #0x5634
-			mov r5, #0x5A34
+			mov r1, #0x5634
+			mov r2, #0x5A34
 			b sc_out
 sc_0x5635:
-			mov r4, #0x5635
-			mov r5, #0x5A35
+			mov r1, #0x5635
+			mov r2, #0x5A35
 			b sc_out
 sc_0x5636:
-			mov r4, #0x5636
-			mov r5, #0x5A36
+			mov r1, #0x5636
+			mov r2, #0x5A36
 			b sc_out
 sc_0x5637:
-			mov r4, #0x5637
-			mov r5, #0x5A37
+			mov r1, #0x5637
+			mov r2, #0x5A37
 			b sc_out
 sc_0x5638:
-			mov r4, #0x5638
-			mov r5, #0x5A38
+			mov r1, #0x5638
+			mov r2, #0x5A38
 			b sc_out
 sc_0x5639:
-			mov r4, #0x5639
-			mov r5, #0x5A39
+			mov r1, #0x5639
+			mov r2, #0x5A39
 			b sc_out
 sc_0x563A:
-			mov r4, #0x563A
-			mov r5, #0x5A3A
+			mov r1, #0x563A
+			mov r2, #0x5A3A
 			b sc_out
 sc_0x563B:
-			mov r4, #0x563B
-			mov r5, #0x5A3B
+			mov r1, #0x563B
+			mov r2, #0x5A3B
 			b sc_out
 sc_0x563C:
-			mov r4, #0x563C
-			mov r5, #0x5A3C
+			mov r1, #0x563C
+			mov r2, #0x5A3C
 			b sc_out
 sc_0x563D:
-			mov r4, #0x563D
-			mov r5, #0x5A3D
+			mov r1, #0x563D
+			mov r2, #0x5A3D
 			b sc_out
 sc_0x563E:
-			mov r4, #0x563E
-			mov r5, #0x5A3E
+			mov r1, #0x563E
+			mov r2, #0x5A3E
 			b sc_out
 sc_0x563F:
-			mov r4, #0x563F
-			mov r5, #0x5A3F
+			mov r1, #0x563F
+			mov r2, #0x5A3F
 			b sc_out
 sc_0x5720:
-			mov r4, #0x5720
-			mov r5, #0x5A20
+			mov r1, #0x5720
+			mov r2, #0x5A20
 			b sc_out
 sc_0x5721:
-			mov r4, #0x5721
-			mov r5, #0x5A21
+			mov r1, #0x5721
+			mov r2, #0x5A21
 			b sc_out
 sc_0x5722:
-			mov r4, #0x5722
-			mov r5, #0x5A22
+			mov r1, #0x5722
+			mov r2, #0x5A22
 			b sc_out
 sc_0x5723:
-			mov r4, #0x5723
-			mov r5, #0x5A23
+			mov r1, #0x5723
+			mov r2, #0x5A23
 			b sc_out
 sc_0x5724:
-			mov r4, #0x5724
-			mov r5, #0x5A24
+			mov r1, #0x5724
+			mov r2, #0x5A24
 			b sc_out
 sc_0x5725:
-			mov r4, #0x5725
-			mov r5, #0x5A25
+			mov r1, #0x5725
+			mov r2, #0x5A25
 			b sc_out
 sc_0x5726:
-			mov r4, #0x5726
-			mov r5, #0x5A26
+			mov r1, #0x5726
+			mov r2, #0x5A26
 			b sc_out
 sc_0x5727:
-			mov r4, #0x5727
-			mov r5, #0x5A27
+			mov r1, #0x5727
+			mov r2, #0x5A27
 			b sc_out
 sc_0x5728:
-			mov r4, #0x5728
-			mov r5, #0x5A28
+			mov r1, #0x5728
+			mov r2, #0x5A28
 			b sc_out
 sc_0x5729:
-			mov r4, #0x5729
-			mov r5, #0x5A29
+			mov r1, #0x5729
+			mov r2, #0x5A29
 			b sc_out
 sc_0x572A:
-			mov r4, #0x572A
-			mov r5, #0x5A2A
+			mov r1, #0x572A
+			mov r2, #0x5A2A
 			b sc_out
 sc_0x572B:
-			mov r4, #0x572B
-			mov r5, #0x5A2B
+			mov r1, #0x572B
+			mov r2, #0x5A2B
 			b sc_out
 sc_0x572C:
-			mov r4, #0x572C
-			mov r5, #0x5A2C
+			mov r1, #0x572C
+			mov r2, #0x5A2C
 			b sc_out
 sc_0x572D:
-			mov r4, #0x572D
-			mov r5, #0x5A2D
+			mov r1, #0x572D
+			mov r2, #0x5A2D
 			b sc_out
 sc_0x572E:
-			mov r4, #0x572E
-			mov r5, #0x5A2E
+			mov r1, #0x572E
+			mov r2, #0x5A2E
 			b sc_out
 sc_0x572F:
-			mov r4, #0x572F
-			mov r5, #0x5A2F
+			mov r1, #0x572F
+			mov r2, #0x5A2F
 			b sc_out
 sc_0x5730:
-			mov r4, #0x5730
-			mov r5, #0x5A30
+			mov r1, #0x5730
+			mov r2, #0x5A30
 			b sc_out
 sc_0x5731:
-			mov r4, #0x5731
-			mov r5, #0x5A31
+			mov r1, #0x5731
+			mov r2, #0x5A31
 			b sc_out
 sc_0x5732:
-			mov r4, #0x5732
-			mov r5, #0x5A32
+			mov r1, #0x5732
+			mov r2, #0x5A32
 			b sc_out
 sc_0x5733:
-			mov r4, #0x5733
-			mov r5, #0x5A33
+			mov r1, #0x5733
+			mov r2, #0x5A33
 			b sc_out
 sc_0x5734:
-			mov r4, #0x5734
-			mov r5, #0x5A34
+			mov r1, #0x5734
+			mov r2, #0x5A34
 			b sc_out
 sc_0x5735:
-			mov r4, #0x5735
-			mov r5, #0x5A35
+			mov r1, #0x5735
+			mov r2, #0x5A35
 			b sc_out
 sc_0x5736:
-			mov r4, #0x5736
-			mov r5, #0x5A36
+			mov r1, #0x5736
+			mov r2, #0x5A36
 			b sc_out
 sc_0x5737:
-			mov r4, #0x5737
-			mov r5, #0x5A37
+			mov r1, #0x5737
+			mov r2, #0x5A37
 			b sc_out
 sc_0x5738:
-			mov r4, #0x5738
-			mov r5, #0x5A38
+			mov r1, #0x5738
+			mov r2, #0x5A38
 			b sc_out
 sc_0x5739:
-			mov r4, #0x5739
-			mov r5, #0x5A39
+			mov r1, #0x5739
+			mov r2, #0x5A39
 			b sc_out
 sc_0x573A:
-			mov r4, #0x573A
-			mov r5, #0x5A3A
+			mov r1, #0x573A
+			mov r2, #0x5A3A
 			b sc_out
 sc_0x573B:
-			mov r4, #0x573B
-			mov r5, #0x5A3B
+			mov r1, #0x573B
+			mov r2, #0x5A3B
 			b sc_out
 sc_0x573C:
-			mov r4, #0x573C
-			mov r5, #0x5A3C
+			mov r1, #0x573C
+			mov r2, #0x5A3C
 			b sc_out
 sc_0x573D:
-			mov r4, #0x573D
-			mov r5, #0x5A3D
+			mov r1, #0x573D
+			mov r2, #0x5A3D
 			b sc_out
 sc_0x573E:
-			mov r4, #0x573E
-			mov r5, #0x5A3E
+			mov r1, #0x573E
+			mov r2, #0x5A3E
 			b sc_out
 sc_0x573F:
-			mov r4, #0x573F
-			mov r5, #0x5A3F
+			mov r1, #0x573F
+			mov r2, #0x5A3F
 			b sc_out
 sc_0x5040:
-			mov r4, #0x5040
-			mov r5, #0x5A40
+			mov r1, #0x5040
+			mov r2, #0x5A40
 			b sc_out
 sc_0x5041:
-			mov r4, #0x5041
-			mov r5, #0x5A41
+			mov r1, #0x5041
+			mov r2, #0x5A41
 			b sc_out
 sc_0x5042:
-			mov r4, #0x5042
-			mov r5, #0x5A42
+			mov r1, #0x5042
+			mov r2, #0x5A42
 			b sc_out
 sc_0x5043:
-			mov r4, #0x5043
-			mov r5, #0x5A43
+			mov r1, #0x5043
+			mov r2, #0x5A43
 			b sc_out
 sc_0x5044:
-			mov r4, #0x5044
-			mov r5, #0x5A44
+			mov r1, #0x5044
+			mov r2, #0x5A44
 			b sc_out
 sc_0x5045:
-			mov r4, #0x5045
-			mov r5, #0x5A45
+			mov r1, #0x5045
+			mov r2, #0x5A45
 			b sc_out
 sc_0x5046:
-			mov r4, #0x5046
-			mov r5, #0x5A46
+			mov r1, #0x5046
+			mov r2, #0x5A46
 			b sc_out
 sc_0x5047:
-			mov r4, #0x5047
-			mov r5, #0x5A47
+			mov r1, #0x5047
+			mov r2, #0x5A47
 			b sc_out
 sc_0x5048:
-			mov r4, #0x5048
-			mov r5, #0x5A48
+			mov r1, #0x5048
+			mov r2, #0x5A48
 			b sc_out
 sc_0x5049:
-			mov r4, #0x5049
-			mov r5, #0x5A49
+			mov r1, #0x5049
+			mov r2, #0x5A49
 			b sc_out
 sc_0x504A:
-			mov r4, #0x504A
-			mov r5, #0x5A4A
+			mov r1, #0x504A
+			mov r2, #0x5A4A
 			b sc_out
 sc_0x504B:
-			mov r4, #0x504B
-			mov r5, #0x5A4B
+			mov r1, #0x504B
+			mov r2, #0x5A4B
 			b sc_out
 sc_0x504C:
-			mov r4, #0x504C
-			mov r5, #0x5A4C
+			mov r1, #0x504C
+			mov r2, #0x5A4C
 			b sc_out
 sc_0x504D:
-			mov r4, #0x504D
-			mov r5, #0x5A4D
+			mov r1, #0x504D
+			mov r2, #0x5A4D
 			b sc_out
 sc_0x504E:
-			mov r4, #0x504E
-			mov r5, #0x5A4E
+			mov r1, #0x504E
+			mov r2, #0x5A4E
 			b sc_out
 sc_0x504F:
-			mov r4, #0x504F
-			mov r5, #0x5A4F
+			mov r1, #0x504F
+			mov r2, #0x5A4F
 			b sc_out
 sc_0x5050:
-			mov r4, #0x5050
-			mov r5, #0x5A50
+			mov r1, #0x5050
+			mov r2, #0x5A50
 			b sc_out
 sc_0x5051:
-			mov r4, #0x5051
-			mov r5, #0x5A51
+			mov r1, #0x5051
+			mov r2, #0x5A51
 			b sc_out
 sc_0x5052:
-			mov r4, #0x5052
-			mov r5, #0x5A52
+			mov r1, #0x5052
+			mov r2, #0x5A52
 			b sc_out
 sc_0x5053:
-			mov r4, #0x5053
-			mov r5, #0x5A53
+			mov r1, #0x5053
+			mov r2, #0x5A53
 			b sc_out
 sc_0x5054:
-			mov r4, #0x5054
-			mov r5, #0x5A54
+			mov r1, #0x5054
+			mov r2, #0x5A54
 			b sc_out
 sc_0x5055:
-			mov r4, #0x5055
-			mov r5, #0x5A55
+			mov r1, #0x5055
+			mov r2, #0x5A55
 			b sc_out
 sc_0x5056:
-			mov r4, #0x5056
-			mov r5, #0x5A56
+			mov r1, #0x5056
+			mov r2, #0x5A56
 			b sc_out
 sc_0x5057:
-			mov r4, #0x5057
-			mov r5, #0x5A57
+			mov r1, #0x5057
+			mov r2, #0x5A57
 			b sc_out
 sc_0x5058:
-			mov r4, #0x5058
-			mov r5, #0x5A58
+			mov r1, #0x5058
+			mov r2, #0x5A58
 			b sc_out
 sc_0x5059:
-			mov r4, #0x5059
-			mov r5, #0x5A59
+			mov r1, #0x5059
+			mov r2, #0x5A59
 			b sc_out
 sc_0x505A:
-			mov r4, #0x505A
-			mov r5, #0x5A5A
+			mov r1, #0x505A
+			mov r2, #0x5A5A
 			b sc_out
 sc_0x505B:
-			mov r4, #0x505B
-			mov r5, #0x5A5B
+			mov r1, #0x505B
+			mov r2, #0x5A5B
 			b sc_out
 sc_0x505C:
-			mov r4, #0x505C
-			mov r5, #0x5A5C
+			mov r1, #0x505C
+			mov r2, #0x5A5C
 			b sc_out
 sc_0x505D:
-			mov r4, #0x505D
-			mov r5, #0x5A5D
+			mov r1, #0x505D
+			mov r2, #0x5A5D
 			b sc_out
 sc_0x505E:
-			mov r4, #0x505E
-			mov r5, #0x5A5E
+			mov r1, #0x505E
+			mov r2, #0x5A5E
 			b sc_out
 sc_0x505F:
-			mov r4, #0x505F
-			mov r5, #0x5A5F
+			mov r1, #0x505F
+			mov r2, #0x5A5F
 			b sc_out
 sc_0x5140:
-			mov r4, #0x5140
-			mov r5, #0x5A40
+			mov r1, #0x5140
+			mov r2, #0x5A40
 			b sc_out
 sc_0x5141:
-			mov r4, #0x5141
-			mov r5, #0x5A41
+			mov r1, #0x5141
+			mov r2, #0x5A41
 			b sc_out
 sc_0x5142:
-			mov r4, #0x5142
-			mov r5, #0x5A42
+			mov r1, #0x5142
+			mov r2, #0x5A42
 			b sc_out
 sc_0x5143:
-			mov r4, #0x5143
-			mov r5, #0x5A43
+			mov r1, #0x5143
+			mov r2, #0x5A43
 			b sc_out
 sc_0x5144:
-			mov r4, #0x5144
-			mov r5, #0x5A44
+			mov r1, #0x5144
+			mov r2, #0x5A44
 			b sc_out
 sc_0x5145:
-			mov r4, #0x5145
-			mov r5, #0x5A45
+			mov r1, #0x5145
+			mov r2, #0x5A45
 			b sc_out
 sc_0x5146:
-			mov r4, #0x5146
-			mov r5, #0x5A46
+			mov r1, #0x5146
+			mov r2, #0x5A46
 			b sc_out
 sc_0x5147:
-			mov r4, #0x5147
-			mov r5, #0x5A47
+			mov r1, #0x5147
+			mov r2, #0x5A47
 			b sc_out
 sc_0x5148:
-			mov r4, #0x5148
-			mov r5, #0x5A48
+			mov r1, #0x5148
+			mov r2, #0x5A48
 			b sc_out
 sc_0x5149:
-			mov r4, #0x5149
-			mov r5, #0x5A49
+			mov r1, #0x5149
+			mov r2, #0x5A49
 			b sc_out
 sc_0x514A:
-			mov r4, #0x514A
-			mov r5, #0x5A4A
+			mov r1, #0x514A
+			mov r2, #0x5A4A
 			b sc_out
 sc_0x514B:
-			mov r4, #0x514B
-			mov r5, #0x5A4B
+			mov r1, #0x514B
+			mov r2, #0x5A4B
 			b sc_out
 sc_0x514C:
-			mov r4, #0x514C
-			mov r5, #0x5A4C
+			mov r1, #0x514C
+			mov r2, #0x5A4C
 			b sc_out
 sc_0x514D:
-			mov r4, #0x514D
-			mov r5, #0x5A4D
+			mov r1, #0x514D
+			mov r2, #0x5A4D
 			b sc_out
 sc_0x514E:
-			mov r4, #0x514E
-			mov r5, #0x5A4E
+			mov r1, #0x514E
+			mov r2, #0x5A4E
 			b sc_out
 sc_0x514F:
-			mov r4, #0x514F
-			mov r5, #0x5A4F
+			mov r1, #0x514F
+			mov r2, #0x5A4F
 			b sc_out
 sc_0x5150:
-			mov r4, #0x5150
-			mov r5, #0x5A50
+			mov r1, #0x5150
+			mov r2, #0x5A50
 			b sc_out
 sc_0x5151:
-			mov r4, #0x5151
-			mov r5, #0x5A51
+			mov r1, #0x5151
+			mov r2, #0x5A51
 			b sc_out
 sc_0x5152:
-			mov r4, #0x5152
-			mov r5, #0x5A52
+			mov r1, #0x5152
+			mov r2, #0x5A52
 			b sc_out
 sc_0x5153:
-			mov r4, #0x5153
-			mov r5, #0x5A53
+			mov r1, #0x5153
+			mov r2, #0x5A53
 			b sc_out
 sc_0x5154:
-			mov r4, #0x5154
-			mov r5, #0x5A54
+			mov r1, #0x5154
+			mov r2, #0x5A54
 			b sc_out
 sc_0x5155:
-			mov r4, #0x5155
-			mov r5, #0x5A55
+			mov r1, #0x5155
+			mov r2, #0x5A55
 			b sc_out
 sc_0x5156:
-			mov r4, #0x5156
-			mov r5, #0x5A56
+			mov r1, #0x5156
+			mov r2, #0x5A56
 			b sc_out
 sc_0x5157:
-			mov r4, #0x5157
-			mov r5, #0x5A57
+			mov r1, #0x5157
+			mov r2, #0x5A57
 			b sc_out
 sc_0x5158:
-			mov r4, #0x5158
-			mov r5, #0x5A58
+			mov r1, #0x5158
+			mov r2, #0x5A58
 			b sc_out
 sc_0x5159:
-			mov r4, #0x5159
-			mov r5, #0x5A59
+			mov r1, #0x5159
+			mov r2, #0x5A59
 			b sc_out
 sc_0x515A:
-			mov r4, #0x515A
-			mov r5, #0x5A5A
+			mov r1, #0x515A
+			mov r2, #0x5A5A
 			b sc_out
 sc_0x515B:
-			mov r4, #0x515B
-			mov r5, #0x5A5B
+			mov r1, #0x515B
+			mov r2, #0x5A5B
 			b sc_out
 sc_0x515C:
-			mov r4, #0x515C
-			mov r5, #0x5A5C
+			mov r1, #0x515C
+			mov r2, #0x5A5C
 			b sc_out
 sc_0x515D:
-			mov r4, #0x515D
-			mov r5, #0x5A5D
+			mov r1, #0x515D
+			mov r2, #0x5A5D
 			b sc_out
 sc_0x515E:
-			mov r4, #0x515E
-			mov r5, #0x5A5E
+			mov r1, #0x515E
+			mov r2, #0x5A5E
 			b sc_out
 sc_0x515F:
-			mov r4, #0x515F
-			mov r5, #0x5A5F
+			mov r1, #0x515F
+			mov r2, #0x5A5F
 			b sc_out
 sc_0x5240:
-			mov r4, #0x5240
-			mov r5, #0x5A40
+			mov r1, #0x5240
+			mov r2, #0x5A40
 			b sc_out
 sc_0x5241:
-			mov r4, #0x5241
-			mov r5, #0x5A41
+			mov r1, #0x5241
+			mov r2, #0x5A41
 			b sc_out
 sc_0x5242:
-			mov r4, #0x5242
-			mov r5, #0x5A42
+			mov r1, #0x5242
+			mov r2, #0x5A42
 			b sc_out
 sc_0x5243:
-			mov r4, #0x5243
-			mov r5, #0x5A43
+			mov r1, #0x5243
+			mov r2, #0x5A43
 			b sc_out
 sc_0x5244:
-			mov r4, #0x5244
-			mov r5, #0x5A44
+			mov r1, #0x5244
+			mov r2, #0x5A44
 			b sc_out
 sc_0x5245:
-			mov r4, #0x5245
-			mov r5, #0x5A45
+			mov r1, #0x5245
+			mov r2, #0x5A45
 			b sc_out
 sc_0x5246:
-			mov r4, #0x5246
-			mov r5, #0x5A46
+			mov r1, #0x5246
+			mov r2, #0x5A46
 			b sc_out
 sc_0x5247:
-			mov r4, #0x5247
-			mov r5, #0x5A47
+			mov r1, #0x5247
+			mov r2, #0x5A47
 			b sc_out
 sc_0x5248:
-			mov r4, #0x5248
-			mov r5, #0x5A48
+			mov r1, #0x5248
+			mov r2, #0x5A48
 			b sc_out
 sc_0x5249:
-			mov r4, #0x5249
-			mov r5, #0x5A49
+			mov r1, #0x5249
+			mov r2, #0x5A49
 			b sc_out
 sc_0x524A:
-			mov r4, #0x524A
-			mov r5, #0x5A4A
+			mov r1, #0x524A
+			mov r2, #0x5A4A
 			b sc_out
 sc_0x524B:
-			mov r4, #0x524B
-			mov r5, #0x5A4B
+			mov r1, #0x524B
+			mov r2, #0x5A4B
 			b sc_out
 sc_0x524C:
-			mov r4, #0x524C
-			mov r5, #0x5A4C
+			mov r1, #0x524C
+			mov r2, #0x5A4C
 			b sc_out
 sc_0x524D:
-			mov r4, #0x524D
-			mov r5, #0x5A4D
+			mov r1, #0x524D
+			mov r2, #0x5A4D
 			b sc_out
 sc_0x524E:
-			mov r4, #0x524E
-			mov r5, #0x5A4E
+			mov r1, #0x524E
+			mov r2, #0x5A4E
 			b sc_out
 sc_0x524F:
-			mov r4, #0x524F
-			mov r5, #0x5A4F
+			mov r1, #0x524F
+			mov r2, #0x5A4F
 			b sc_out
 sc_0x5250:
-			mov r4, #0x5250
-			mov r5, #0x5A50
+			mov r1, #0x5250
+			mov r2, #0x5A50
 			b sc_out
 sc_0x5251:
-			mov r4, #0x5251
-			mov r5, #0x5A51
+			mov r1, #0x5251
+			mov r2, #0x5A51
 			b sc_out
 sc_0x5252:
-			mov r4, #0x5252
-			mov r5, #0x5A52
+			mov r1, #0x5252
+			mov r2, #0x5A52
 			b sc_out
 sc_0x5253:
-			mov r4, #0x5253
-			mov r5, #0x5A53
+			mov r1, #0x5253
+			mov r2, #0x5A53
 			b sc_out
 sc_0x5254:
-			mov r4, #0x5254
-			mov r5, #0x5A54
+			mov r1, #0x5254
+			mov r2, #0x5A54
 			b sc_out
 sc_0x5255:
-			mov r4, #0x5255
-			mov r5, #0x5A55
+			mov r1, #0x5255
+			mov r2, #0x5A55
 			b sc_out
 sc_0x5256:
-			mov r4, #0x5256
-			mov r5, #0x5A56
+			mov r1, #0x5256
+			mov r2, #0x5A56
 			b sc_out
 sc_0x5257:
-			mov r4, #0x5257
-			mov r5, #0x5A57
+			mov r1, #0x5257
+			mov r2, #0x5A57
 			b sc_out
 sc_0x5258:
-			mov r4, #0x5258
-			mov r5, #0x5A58
+			mov r1, #0x5258
+			mov r2, #0x5A58
 			b sc_out
 sc_0x5259:
-			mov r4, #0x5259
-			mov r5, #0x5A59
+			mov r1, #0x5259
+			mov r2, #0x5A59
 			b sc_out
 sc_0x525A:
-			mov r4, #0x525A
-			mov r5, #0x5A5A
+			mov r1, #0x525A
+			mov r2, #0x5A5A
 			b sc_out
 sc_0x525B:
-			mov r4, #0x525B
-			mov r5, #0x5A5B
+			mov r1, #0x525B
+			mov r2, #0x5A5B
 			b sc_out
 sc_0x525C:
-			mov r4, #0x525C
-			mov r5, #0x5A5C
+			mov r1, #0x525C
+			mov r2, #0x5A5C
 			b sc_out
 sc_0x525D:
-			mov r4, #0x525D
-			mov r5, #0x5A5D
+			mov r1, #0x525D
+			mov r2, #0x5A5D
 			b sc_out
 sc_0x525E:
-			mov r4, #0x525E
-			mov r5, #0x5A5E
+			mov r1, #0x525E
+			mov r2, #0x5A5E
 			b sc_out
 sc_0x525F:
-			mov r4, #0x525F
-			mov r5, #0x5A5F
+			mov r1, #0x525F
+			mov r2, #0x5A5F
 			b sc_out
 sc_0x5340:
-			mov r4, #0x5340
-			mov r5, #0x5A40
+			mov r1, #0x5340
+			mov r2, #0x5A40
 			b sc_out
 sc_0x5341:
-			mov r4, #0x5341
-			mov r5, #0x5A41
+			mov r1, #0x5341
+			mov r2, #0x5A41
 			b sc_out
 sc_0x5342:
-			mov r4, #0x5342
-			mov r5, #0x5A42
+			mov r1, #0x5342
+			mov r2, #0x5A42
 			b sc_out
 sc_0x5343:
-			mov r4, #0x5343
-			mov r5, #0x5A43
+			mov r1, #0x5343
+			mov r2, #0x5A43
 			b sc_out
 sc_0x5344:
-			mov r4, #0x5344
-			mov r5, #0x5A44
+			mov r1, #0x5344
+			mov r2, #0x5A44
 			b sc_out
 sc_0x5345:
-			mov r4, #0x5345
-			mov r5, #0x5A45
+			mov r1, #0x5345
+			mov r2, #0x5A45
 			b sc_out
 sc_0x5346:
-			mov r4, #0x5346
-			mov r5, #0x5A46
+			mov r1, #0x5346
+			mov r2, #0x5A46
 			b sc_out
 sc_0x5347:
-			mov r4, #0x5347
-			mov r5, #0x5A47
+			mov r1, #0x5347
+			mov r2, #0x5A47
 			b sc_out
 sc_0x5348:
-			mov r4, #0x5348
-			mov r5, #0x5A48
+			mov r1, #0x5348
+			mov r2, #0x5A48
 			b sc_out
 sc_0x5349:
-			mov r4, #0x5349
-			mov r5, #0x5A49
+			mov r1, #0x5349
+			mov r2, #0x5A49
 			b sc_out
 sc_0x534A:
-			mov r4, #0x534A
-			mov r5, #0x5A4A
+			mov r1, #0x534A
+			mov r2, #0x5A4A
 			b sc_out
 sc_0x534B:
-			mov r4, #0x534B
-			mov r5, #0x5A4B
+			mov r1, #0x534B
+			mov r2, #0x5A4B
 			b sc_out
 sc_0x534C:
-			mov r4, #0x534C
-			mov r5, #0x5A4C
+			mov r1, #0x534C
+			mov r2, #0x5A4C
 			b sc_out
 sc_0x534D:
-			mov r4, #0x534D
-			mov r5, #0x5A4D
+			mov r1, #0x534D
+			mov r2, #0x5A4D
 			b sc_out
 sc_0x534E:
-			mov r4, #0x534E
-			mov r5, #0x5A4E
+			mov r1, #0x534E
+			mov r2, #0x5A4E
 			b sc_out
 sc_0x534F:
-			mov r4, #0x534F
-			mov r5, #0x5A4F
+			mov r1, #0x534F
+			mov r2, #0x5A4F
 			b sc_out
 sc_0x5350:
-			mov r4, #0x5350
-			mov r5, #0x5A50
+			mov r1, #0x5350
+			mov r2, #0x5A50
 			b sc_out
 sc_0x5351:
-			mov r4, #0x5351
-			mov r5, #0x5A51
+			mov r1, #0x5351
+			mov r2, #0x5A51
 			b sc_out
 sc_0x5352:
-			mov r4, #0x5352
-			mov r5, #0x5A52
+			mov r1, #0x5352
+			mov r2, #0x5A52
 			b sc_out
 sc_0x5353:
-			mov r4, #0x5353
-			mov r5, #0x5A53
+			mov r1, #0x5353
+			mov r2, #0x5A53
 			b sc_out
 sc_0x5354:
-			mov r4, #0x5354
-			mov r5, #0x5A54
+			mov r1, #0x5354
+			mov r2, #0x5A54
 			b sc_out
 sc_0x5355:
-			mov r4, #0x5355
-			mov r5, #0x5A55
+			mov r1, #0x5355
+			mov r2, #0x5A55
 			b sc_out
 sc_0x5356:
-			mov r4, #0x5356
-			mov r5, #0x5A56
+			mov r1, #0x5356
+			mov r2, #0x5A56
 			b sc_out
 sc_0x5357:
-			mov r4, #0x5357
-			mov r5, #0x5A57
+			mov r1, #0x5357
+			mov r2, #0x5A57
 			b sc_out
 sc_0x5358:
-			mov r4, #0x5358
-			mov r5, #0x5A58
+			mov r1, #0x5358
+			mov r2, #0x5A58
 			b sc_out
 sc_0x5359:
-			mov r4, #0x5359
-			mov r5, #0x5A59
+			mov r1, #0x5359
+			mov r2, #0x5A59
 			b sc_out
 sc_0x535A:
-			mov r4, #0x535A
-			mov r5, #0x5A5A
+			mov r1, #0x535A
+			mov r2, #0x5A5A
 			b sc_out
 sc_0x535B:
-			mov r4, #0x535B
-			mov r5, #0x5A5B
+			mov r1, #0x535B
+			mov r2, #0x5A5B
 			b sc_out
 sc_0x535C:
-			mov r4, #0x535C
-			mov r5, #0x5A5C
+			mov r1, #0x535C
+			mov r2, #0x5A5C
 			b sc_out
 sc_0x535D:
-			mov r4, #0x535D
-			mov r5, #0x5A5D
+			mov r1, #0x535D
+			mov r2, #0x5A5D
 			b sc_out
 sc_0x535E:
-			mov r4, #0x535E
-			mov r5, #0x5A5E
+			mov r1, #0x535E
+			mov r2, #0x5A5E
 			b sc_out
 sc_0x535F:
-			mov r4, #0x535F
-			mov r5, #0x5A5F
+			mov r1, #0x535F
+			mov r2, #0x5A5F
 			b sc_out
 sc_0x5440:
-			mov r4, #0x5440
-			mov r5, #0x5A40
+			mov r1, #0x5440
+			mov r2, #0x5A40
 			b sc_out
 sc_0x5441:
-			mov r4, #0x5441
-			mov r5, #0x5A41
+			mov r1, #0x5441
+			mov r2, #0x5A41
 			b sc_out
 sc_0x5442:
-			mov r4, #0x5442
-			mov r5, #0x5A42
+			mov r1, #0x5442
+			mov r2, #0x5A42
 			b sc_out
 sc_0x5443:
-			mov r4, #0x5443
-			mov r5, #0x5A43
+			mov r1, #0x5443
+			mov r2, #0x5A43
 			b sc_out
 sc_0x5444:
-			mov r4, #0x5444
-			mov r5, #0x5A44
+			mov r1, #0x5444
+			mov r2, #0x5A44
 			b sc_out
 sc_0x5445:
-			mov r4, #0x5445
-			mov r5, #0x5A45
+			mov r1, #0x5445
+			mov r2, #0x5A45
 			b sc_out
 sc_0x5446:
-			mov r4, #0x5446
-			mov r5, #0x5A46
+			mov r1, #0x5446
+			mov r2, #0x5A46
 			b sc_out
 sc_0x5447:
-			mov r4, #0x5447
-			mov r5, #0x5A47
+			mov r1, #0x5447
+			mov r2, #0x5A47
 			b sc_out
 sc_0x5448:
-			mov r4, #0x5448
-			mov r5, #0x5A48
+			mov r1, #0x5448
+			mov r2, #0x5A48
 			b sc_out
 sc_0x5449:
-			mov r4, #0x5449
-			mov r5, #0x5A49
+			mov r1, #0x5449
+			mov r2, #0x5A49
 			b sc_out
 sc_0x544A:
-			mov r4, #0x544A
-			mov r5, #0x5A4A
+			mov r1, #0x544A
+			mov r2, #0x5A4A
 			b sc_out
 sc_0x544B:
-			mov r4, #0x544B
-			mov r5, #0x5A4B
+			mov r1, #0x544B
+			mov r2, #0x5A4B
 			b sc_out
 sc_0x544C:
-			mov r4, #0x544C
-			mov r5, #0x5A4C
+			mov r1, #0x544C
+			mov r2, #0x5A4C
 			b sc_out
 sc_0x544D:
-			mov r4, #0x544D
-			mov r5, #0x5A4D
+			mov r1, #0x544D
+			mov r2, #0x5A4D
 			b sc_out
 sc_0x544E:
-			mov r4, #0x544E
-			mov r5, #0x5A4E
+			mov r1, #0x544E
+			mov r2, #0x5A4E
 			b sc_out
 sc_0x544F:
-			mov r4, #0x544F
-			mov r5, #0x5A4F
+			mov r1, #0x544F
+			mov r2, #0x5A4F
 			b sc_out
 sc_0x5450:
-			mov r4, #0x5450
-			mov r5, #0x5A50
+			mov r1, #0x5450
+			mov r2, #0x5A50
 			b sc_out
 sc_0x5451:
-			mov r4, #0x5451
-			mov r5, #0x5A51
+			mov r1, #0x5451
+			mov r2, #0x5A51
 			b sc_out
 sc_0x5452:
-			mov r4, #0x5452
-			mov r5, #0x5A52
+			mov r1, #0x5452
+			mov r2, #0x5A52
 			b sc_out
 sc_0x5453:
-			mov r4, #0x5453
-			mov r5, #0x5A53
+			mov r1, #0x5453
+			mov r2, #0x5A53
 			b sc_out
 sc_0x5454:
-			mov r4, #0x5454
-			mov r5, #0x5A54
+			mov r1, #0x5454
+			mov r2, #0x5A54
 			b sc_out
 sc_0x5455:
-			mov r4, #0x5455
-			mov r5, #0x5A55
+			mov r1, #0x5455
+			mov r2, #0x5A55
 			b sc_out
 sc_0x5456:
-			mov r4, #0x5456
-			mov r5, #0x5A56
+			mov r1, #0x5456
+			mov r2, #0x5A56
 			b sc_out
 sc_0x5457:
-			mov r4, #0x5457
-			mov r5, #0x5A57
+			mov r1, #0x5457
+			mov r2, #0x5A57
 			b sc_out
 sc_0x5458:
-			mov r4, #0x5458
-			mov r5, #0x5A58
+			mov r1, #0x5458
+			mov r2, #0x5A58
 			b sc_out
 sc_0x5459:
-			mov r4, #0x5459
-			mov r5, #0x5A59
+			mov r1, #0x5459
+			mov r2, #0x5A59
 			b sc_out
 sc_0x545A:
-			mov r4, #0x545A
-			mov r5, #0x5A5A
+			mov r1, #0x545A
+			mov r2, #0x5A5A
 			b sc_out
 sc_0x545B:
-			mov r4, #0x545B
-			mov r5, #0x5A5B
+			mov r1, #0x545B
+			mov r2, #0x5A5B
 			b sc_out
 sc_0x545C:
-			mov r4, #0x545C
-			mov r5, #0x5A5C
+			mov r1, #0x545C
+			mov r2, #0x5A5C
 			b sc_out
 sc_0x545D:
-			mov r4, #0x545D
-			mov r5, #0x5A5D
+			mov r1, #0x545D
+			mov r2, #0x5A5D
 			b sc_out
 sc_0x545E:
-			mov r4, #0x545E
-			mov r5, #0x5A5E
+			mov r1, #0x545E
+			mov r2, #0x5A5E
 			b sc_out
 sc_0x545F:
-			mov r4, #0x545F
-			mov r5, #0x5A5F
+			mov r1, #0x545F
+			mov r2, #0x5A5F
 			b sc_out
 sc_0x5540:
-			mov r4, #0x5540
-			mov r5, #0x5A40
+			mov r1, #0x5540
+			mov r2, #0x5A40
 			b sc_out
 sc_0x5541:
-			mov r4, #0x5541
-			mov r5, #0x5A41
+			mov r1, #0x5541
+			mov r2, #0x5A41
 			b sc_out
 sc_0x5542:
-			mov r4, #0x5542
-			mov r5, #0x5A42
+			mov r1, #0x5542
+			mov r2, #0x5A42
 			b sc_out
 sc_0x5543:
-			mov r4, #0x5543
-			mov r5, #0x5A43
+			mov r1, #0x5543
+			mov r2, #0x5A43
 			b sc_out
 sc_0x5544:
-			mov r4, #0x5544
-			mov r5, #0x5A44
+			mov r1, #0x5544
+			mov r2, #0x5A44
 			b sc_out
 sc_0x5545:
-			mov r4, #0x5545
-			mov r5, #0x5A45
+			mov r1, #0x5545
+			mov r2, #0x5A45
 			b sc_out
 sc_0x5546:
-			mov r4, #0x5546
-			mov r5, #0x5A46
+			mov r1, #0x5546
+			mov r2, #0x5A46
 			b sc_out
 sc_0x5547:
-			mov r4, #0x5547
-			mov r5, #0x5A47
+			mov r1, #0x5547
+			mov r2, #0x5A47
 			b sc_out
 sc_0x5548:
-			mov r4, #0x5548
-			mov r5, #0x5A48
+			mov r1, #0x5548
+			mov r2, #0x5A48
 			b sc_out
 sc_0x5549:
-			mov r4, #0x5549
-			mov r5, #0x5A49
+			mov r1, #0x5549
+			mov r2, #0x5A49
 			b sc_out
 sc_0x554A:
-			mov r4, #0x554A
-			mov r5, #0x5A4A
+			mov r1, #0x554A
+			mov r2, #0x5A4A
 			b sc_out
 sc_0x554B:
-			mov r4, #0x554B
-			mov r5, #0x5A4B
+			mov r1, #0x554B
+			mov r2, #0x5A4B
 			b sc_out
 sc_0x554C:
-			mov r4, #0x554C
-			mov r5, #0x5A4C
+			mov r1, #0x554C
+			mov r2, #0x5A4C
 			b sc_out
 sc_0x554D:
-			mov r4, #0x554D
-			mov r5, #0x5A4D
+			mov r1, #0x554D
+			mov r2, #0x5A4D
 			b sc_out
 sc_0x554E:
-			mov r4, #0x554E
-			mov r5, #0x5A4E
+			mov r1, #0x554E
+			mov r2, #0x5A4E
 			b sc_out
 sc_0x554F:
-			mov r4, #0x554F
-			mov r5, #0x5A4F
+			mov r1, #0x554F
+			mov r2, #0x5A4F
 			b sc_out
 sc_0x5550:
-			mov r4, #0x5550
-			mov r5, #0x5A50
+			mov r1, #0x5550
+			mov r2, #0x5A50
 			b sc_out
 sc_0x5551:
-			mov r4, #0x5551
-			mov r5, #0x5A51
+			mov r1, #0x5551
+			mov r2, #0x5A51
 			b sc_out
 sc_0x5552:
-			mov r4, #0x5552
-			mov r5, #0x5A52
+			mov r1, #0x5552
+			mov r2, #0x5A52
 			b sc_out
 sc_0x5553:
-			mov r4, #0x5553
-			mov r5, #0x5A53
+			mov r1, #0x5553
+			mov r2, #0x5A53
 			b sc_out
 sc_0x5554:
-			mov r4, #0x5554
-			mov r5, #0x5A54
+			mov r1, #0x5554
+			mov r2, #0x5A54
 			b sc_out
 sc_0x5555:
-			mov r4, #0x5555
-			mov r5, #0x5A55
+			mov r1, #0x5555
+			mov r2, #0x5A55
 			b sc_out
 sc_0x5556:
-			mov r4, #0x5556
-			mov r5, #0x5A56
+			mov r1, #0x5556
+			mov r2, #0x5A56
 			b sc_out
 sc_0x5557:
-			mov r4, #0x5557
-			mov r5, #0x5A57
+			mov r1, #0x5557
+			mov r2, #0x5A57
 			b sc_out
 sc_0x5558:
-			mov r4, #0x5558
-			mov r5, #0x5A58
+			mov r1, #0x5558
+			mov r2, #0x5A58
 			b sc_out
 sc_0x5559:
-			mov r4, #0x5559
-			mov r5, #0x5A59
+			mov r1, #0x5559
+			mov r2, #0x5A59
 			b sc_out
 sc_0x555A:
-			mov r4, #0x555A
-			mov r5, #0x5A5A
+			mov r1, #0x555A
+			mov r2, #0x5A5A
 			b sc_out
 sc_0x555B:
-			mov r4, #0x555B
-			mov r5, #0x5A5B
+			mov r1, #0x555B
+			mov r2, #0x5A5B
 			b sc_out
 sc_0x555C:
-			mov r4, #0x555C
-			mov r5, #0x5A5C
+			mov r1, #0x555C
+			mov r2, #0x5A5C
 			b sc_out
 sc_0x555D:
-			mov r4, #0x555D
-			mov r5, #0x5A5D
+			mov r1, #0x555D
+			mov r2, #0x5A5D
 			b sc_out
 sc_0x555E:
-			mov r4, #0x555E
-			mov r5, #0x5A5E
+			mov r1, #0x555E
+			mov r2, #0x5A5E
 			b sc_out
 sc_0x555F:
-			mov r4, #0x555F
-			mov r5, #0x5A5F
+			mov r1, #0x555F
+			mov r2, #0x5A5F
 			b sc_out
 sc_0x5640:
-			mov r4, #0x5640
-			mov r5, #0x5A40
+			mov r1, #0x5640
+			mov r2, #0x5A40
 			b sc_out
 sc_0x5641:
-			mov r4, #0x5641
-			mov r5, #0x5A41
+			mov r1, #0x5641
+			mov r2, #0x5A41
 			b sc_out
 sc_0x5642:
-			mov r4, #0x5642
-			mov r5, #0x5A42
+			mov r1, #0x5642
+			mov r2, #0x5A42
 			b sc_out
 sc_0x5643:
-			mov r4, #0x5643
-			mov r5, #0x5A43
+			mov r1, #0x5643
+			mov r2, #0x5A43
 			b sc_out
 sc_0x5644:
-			mov r4, #0x5644
-			mov r5, #0x5A44
+			mov r1, #0x5644
+			mov r2, #0x5A44
 			b sc_out
 sc_0x5645:
-			mov r4, #0x5645
-			mov r5, #0x5A45
+			mov r1, #0x5645
+			mov r2, #0x5A45
 			b sc_out
 sc_0x5646:
-			mov r4, #0x5646
-			mov r5, #0x5A46
+			mov r1, #0x5646
+			mov r2, #0x5A46
 			b sc_out
 sc_0x5647:
-			mov r4, #0x5647
-			mov r5, #0x5A47
+			mov r1, #0x5647
+			mov r2, #0x5A47
 			b sc_out
 sc_0x5648:
-			mov r4, #0x5648
-			mov r5, #0x5A48
+			mov r1, #0x5648
+			mov r2, #0x5A48
 			b sc_out
 sc_0x5649:
-			mov r4, #0x5649
-			mov r5, #0x5A49
+			mov r1, #0x5649
+			mov r2, #0x5A49
 			b sc_out
 sc_0x564A:
-			mov r4, #0x564A
-			mov r5, #0x5A4A
+			mov r1, #0x564A
+			mov r2, #0x5A4A
 			b sc_out
 sc_0x564B:
-			mov r4, #0x564B
-			mov r5, #0x5A4B
+			mov r1, #0x564B
+			mov r2, #0x5A4B
 			b sc_out
 sc_0x564C:
-			mov r4, #0x564C
-			mov r5, #0x5A4C
+			mov r1, #0x564C
+			mov r2, #0x5A4C
 			b sc_out
 sc_0x564D:
-			mov r4, #0x564D
-			mov r5, #0x5A4D
+			mov r1, #0x564D
+			mov r2, #0x5A4D
 			b sc_out
 sc_0x564E:
-			mov r4, #0x564E
-			mov r5, #0x5A4E
+			mov r1, #0x564E
+			mov r2, #0x5A4E
 			b sc_out
 sc_0x564F:
-			mov r4, #0x564F
-			mov r5, #0x5A4F
+			mov r1, #0x564F
+			mov r2, #0x5A4F
 			b sc_out
 sc_0x5650:
-			mov r4, #0x5650
-			mov r5, #0x5A50
+			mov r1, #0x5650
+			mov r2, #0x5A50
 			b sc_out
 sc_0x5651:
-			mov r4, #0x5651
-			mov r5, #0x5A51
+			mov r1, #0x5651
+			mov r2, #0x5A51
 			b sc_out
 sc_0x5652:
-			mov r4, #0x5652
-			mov r5, #0x5A52
+			mov r1, #0x5652
+			mov r2, #0x5A52
 			b sc_out
 sc_0x5653:
-			mov r4, #0x5653
-			mov r5, #0x5A53
+			mov r1, #0x5653
+			mov r2, #0x5A53
 			b sc_out
 sc_0x5654:
-			mov r4, #0x5654
-			mov r5, #0x5A54
+			mov r1, #0x5654
+			mov r2, #0x5A54
 			b sc_out
 sc_0x5655:
-			mov r4, #0x5655
-			mov r5, #0x5A55
+			mov r1, #0x5655
+			mov r2, #0x5A55
 			b sc_out
 sc_0x5656:
-			mov r4, #0x5656
-			mov r5, #0x5A56
+			mov r1, #0x5656
+			mov r2, #0x5A56
 			b sc_out
 sc_0x5657:
-			mov r4, #0x5657
-			mov r5, #0x5A57
+			mov r1, #0x5657
+			mov r2, #0x5A57
 			b sc_out
 sc_0x5658:
-			mov r4, #0x5658
-			mov r5, #0x5A58
+			mov r1, #0x5658
+			mov r2, #0x5A58
 			b sc_out
 sc_0x5659:
-			mov r4, #0x5659
-			mov r5, #0x5A59
+			mov r1, #0x5659
+			mov r2, #0x5A59
 			b sc_out
 sc_0x565A:
-			mov r4, #0x565A
-			mov r5, #0x5A5A
+			mov r1, #0x565A
+			mov r2, #0x5A5A
 			b sc_out
 sc_0x565B:
-			mov r4, #0x565B
-			mov r5, #0x5A5B
+			mov r1, #0x565B
+			mov r2, #0x5A5B
 			b sc_out
 sc_0x565C:
-			mov r4, #0x565C
-			mov r5, #0x5A5C
+			mov r1, #0x565C
+			mov r2, #0x5A5C
 			b sc_out
 sc_0x565D:
-			mov r4, #0x565D
-			mov r5, #0x5A5D
+			mov r1, #0x565D
+			mov r2, #0x5A5D
 			b sc_out
 sc_0x565E:
-			mov r4, #0x565E
-			mov r5, #0x5A5E
+			mov r1, #0x565E
+			mov r2, #0x5A5E
 			b sc_out
 sc_0x565F:
-			mov r4, #0x565F
-			mov r5, #0x5A5F
+			mov r1, #0x565F
+			mov r2, #0x5A5F
 			b sc_out
 sc_0x5740:
-			mov r4, #0x5740
-			mov r5, #0x5A40
+			mov r1, #0x5740
+			mov r2, #0x5A40
 			b sc_out
 sc_0x5741:
-			mov r4, #0x5741
-			mov r5, #0x5A41
+			mov r1, #0x5741
+			mov r2, #0x5A41
 			b sc_out
 sc_0x5742:
-			mov r4, #0x5742
-			mov r5, #0x5A42
+			mov r1, #0x5742
+			mov r2, #0x5A42
 			b sc_out
 sc_0x5743:
-			mov r4, #0x5743
-			mov r5, #0x5A43
+			mov r1, #0x5743
+			mov r2, #0x5A43
 			b sc_out
 sc_0x5744:
-			mov r4, #0x5744
-			mov r5, #0x5A44
+			mov r1, #0x5744
+			mov r2, #0x5A44
 			b sc_out
 sc_0x5745:
-			mov r4, #0x5745
-			mov r5, #0x5A45
+			mov r1, #0x5745
+			mov r2, #0x5A45
 			b sc_out
 sc_0x5746:
-			mov r4, #0x5746
-			mov r5, #0x5A46
+			mov r1, #0x5746
+			mov r2, #0x5A46
 			b sc_out
 sc_0x5747:
-			mov r4, #0x5747
-			mov r5, #0x5A47
+			mov r1, #0x5747
+			mov r2, #0x5A47
 			b sc_out
 sc_0x5748:
-			mov r4, #0x5748
-			mov r5, #0x5A48
+			mov r1, #0x5748
+			mov r2, #0x5A48
 			b sc_out
 sc_0x5749:
-			mov r4, #0x5749
-			mov r5, #0x5A49
+			mov r1, #0x5749
+			mov r2, #0x5A49
 			b sc_out
 sc_0x574A:
-			mov r4, #0x574A
-			mov r5, #0x5A4A
+			mov r1, #0x574A
+			mov r2, #0x5A4A
 			b sc_out
 sc_0x574B:
-			mov r4, #0x574B
-			mov r5, #0x5A4B
+			mov r1, #0x574B
+			mov r2, #0x5A4B
 			b sc_out
 sc_0x574C:
-			mov r4, #0x574C
-			mov r5, #0x5A4C
+			mov r1, #0x574C
+			mov r2, #0x5A4C
 			b sc_out
 sc_0x574D:
-			mov r4, #0x574D
-			mov r5, #0x5A4D
+			mov r1, #0x574D
+			mov r2, #0x5A4D
 			b sc_out
 sc_0x574E:
-			mov r4, #0x574E
-			mov r5, #0x5A4E
+			mov r1, #0x574E
+			mov r2, #0x5A4E
 			b sc_out
 sc_0x574F:
-			mov r4, #0x574F
-			mov r5, #0x5A4F
+			mov r1, #0x574F
+			mov r2, #0x5A4F
 			b sc_out
 sc_0x5750:
-			mov r4, #0x5750
-			mov r5, #0x5A50
+			mov r1, #0x5750
+			mov r2, #0x5A50
 			b sc_out
 sc_0x5751:
-			mov r4, #0x5751
-			mov r5, #0x5A51
+			mov r1, #0x5751
+			mov r2, #0x5A51
 			b sc_out
 sc_0x5752:
-			mov r4, #0x5752
-			mov r5, #0x5A52
+			mov r1, #0x5752
+			mov r2, #0x5A52
 			b sc_out
 sc_0x5753:
-			mov r4, #0x5753
-			mov r5, #0x5A53
+			mov r1, #0x5753
+			mov r2, #0x5A53
 			b sc_out
 sc_0x5754:
-			mov r4, #0x5754
-			mov r5, #0x5A54
+			mov r1, #0x5754
+			mov r2, #0x5A54
 			b sc_out
 sc_0x5755:
-			mov r4, #0x5755
-			mov r5, #0x5A55
+			mov r1, #0x5755
+			mov r2, #0x5A55
 			b sc_out
 sc_0x5756:
-			mov r4, #0x5756
-			mov r5, #0x5A56
+			mov r1, #0x5756
+			mov r2, #0x5A56
 			b sc_out
 sc_0x5757:
-			mov r4, #0x5757
-			mov r5, #0x5A57
+			mov r1, #0x5757
+			mov r2, #0x5A57
 			b sc_out
 sc_0x5758:
-			mov r4, #0x5758
-			mov r5, #0x5A58
+			mov r1, #0x5758
+			mov r2, #0x5A58
 			b sc_out
 sc_0x5759:
-			mov r4, #0x5759
-			mov r5, #0x5A59
+			mov r1, #0x5759
+			mov r2, #0x5A59
 			b sc_out
 sc_0x575A:
-			mov r4, #0x575A
-			mov r5, #0x5A5A
+			mov r1, #0x575A
+			mov r2, #0x5A5A
 			b sc_out
 sc_0x575B:
-			mov r4, #0x575B
-			mov r5, #0x5A5B
+			mov r1, #0x575B
+			mov r2, #0x5A5B
 			b sc_out
 sc_0x575C:
-			mov r4, #0x575C
-			mov r5, #0x5A5C
+			mov r1, #0x575C
+			mov r2, #0x5A5C
 			b sc_out
 sc_0x575D:
-			mov r4, #0x575D
-			mov r5, #0x5A5D
+			mov r1, #0x575D
+			mov r2, #0x5A5D
 			b sc_out
 sc_0x575E:
-			mov r4, #0x575E
-			mov r5, #0x5A5E
+			mov r1, #0x575E
+			mov r2, #0x5A5E
 			b sc_out
 sc_0x575F:
-			mov r4, #0x575F
-			mov r5, #0x5A5F
+			mov r1, #0x575F
+			mov r2, #0x5A5F
 			b sc_out
 sc_0x5060:
-			mov r4, #0x5060
-			mov r5, #0x5A60
+			mov r1, #0x5060
+			mov r2, #0x5A60
 			b sc_out
 sc_0x5061:
-			mov r4, #0x5061
-			mov r5, #0x5A61
+			mov r1, #0x5061
+			mov r2, #0x5A61
 			b sc_out
 sc_0x5062:
-			mov r4, #0x5062
-			mov r5, #0x5A62
+			mov r1, #0x5062
+			mov r2, #0x5A62
 			b sc_out
 sc_0x5063:
-			mov r4, #0x5063
-			mov r5, #0x5A63
+			mov r1, #0x5063
+			mov r2, #0x5A63
 			b sc_out
 sc_0x5064:
-			mov r4, #0x5064
-			mov r5, #0x5A64
+			mov r1, #0x5064
+			mov r2, #0x5A64
 			b sc_out
 sc_0x5065:
-			mov r4, #0x5065
-			mov r5, #0x5A65
+			mov r1, #0x5065
+			mov r2, #0x5A65
 			b sc_out
 sc_0x5066:
-			mov r4, #0x5066
-			mov r5, #0x5A66
+			mov r1, #0x5066
+			mov r2, #0x5A66
 			b sc_out
 sc_0x5067:
-			mov r4, #0x5067
-			mov r5, #0x5A67
+			mov r1, #0x5067
+			mov r2, #0x5A67
 			b sc_out
 sc_0x5068:
-			mov r4, #0x5068
-			mov r5, #0x5A68
+			mov r1, #0x5068
+			mov r2, #0x5A68
 			b sc_out
 sc_0x5069:
-			mov r4, #0x5069
-			mov r5, #0x5A69
+			mov r1, #0x5069
+			mov r2, #0x5A69
 			b sc_out
 sc_0x506A:
-			mov r4, #0x506A
-			mov r5, #0x5A6A
+			mov r1, #0x506A
+			mov r2, #0x5A6A
 			b sc_out
 sc_0x506B:
-			mov r4, #0x506B
-			mov r5, #0x5A6B
+			mov r1, #0x506B
+			mov r2, #0x5A6B
 			b sc_out
 sc_0x506C:
-			mov r4, #0x506C
-			mov r5, #0x5A6C
+			mov r1, #0x506C
+			mov r2, #0x5A6C
 			b sc_out
 sc_0x506D:
-			mov r4, #0x506D
-			mov r5, #0x5A6D
+			mov r1, #0x506D
+			mov r2, #0x5A6D
 			b sc_out
 sc_0x506E:
-			mov r4, #0x506E
-			mov r5, #0x5A6E
+			mov r1, #0x506E
+			mov r2, #0x5A6E
 			b sc_out
 sc_0x506F:
-			mov r4, #0x506F
-			mov r5, #0x5A6F
+			mov r1, #0x506F
+			mov r2, #0x5A6F
 			b sc_out
 sc_0x5070:
-			mov r4, #0x5070
-			mov r5, #0x5A70
+			mov r1, #0x5070
+			mov r2, #0x5A70
 			b sc_out
 sc_0x5071:
-			mov r4, #0x5071
-			mov r5, #0x5A71
+			mov r1, #0x5071
+			mov r2, #0x5A71
 			b sc_out
 sc_0x5072:
-			mov r4, #0x5072
-			mov r5, #0x5A72
+			mov r1, #0x5072
+			mov r2, #0x5A72
 			b sc_out
 sc_0x5073:
-			mov r4, #0x5073
-			mov r5, #0x5A73
+			mov r1, #0x5073
+			mov r2, #0x5A73
 			b sc_out
 sc_0x5074:
-			mov r4, #0x5074
-			mov r5, #0x5A74
+			mov r1, #0x5074
+			mov r2, #0x5A74
 			b sc_out
 sc_0x5075:
-			mov r4, #0x5075
-			mov r5, #0x5A75
+			mov r1, #0x5075
+			mov r2, #0x5A75
 			b sc_out
 sc_0x5076:
-			mov r4, #0x5076
-			mov r5, #0x5A76
+			mov r1, #0x5076
+			mov r2, #0x5A76
 			b sc_out
 sc_0x5077:
-			mov r4, #0x5077
-			mov r5, #0x5A77
+			mov r1, #0x5077
+			mov r2, #0x5A77
 			b sc_out
 sc_0x5078:
-			mov r4, #0x5078
-			mov r5, #0x5A78
+			mov r1, #0x5078
+			mov r2, #0x5A78
 			b sc_out
 sc_0x5079:
-			mov r4, #0x5079
-			mov r5, #0x5A79
+			mov r1, #0x5079
+			mov r2, #0x5A79
 			b sc_out
 sc_0x507A:
-			mov r4, #0x507A
-			mov r5, #0x5A7A
+			mov r1, #0x507A
+			mov r2, #0x5A7A
 			b sc_out
 sc_0x507B:
-			mov r4, #0x507B
-			mov r5, #0x5A7B
+			mov r1, #0x507B
+			mov r2, #0x5A7B
 			b sc_out
 sc_0x507C:
-			mov r4, #0x507C
-			mov r5, #0x5A7C
+			mov r1, #0x507C
+			mov r2, #0x5A7C
 			b sc_out
 sc_0x507D:
-			mov r4, #0x507D
-			mov r5, #0x5A7D
+			mov r1, #0x507D
+			mov r2, #0x5A7D
 			b sc_out
 sc_0x507E:
-			mov r4, #0x507E
-			mov r5, #0x5A7E
+			mov r1, #0x507E
+			mov r2, #0x5A7E
 			b sc_out
 sc_0x507F:
-			mov r4, #0x507F
-			mov r5, #0x5A7F
+			mov r1, #0x507F
+			mov r2, #0x5A7F
 			b sc_out
 sc_0x5160:
-			mov r4, #0x5160
-			mov r5, #0x5A60
+			mov r1, #0x5160
+			mov r2, #0x5A60
 			b sc_out
 sc_0x5161:
-			mov r4, #0x5161
-			mov r5, #0x5A61
+			mov r1, #0x5161
+			mov r2, #0x5A61
 			b sc_out
 sc_0x5162:
-			mov r4, #0x5162
-			mov r5, #0x5A62
+			mov r1, #0x5162
+			mov r2, #0x5A62
 			b sc_out
 sc_0x5163:
-			mov r4, #0x5163
-			mov r5, #0x5A63
+			mov r1, #0x5163
+			mov r2, #0x5A63
 			b sc_out
 sc_0x5164:
-			mov r4, #0x5164
-			mov r5, #0x5A64
+			mov r1, #0x5164
+			mov r2, #0x5A64
 			b sc_out
 sc_0x5165:
-			mov r4, #0x5165
-			mov r5, #0x5A65
+			mov r1, #0x5165
+			mov r2, #0x5A65
 			b sc_out
 sc_0x5166:
-			mov r4, #0x5166
-			mov r5, #0x5A66
+			mov r1, #0x5166
+			mov r2, #0x5A66
 			b sc_out
 sc_0x5167:
-			mov r4, #0x5167
-			mov r5, #0x5A67
+			mov r1, #0x5167
+			mov r2, #0x5A67
 			b sc_out
 sc_0x5168:
-			mov r4, #0x5168
-			mov r5, #0x5A68
+			mov r1, #0x5168
+			mov r2, #0x5A68
 			b sc_out
 sc_0x5169:
-			mov r4, #0x5169
-			mov r5, #0x5A69
+			mov r1, #0x5169
+			mov r2, #0x5A69
 			b sc_out
 sc_0x516A:
-			mov r4, #0x516A
-			mov r5, #0x5A6A
+			mov r1, #0x516A
+			mov r2, #0x5A6A
 			b sc_out
 sc_0x516B:
-			mov r4, #0x516B
-			mov r5, #0x5A6B
+			mov r1, #0x516B
+			mov r2, #0x5A6B
 			b sc_out
 sc_0x516C:
-			mov r4, #0x516C
-			mov r5, #0x5A6C
+			mov r1, #0x516C
+			mov r2, #0x5A6C
 			b sc_out
 sc_0x516D:
-			mov r4, #0x516D
-			mov r5, #0x5A6D
+			mov r1, #0x516D
+			mov r2, #0x5A6D
 			b sc_out
 sc_0x516E:
-			mov r4, #0x516E
-			mov r5, #0x5A6E
+			mov r1, #0x516E
+			mov r2, #0x5A6E
 			b sc_out
 sc_0x516F:
-			mov r4, #0x516F
-			mov r5, #0x5A6F
+			mov r1, #0x516F
+			mov r2, #0x5A6F
 			b sc_out
 sc_0x5170:
-			mov r4, #0x5170
-			mov r5, #0x5A70
+			mov r1, #0x5170
+			mov r2, #0x5A70
 			b sc_out
 sc_0x5171:
-			mov r4, #0x5171
-			mov r5, #0x5A71
+			mov r1, #0x5171
+			mov r2, #0x5A71
 			b sc_out
 sc_0x5172:
-			mov r4, #0x5172
-			mov r5, #0x5A72
+			mov r1, #0x5172
+			mov r2, #0x5A72
 			b sc_out
 sc_0x5173:
-			mov r4, #0x5173
-			mov r5, #0x5A73
+			mov r1, #0x5173
+			mov r2, #0x5A73
 			b sc_out
 sc_0x5174:
-			mov r4, #0x5174
-			mov r5, #0x5A74
+			mov r1, #0x5174
+			mov r2, #0x5A74
 			b sc_out
 sc_0x5175:
-			mov r4, #0x5175
-			mov r5, #0x5A75
+			mov r1, #0x5175
+			mov r2, #0x5A75
 			b sc_out
 sc_0x5176:
-			mov r4, #0x5176
-			mov r5, #0x5A76
+			mov r1, #0x5176
+			mov r2, #0x5A76
 			b sc_out
 sc_0x5177:
-			mov r4, #0x5177
-			mov r5, #0x5A77
+			mov r1, #0x5177
+			mov r2, #0x5A77
 			b sc_out
 sc_0x5178:
-			mov r4, #0x5178
-			mov r5, #0x5A78
+			mov r1, #0x5178
+			mov r2, #0x5A78
 			b sc_out
 sc_0x5179:
-			mov r4, #0x5179
-			mov r5, #0x5A79
+			mov r1, #0x5179
+			mov r2, #0x5A79
 			b sc_out
 sc_0x517A:
-			mov r4, #0x517A
-			mov r5, #0x5A7A
+			mov r1, #0x517A
+			mov r2, #0x5A7A
 			b sc_out
 sc_0x517B:
-			mov r4, #0x517B
-			mov r5, #0x5A7B
+			mov r1, #0x517B
+			mov r2, #0x5A7B
 			b sc_out
 sc_0x517C:
-			mov r4, #0x517C
-			mov r5, #0x5A7C
+			mov r1, #0x517C
+			mov r2, #0x5A7C
 			b sc_out
 sc_0x517D:
-			mov r4, #0x517D
-			mov r5, #0x5A7D
+			mov r1, #0x517D
+			mov r2, #0x5A7D
 			b sc_out
 sc_0x517E:
-			mov r4, #0x517E
-			mov r5, #0x5A7E
+			mov r1, #0x517E
+			mov r2, #0x5A7E
 			b sc_out
 sc_0x517F:
-			mov r4, #0x517F
-			mov r5, #0x5A7F
+			mov r1, #0x517F
+			mov r2, #0x5A7F
 			b sc_out
 sc_0x5260:
-			mov r4, #0x5260
-			mov r5, #0x5A60
+			mov r1, #0x5260
+			mov r2, #0x5A60
 			b sc_out
 sc_0x5261:
-			mov r4, #0x5261
-			mov r5, #0x5A61
+			mov r1, #0x5261
+			mov r2, #0x5A61
 			b sc_out
 sc_0x5262:
-			mov r4, #0x5262
-			mov r5, #0x5A62
+			mov r1, #0x5262
+			mov r2, #0x5A62
 			b sc_out
 sc_0x5263:
-			mov r4, #0x5263
-			mov r5, #0x5A63
+			mov r1, #0x5263
+			mov r2, #0x5A63
 			b sc_out
 sc_0x5264:
-			mov r4, #0x5264
-			mov r5, #0x5A64
+			mov r1, #0x5264
+			mov r2, #0x5A64
 			b sc_out
 sc_0x5265:
-			mov r4, #0x5265
-			mov r5, #0x5A65
+			mov r1, #0x5265
+			mov r2, #0x5A65
 			b sc_out
 sc_0x5266:
-			mov r4, #0x5266
-			mov r5, #0x5A66
+			mov r1, #0x5266
+			mov r2, #0x5A66
 			b sc_out
 sc_0x5267:
-			mov r4, #0x5267
-			mov r5, #0x5A67
+			mov r1, #0x5267
+			mov r2, #0x5A67
 			b sc_out
 sc_0x5268:
-			mov r4, #0x5268
-			mov r5, #0x5A68
+			mov r1, #0x5268
+			mov r2, #0x5A68
 			b sc_out
 sc_0x5269:
-			mov r4, #0x5269
-			mov r5, #0x5A69
+			mov r1, #0x5269
+			mov r2, #0x5A69
 			b sc_out
 sc_0x526A:
-			mov r4, #0x526A
-			mov r5, #0x5A6A
+			mov r1, #0x526A
+			mov r2, #0x5A6A
 			b sc_out
 sc_0x526B:
-			mov r4, #0x526B
-			mov r5, #0x5A6B
+			mov r1, #0x526B
+			mov r2, #0x5A6B
 			b sc_out
 sc_0x526C:
-			mov r4, #0x526C
-			mov r5, #0x5A6C
+			mov r1, #0x526C
+			mov r2, #0x5A6C
 			b sc_out
 sc_0x526D:
-			mov r4, #0x526D
-			mov r5, #0x5A6D
+			mov r1, #0x526D
+			mov r2, #0x5A6D
 			b sc_out
 sc_0x526E:
-			mov r4, #0x526E
-			mov r5, #0x5A6E
+			mov r1, #0x526E
+			mov r2, #0x5A6E
 			b sc_out
 sc_0x526F:
-			mov r4, #0x526F
-			mov r5, #0x5A6F
+			mov r1, #0x526F
+			mov r2, #0x5A6F
 			b sc_out
 sc_0x5270:
-			mov r4, #0x5270
-			mov r5, #0x5A70
+			mov r1, #0x5270
+			mov r2, #0x5A70
 			b sc_out
 sc_0x5271:
-			mov r4, #0x5271
-			mov r5, #0x5A71
+			mov r1, #0x5271
+			mov r2, #0x5A71
 			b sc_out
 sc_0x5272:
-			mov r4, #0x5272
-			mov r5, #0x5A72
+			mov r1, #0x5272
+			mov r2, #0x5A72
 			b sc_out
 sc_0x5273:
-			mov r4, #0x5273
-			mov r5, #0x5A73
+			mov r1, #0x5273
+			mov r2, #0x5A73
 			b sc_out
 sc_0x5274:
-			mov r4, #0x5274
-			mov r5, #0x5A74
+			mov r1, #0x5274
+			mov r2, #0x5A74
 			b sc_out
 sc_0x5275:
-			mov r4, #0x5275
-			mov r5, #0x5A75
+			mov r1, #0x5275
+			mov r2, #0x5A75
 			b sc_out
 sc_0x5276:
-			mov r4, #0x5276
-			mov r5, #0x5A76
+			mov r1, #0x5276
+			mov r2, #0x5A76
 			b sc_out
 sc_0x5277:
-			mov r4, #0x5277
-			mov r5, #0x5A77
+			mov r1, #0x5277
+			mov r2, #0x5A77
 			b sc_out
 sc_0x5278:
-			mov r4, #0x5278
-			mov r5, #0x5A78
+			mov r1, #0x5278
+			mov r2, #0x5A78
 			b sc_out
 sc_0x5279:
-			mov r4, #0x5279
-			mov r5, #0x5A79
+			mov r1, #0x5279
+			mov r2, #0x5A79
 			b sc_out
 sc_0x527A:
-			mov r4, #0x527A
-			mov r5, #0x5A7A
+			mov r1, #0x527A
+			mov r2, #0x5A7A
 			b sc_out
 sc_0x527B:
-			mov r4, #0x527B
-			mov r5, #0x5A7B
+			mov r1, #0x527B
+			mov r2, #0x5A7B
 			b sc_out
 sc_0x527C:
-			mov r4, #0x527C
-			mov r5, #0x5A7C
+			mov r1, #0x527C
+			mov r2, #0x5A7C
 			b sc_out
 sc_0x527D:
-			mov r4, #0x527D
-			mov r5, #0x5A7D
+			mov r1, #0x527D
+			mov r2, #0x5A7D
 			b sc_out
 sc_0x527E:
-			mov r4, #0x527E
-			mov r5, #0x5A7E
+			mov r1, #0x527E
+			mov r2, #0x5A7E
 			b sc_out
 sc_0x527F:
-			mov r4, #0x527F
-			mov r5, #0x5A7F
+			mov r1, #0x527F
+			mov r2, #0x5A7F
 			b sc_out
 sc_0x5360:
-			mov r4, #0x5360
-			mov r5, #0x5A60
+			mov r1, #0x5360
+			mov r2, #0x5A60
 			b sc_out
 sc_0x5361:
-			mov r4, #0x5361
-			mov r5, #0x5A61
+			mov r1, #0x5361
+			mov r2, #0x5A61
 			b sc_out
 sc_0x5362:
-			mov r4, #0x5362
-			mov r5, #0x5A62
+			mov r1, #0x5362
+			mov r2, #0x5A62
 			b sc_out
 sc_0x5363:
-			mov r4, #0x5363
-			mov r5, #0x5A63
+			mov r1, #0x5363
+			mov r2, #0x5A63
 			b sc_out
 sc_0x5364:
-			mov r4, #0x5364
-			mov r5, #0x5A64
+			mov r1, #0x5364
+			mov r2, #0x5A64
 			b sc_out
 sc_0x5365:
-			mov r4, #0x5365
-			mov r5, #0x5A65
+			mov r1, #0x5365
+			mov r2, #0x5A65
 			b sc_out
 sc_0x5366:
-			mov r4, #0x5366
-			mov r5, #0x5A66
+			mov r1, #0x5366
+			mov r2, #0x5A66
 			b sc_out
 sc_0x5367:
-			mov r4, #0x5367
-			mov r5, #0x5A67
+			mov r1, #0x5367
+			mov r2, #0x5A67
 			b sc_out
 sc_0x5368:
-			mov r4, #0x5368
-			mov r5, #0x5A68
+			mov r1, #0x5368
+			mov r2, #0x5A68
 			b sc_out
 sc_0x5369:
-			mov r4, #0x5369
-			mov r5, #0x5A69
+			mov r1, #0x5369
+			mov r2, #0x5A69
 			b sc_out
 sc_0x536A:
-			mov r4, #0x536A
-			mov r5, #0x5A6A
+			mov r1, #0x536A
+			mov r2, #0x5A6A
 			b sc_out
 sc_0x536B:
-			mov r4, #0x536B
-			mov r5, #0x5A6B
+			mov r1, #0x536B
+			mov r2, #0x5A6B
 			b sc_out
 sc_0x536C:
-			mov r4, #0x536C
-			mov r5, #0x5A6C
+			mov r1, #0x536C
+			mov r2, #0x5A6C
 			b sc_out
 sc_0x536D:
-			mov r4, #0x536D
-			mov r5, #0x5A6D
+			mov r1, #0x536D
+			mov r2, #0x5A6D
 			b sc_out
 sc_0x536E:
-			mov r4, #0x536E
-			mov r5, #0x5A6E
+			mov r1, #0x536E
+			mov r2, #0x5A6E
 			b sc_out
 sc_0x536F:
-			mov r4, #0x536F
-			mov r5, #0x5A6F
+			mov r1, #0x536F
+			mov r2, #0x5A6F
 			b sc_out
 sc_0x5370:
-			mov r4, #0x5370
-			mov r5, #0x5A70
+			mov r1, #0x5370
+			mov r2, #0x5A70
 			b sc_out
 sc_0x5371:
-			mov r4, #0x5371
-			mov r5, #0x5A71
+			mov r1, #0x5371
+			mov r2, #0x5A71
 			b sc_out
 sc_0x5372:
-			mov r4, #0x5372
-			mov r5, #0x5A72
+			mov r1, #0x5372
+			mov r2, #0x5A72
 			b sc_out
 sc_0x5373:
-			mov r4, #0x5373
-			mov r5, #0x5A73
+			mov r1, #0x5373
+			mov r2, #0x5A73
 			b sc_out
 sc_0x5374:
-			mov r4, #0x5374
-			mov r5, #0x5A74
+			mov r1, #0x5374
+			mov r2, #0x5A74
 			b sc_out
 sc_0x5375:
-			mov r4, #0x5375
-			mov r5, #0x5A75
+			mov r1, #0x5375
+			mov r2, #0x5A75
 			b sc_out
 sc_0x5376:
-			mov r4, #0x5376
-			mov r5, #0x5A76
+			mov r1, #0x5376
+			mov r2, #0x5A76
 			b sc_out
 sc_0x5377:
-			mov r4, #0x5377
-			mov r5, #0x5A77
+			mov r1, #0x5377
+			mov r2, #0x5A77
 			b sc_out
 sc_0x5378:
-			mov r4, #0x5378
-			mov r5, #0x5A78
+			mov r1, #0x5378
+			mov r2, #0x5A78
 			b sc_out
 sc_0x5379:
-			mov r4, #0x5379
-			mov r5, #0x5A79
+			mov r1, #0x5379
+			mov r2, #0x5A79
 			b sc_out
 sc_0x537A:
-			mov r4, #0x537A
-			mov r5, #0x5A7A
+			mov r1, #0x537A
+			mov r2, #0x5A7A
 			b sc_out
 sc_0x537B:
-			mov r4, #0x537B
-			mov r5, #0x5A7B
+			mov r1, #0x537B
+			mov r2, #0x5A7B
 			b sc_out
 sc_0x537C:
-			mov r4, #0x537C
-			mov r5, #0x5A7C
+			mov r1, #0x537C
+			mov r2, #0x5A7C
 			b sc_out
 sc_0x537D:
-			mov r4, #0x537D
-			mov r5, #0x5A7D
+			mov r1, #0x537D
+			mov r2, #0x5A7D
 			b sc_out
 sc_0x537E:
-			mov r4, #0x537E
-			mov r5, #0x5A7E
+			mov r1, #0x537E
+			mov r2, #0x5A7E
 			b sc_out
 sc_0x537F:
-			mov r4, #0x537F
-			mov r5, #0x5A7F
+			mov r1, #0x537F
+			mov r2, #0x5A7F
 			b sc_out
 sc_0x5460:
-			mov r4, #0x5460
-			mov r5, #0x5A60
+			mov r1, #0x5460
+			mov r2, #0x5A60
 			b sc_out
 sc_0x5461:
-			mov r4, #0x5461
-			mov r5, #0x5A61
+			mov r1, #0x5461
+			mov r2, #0x5A61
 			b sc_out
 sc_0x5462:
-			mov r4, #0x5462
-			mov r5, #0x5A62
+			mov r1, #0x5462
+			mov r2, #0x5A62
 			b sc_out
 sc_0x5463:
-			mov r4, #0x5463
-			mov r5, #0x5A63
+			mov r1, #0x5463
+			mov r2, #0x5A63
 			b sc_out
 sc_0x5464:
-			mov r4, #0x5464
-			mov r5, #0x5A64
+			mov r1, #0x5464
+			mov r2, #0x5A64
 			b sc_out
 sc_0x5465:
-			mov r4, #0x5465
-			mov r5, #0x5A65
+			mov r1, #0x5465
+			mov r2, #0x5A65
 			b sc_out
 sc_0x5466:
-			mov r4, #0x5466
-			mov r5, #0x5A66
+			mov r1, #0x5466
+			mov r2, #0x5A66
 			b sc_out
 sc_0x5467:
-			mov r4, #0x5467
-			mov r5, #0x5A67
+			mov r1, #0x5467
+			mov r2, #0x5A67
 			b sc_out
 sc_0x5468:
-			mov r4, #0x5468
-			mov r5, #0x5A68
+			mov r1, #0x5468
+			mov r2, #0x5A68
 			b sc_out
 sc_0x5469:
-			mov r4, #0x5469
-			mov r5, #0x5A69
+			mov r1, #0x5469
+			mov r2, #0x5A69
 			b sc_out
 sc_0x546A:
-			mov r4, #0x546A
-			mov r5, #0x5A6A
+			mov r1, #0x546A
+			mov r2, #0x5A6A
 			b sc_out
 sc_0x546B:
-			mov r4, #0x546B
-			mov r5, #0x5A6B
+			mov r1, #0x546B
+			mov r2, #0x5A6B
 			b sc_out
 sc_0x546C:
-			mov r4, #0x546C
-			mov r5, #0x5A6C
+			mov r1, #0x546C
+			mov r2, #0x5A6C
 			b sc_out
 sc_0x546D:
-			mov r4, #0x546D
-			mov r5, #0x5A6D
+			mov r1, #0x546D
+			mov r2, #0x5A6D
 			b sc_out
 sc_0x546E:
-			mov r4, #0x546E
-			mov r5, #0x5A6E
+			mov r1, #0x546E
+			mov r2, #0x5A6E
 			b sc_out
 sc_0x546F:
-			mov r4, #0x546F
-			mov r5, #0x5A6F
+			mov r1, #0x546F
+			mov r2, #0x5A6F
 			b sc_out
 sc_0x5470:
-			mov r4, #0x5470
-			mov r5, #0x5A70
+			mov r1, #0x5470
+			mov r2, #0x5A70
 			b sc_out
 sc_0x5471:
-			mov r4, #0x5471
-			mov r5, #0x5A71
+			mov r1, #0x5471
+			mov r2, #0x5A71
 			b sc_out
 sc_0x5472:
-			mov r4, #0x5472
-			mov r5, #0x5A72
+			mov r1, #0x5472
+			mov r2, #0x5A72
 			b sc_out
 sc_0x5473:
-			mov r4, #0x5473
-			mov r5, #0x5A73
+			mov r1, #0x5473
+			mov r2, #0x5A73
 			b sc_out
 sc_0x5474:
-			mov r4, #0x5474
-			mov r5, #0x5A74
+			mov r1, #0x5474
+			mov r2, #0x5A74
 			b sc_out
 sc_0x5475:
-			mov r4, #0x5475
-			mov r5, #0x5A75
+			mov r1, #0x5475
+			mov r2, #0x5A75
 			b sc_out
 sc_0x5476:
-			mov r4, #0x5476
-			mov r5, #0x5A76
+			mov r1, #0x5476
+			mov r2, #0x5A76
 			b sc_out
 sc_0x5477:
-			mov r4, #0x5477
-			mov r5, #0x5A77
+			mov r1, #0x5477
+			mov r2, #0x5A77
 			b sc_out
 sc_0x5478:
-			mov r4, #0x5478
-			mov r5, #0x5A78
+			mov r1, #0x5478
+			mov r2, #0x5A78
 			b sc_out
 sc_0x5479:
-			mov r4, #0x5479
-			mov r5, #0x5A79
+			mov r1, #0x5479
+			mov r2, #0x5A79
 			b sc_out
 sc_0x547A:
-			mov r4, #0x547A
-			mov r5, #0x5A7A
+			mov r1, #0x547A
+			mov r2, #0x5A7A
 			b sc_out
 sc_0x547B:
-			mov r4, #0x547B
-			mov r5, #0x5A7B
+			mov r1, #0x547B
+			mov r2, #0x5A7B
 			b sc_out
 sc_0x547C:
-			mov r4, #0x547C
-			mov r5, #0x5A7C
+			mov r1, #0x547C
+			mov r2, #0x5A7C
 			b sc_out
 sc_0x547D:
-			mov r4, #0x547D
-			mov r5, #0x5A7D
+			mov r1, #0x547D
+			mov r2, #0x5A7D
 			b sc_out
 sc_0x547E:
-			mov r4, #0x547E
-			mov r5, #0x5A7E
+			mov r1, #0x547E
+			mov r2, #0x5A7E
 			b sc_out
 sc_0x547F:
-			mov r4, #0x547F
-			mov r5, #0x5A7F
+			mov r1, #0x547F
+			mov r2, #0x5A7F
 			b sc_out
 sc_0x5560:
-			mov r4, #0x5560
-			mov r5, #0x5A60
+			mov r1, #0x5560
+			mov r2, #0x5A60
 			b sc_out
 sc_0x5561:
-			mov r4, #0x5561
-			mov r5, #0x5A61
+			mov r1, #0x5561
+			mov r2, #0x5A61
 			b sc_out
 sc_0x5562:
-			mov r4, #0x5562
-			mov r5, #0x5A62
+			mov r1, #0x5562
+			mov r2, #0x5A62
 			b sc_out
 sc_0x5563:
-			mov r4, #0x5563
-			mov r5, #0x5A63
+			mov r1, #0x5563
+			mov r2, #0x5A63
 			b sc_out
 sc_0x5564:
-			mov r4, #0x5564
-			mov r5, #0x5A64
+			mov r1, #0x5564
+			mov r2, #0x5A64
 			b sc_out
 sc_0x5565:
-			mov r4, #0x5565
-			mov r5, #0x5A65
+			mov r1, #0x5565
+			mov r2, #0x5A65
 			b sc_out
 sc_0x5566:
-			mov r4, #0x5566
-			mov r5, #0x5A66
+			mov r1, #0x5566
+			mov r2, #0x5A66
 			b sc_out
 sc_0x5567:
-			mov r4, #0x5567
-			mov r5, #0x5A67
+			mov r1, #0x5567
+			mov r2, #0x5A67
 			b sc_out
 sc_0x5568:
-			mov r4, #0x5568
-			mov r5, #0x5A68
+			mov r1, #0x5568
+			mov r2, #0x5A68
 			b sc_out
 sc_0x5569:
-			mov r4, #0x5569
-			mov r5, #0x5A69
+			mov r1, #0x5569
+			mov r2, #0x5A69
 			b sc_out
 sc_0x556A:
-			mov r4, #0x556A
-			mov r5, #0x5A6A
+			mov r1, #0x556A
+			mov r2, #0x5A6A
 			b sc_out
 sc_0x556B:
-			mov r4, #0x556B
-			mov r5, #0x5A6B
+			mov r1, #0x556B
+			mov r2, #0x5A6B
 			b sc_out
 sc_0x556C:
-			mov r4, #0x556C
-			mov r5, #0x5A6C
+			mov r1, #0x556C
+			mov r2, #0x5A6C
 			b sc_out
 sc_0x556D:
-			mov r4, #0x556D
-			mov r5, #0x5A6D
+			mov r1, #0x556D
+			mov r2, #0x5A6D
 			b sc_out
 sc_0x556E:
-			mov r4, #0x556E
-			mov r5, #0x5A6E
+			mov r1, #0x556E
+			mov r2, #0x5A6E
 			b sc_out
 sc_0x556F:
-			mov r4, #0x556F
-			mov r5, #0x5A6F
+			mov r1, #0x556F
+			mov r2, #0x5A6F
 			b sc_out
 sc_0x5570:
-			mov r4, #0x5570
-			mov r5, #0x5A70
+			mov r1, #0x5570
+			mov r2, #0x5A70
 			b sc_out
 sc_0x5571:
-			mov r4, #0x5571
-			mov r5, #0x5A71
+			mov r1, #0x5571
+			mov r2, #0x5A71
 			b sc_out
 sc_0x5572:
-			mov r4, #0x5572
-			mov r5, #0x5A72
+			mov r1, #0x5572
+			mov r2, #0x5A72
 			b sc_out
 sc_0x5573:
-			mov r4, #0x5573
-			mov r5, #0x5A73
+			mov r1, #0x5573
+			mov r2, #0x5A73
 			b sc_out
 sc_0x5574:
-			mov r4, #0x5574
-			mov r5, #0x5A74
+			mov r1, #0x5574
+			mov r2, #0x5A74
 			b sc_out
 sc_0x5575:
-			mov r4, #0x5575
-			mov r5, #0x5A75
+			mov r1, #0x5575
+			mov r2, #0x5A75
 			b sc_out
 sc_0x5576:
-			mov r4, #0x5576
-			mov r5, #0x5A76
+			mov r1, #0x5576
+			mov r2, #0x5A76
 			b sc_out
 sc_0x5577:
-			mov r4, #0x5577
-			mov r5, #0x5A77
+			mov r1, #0x5577
+			mov r2, #0x5A77
 			b sc_out
 sc_0x5578:
-			mov r4, #0x5578
-			mov r5, #0x5A78
+			mov r1, #0x5578
+			mov r2, #0x5A78
 			b sc_out
 sc_0x5579:
-			mov r4, #0x5579
-			mov r5, #0x5A79
+			mov r1, #0x5579
+			mov r2, #0x5A79
 			b sc_out
 sc_0x557A:
-			mov r4, #0x557A
-			mov r5, #0x5A7A
+			mov r1, #0x557A
+			mov r2, #0x5A7A
 			b sc_out
 sc_0x557B:
-			mov r4, #0x557B
-			mov r5, #0x5A7B
+			mov r1, #0x557B
+			mov r2, #0x5A7B
 			b sc_out
 sc_0x557C:
-			mov r4, #0x557C
-			mov r5, #0x5A7C
+			mov r1, #0x557C
+			mov r2, #0x5A7C
 			b sc_out
 sc_0x557D:
-			mov r4, #0x557D
-			mov r5, #0x5A7D
+			mov r1, #0x557D
+			mov r2, #0x5A7D
 			b sc_out
 sc_0x557E:
-			mov r4, #0x557E
-			mov r5, #0x5A7E
+			mov r1, #0x557E
+			mov r2, #0x5A7E
 			b sc_out
 sc_0x557F:
-			mov r4, #0x557F
-			mov r5, #0x5A7F
+			mov r1, #0x557F
+			mov r2, #0x5A7F
 			b sc_out
 sc_0x5660:
-			mov r4, #0x5660
-			mov r5, #0x5A60
+			mov r1, #0x5660
+			mov r2, #0x5A60
 			b sc_out
 sc_0x5661:
-			mov r4, #0x5661
-			mov r5, #0x5A61
+			mov r1, #0x5661
+			mov r2, #0x5A61
 			b sc_out
 sc_0x5662:
-			mov r4, #0x5662
-			mov r5, #0x5A62
+			mov r1, #0x5662
+			mov r2, #0x5A62
 			b sc_out
 sc_0x5663:
-			mov r4, #0x5663
-			mov r5, #0x5A63
+			mov r1, #0x5663
+			mov r2, #0x5A63
 			b sc_out
 sc_0x5664:
-			mov r4, #0x5664
-			mov r5, #0x5A64
+			mov r1, #0x5664
+			mov r2, #0x5A64
 			b sc_out
 sc_0x5665:
-			mov r4, #0x5665
-			mov r5, #0x5A65
+			mov r1, #0x5665
+			mov r2, #0x5A65
 			b sc_out
 sc_0x5666:
-			mov r4, #0x5666
-			mov r5, #0x5A66
+			mov r1, #0x5666
+			mov r2, #0x5A66
 			b sc_out
 sc_0x5667:
-			mov r4, #0x5667
-			mov r5, #0x5A67
+			mov r1, #0x5667
+			mov r2, #0x5A67
 			b sc_out
 sc_0x5668:
-			mov r4, #0x5668
-			mov r5, #0x5A68
+			mov r1, #0x5668
+			mov r2, #0x5A68
 			b sc_out
 sc_0x5669:
-			mov r4, #0x5669
-			mov r5, #0x5A69
+			mov r1, #0x5669
+			mov r2, #0x5A69
 			b sc_out
 sc_0x566A:
-			mov r4, #0x566A
-			mov r5, #0x5A6A
+			mov r1, #0x566A
+			mov r2, #0x5A6A
 			b sc_out
 sc_0x566B:
-			mov r4, #0x566B
-			mov r5, #0x5A6B
+			mov r1, #0x566B
+			mov r2, #0x5A6B
 			b sc_out
 sc_0x566C:
-			mov r4, #0x566C
-			mov r5, #0x5A6C
+			mov r1, #0x566C
+			mov r2, #0x5A6C
 			b sc_out
 sc_0x566D:
-			mov r4, #0x566D
-			mov r5, #0x5A6D
+			mov r1, #0x566D
+			mov r2, #0x5A6D
 			b sc_out
 sc_0x566E:
-			mov r4, #0x566E
-			mov r5, #0x5A6E
+			mov r1, #0x566E
+			mov r2, #0x5A6E
 			b sc_out
 sc_0x566F:
-			mov r4, #0x566F
-			mov r5, #0x5A6F
+			mov r1, #0x566F
+			mov r2, #0x5A6F
 			b sc_out
 sc_0x5670:
-			mov r4, #0x5670
-			mov r5, #0x5A70
+			mov r1, #0x5670
+			mov r2, #0x5A70
 			b sc_out
 sc_0x5671:
-			mov r4, #0x5671
-			mov r5, #0x5A71
+			mov r1, #0x5671
+			mov r2, #0x5A71
 			b sc_out
 sc_0x5672:
-			mov r4, #0x5672
-			mov r5, #0x5A72
+			mov r1, #0x5672
+			mov r2, #0x5A72
 			b sc_out
 sc_0x5673:
-			mov r4, #0x5673
-			mov r5, #0x5A73
+			mov r1, #0x5673
+			mov r2, #0x5A73
 			b sc_out
 sc_0x5674:
-			mov r4, #0x5674
-			mov r5, #0x5A74
+			mov r1, #0x5674
+			mov r2, #0x5A74
 			b sc_out
 sc_0x5675:
-			mov r4, #0x5675
-			mov r5, #0x5A75
+			mov r1, #0x5675
+			mov r2, #0x5A75
 			b sc_out
 sc_0x5676:
-			mov r4, #0x5676
-			mov r5, #0x5A76
+			mov r1, #0x5676
+			mov r2, #0x5A76
 			b sc_out
 sc_0x5677:
-			mov r4, #0x5677
-			mov r5, #0x5A77
+			mov r1, #0x5677
+			mov r2, #0x5A77
 			b sc_out
 sc_0x5678:
-			mov r4, #0x5678
-			mov r5, #0x5A78
+			mov r1, #0x5678
+			mov r2, #0x5A78
 			b sc_out
 sc_0x5679:
-			mov r4, #0x5679
-			mov r5, #0x5A79
+			mov r1, #0x5679
+			mov r2, #0x5A79
 			b sc_out
 sc_0x567A:
-			mov r4, #0x567A
-			mov r5, #0x5A7A
+			mov r1, #0x567A
+			mov r2, #0x5A7A
 			b sc_out
 sc_0x567B:
-			mov r4, #0x567B
-			mov r5, #0x5A7B
+			mov r1, #0x567B
+			mov r2, #0x5A7B
 			b sc_out
 sc_0x567C:
-			mov r4, #0x567C
-			mov r5, #0x5A7C
+			mov r1, #0x567C
+			mov r2, #0x5A7C
 			b sc_out
 sc_0x567D:
-			mov r4, #0x567D
-			mov r5, #0x5A7D
+			mov r1, #0x567D
+			mov r2, #0x5A7D
 			b sc_out
 sc_0x567E:
-			mov r4, #0x567E
-			mov r5, #0x5A7E
+			mov r1, #0x567E
+			mov r2, #0x5A7E
 			b sc_out
 sc_0x567F:
-			mov r4, #0x567F
-			mov r5, #0x5A7F
+			mov r1, #0x567F
+			mov r2, #0x5A7F
 			b sc_out
 sc_0x5760:
-			mov r4, #0x5760
-			mov r5, #0x5A60
+			mov r1, #0x5760
+			mov r2, #0x5A60
 			b sc_out
 sc_0x5761:
-			mov r4, #0x5761
-			mov r5, #0x5A61
+			mov r1, #0x5761
+			mov r2, #0x5A61
 			b sc_out
 sc_0x5762:
-			mov r4, #0x5762
-			mov r5, #0x5A62
+			mov r1, #0x5762
+			mov r2, #0x5A62
 			b sc_out
 sc_0x5763:
-			mov r4, #0x5763
-			mov r5, #0x5A63
+			mov r1, #0x5763
+			mov r2, #0x5A63
 			b sc_out
 sc_0x5764:
-			mov r4, #0x5764
-			mov r5, #0x5A64
+			mov r1, #0x5764
+			mov r2, #0x5A64
 			b sc_out
 sc_0x5765:
-			mov r4, #0x5765
-			mov r5, #0x5A65
+			mov r1, #0x5765
+			mov r2, #0x5A65
 			b sc_out
 sc_0x5766:
-			mov r4, #0x5766
-			mov r5, #0x5A66
+			mov r1, #0x5766
+			mov r2, #0x5A66
 			b sc_out
 sc_0x5767:
-			mov r4, #0x5767
-			mov r5, #0x5A67
+			mov r1, #0x5767
+			mov r2, #0x5A67
 			b sc_out
 sc_0x5768:
-			mov r4, #0x5768
-			mov r5, #0x5A68
+			mov r1, #0x5768
+			mov r2, #0x5A68
 			b sc_out
 sc_0x5769:
-			mov r4, #0x5769
-			mov r5, #0x5A69
+			mov r1, #0x5769
+			mov r2, #0x5A69
 			b sc_out
 sc_0x576A:
-			mov r4, #0x576A
-			mov r5, #0x5A6A
+			mov r1, #0x576A
+			mov r2, #0x5A6A
 			b sc_out
 sc_0x576B:
-			mov r4, #0x576B
-			mov r5, #0x5A6B
+			mov r1, #0x576B
+			mov r2, #0x5A6B
 			b sc_out
 sc_0x576C:
-			mov r4, #0x576C
-			mov r5, #0x5A6C
+			mov r1, #0x576C
+			mov r2, #0x5A6C
 			b sc_out
 sc_0x576D:
-			mov r4, #0x576D
-			mov r5, #0x5A6D
+			mov r1, #0x576D
+			mov r2, #0x5A6D
 			b sc_out
 sc_0x576E:
-			mov r4, #0x576E
-			mov r5, #0x5A6E
+			mov r1, #0x576E
+			mov r2, #0x5A6E
 			b sc_out
 sc_0x576F:
-			mov r4, #0x576F
-			mov r5, #0x5A6F
+			mov r1, #0x576F
+			mov r2, #0x5A6F
 			b sc_out
 sc_0x5770:
-			mov r4, #0x5770
-			mov r5, #0x5A70
+			mov r1, #0x5770
+			mov r2, #0x5A70
 			b sc_out
 sc_0x5771:
-			mov r4, #0x5771
-			mov r5, #0x5A71
+			mov r1, #0x5771
+			mov r2, #0x5A71
 			b sc_out
 sc_0x5772:
-			mov r4, #0x5772
-			mov r5, #0x5A72
+			mov r1, #0x5772
+			mov r2, #0x5A72
 			b sc_out
 sc_0x5773:
-			mov r4, #0x5773
-			mov r5, #0x5A73
+			mov r1, #0x5773
+			mov r2, #0x5A73
 			b sc_out
 sc_0x5774:
-			mov r4, #0x5774
-			mov r5, #0x5A74
+			mov r1, #0x5774
+			mov r2, #0x5A74
 			b sc_out
 sc_0x5775:
-			mov r4, #0x5775
-			mov r5, #0x5A75
+			mov r1, #0x5775
+			mov r2, #0x5A75
 			b sc_out
 sc_0x5776:
-			mov r4, #0x5776
-			mov r5, #0x5A76
+			mov r1, #0x5776
+			mov r2, #0x5A76
 			b sc_out
 sc_0x5777:
-			mov r4, #0x5777
-			mov r5, #0x5A77
+			mov r1, #0x5777
+			mov r2, #0x5A77
 			b sc_out
 sc_0x5778:
-			mov r4, #0x5778
-			mov r5, #0x5A78
+			mov r1, #0x5778
+			mov r2, #0x5A78
 			b sc_out
 sc_0x5779:
-			mov r4, #0x5779
-			mov r5, #0x5A79
+			mov r1, #0x5779
+			mov r2, #0x5A79
 			b sc_out
 sc_0x577A:
-			mov r4, #0x577A
-			mov r5, #0x5A7A
+			mov r1, #0x577A
+			mov r2, #0x5A7A
 			b sc_out
 sc_0x577B:
-			mov r4, #0x577B
-			mov r5, #0x5A7B
+			mov r1, #0x577B
+			mov r2, #0x5A7B
 			b sc_out
 sc_0x577C:
-			mov r4, #0x577C
-			mov r5, #0x5A7C
+			mov r1, #0x577C
+			mov r2, #0x5A7C
 			b sc_out
 sc_0x577D:
-			mov r4, #0x577D
-			mov r5, #0x5A7D
+			mov r1, #0x577D
+			mov r2, #0x5A7D
 			b sc_out
 sc_0x577E:
-			mov r4, #0x577E
-			mov r5, #0x5A7E
+			mov r1, #0x577E
+			mov r2, #0x5A7E
 			b sc_out
 sc_0x577F:
-			mov r4, #0x577F
-			mov r5, #0x5A7F
+			mov r1, #0x577F
+			mov r2, #0x5A7F
 			b sc_out
 sc_0x5080:
-			mov r4, #0x5080
-			mov r5, #0x5A80
+			mov r1, #0x5080
+			mov r2, #0x5A80
 			b sc_out
 sc_0x5081:
-			mov r4, #0x5081
-			mov r5, #0x5A81
+			mov r1, #0x5081
+			mov r2, #0x5A81
 			b sc_out
 sc_0x5082:
-			mov r4, #0x5082
-			mov r5, #0x5A82
+			mov r1, #0x5082
+			mov r2, #0x5A82
 			b sc_out
 sc_0x5083:
-			mov r4, #0x5083
-			mov r5, #0x5A83
+			mov r1, #0x5083
+			mov r2, #0x5A83
 			b sc_out
 sc_0x5084:
-			mov r4, #0x5084
-			mov r5, #0x5A84
+			mov r1, #0x5084
+			mov r2, #0x5A84
 			b sc_out
 sc_0x5085:
-			mov r4, #0x5085
-			mov r5, #0x5A85
+			mov r1, #0x5085
+			mov r2, #0x5A85
 			b sc_out
 sc_0x5086:
-			mov r4, #0x5086
-			mov r5, #0x5A86
+			mov r1, #0x5086
+			mov r2, #0x5A86
 			b sc_out
 sc_0x5087:
-			mov r4, #0x5087
-			mov r5, #0x5A87
+			mov r1, #0x5087
+			mov r2, #0x5A87
 			b sc_out
 sc_0x5088:
-			mov r4, #0x5088
-			mov r5, #0x5A88
+			mov r1, #0x5088
+			mov r2, #0x5A88
 			b sc_out
 sc_0x5089:
-			mov r4, #0x5089
-			mov r5, #0x5A89
+			mov r1, #0x5089
+			mov r2, #0x5A89
 			b sc_out
 sc_0x508A:
-			mov r4, #0x508A
-			mov r5, #0x5A8A
+			mov r1, #0x508A
+			mov r2, #0x5A8A
 			b sc_out
 sc_0x508B:
-			mov r4, #0x508B
-			mov r5, #0x5A8B
+			mov r1, #0x508B
+			mov r2, #0x5A8B
 			b sc_out
 sc_0x508C:
-			mov r4, #0x508C
-			mov r5, #0x5A8C
+			mov r1, #0x508C
+			mov r2, #0x5A8C
 			b sc_out
 sc_0x508D:
-			mov r4, #0x508D
-			mov r5, #0x5A8D
+			mov r1, #0x508D
+			mov r2, #0x5A8D
 			b sc_out
 sc_0x508E:
-			mov r4, #0x508E
-			mov r5, #0x5A8E
+			mov r1, #0x508E
+			mov r2, #0x5A8E
 			b sc_out
 sc_0x508F:
-			mov r4, #0x508F
-			mov r5, #0x5A8F
+			mov r1, #0x508F
+			mov r2, #0x5A8F
 			b sc_out
 sc_0x5090:
-			mov r4, #0x5090
-			mov r5, #0x5A90
+			mov r1, #0x5090
+			mov r2, #0x5A90
 			b sc_out
 sc_0x5091:
-			mov r4, #0x5091
-			mov r5, #0x5A91
+			mov r1, #0x5091
+			mov r2, #0x5A91
 			b sc_out
 sc_0x5092:
-			mov r4, #0x5092
-			mov r5, #0x5A92
+			mov r1, #0x5092
+			mov r2, #0x5A92
 			b sc_out
 sc_0x5093:
-			mov r4, #0x5093
-			mov r5, #0x5A93
+			mov r1, #0x5093
+			mov r2, #0x5A93
 			b sc_out
 sc_0x5094:
-			mov r4, #0x5094
-			mov r5, #0x5A94
+			mov r1, #0x5094
+			mov r2, #0x5A94
 			b sc_out
 sc_0x5095:
-			mov r4, #0x5095
-			mov r5, #0x5A95
+			mov r1, #0x5095
+			mov r2, #0x5A95
 			b sc_out
 sc_0x5096:
-			mov r4, #0x5096
-			mov r5, #0x5A96
+			mov r1, #0x5096
+			mov r2, #0x5A96
 			b sc_out
 sc_0x5097:
-			mov r4, #0x5097
-			mov r5, #0x5A97
+			mov r1, #0x5097
+			mov r2, #0x5A97
 			b sc_out
 sc_0x5098:
-			mov r4, #0x5098
-			mov r5, #0x5A98
+			mov r1, #0x5098
+			mov r2, #0x5A98
 			b sc_out
 sc_0x5099:
-			mov r4, #0x5099
-			mov r5, #0x5A99
+			mov r1, #0x5099
+			mov r2, #0x5A99
 			b sc_out
 sc_0x509A:
-			mov r4, #0x509A
-			mov r5, #0x5A9A
+			mov r1, #0x509A
+			mov r2, #0x5A9A
 			b sc_out
 sc_0x509B:
-			mov r4, #0x509B
-			mov r5, #0x5A9B
+			mov r1, #0x509B
+			mov r2, #0x5A9B
 			b sc_out
 sc_0x509C:
-			mov r4, #0x509C
-			mov r5, #0x5A9C
+			mov r1, #0x509C
+			mov r2, #0x5A9C
 			b sc_out
 sc_0x509D:
-			mov r4, #0x509D
-			mov r5, #0x5A9D
+			mov r1, #0x509D
+			mov r2, #0x5A9D
 			b sc_out
 sc_0x509E:
-			mov r4, #0x509E
-			mov r5, #0x5A9E
+			mov r1, #0x509E
+			mov r2, #0x5A9E
 			b sc_out
 sc_0x509F:
-			mov r4, #0x509F
-			mov r5, #0x5A9F
+			mov r1, #0x509F
+			mov r2, #0x5A9F
 			b sc_out
 sc_0x5180:
-			mov r4, #0x5180
-			mov r5, #0x5A80
+			mov r1, #0x5180
+			mov r2, #0x5A80
 			b sc_out
 sc_0x5181:
-			mov r4, #0x5181
-			mov r5, #0x5A81
+			mov r1, #0x5181
+			mov r2, #0x5A81
 			b sc_out
 sc_0x5182:
-			mov r4, #0x5182
-			mov r5, #0x5A82
+			mov r1, #0x5182
+			mov r2, #0x5A82
 			b sc_out
 sc_0x5183:
-			mov r4, #0x5183
-			mov r5, #0x5A83
+			mov r1, #0x5183
+			mov r2, #0x5A83
 			b sc_out
 sc_0x5184:
-			mov r4, #0x5184
-			mov r5, #0x5A84
+			mov r1, #0x5184
+			mov r2, #0x5A84
 			b sc_out
 sc_0x5185:
-			mov r4, #0x5185
-			mov r5, #0x5A85
+			mov r1, #0x5185
+			mov r2, #0x5A85
 			b sc_out
 sc_0x5186:
-			mov r4, #0x5186
-			mov r5, #0x5A86
+			mov r1, #0x5186
+			mov r2, #0x5A86
 			b sc_out
 sc_0x5187:
-			mov r4, #0x5187
-			mov r5, #0x5A87
+			mov r1, #0x5187
+			mov r2, #0x5A87
 			b sc_out
 sc_0x5188:
-			mov r4, #0x5188
-			mov r5, #0x5A88
+			mov r1, #0x5188
+			mov r2, #0x5A88
 			b sc_out
 sc_0x5189:
-			mov r4, #0x5189
-			mov r5, #0x5A89
+			mov r1, #0x5189
+			mov r2, #0x5A89
 			b sc_out
 sc_0x518A:
-			mov r4, #0x518A
-			mov r5, #0x5A8A
+			mov r1, #0x518A
+			mov r2, #0x5A8A
 			b sc_out
 sc_0x518B:
-			mov r4, #0x518B
-			mov r5, #0x5A8B
+			mov r1, #0x518B
+			mov r2, #0x5A8B
 			b sc_out
 sc_0x518C:
-			mov r4, #0x518C
-			mov r5, #0x5A8C
+			mov r1, #0x518C
+			mov r2, #0x5A8C
 			b sc_out
 sc_0x518D:
-			mov r4, #0x518D
-			mov r5, #0x5A8D
+			mov r1, #0x518D
+			mov r2, #0x5A8D
 			b sc_out
 sc_0x518E:
-			mov r4, #0x518E
-			mov r5, #0x5A8E
+			mov r1, #0x518E
+			mov r2, #0x5A8E
 			b sc_out
 sc_0x518F:
-			mov r4, #0x518F
-			mov r5, #0x5A8F
+			mov r1, #0x518F
+			mov r2, #0x5A8F
 			b sc_out
 sc_0x5190:
-			mov r4, #0x5190
-			mov r5, #0x5A90
+			mov r1, #0x5190
+			mov r2, #0x5A90
 			b sc_out
 sc_0x5191:
-			mov r4, #0x5191
-			mov r5, #0x5A91
+			mov r1, #0x5191
+			mov r2, #0x5A91
 			b sc_out
 sc_0x5192:
-			mov r4, #0x5192
-			mov r5, #0x5A92
+			mov r1, #0x5192
+			mov r2, #0x5A92
 			b sc_out
 sc_0x5193:
-			mov r4, #0x5193
-			mov r5, #0x5A93
+			mov r1, #0x5193
+			mov r2, #0x5A93
 			b sc_out
 sc_0x5194:
-			mov r4, #0x5194
-			mov r5, #0x5A94
+			mov r1, #0x5194
+			mov r2, #0x5A94
 			b sc_out
 sc_0x5195:
-			mov r4, #0x5195
-			mov r5, #0x5A95
+			mov r1, #0x5195
+			mov r2, #0x5A95
 			b sc_out
 sc_0x5196:
-			mov r4, #0x5196
-			mov r5, #0x5A96
+			mov r1, #0x5196
+			mov r2, #0x5A96
 			b sc_out
 sc_0x5197:
-			mov r4, #0x5197
-			mov r5, #0x5A97
+			mov r1, #0x5197
+			mov r2, #0x5A97
 			b sc_out
 sc_0x5198:
-			mov r4, #0x5198
-			mov r5, #0x5A98
+			mov r1, #0x5198
+			mov r2, #0x5A98
 			b sc_out
 sc_0x5199:
-			mov r4, #0x5199
-			mov r5, #0x5A99
+			mov r1, #0x5199
+			mov r2, #0x5A99
 			b sc_out
 sc_0x519A:
-			mov r4, #0x519A
-			mov r5, #0x5A9A
+			mov r1, #0x519A
+			mov r2, #0x5A9A
 			b sc_out
 sc_0x519B:
-			mov r4, #0x519B
-			mov r5, #0x5A9B
+			mov r1, #0x519B
+			mov r2, #0x5A9B
 			b sc_out
 sc_0x519C:
-			mov r4, #0x519C
-			mov r5, #0x5A9C
+			mov r1, #0x519C
+			mov r2, #0x5A9C
 			b sc_out
 sc_0x519D:
-			mov r4, #0x519D
-			mov r5, #0x5A9D
+			mov r1, #0x519D
+			mov r2, #0x5A9D
 			b sc_out
 sc_0x519E:
-			mov r4, #0x519E
-			mov r5, #0x5A9E
+			mov r1, #0x519E
+			mov r2, #0x5A9E
 			b sc_out
 sc_0x519F:
-			mov r4, #0x519F
-			mov r5, #0x5A9F
+			mov r1, #0x519F
+			mov r2, #0x5A9F
 			b sc_out
 sc_0x5280:
-			mov r4, #0x5280
-			mov r5, #0x5A80
+			mov r1, #0x5280
+			mov r2, #0x5A80
 			b sc_out
 sc_0x5281:
-			mov r4, #0x5281
-			mov r5, #0x5A81
+			mov r1, #0x5281
+			mov r2, #0x5A81
 			b sc_out
 sc_0x5282:
-			mov r4, #0x5282
-			mov r5, #0x5A82
+			mov r1, #0x5282
+			mov r2, #0x5A82
 			b sc_out
 sc_0x5283:
-			mov r4, #0x5283
-			mov r5, #0x5A83
+			mov r1, #0x5283
+			mov r2, #0x5A83
 			b sc_out
 sc_0x5284:
-			mov r4, #0x5284
-			mov r5, #0x5A84
+			mov r1, #0x5284
+			mov r2, #0x5A84
 			b sc_out
 sc_0x5285:
-			mov r4, #0x5285
-			mov r5, #0x5A85
+			mov r1, #0x5285
+			mov r2, #0x5A85
 			b sc_out
 sc_0x5286:
-			mov r4, #0x5286
-			mov r5, #0x5A86
+			mov r1, #0x5286
+			mov r2, #0x5A86
 			b sc_out
 sc_0x5287:
-			mov r4, #0x5287
-			mov r5, #0x5A87
+			mov r1, #0x5287
+			mov r2, #0x5A87
 			b sc_out
 sc_0x5288:
-			mov r4, #0x5288
-			mov r5, #0x5A88
+			mov r1, #0x5288
+			mov r2, #0x5A88
 			b sc_out
 sc_0x5289:
-			mov r4, #0x5289
-			mov r5, #0x5A89
+			mov r1, #0x5289
+			mov r2, #0x5A89
 			b sc_out
 sc_0x528A:
-			mov r4, #0x528A
-			mov r5, #0x5A8A
+			mov r1, #0x528A
+			mov r2, #0x5A8A
 			b sc_out
 sc_0x528B:
-			mov r4, #0x528B
-			mov r5, #0x5A8B
+			mov r1, #0x528B
+			mov r2, #0x5A8B
 			b sc_out
 sc_0x528C:
-			mov r4, #0x528C
-			mov r5, #0x5A8C
+			mov r1, #0x528C
+			mov r2, #0x5A8C
 			b sc_out
 sc_0x528D:
-			mov r4, #0x528D
-			mov r5, #0x5A8D
+			mov r1, #0x528D
+			mov r2, #0x5A8D
 			b sc_out
 sc_0x528E:
-			mov r4, #0x528E
-			mov r5, #0x5A8E
+			mov r1, #0x528E
+			mov r2, #0x5A8E
 			b sc_out
 sc_0x528F:
-			mov r4, #0x528F
-			mov r5, #0x5A8F
+			mov r1, #0x528F
+			mov r2, #0x5A8F
 			b sc_out
 sc_0x5290:
-			mov r4, #0x5290
-			mov r5, #0x5A90
+			mov r1, #0x5290
+			mov r2, #0x5A90
 			b sc_out
 sc_0x5291:
-			mov r4, #0x5291
-			mov r5, #0x5A91
+			mov r1, #0x5291
+			mov r2, #0x5A91
 			b sc_out
 sc_0x5292:
-			mov r4, #0x5292
-			mov r5, #0x5A92
+			mov r1, #0x5292
+			mov r2, #0x5A92
 			b sc_out
 sc_0x5293:
-			mov r4, #0x5293
-			mov r5, #0x5A93
+			mov r1, #0x5293
+			mov r2, #0x5A93
 			b sc_out
 sc_0x5294:
-			mov r4, #0x5294
-			mov r5, #0x5A94
+			mov r1, #0x5294
+			mov r2, #0x5A94
 			b sc_out
 sc_0x5295:
-			mov r4, #0x5295
-			mov r5, #0x5A95
+			mov r1, #0x5295
+			mov r2, #0x5A95
 			b sc_out
 sc_0x5296:
-			mov r4, #0x5296
-			mov r5, #0x5A96
+			mov r1, #0x5296
+			mov r2, #0x5A96
 			b sc_out
 sc_0x5297:
-			mov r4, #0x5297
-			mov r5, #0x5A97
+			mov r1, #0x5297
+			mov r2, #0x5A97
 			b sc_out
 sc_0x5298:
-			mov r4, #0x5298
-			mov r5, #0x5A98
+			mov r1, #0x5298
+			mov r2, #0x5A98
 			b sc_out
 sc_0x5299:
-			mov r4, #0x5299
-			mov r5, #0x5A99
+			mov r1, #0x5299
+			mov r2, #0x5A99
 			b sc_out
 sc_0x529A:
-			mov r4, #0x529A
-			mov r5, #0x5A9A
+			mov r1, #0x529A
+			mov r2, #0x5A9A
 			b sc_out
 sc_0x529B:
-			mov r4, #0x529B
-			mov r5, #0x5A9B
+			mov r1, #0x529B
+			mov r2, #0x5A9B
 			b sc_out
 sc_0x529C:
-			mov r4, #0x529C
-			mov r5, #0x5A9C
+			mov r1, #0x529C
+			mov r2, #0x5A9C
 			b sc_out
 sc_0x529D:
-			mov r4, #0x529D
-			mov r5, #0x5A9D
+			mov r1, #0x529D
+			mov r2, #0x5A9D
 			b sc_out
 sc_0x529E:
-			mov r4, #0x529E
-			mov r5, #0x5A9E
+			mov r1, #0x529E
+			mov r2, #0x5A9E
 			b sc_out
 sc_0x529F:
-			mov r4, #0x529F
-			mov r5, #0x5A9F
+			mov r1, #0x529F
+			mov r2, #0x5A9F
 			b sc_out
 sc_0x5380:
-			mov r4, #0x5380
-			mov r5, #0x5A80
+			mov r1, #0x5380
+			mov r2, #0x5A80
 			b sc_out
 sc_0x5381:
-			mov r4, #0x5381
-			mov r5, #0x5A81
+			mov r1, #0x5381
+			mov r2, #0x5A81
 			b sc_out
 sc_0x5382:
-			mov r4, #0x5382
-			mov r5, #0x5A82
+			mov r1, #0x5382
+			mov r2, #0x5A82
 			b sc_out
 sc_0x5383:
-			mov r4, #0x5383
-			mov r5, #0x5A83
+			mov r1, #0x5383
+			mov r2, #0x5A83
 			b sc_out
 sc_0x5384:
-			mov r4, #0x5384
-			mov r5, #0x5A84
+			mov r1, #0x5384
+			mov r2, #0x5A84
 			b sc_out
 sc_0x5385:
-			mov r4, #0x5385
-			mov r5, #0x5A85
+			mov r1, #0x5385
+			mov r2, #0x5A85
 			b sc_out
 sc_0x5386:
-			mov r4, #0x5386
-			mov r5, #0x5A86
+			mov r1, #0x5386
+			mov r2, #0x5A86
 			b sc_out
 sc_0x5387:
-			mov r4, #0x5387
-			mov r5, #0x5A87
+			mov r1, #0x5387
+			mov r2, #0x5A87
 			b sc_out
 sc_0x5388:
-			mov r4, #0x5388
-			mov r5, #0x5A88
+			mov r1, #0x5388
+			mov r2, #0x5A88
 			b sc_out
 sc_0x5389:
-			mov r4, #0x5389
-			mov r5, #0x5A89
+			mov r1, #0x5389
+			mov r2, #0x5A89
 			b sc_out
 sc_0x538A:
-			mov r4, #0x538A
-			mov r5, #0x5A8A
+			mov r1, #0x538A
+			mov r2, #0x5A8A
 			b sc_out
 sc_0x538B:
-			mov r4, #0x538B
-			mov r5, #0x5A8B
+			mov r1, #0x538B
+			mov r2, #0x5A8B
 			b sc_out
 sc_0x538C:
-			mov r4, #0x538C
-			mov r5, #0x5A8C
+			mov r1, #0x538C
+			mov r2, #0x5A8C
 			b sc_out
 sc_0x538D:
-			mov r4, #0x538D
-			mov r5, #0x5A8D
+			mov r1, #0x538D
+			mov r2, #0x5A8D
 			b sc_out
 sc_0x538E:
-			mov r4, #0x538E
-			mov r5, #0x5A8E
+			mov r1, #0x538E
+			mov r2, #0x5A8E
 			b sc_out
 sc_0x538F:
-			mov r4, #0x538F
-			mov r5, #0x5A8F
+			mov r1, #0x538F
+			mov r2, #0x5A8F
 			b sc_out
 sc_0x5390:
-			mov r4, #0x5390
-			mov r5, #0x5A90
+			mov r1, #0x5390
+			mov r2, #0x5A90
 			b sc_out
 sc_0x5391:
-			mov r4, #0x5391
-			mov r5, #0x5A91
+			mov r1, #0x5391
+			mov r2, #0x5A91
 			b sc_out
 sc_0x5392:
-			mov r4, #0x5392
-			mov r5, #0x5A92
+			mov r1, #0x5392
+			mov r2, #0x5A92
 			b sc_out
 sc_0x5393:
-			mov r4, #0x5393
-			mov r5, #0x5A93
+			mov r1, #0x5393
+			mov r2, #0x5A93
 			b sc_out
 sc_0x5394:
-			mov r4, #0x5394
-			mov r5, #0x5A94
+			mov r1, #0x5394
+			mov r2, #0x5A94
 			b sc_out
 sc_0x5395:
-			mov r4, #0x5395
-			mov r5, #0x5A95
+			mov r1, #0x5395
+			mov r2, #0x5A95
 			b sc_out
 sc_0x5396:
-			mov r4, #0x5396
-			mov r5, #0x5A96
+			mov r1, #0x5396
+			mov r2, #0x5A96
 			b sc_out
 sc_0x5397:
-			mov r4, #0x5397
-			mov r5, #0x5A97
+			mov r1, #0x5397
+			mov r2, #0x5A97
 			b sc_out
 sc_0x5398:
-			mov r4, #0x5398
-			mov r5, #0x5A98
+			mov r1, #0x5398
+			mov r2, #0x5A98
 			b sc_out
 sc_0x5399:
-			mov r4, #0x5399
-			mov r5, #0x5A99
+			mov r1, #0x5399
+			mov r2, #0x5A99
 			b sc_out
 sc_0x539A:
-			mov r4, #0x539A
-			mov r5, #0x5A9A
+			mov r1, #0x539A
+			mov r2, #0x5A9A
 			b sc_out
 sc_0x539B:
-			mov r4, #0x539B
-			mov r5, #0x5A9B
+			mov r1, #0x539B
+			mov r2, #0x5A9B
 			b sc_out
 sc_0x539C:
-			mov r4, #0x539C
-			mov r5, #0x5A9C
+			mov r1, #0x539C
+			mov r2, #0x5A9C
 			b sc_out
 sc_0x539D:
-			mov r4, #0x539D
-			mov r5, #0x5A9D
+			mov r1, #0x539D
+			mov r2, #0x5A9D
 			b sc_out
 sc_0x539E:
-			mov r4, #0x539E
-			mov r5, #0x5A9E
+			mov r1, #0x539E
+			mov r2, #0x5A9E
 			b sc_out
 sc_0x539F:
-			mov r4, #0x539F
-			mov r5, #0x5A9F
+			mov r1, #0x539F
+			mov r2, #0x5A9F
 			b sc_out
 sc_0x5480:
-			mov r4, #0x5480
-			mov r5, #0x5A80
+			mov r1, #0x5480
+			mov r2, #0x5A80
 			b sc_out
 sc_0x5481:
-			mov r4, #0x5481
-			mov r5, #0x5A81
+			mov r1, #0x5481
+			mov r2, #0x5A81
 			b sc_out
 sc_0x5482:
-			mov r4, #0x5482
-			mov r5, #0x5A82
+			mov r1, #0x5482
+			mov r2, #0x5A82
 			b sc_out
 sc_0x5483:
-			mov r4, #0x5483
-			mov r5, #0x5A83
+			mov r1, #0x5483
+			mov r2, #0x5A83
 			b sc_out
 sc_0x5484:
-			mov r4, #0x5484
-			mov r5, #0x5A84
+			mov r1, #0x5484
+			mov r2, #0x5A84
 			b sc_out
 sc_0x5485:
-			mov r4, #0x5485
-			mov r5, #0x5A85
+			mov r1, #0x5485
+			mov r2, #0x5A85
 			b sc_out
 sc_0x5486:
-			mov r4, #0x5486
-			mov r5, #0x5A86
+			mov r1, #0x5486
+			mov r2, #0x5A86
 			b sc_out
 sc_0x5487:
-			mov r4, #0x5487
-			mov r5, #0x5A87
+			mov r1, #0x5487
+			mov r2, #0x5A87
 			b sc_out
 sc_0x5488:
-			mov r4, #0x5488
-			mov r5, #0x5A88
+			mov r1, #0x5488
+			mov r2, #0x5A88
 			b sc_out
 sc_0x5489:
-			mov r4, #0x5489
-			mov r5, #0x5A89
+			mov r1, #0x5489
+			mov r2, #0x5A89
 			b sc_out
 sc_0x548A:
-			mov r4, #0x548A
-			mov r5, #0x5A8A
+			mov r1, #0x548A
+			mov r2, #0x5A8A
 			b sc_out
 sc_0x548B:
-			mov r4, #0x548B
-			mov r5, #0x5A8B
+			mov r1, #0x548B
+			mov r2, #0x5A8B
 			b sc_out
 sc_0x548C:
-			mov r4, #0x548C
-			mov r5, #0x5A8C
+			mov r1, #0x548C
+			mov r2, #0x5A8C
 			b sc_out
 sc_0x548D:
-			mov r4, #0x548D
-			mov r5, #0x5A8D
+			mov r1, #0x548D
+			mov r2, #0x5A8D
 			b sc_out
 sc_0x548E:
-			mov r4, #0x548E
-			mov r5, #0x5A8E
+			mov r1, #0x548E
+			mov r2, #0x5A8E
 			b sc_out
 sc_0x548F:
-			mov r4, #0x548F
-			mov r5, #0x5A8F
+			mov r1, #0x548F
+			mov r2, #0x5A8F
 			b sc_out
 sc_0x5490:
-			mov r4, #0x5490
-			mov r5, #0x5A90
+			mov r1, #0x5490
+			mov r2, #0x5A90
 			b sc_out
 sc_0x5491:
-			mov r4, #0x5491
-			mov r5, #0x5A91
+			mov r1, #0x5491
+			mov r2, #0x5A91
 			b sc_out
 sc_0x5492:
-			mov r4, #0x5492
-			mov r5, #0x5A92
+			mov r1, #0x5492
+			mov r2, #0x5A92
 			b sc_out
 sc_0x5493:
-			mov r4, #0x5493
-			mov r5, #0x5A93
+			mov r1, #0x5493
+			mov r2, #0x5A93
 			b sc_out
 sc_0x5494:
-			mov r4, #0x5494
-			mov r5, #0x5A94
+			mov r1, #0x5494
+			mov r2, #0x5A94
 			b sc_out
 sc_0x5495:
-			mov r4, #0x5495
-			mov r5, #0x5A95
+			mov r1, #0x5495
+			mov r2, #0x5A95
 			b sc_out
 sc_0x5496:
-			mov r4, #0x5496
-			mov r5, #0x5A96
+			mov r1, #0x5496
+			mov r2, #0x5A96
 			b sc_out
 sc_0x5497:
-			mov r4, #0x5497
-			mov r5, #0x5A97
+			mov r1, #0x5497
+			mov r2, #0x5A97
 			b sc_out
 sc_0x5498:
-			mov r4, #0x5498
-			mov r5, #0x5A98
+			mov r1, #0x5498
+			mov r2, #0x5A98
 			b sc_out
 sc_0x5499:
-			mov r4, #0x5499
-			mov r5, #0x5A99
+			mov r1, #0x5499
+			mov r2, #0x5A99
 			b sc_out
 sc_0x549A:
-			mov r4, #0x549A
-			mov r5, #0x5A9A
+			mov r1, #0x549A
+			mov r2, #0x5A9A
 			b sc_out
 sc_0x549B:
-			mov r4, #0x549B
-			mov r5, #0x5A9B
+			mov r1, #0x549B
+			mov r2, #0x5A9B
 			b sc_out
 sc_0x549C:
-			mov r4, #0x549C
-			mov r5, #0x5A9C
+			mov r1, #0x549C
+			mov r2, #0x5A9C
 			b sc_out
 sc_0x549D:
-			mov r4, #0x549D
-			mov r5, #0x5A9D
+			mov r1, #0x549D
+			mov r2, #0x5A9D
 			b sc_out
 sc_0x549E:
-			mov r4, #0x549E
-			mov r5, #0x5A9E
+			mov r1, #0x549E
+			mov r2, #0x5A9E
 			b sc_out
 sc_0x549F:
-			mov r4, #0x549F
-			mov r5, #0x5A9F
+			mov r1, #0x549F
+			mov r2, #0x5A9F
 			b sc_out
 sc_0x5580:
-			mov r4, #0x5580
-			mov r5, #0x5A80
+			mov r1, #0x5580
+			mov r2, #0x5A80
 			b sc_out
 sc_0x5581:
-			mov r4, #0x5581
-			mov r5, #0x5A81
+			mov r1, #0x5581
+			mov r2, #0x5A81
 			b sc_out
 sc_0x5582:
-			mov r4, #0x5582
-			mov r5, #0x5A82
+			mov r1, #0x5582
+			mov r2, #0x5A82
 			b sc_out
 sc_0x5583:
-			mov r4, #0x5583
-			mov r5, #0x5A83
+			mov r1, #0x5583
+			mov r2, #0x5A83
 			b sc_out
 sc_0x5584:
-			mov r4, #0x5584
-			mov r5, #0x5A84
+			mov r1, #0x5584
+			mov r2, #0x5A84
 			b sc_out
 sc_0x5585:
-			mov r4, #0x5585
-			mov r5, #0x5A85
+			mov r1, #0x5585
+			mov r2, #0x5A85
 			b sc_out
 sc_0x5586:
-			mov r4, #0x5586
-			mov r5, #0x5A86
+			mov r1, #0x5586
+			mov r2, #0x5A86
 			b sc_out
 sc_0x5587:
-			mov r4, #0x5587
-			mov r5, #0x5A87
+			mov r1, #0x5587
+			mov r2, #0x5A87
 			b sc_out
 sc_0x5588:
-			mov r4, #0x5588
-			mov r5, #0x5A88
+			mov r1, #0x5588
+			mov r2, #0x5A88
 			b sc_out
 sc_0x5589:
-			mov r4, #0x5589
-			mov r5, #0x5A89
+			mov r1, #0x5589
+			mov r2, #0x5A89
 			b sc_out
 sc_0x558A:
-			mov r4, #0x558A
-			mov r5, #0x5A8A
+			mov r1, #0x558A
+			mov r2, #0x5A8A
 			b sc_out
 sc_0x558B:
-			mov r4, #0x558B
-			mov r5, #0x5A8B
+			mov r1, #0x558B
+			mov r2, #0x5A8B
 			b sc_out
 sc_0x558C:
-			mov r4, #0x558C
-			mov r5, #0x5A8C
+			mov r1, #0x558C
+			mov r2, #0x5A8C
 			b sc_out
 sc_0x558D:
-			mov r4, #0x558D
-			mov r5, #0x5A8D
+			mov r1, #0x558D
+			mov r2, #0x5A8D
 			b sc_out
 sc_0x558E:
-			mov r4, #0x558E
-			mov r5, #0x5A8E
+			mov r1, #0x558E
+			mov r2, #0x5A8E
 			b sc_out
 sc_0x558F:
-			mov r4, #0x558F
-			mov r5, #0x5A8F
+			mov r1, #0x558F
+			mov r2, #0x5A8F
 			b sc_out
 sc_0x5590:
-			mov r4, #0x5590
-			mov r5, #0x5A90
+			mov r1, #0x5590
+			mov r2, #0x5A90
 			b sc_out
 sc_0x5591:
-			mov r4, #0x5591
-			mov r5, #0x5A91
+			mov r1, #0x5591
+			mov r2, #0x5A91
 			b sc_out
 sc_0x5592:
-			mov r4, #0x5592
-			mov r5, #0x5A92
+			mov r1, #0x5592
+			mov r2, #0x5A92
 			b sc_out
 sc_0x5593:
-			mov r4, #0x5593
-			mov r5, #0x5A93
+			mov r1, #0x5593
+			mov r2, #0x5A93
 			b sc_out
 sc_0x5594:
-			mov r4, #0x5594
-			mov r5, #0x5A94
+			mov r1, #0x5594
+			mov r2, #0x5A94
 			b sc_out
 sc_0x5595:
-			mov r4, #0x5595
-			mov r5, #0x5A95
+			mov r1, #0x5595
+			mov r2, #0x5A95
 			b sc_out
 sc_0x5596:
-			mov r4, #0x5596
-			mov r5, #0x5A96
+			mov r1, #0x5596
+			mov r2, #0x5A96
 			b sc_out
 sc_0x5597:
-			mov r4, #0x5597
-			mov r5, #0x5A97
+			mov r1, #0x5597
+			mov r2, #0x5A97
 			b sc_out
 sc_0x5598:
-			mov r4, #0x5598
-			mov r5, #0x5A98
+			mov r1, #0x5598
+			mov r2, #0x5A98
 			b sc_out
 sc_0x5599:
-			mov r4, #0x5599
-			mov r5, #0x5A99
+			mov r1, #0x5599
+			mov r2, #0x5A99
 			b sc_out
 sc_0x559A:
-			mov r4, #0x559A
-			mov r5, #0x5A9A
+			mov r1, #0x559A
+			mov r2, #0x5A9A
 			b sc_out
 sc_0x559B:
-			mov r4, #0x559B
-			mov r5, #0x5A9B
+			mov r1, #0x559B
+			mov r2, #0x5A9B
 			b sc_out
 sc_0x559C:
-			mov r4, #0x559C
-			mov r5, #0x5A9C
+			mov r1, #0x559C
+			mov r2, #0x5A9C
 			b sc_out
 sc_0x559D:
-			mov r4, #0x559D
-			mov r5, #0x5A9D
+			mov r1, #0x559D
+			mov r2, #0x5A9D
 			b sc_out
 sc_0x559E:
-			mov r4, #0x559E
-			mov r5, #0x5A9E
+			mov r1, #0x559E
+			mov r2, #0x5A9E
 			b sc_out
 sc_0x559F:
-			mov r4, #0x559F
-			mov r5, #0x5A9F
+			mov r1, #0x559F
+			mov r2, #0x5A9F
 			b sc_out
 sc_0x5680:
-			mov r4, #0x5680
-			mov r5, #0x5A80
+			mov r1, #0x5680
+			mov r2, #0x5A80
 			b sc_out
 sc_0x5681:
-			mov r4, #0x5681
-			mov r5, #0x5A81
+			mov r1, #0x5681
+			mov r2, #0x5A81
 			b sc_out
 sc_0x5682:
-			mov r4, #0x5682
-			mov r5, #0x5A82
+			mov r1, #0x5682
+			mov r2, #0x5A82
 			b sc_out
 sc_0x5683:
-			mov r4, #0x5683
-			mov r5, #0x5A83
+			mov r1, #0x5683
+			mov r2, #0x5A83
 			b sc_out
 sc_0x5684:
-			mov r4, #0x5684
-			mov r5, #0x5A84
+			mov r1, #0x5684
+			mov r2, #0x5A84
 			b sc_out
 sc_0x5685:
-			mov r4, #0x5685
-			mov r5, #0x5A85
+			mov r1, #0x5685
+			mov r2, #0x5A85
 			b sc_out
 sc_0x5686:
-			mov r4, #0x5686
-			mov r5, #0x5A86
+			mov r1, #0x5686
+			mov r2, #0x5A86
 			b sc_out
 sc_0x5687:
-			mov r4, #0x5687
-			mov r5, #0x5A87
+			mov r1, #0x5687
+			mov r2, #0x5A87
 			b sc_out
 sc_0x5688:
-			mov r4, #0x5688
-			mov r5, #0x5A88
+			mov r1, #0x5688
+			mov r2, #0x5A88
 			b sc_out
 sc_0x5689:
-			mov r4, #0x5689
-			mov r5, #0x5A89
+			mov r1, #0x5689
+			mov r2, #0x5A89
 			b sc_out
 sc_0x568A:
-			mov r4, #0x568A
-			mov r5, #0x5A8A
+			mov r1, #0x568A
+			mov r2, #0x5A8A
 			b sc_out
 sc_0x568B:
-			mov r4, #0x568B
-			mov r5, #0x5A8B
+			mov r1, #0x568B
+			mov r2, #0x5A8B
 			b sc_out
 sc_0x568C:
-			mov r4, #0x568C
-			mov r5, #0x5A8C
+			mov r1, #0x568C
+			mov r2, #0x5A8C
 			b sc_out
 sc_0x568D:
-			mov r4, #0x568D
-			mov r5, #0x5A8D
+			mov r1, #0x568D
+			mov r2, #0x5A8D
 			b sc_out
 sc_0x568E:
-			mov r4, #0x568E
-			mov r5, #0x5A8E
+			mov r1, #0x568E
+			mov r2, #0x5A8E
 			b sc_out
 sc_0x568F:
-			mov r4, #0x568F
-			mov r5, #0x5A8F
+			mov r1, #0x568F
+			mov r2, #0x5A8F
 			b sc_out
 sc_0x5690:
-			mov r4, #0x5690
-			mov r5, #0x5A90
+			mov r1, #0x5690
+			mov r2, #0x5A90
 			b sc_out
 sc_0x5691:
-			mov r4, #0x5691
-			mov r5, #0x5A91
+			mov r1, #0x5691
+			mov r2, #0x5A91
 			b sc_out
 sc_0x5692:
-			mov r4, #0x5692
-			mov r5, #0x5A92
+			mov r1, #0x5692
+			mov r2, #0x5A92
 			b sc_out
 sc_0x5693:
-			mov r4, #0x5693
-			mov r5, #0x5A93
+			mov r1, #0x5693
+			mov r2, #0x5A93
 			b sc_out
 sc_0x5694:
-			mov r4, #0x5694
-			mov r5, #0x5A94
+			mov r1, #0x5694
+			mov r2, #0x5A94
 			b sc_out
 sc_0x5695:
-			mov r4, #0x5695
-			mov r5, #0x5A95
+			mov r1, #0x5695
+			mov r2, #0x5A95
 			b sc_out
 sc_0x5696:
-			mov r4, #0x5696
-			mov r5, #0x5A96
+			mov r1, #0x5696
+			mov r2, #0x5A96
 			b sc_out
 sc_0x5697:
-			mov r4, #0x5697
-			mov r5, #0x5A97
+			mov r1, #0x5697
+			mov r2, #0x5A97
 			b sc_out
 sc_0x5698:
-			mov r4, #0x5698
-			mov r5, #0x5A98
+			mov r1, #0x5698
+			mov r2, #0x5A98
 			b sc_out
 sc_0x5699:
-			mov r4, #0x5699
-			mov r5, #0x5A99
+			mov r1, #0x5699
+			mov r2, #0x5A99
 			b sc_out
 sc_0x569A:
-			mov r4, #0x569A
-			mov r5, #0x5A9A
+			mov r1, #0x569A
+			mov r2, #0x5A9A
 			b sc_out
 sc_0x569B:
-			mov r4, #0x569B
-			mov r5, #0x5A9B
+			mov r1, #0x569B
+			mov r2, #0x5A9B
 			b sc_out
 sc_0x569C:
-			mov r4, #0x569C
-			mov r5, #0x5A9C
+			mov r1, #0x569C
+			mov r2, #0x5A9C
 			b sc_out
 sc_0x569D:
-			mov r4, #0x569D
-			mov r5, #0x5A9D
+			mov r1, #0x569D
+			mov r2, #0x5A9D
 			b sc_out
 sc_0x569E:
-			mov r4, #0x569E
-			mov r5, #0x5A9E
+			mov r1, #0x569E
+			mov r2, #0x5A9E
 			b sc_out
 sc_0x569F:
-			mov r4, #0x569F
-			mov r5, #0x5A9F
+			mov r1, #0x569F
+			mov r2, #0x5A9F
 			b sc_out
 sc_0x5780:
-			mov r4, #0x5780
-			mov r5, #0x5A80
+			mov r1, #0x5780
+			mov r2, #0x5A80
 			b sc_out
 sc_0x5781:
-			mov r4, #0x5781
-			mov r5, #0x5A81
+			mov r1, #0x5781
+			mov r2, #0x5A81
 			b sc_out
 sc_0x5782:
-			mov r4, #0x5782
-			mov r5, #0x5A82
+			mov r1, #0x5782
+			mov r2, #0x5A82
 			b sc_out
 sc_0x5783:
-			mov r4, #0x5783
-			mov r5, #0x5A83
+			mov r1, #0x5783
+			mov r2, #0x5A83
 			b sc_out
 sc_0x5784:
-			mov r4, #0x5784
-			mov r5, #0x5A84
+			mov r1, #0x5784
+			mov r2, #0x5A84
 			b sc_out
 sc_0x5785:
-			mov r4, #0x5785
-			mov r5, #0x5A85
+			mov r1, #0x5785
+			mov r2, #0x5A85
 			b sc_out
 sc_0x5786:
-			mov r4, #0x5786
-			mov r5, #0x5A86
+			mov r1, #0x5786
+			mov r2, #0x5A86
 			b sc_out
 sc_0x5787:
-			mov r4, #0x5787
-			mov r5, #0x5A87
+			mov r1, #0x5787
+			mov r2, #0x5A87
 			b sc_out
 sc_0x5788:
-			mov r4, #0x5788
-			mov r5, #0x5A88
+			mov r1, #0x5788
+			mov r2, #0x5A88
 			b sc_out
 sc_0x5789:
-			mov r4, #0x5789
-			mov r5, #0x5A89
+			mov r1, #0x5789
+			mov r2, #0x5A89
 			b sc_out
 sc_0x578A:
-			mov r4, #0x578A
-			mov r5, #0x5A8A
+			mov r1, #0x578A
+			mov r2, #0x5A8A
 			b sc_out
 sc_0x578B:
-			mov r4, #0x578B
-			mov r5, #0x5A8B
+			mov r1, #0x578B
+			mov r2, #0x5A8B
 			b sc_out
 sc_0x578C:
-			mov r4, #0x578C
-			mov r5, #0x5A8C
+			mov r1, #0x578C
+			mov r2, #0x5A8C
 			b sc_out
 sc_0x578D:
-			mov r4, #0x578D
-			mov r5, #0x5A8D
+			mov r1, #0x578D
+			mov r2, #0x5A8D
 			b sc_out
 sc_0x578E:
-			mov r4, #0x578E
-			mov r5, #0x5A8E
+			mov r1, #0x578E
+			mov r2, #0x5A8E
 			b sc_out
 sc_0x578F:
-			mov r4, #0x578F
-			mov r5, #0x5A8F
+			mov r1, #0x578F
+			mov r2, #0x5A8F
 			b sc_out
 sc_0x5790:
-			mov r4, #0x5790
-			mov r5, #0x5A90
+			mov r1, #0x5790
+			mov r2, #0x5A90
 			b sc_out
 sc_0x5791:
-			mov r4, #0x5791
-			mov r5, #0x5A91
+			mov r1, #0x5791
+			mov r2, #0x5A91
 			b sc_out
 sc_0x5792:
-			mov r4, #0x5792
-			mov r5, #0x5A92
+			mov r1, #0x5792
+			mov r2, #0x5A92
 			b sc_out
 sc_0x5793:
-			mov r4, #0x5793
-			mov r5, #0x5A93
+			mov r1, #0x5793
+			mov r2, #0x5A93
 			b sc_out
 sc_0x5794:
-			mov r4, #0x5794
-			mov r5, #0x5A94
+			mov r1, #0x5794
+			mov r2, #0x5A94
 			b sc_out
 sc_0x5795:
-			mov r4, #0x5795
-			mov r5, #0x5A95
+			mov r1, #0x5795
+			mov r2, #0x5A95
 			b sc_out
 sc_0x5796:
-			mov r4, #0x5796
-			mov r5, #0x5A96
+			mov r1, #0x5796
+			mov r2, #0x5A96
 			b sc_out
 sc_0x5797:
-			mov r4, #0x5797
-			mov r5, #0x5A97
+			mov r1, #0x5797
+			mov r2, #0x5A97
 			b sc_out
 sc_0x5798:
-			mov r4, #0x5798
-			mov r5, #0x5A98
+			mov r1, #0x5798
+			mov r2, #0x5A98
 			b sc_out
 sc_0x5799:
-			mov r4, #0x5799
-			mov r5, #0x5A99
+			mov r1, #0x5799
+			mov r2, #0x5A99
 			b sc_out
 sc_0x579A:
-			mov r4, #0x579A
-			mov r5, #0x5A9A
+			mov r1, #0x579A
+			mov r2, #0x5A9A
 			b sc_out
 sc_0x579B:
-			mov r4, #0x579B
-			mov r5, #0x5A9B
+			mov r1, #0x579B
+			mov r2, #0x5A9B
 			b sc_out
 sc_0x579C:
-			mov r4, #0x579C
-			mov r5, #0x5A9C
+			mov r1, #0x579C
+			mov r2, #0x5A9C
 			b sc_out
 sc_0x579D:
-			mov r4, #0x579D
-			mov r5, #0x5A9D
+			mov r1, #0x579D
+			mov r2, #0x5A9D
 			b sc_out
 sc_0x579E:
-			mov r4, #0x579E
-			mov r5, #0x5A9E
+			mov r1, #0x579E
+			mov r2, #0x5A9E
 			b sc_out
 sc_0x579F:
-			mov r4, #0x579F
-			mov r5, #0x5A9F
+			mov r1, #0x579F
+			mov r2, #0x5A9F
 			b sc_out
 sc_0x50A0:
-			mov r4, #0x50A0
-			mov r5, #0x5AA0
+			mov r1, #0x50A0
+			mov r2, #0x5AA0
 			b sc_out
 sc_0x50A1:
-			mov r4, #0x50A1
-			mov r5, #0x5AA1
+			mov r1, #0x50A1
+			mov r2, #0x5AA1
 			b sc_out
 sc_0x50A2:
-			mov r4, #0x50A2
-			mov r5, #0x5AA2
+			mov r1, #0x50A2
+			mov r2, #0x5AA2
 			b sc_out
 sc_0x50A3:
-			mov r4, #0x50A3
-			mov r5, #0x5AA3
+			mov r1, #0x50A3
+			mov r2, #0x5AA3
 			b sc_out
 sc_0x50A4:
-			mov r4, #0x50A4
-			mov r5, #0x5AA4
+			mov r1, #0x50A4
+			mov r2, #0x5AA4
 			b sc_out
 sc_0x50A5:
-			mov r4, #0x50A5
-			mov r5, #0x5AA5
+			mov r1, #0x50A5
+			mov r2, #0x5AA5
 			b sc_out
 sc_0x50A6:
-			mov r4, #0x50A6
-			mov r5, #0x5AA6
+			mov r1, #0x50A6
+			mov r2, #0x5AA6
 			b sc_out
 sc_0x50A7:
-			mov r4, #0x50A7
-			mov r5, #0x5AA7
+			mov r1, #0x50A7
+			mov r2, #0x5AA7
 			b sc_out
 sc_0x50A8:
-			mov r4, #0x50A8
-			mov r5, #0x5AA8
+			mov r1, #0x50A8
+			mov r2, #0x5AA8
 			b sc_out
 sc_0x50A9:
-			mov r4, #0x50A9
-			mov r5, #0x5AA9
+			mov r1, #0x50A9
+			mov r2, #0x5AA9
 			b sc_out
 sc_0x50AA:
-			mov r4, #0x50AA
-			mov r5, #0x5AAA
+			mov r1, #0x50AA
+			mov r2, #0x5AAA
 			b sc_out
 sc_0x50AB:
-			mov r4, #0x50AB
-			mov r5, #0x5AAB
+			mov r1, #0x50AB
+			mov r2, #0x5AAB
 			b sc_out
 sc_0x50AC:
-			mov r4, #0x50AC
-			mov r5, #0x5AAC
+			mov r1, #0x50AC
+			mov r2, #0x5AAC
 			b sc_out
 sc_0x50AD:
-			mov r4, #0x50AD
-			mov r5, #0x5AAD
+			mov r1, #0x50AD
+			mov r2, #0x5AAD
 			b sc_out
 sc_0x50AE:
-			mov r4, #0x50AE
-			mov r5, #0x5AAE
+			mov r1, #0x50AE
+			mov r2, #0x5AAE
 			b sc_out
 sc_0x50AF:
-			mov r4, #0x50AF
-			mov r5, #0x5AAF
+			mov r1, #0x50AF
+			mov r2, #0x5AAF
 			b sc_out
 sc_0x50B0:
-			mov r4, #0x50B0
-			mov r5, #0x5AB0
+			mov r1, #0x50B0
+			mov r2, #0x5AB0
 			b sc_out
 sc_0x50B1:
-			mov r4, #0x50B1
-			mov r5, #0x5AB1
+			mov r1, #0x50B1
+			mov r2, #0x5AB1
 			b sc_out
 sc_0x50B2:
-			mov r4, #0x50B2
-			mov r5, #0x5AB2
+			mov r1, #0x50B2
+			mov r2, #0x5AB2
 			b sc_out
 sc_0x50B3:
-			mov r4, #0x50B3
-			mov r5, #0x5AB3
+			mov r1, #0x50B3
+			mov r2, #0x5AB3
 			b sc_out
 sc_0x50B4:
-			mov r4, #0x50B4
-			mov r5, #0x5AB4
+			mov r1, #0x50B4
+			mov r2, #0x5AB4
 			b sc_out
 sc_0x50B5:
-			mov r4, #0x50B5
-			mov r5, #0x5AB5
+			mov r1, #0x50B5
+			mov r2, #0x5AB5
 			b sc_out
 sc_0x50B6:
-			mov r4, #0x50B6
-			mov r5, #0x5AB6
+			mov r1, #0x50B6
+			mov r2, #0x5AB6
 			b sc_out
 sc_0x50B7:
-			mov r4, #0x50B7
-			mov r5, #0x5AB7
+			mov r1, #0x50B7
+			mov r2, #0x5AB7
 			b sc_out
 sc_0x50B8:
-			mov r4, #0x50B8
-			mov r5, #0x5AB8
+			mov r1, #0x50B8
+			mov r2, #0x5AB8
 			b sc_out
 sc_0x50B9:
-			mov r4, #0x50B9
-			mov r5, #0x5AB9
+			mov r1, #0x50B9
+			mov r2, #0x5AB9
 			b sc_out
 sc_0x50BA:
-			mov r4, #0x50BA
-			mov r5, #0x5ABA
+			mov r1, #0x50BA
+			mov r2, #0x5ABA
 			b sc_out
 sc_0x50BB:
-			mov r4, #0x50BB
-			mov r5, #0x5ABB
+			mov r1, #0x50BB
+			mov r2, #0x5ABB
 			b sc_out
 sc_0x50BC:
-			mov r4, #0x50BC
-			mov r5, #0x5ABC
+			mov r1, #0x50BC
+			mov r2, #0x5ABC
 			b sc_out
 sc_0x50BD:
-			mov r4, #0x50BD
-			mov r5, #0x5ABD
+			mov r1, #0x50BD
+			mov r2, #0x5ABD
 			b sc_out
 sc_0x50BE:
-			mov r4, #0x50BE
-			mov r5, #0x5ABE
+			mov r1, #0x50BE
+			mov r2, #0x5ABE
 			b sc_out
 sc_0x50BF:
-			mov r4, #0x50BF
-			mov r5, #0x5ABF
+			mov r1, #0x50BF
+			mov r2, #0x5ABF
 			b sc_out
 sc_0x51A0:
-			mov r4, #0x51A0
-			mov r5, #0x5AA0
+			mov r1, #0x51A0
+			mov r2, #0x5AA0
 			b sc_out
 sc_0x51A1:
-			mov r4, #0x51A1
-			mov r5, #0x5AA1
+			mov r1, #0x51A1
+			mov r2, #0x5AA1
 			b sc_out
 sc_0x51A2:
-			mov r4, #0x51A2
-			mov r5, #0x5AA2
+			mov r1, #0x51A2
+			mov r2, #0x5AA2
 			b sc_out
 sc_0x51A3:
-			mov r4, #0x51A3
-			mov r5, #0x5AA3
+			mov r1, #0x51A3
+			mov r2, #0x5AA3
 			b sc_out
 sc_0x51A4:
-			mov r4, #0x51A4
-			mov r5, #0x5AA4
+			mov r1, #0x51A4
+			mov r2, #0x5AA4
 			b sc_out
 sc_0x51A5:
-			mov r4, #0x51A5
-			mov r5, #0x5AA5
+			mov r1, #0x51A5
+			mov r2, #0x5AA5
 			b sc_out
 sc_0x51A6:
-			mov r4, #0x51A6
-			mov r5, #0x5AA6
+			mov r1, #0x51A6
+			mov r2, #0x5AA6
 			b sc_out
 sc_0x51A7:
-			mov r4, #0x51A7
-			mov r5, #0x5AA7
+			mov r1, #0x51A7
+			mov r2, #0x5AA7
 			b sc_out
 sc_0x51A8:
-			mov r4, #0x51A8
-			mov r5, #0x5AA8
+			mov r1, #0x51A8
+			mov r2, #0x5AA8
 			b sc_out
 sc_0x51A9:
-			mov r4, #0x51A9
-			mov r5, #0x5AA9
+			mov r1, #0x51A9
+			mov r2, #0x5AA9
 			b sc_out
 sc_0x51AA:
-			mov r4, #0x51AA
-			mov r5, #0x5AAA
+			mov r1, #0x51AA
+			mov r2, #0x5AAA
 			b sc_out
 sc_0x51AB:
-			mov r4, #0x51AB
-			mov r5, #0x5AAB
+			mov r1, #0x51AB
+			mov r2, #0x5AAB
 			b sc_out
 sc_0x51AC:
-			mov r4, #0x51AC
-			mov r5, #0x5AAC
+			mov r1, #0x51AC
+			mov r2, #0x5AAC
 			b sc_out
 sc_0x51AD:
-			mov r4, #0x51AD
-			mov r5, #0x5AAD
+			mov r1, #0x51AD
+			mov r2, #0x5AAD
 			b sc_out
 sc_0x51AE:
-			mov r4, #0x51AE
-			mov r5, #0x5AAE
+			mov r1, #0x51AE
+			mov r2, #0x5AAE
 			b sc_out
 sc_0x51AF:
-			mov r4, #0x51AF
-			mov r5, #0x5AAF
+			mov r1, #0x51AF
+			mov r2, #0x5AAF
 			b sc_out
 sc_0x51B0:
-			mov r4, #0x51B0
-			mov r5, #0x5AB0
+			mov r1, #0x51B0
+			mov r2, #0x5AB0
 			b sc_out
 sc_0x51B1:
-			mov r4, #0x51B1
-			mov r5, #0x5AB1
+			mov r1, #0x51B1
+			mov r2, #0x5AB1
 			b sc_out
 sc_0x51B2:
-			mov r4, #0x51B2
-			mov r5, #0x5AB2
+			mov r1, #0x51B2
+			mov r2, #0x5AB2
 			b sc_out
 sc_0x51B3:
-			mov r4, #0x51B3
-			mov r5, #0x5AB3
+			mov r1, #0x51B3
+			mov r2, #0x5AB3
 			b sc_out
 sc_0x51B4:
-			mov r4, #0x51B4
-			mov r5, #0x5AB4
+			mov r1, #0x51B4
+			mov r2, #0x5AB4
 			b sc_out
 sc_0x51B5:
-			mov r4, #0x51B5
-			mov r5, #0x5AB5
+			mov r1, #0x51B5
+			mov r2, #0x5AB5
 			b sc_out
 sc_0x51B6:
-			mov r4, #0x51B6
-			mov r5, #0x5AB6
+			mov r1, #0x51B6
+			mov r2, #0x5AB6
 			b sc_out
 sc_0x51B7:
-			mov r4, #0x51B7
-			mov r5, #0x5AB7
+			mov r1, #0x51B7
+			mov r2, #0x5AB7
 			b sc_out
 sc_0x51B8:
-			mov r4, #0x51B8
-			mov r5, #0x5AB8
+			mov r1, #0x51B8
+			mov r2, #0x5AB8
 			b sc_out
 sc_0x51B9:
-			mov r4, #0x51B9
-			mov r5, #0x5AB9
+			mov r1, #0x51B9
+			mov r2, #0x5AB9
 			b sc_out
 sc_0x51BA:
-			mov r4, #0x51BA
-			mov r5, #0x5ABA
+			mov r1, #0x51BA
+			mov r2, #0x5ABA
 			b sc_out
 sc_0x51BB:
-			mov r4, #0x51BB
-			mov r5, #0x5ABB
+			mov r1, #0x51BB
+			mov r2, #0x5ABB
 			b sc_out
 sc_0x51BC:
-			mov r4, #0x51BC
-			mov r5, #0x5ABC
+			mov r1, #0x51BC
+			mov r2, #0x5ABC
 			b sc_out
 sc_0x51BD:
-			mov r4, #0x51BD
-			mov r5, #0x5ABD
+			mov r1, #0x51BD
+			mov r2, #0x5ABD
 			b sc_out
 sc_0x51BE:
-			mov r4, #0x51BE
-			mov r5, #0x5ABE
+			mov r1, #0x51BE
+			mov r2, #0x5ABE
 			b sc_out
 sc_0x51BF:
-			mov r4, #0x51BF
-			mov r5, #0x5ABF
+			mov r1, #0x51BF
+			mov r2, #0x5ABF
 			b sc_out
 sc_0x52A0:
-			mov r4, #0x52A0
-			mov r5, #0x5AA0
+			mov r1, #0x52A0
+			mov r2, #0x5AA0
 			b sc_out
 sc_0x52A1:
-			mov r4, #0x52A1
-			mov r5, #0x5AA1
+			mov r1, #0x52A1
+			mov r2, #0x5AA1
 			b sc_out
 sc_0x52A2:
-			mov r4, #0x52A2
-			mov r5, #0x5AA2
+			mov r1, #0x52A2
+			mov r2, #0x5AA2
 			b sc_out
 sc_0x52A3:
-			mov r4, #0x52A3
-			mov r5, #0x5AA3
+			mov r1, #0x52A3
+			mov r2, #0x5AA3
 			b sc_out
 sc_0x52A4:
-			mov r4, #0x52A4
-			mov r5, #0x5AA4
+			mov r1, #0x52A4
+			mov r2, #0x5AA4
 			b sc_out
 sc_0x52A5:
-			mov r4, #0x52A5
-			mov r5, #0x5AA5
+			mov r1, #0x52A5
+			mov r2, #0x5AA5
 			b sc_out
 sc_0x52A6:
-			mov r4, #0x52A6
-			mov r5, #0x5AA6
+			mov r1, #0x52A6
+			mov r2, #0x5AA6
 			b sc_out
 sc_0x52A7:
-			mov r4, #0x52A7
-			mov r5, #0x5AA7
+			mov r1, #0x52A7
+			mov r2, #0x5AA7
 			b sc_out
 sc_0x52A8:
-			mov r4, #0x52A8
-			mov r5, #0x5AA8
+			mov r1, #0x52A8
+			mov r2, #0x5AA8
 			b sc_out
 sc_0x52A9:
-			mov r4, #0x52A9
-			mov r5, #0x5AA9
+			mov r1, #0x52A9
+			mov r2, #0x5AA9
 			b sc_out
 sc_0x52AA:
-			mov r4, #0x52AA
-			mov r5, #0x5AAA
+			mov r1, #0x52AA
+			mov r2, #0x5AAA
 			b sc_out
 sc_0x52AB:
-			mov r4, #0x52AB
-			mov r5, #0x5AAB
+			mov r1, #0x52AB
+			mov r2, #0x5AAB
 			b sc_out
 sc_0x52AC:
-			mov r4, #0x52AC
-			mov r5, #0x5AAC
+			mov r1, #0x52AC
+			mov r2, #0x5AAC
 			b sc_out
 sc_0x52AD:
-			mov r4, #0x52AD
-			mov r5, #0x5AAD
+			mov r1, #0x52AD
+			mov r2, #0x5AAD
 			b sc_out
 sc_0x52AE:
-			mov r4, #0x52AE
-			mov r5, #0x5AAE
+			mov r1, #0x52AE
+			mov r2, #0x5AAE
 			b sc_out
 sc_0x52AF:
-			mov r4, #0x52AF
-			mov r5, #0x5AAF
+			mov r1, #0x52AF
+			mov r2, #0x5AAF
 			b sc_out
 sc_0x52B0:
-			mov r4, #0x52B0
-			mov r5, #0x5AB0
+			mov r1, #0x52B0
+			mov r2, #0x5AB0
 			b sc_out
 sc_0x52B1:
-			mov r4, #0x52B1
-			mov r5, #0x5AB1
+			mov r1, #0x52B1
+			mov r2, #0x5AB1
 			b sc_out
 sc_0x52B2:
-			mov r4, #0x52B2
-			mov r5, #0x5AB2
+			mov r1, #0x52B2
+			mov r2, #0x5AB2
 			b sc_out
 sc_0x52B3:
-			mov r4, #0x52B3
-			mov r5, #0x5AB3
+			mov r1, #0x52B3
+			mov r2, #0x5AB3
 			b sc_out
 sc_0x52B4:
-			mov r4, #0x52B4
-			mov r5, #0x5AB4
+			mov r1, #0x52B4
+			mov r2, #0x5AB4
 			b sc_out
 sc_0x52B5:
-			mov r4, #0x52B5
-			mov r5, #0x5AB5
+			mov r1, #0x52B5
+			mov r2, #0x5AB5
 			b sc_out
 sc_0x52B6:
-			mov r4, #0x52B6
-			mov r5, #0x5AB6
+			mov r1, #0x52B6
+			mov r2, #0x5AB6
 			b sc_out
 sc_0x52B7:
-			mov r4, #0x52B7
-			mov r5, #0x5AB7
+			mov r1, #0x52B7
+			mov r2, #0x5AB7
 			b sc_out
 sc_0x52B8:
-			mov r4, #0x52B8
-			mov r5, #0x5AB8
+			mov r1, #0x52B8
+			mov r2, #0x5AB8
 			b sc_out
 sc_0x52B9:
-			mov r4, #0x52B9
-			mov r5, #0x5AB9
+			mov r1, #0x52B9
+			mov r2, #0x5AB9
 			b sc_out
 sc_0x52BA:
-			mov r4, #0x52BA
-			mov r5, #0x5ABA
+			mov r1, #0x52BA
+			mov r2, #0x5ABA
 			b sc_out
 sc_0x52BB:
-			mov r4, #0x52BB
-			mov r5, #0x5ABB
+			mov r1, #0x52BB
+			mov r2, #0x5ABB
 			b sc_out
 sc_0x52BC:
-			mov r4, #0x52BC
-			mov r5, #0x5ABC
+			mov r1, #0x52BC
+			mov r2, #0x5ABC
 			b sc_out
 sc_0x52BD:
-			mov r4, #0x52BD
-			mov r5, #0x5ABD
+			mov r1, #0x52BD
+			mov r2, #0x5ABD
 			b sc_out
 sc_0x52BE:
-			mov r4, #0x52BE
-			mov r5, #0x5ABE
+			mov r1, #0x52BE
+			mov r2, #0x5ABE
 			b sc_out
 sc_0x52BF:
-			mov r4, #0x52BF
-			mov r5, #0x5ABF
+			mov r1, #0x52BF
+			mov r2, #0x5ABF
 			b sc_out
 sc_0x53A0:
-			mov r4, #0x53A0
-			mov r5, #0x5AA0
+			mov r1, #0x53A0
+			mov r2, #0x5AA0
 			b sc_out
 sc_0x53A1:
-			mov r4, #0x53A1
-			mov r5, #0x5AA1
+			mov r1, #0x53A1
+			mov r2, #0x5AA1
 			b sc_out
 sc_0x53A2:
-			mov r4, #0x53A2
-			mov r5, #0x5AA2
+			mov r1, #0x53A2
+			mov r2, #0x5AA2
 			b sc_out
 sc_0x53A3:
-			mov r4, #0x53A3
-			mov r5, #0x5AA3
+			mov r1, #0x53A3
+			mov r2, #0x5AA3
 			b sc_out
 sc_0x53A4:
-			mov r4, #0x53A4
-			mov r5, #0x5AA4
+			mov r1, #0x53A4
+			mov r2, #0x5AA4
 			b sc_out
 sc_0x53A5:
-			mov r4, #0x53A5
-			mov r5, #0x5AA5
+			mov r1, #0x53A5
+			mov r2, #0x5AA5
 			b sc_out
 sc_0x53A6:
-			mov r4, #0x53A6
-			mov r5, #0x5AA6
+			mov r1, #0x53A6
+			mov r2, #0x5AA6
 			b sc_out
 sc_0x53A7:
-			mov r4, #0x53A7
-			mov r5, #0x5AA7
+			mov r1, #0x53A7
+			mov r2, #0x5AA7
 			b sc_out
 sc_0x53A8:
-			mov r4, #0x53A8
-			mov r5, #0x5AA8
+			mov r1, #0x53A8
+			mov r2, #0x5AA8
 			b sc_out
 sc_0x53A9:
-			mov r4, #0x53A9
-			mov r5, #0x5AA9
+			mov r1, #0x53A9
+			mov r2, #0x5AA9
 			b sc_out
 sc_0x53AA:
-			mov r4, #0x53AA
-			mov r5, #0x5AAA
+			mov r1, #0x53AA
+			mov r2, #0x5AAA
 			b sc_out
 sc_0x53AB:
-			mov r4, #0x53AB
-			mov r5, #0x5AAB
+			mov r1, #0x53AB
+			mov r2, #0x5AAB
 			b sc_out
 sc_0x53AC:
-			mov r4, #0x53AC
-			mov r5, #0x5AAC
+			mov r1, #0x53AC
+			mov r2, #0x5AAC
 			b sc_out
 sc_0x53AD:
-			mov r4, #0x53AD
-			mov r5, #0x5AAD
+			mov r1, #0x53AD
+			mov r2, #0x5AAD
 			b sc_out
 sc_0x53AE:
-			mov r4, #0x53AE
-			mov r5, #0x5AAE
+			mov r1, #0x53AE
+			mov r2, #0x5AAE
 			b sc_out
 sc_0x53AF:
-			mov r4, #0x53AF
-			mov r5, #0x5AAF
+			mov r1, #0x53AF
+			mov r2, #0x5AAF
 			b sc_out
 sc_0x53B0:
-			mov r4, #0x53B0
-			mov r5, #0x5AB0
+			mov r1, #0x53B0
+			mov r2, #0x5AB0
 			b sc_out
 sc_0x53B1:
-			mov r4, #0x53B1
-			mov r5, #0x5AB1
+			mov r1, #0x53B1
+			mov r2, #0x5AB1
 			b sc_out
 sc_0x53B2:
-			mov r4, #0x53B2
-			mov r5, #0x5AB2
+			mov r1, #0x53B2
+			mov r2, #0x5AB2
 			b sc_out
 sc_0x53B3:
-			mov r4, #0x53B3
-			mov r5, #0x5AB3
+			mov r1, #0x53B3
+			mov r2, #0x5AB3
 			b sc_out
 sc_0x53B4:
-			mov r4, #0x53B4
-			mov r5, #0x5AB4
+			mov r1, #0x53B4
+			mov r2, #0x5AB4
 			b sc_out
 sc_0x53B5:
-			mov r4, #0x53B5
-			mov r5, #0x5AB5
+			mov r1, #0x53B5
+			mov r2, #0x5AB5
 			b sc_out
 sc_0x53B6:
-			mov r4, #0x53B6
-			mov r5, #0x5AB6
+			mov r1, #0x53B6
+			mov r2, #0x5AB6
 			b sc_out
 sc_0x53B7:
-			mov r4, #0x53B7
-			mov r5, #0x5AB7
+			mov r1, #0x53B7
+			mov r2, #0x5AB7
 			b sc_out
 sc_0x53B8:
-			mov r4, #0x53B8
-			mov r5, #0x5AB8
+			mov r1, #0x53B8
+			mov r2, #0x5AB8
 			b sc_out
 sc_0x53B9:
-			mov r4, #0x53B9
-			mov r5, #0x5AB9
+			mov r1, #0x53B9
+			mov r2, #0x5AB9
 			b sc_out
 sc_0x53BA:
-			mov r4, #0x53BA
-			mov r5, #0x5ABA
+			mov r1, #0x53BA
+			mov r2, #0x5ABA
 			b sc_out
 sc_0x53BB:
-			mov r4, #0x53BB
-			mov r5, #0x5ABB
+			mov r1, #0x53BB
+			mov r2, #0x5ABB
 			b sc_out
 sc_0x53BC:
-			mov r4, #0x53BC
-			mov r5, #0x5ABC
+			mov r1, #0x53BC
+			mov r2, #0x5ABC
 			b sc_out
 sc_0x53BD:
-			mov r4, #0x53BD
-			mov r5, #0x5ABD
+			mov r1, #0x53BD
+			mov r2, #0x5ABD
 			b sc_out
 sc_0x53BE:
-			mov r4, #0x53BE
-			mov r5, #0x5ABE
+			mov r1, #0x53BE
+			mov r2, #0x5ABE
 			b sc_out
 sc_0x53BF:
-			mov r4, #0x53BF
-			mov r5, #0x5ABF
+			mov r1, #0x53BF
+			mov r2, #0x5ABF
 			b sc_out
 sc_0x54A0:
-			mov r4, #0x54A0
-			mov r5, #0x5AA0
+			mov r1, #0x54A0
+			mov r2, #0x5AA0
 			b sc_out
 sc_0x54A1:
-			mov r4, #0x54A1
-			mov r5, #0x5AA1
+			mov r1, #0x54A1
+			mov r2, #0x5AA1
 			b sc_out
 sc_0x54A2:
-			mov r4, #0x54A2
-			mov r5, #0x5AA2
+			mov r1, #0x54A2
+			mov r2, #0x5AA2
 			b sc_out
 sc_0x54A3:
-			mov r4, #0x54A3
-			mov r5, #0x5AA3
+			mov r1, #0x54A3
+			mov r2, #0x5AA3
 			b sc_out
 sc_0x54A4:
-			mov r4, #0x54A4
-			mov r5, #0x5AA4
+			mov r1, #0x54A4
+			mov r2, #0x5AA4
 			b sc_out
 sc_0x54A5:
-			mov r4, #0x54A5
-			mov r5, #0x5AA5
+			mov r1, #0x54A5
+			mov r2, #0x5AA5
 			b sc_out
 sc_0x54A6:
-			mov r4, #0x54A6
-			mov r5, #0x5AA6
+			mov r1, #0x54A6
+			mov r2, #0x5AA6
 			b sc_out
 sc_0x54A7:
-			mov r4, #0x54A7
-			mov r5, #0x5AA7
+			mov r1, #0x54A7
+			mov r2, #0x5AA7
 			b sc_out
 sc_0x54A8:
-			mov r4, #0x54A8
-			mov r5, #0x5AA8
+			mov r1, #0x54A8
+			mov r2, #0x5AA8
 			b sc_out
 sc_0x54A9:
-			mov r4, #0x54A9
-			mov r5, #0x5AA9
+			mov r1, #0x54A9
+			mov r2, #0x5AA9
 			b sc_out
 sc_0x54AA:
-			mov r4, #0x54AA
-			mov r5, #0x5AAA
+			mov r1, #0x54AA
+			mov r2, #0x5AAA
 			b sc_out
 sc_0x54AB:
-			mov r4, #0x54AB
-			mov r5, #0x5AAB
+			mov r1, #0x54AB
+			mov r2, #0x5AAB
 			b sc_out
 sc_0x54AC:
-			mov r4, #0x54AC
-			mov r5, #0x5AAC
+			mov r1, #0x54AC
+			mov r2, #0x5AAC
 			b sc_out
 sc_0x54AD:
-			mov r4, #0x54AD
-			mov r5, #0x5AAD
+			mov r1, #0x54AD
+			mov r2, #0x5AAD
 			b sc_out
 sc_0x54AE:
-			mov r4, #0x54AE
-			mov r5, #0x5AAE
+			mov r1, #0x54AE
+			mov r2, #0x5AAE
 			b sc_out
 sc_0x54AF:
-			mov r4, #0x54AF
-			mov r5, #0x5AAF
+			mov r1, #0x54AF
+			mov r2, #0x5AAF
 			b sc_out
 sc_0x54B0:
-			mov r4, #0x54B0
-			mov r5, #0x5AB0
+			mov r1, #0x54B0
+			mov r2, #0x5AB0
 			b sc_out
 sc_0x54B1:
-			mov r4, #0x54B1
-			mov r5, #0x5AB1
+			mov r1, #0x54B1
+			mov r2, #0x5AB1
 			b sc_out
 sc_0x54B2:
-			mov r4, #0x54B2
-			mov r5, #0x5AB2
+			mov r1, #0x54B2
+			mov r2, #0x5AB2
 			b sc_out
 sc_0x54B3:
-			mov r4, #0x54B3
-			mov r5, #0x5AB3
+			mov r1, #0x54B3
+			mov r2, #0x5AB3
 			b sc_out
 sc_0x54B4:
-			mov r4, #0x54B4
-			mov r5, #0x5AB4
+			mov r1, #0x54B4
+			mov r2, #0x5AB4
 			b sc_out
 sc_0x54B5:
-			mov r4, #0x54B5
-			mov r5, #0x5AB5
+			mov r1, #0x54B5
+			mov r2, #0x5AB5
 			b sc_out
 sc_0x54B6:
-			mov r4, #0x54B6
-			mov r5, #0x5AB6
+			mov r1, #0x54B6
+			mov r2, #0x5AB6
 			b sc_out
 sc_0x54B7:
-			mov r4, #0x54B7
-			mov r5, #0x5AB7
+			mov r1, #0x54B7
+			mov r2, #0x5AB7
 			b sc_out
 sc_0x54B8:
-			mov r4, #0x54B8
-			mov r5, #0x5AB8
+			mov r1, #0x54B8
+			mov r2, #0x5AB8
 			b sc_out
 sc_0x54B9:
-			mov r4, #0x54B9
-			mov r5, #0x5AB9
+			mov r1, #0x54B9
+			mov r2, #0x5AB9
 			b sc_out
 sc_0x54BA:
-			mov r4, #0x54BA
-			mov r5, #0x5ABA
+			mov r1, #0x54BA
+			mov r2, #0x5ABA
 			b sc_out
 sc_0x54BB:
-			mov r4, #0x54BB
-			mov r5, #0x5ABB
+			mov r1, #0x54BB
+			mov r2, #0x5ABB
 			b sc_out
 sc_0x54BC:
-			mov r4, #0x54BC
-			mov r5, #0x5ABC
+			mov r1, #0x54BC
+			mov r2, #0x5ABC
 			b sc_out
 sc_0x54BD:
-			mov r4, #0x54BD
-			mov r5, #0x5ABD
+			mov r1, #0x54BD
+			mov r2, #0x5ABD
 			b sc_out
 sc_0x54BE:
-			mov r4, #0x54BE
-			mov r5, #0x5ABE
+			mov r1, #0x54BE
+			mov r2, #0x5ABE
 			b sc_out
 sc_0x54BF:
-			mov r4, #0x54BF
-			mov r5, #0x5ABF
+			mov r1, #0x54BF
+			mov r2, #0x5ABF
 			b sc_out
 sc_0x55A0:
-			mov r4, #0x55A0
-			mov r5, #0x5AA0
+			mov r1, #0x55A0
+			mov r2, #0x5AA0
 			b sc_out
 sc_0x55A1:
-			mov r4, #0x55A1
-			mov r5, #0x5AA1
+			mov r1, #0x55A1
+			mov r2, #0x5AA1
 			b sc_out
 sc_0x55A2:
-			mov r4, #0x55A2
-			mov r5, #0x5AA2
+			mov r1, #0x55A2
+			mov r2, #0x5AA2
 			b sc_out
 sc_0x55A3:
-			mov r4, #0x55A3
-			mov r5, #0x5AA3
+			mov r1, #0x55A3
+			mov r2, #0x5AA3
 			b sc_out
 sc_0x55A4:
-			mov r4, #0x55A4
-			mov r5, #0x5AA4
+			mov r1, #0x55A4
+			mov r2, #0x5AA4
 			b sc_out
 sc_0x55A5:
-			mov r4, #0x55A5
-			mov r5, #0x5AA5
+			mov r1, #0x55A5
+			mov r2, #0x5AA5
 			b sc_out
 sc_0x55A6:
-			mov r4, #0x55A6
-			mov r5, #0x5AA6
+			mov r1, #0x55A6
+			mov r2, #0x5AA6
 			b sc_out
 sc_0x55A7:
-			mov r4, #0x55A7
-			mov r5, #0x5AA7
+			mov r1, #0x55A7
+			mov r2, #0x5AA7
 			b sc_out
 sc_0x55A8:
-			mov r4, #0x55A8
-			mov r5, #0x5AA8
+			mov r1, #0x55A8
+			mov r2, #0x5AA8
 			b sc_out
 sc_0x55A9:
-			mov r4, #0x55A9
-			mov r5, #0x5AA9
+			mov r1, #0x55A9
+			mov r2, #0x5AA9
 			b sc_out
 sc_0x55AA:
-			mov r4, #0x55AA
-			mov r5, #0x5AAA
+			mov r1, #0x55AA
+			mov r2, #0x5AAA
 			b sc_out
 sc_0x55AB:
-			mov r4, #0x55AB
-			mov r5, #0x5AAB
+			mov r1, #0x55AB
+			mov r2, #0x5AAB
 			b sc_out
 sc_0x55AC:
-			mov r4, #0x55AC
-			mov r5, #0x5AAC
+			mov r1, #0x55AC
+			mov r2, #0x5AAC
 			b sc_out
 sc_0x55AD:
-			mov r4, #0x55AD
-			mov r5, #0x5AAD
+			mov r1, #0x55AD
+			mov r2, #0x5AAD
 			b sc_out
 sc_0x55AE:
-			mov r4, #0x55AE
-			mov r5, #0x5AAE
+			mov r1, #0x55AE
+			mov r2, #0x5AAE
 			b sc_out
 sc_0x55AF:
-			mov r4, #0x55AF
-			mov r5, #0x5AAF
+			mov r1, #0x55AF
+			mov r2, #0x5AAF
 			b sc_out
 sc_0x55B0:
-			mov r4, #0x55B0
-			mov r5, #0x5AB0
+			mov r1, #0x55B0
+			mov r2, #0x5AB0
 			b sc_out
 sc_0x55B1:
-			mov r4, #0x55B1
-			mov r5, #0x5AB1
+			mov r1, #0x55B1
+			mov r2, #0x5AB1
 			b sc_out
 sc_0x55B2:
-			mov r4, #0x55B2
-			mov r5, #0x5AB2
+			mov r1, #0x55B2
+			mov r2, #0x5AB2
 			b sc_out
 sc_0x55B3:
-			mov r4, #0x55B3
-			mov r5, #0x5AB3
+			mov r1, #0x55B3
+			mov r2, #0x5AB3
 			b sc_out
 sc_0x55B4:
-			mov r4, #0x55B4
-			mov r5, #0x5AB4
+			mov r1, #0x55B4
+			mov r2, #0x5AB4
 			b sc_out
 sc_0x55B5:
-			mov r4, #0x55B5
-			mov r5, #0x5AB5
+			mov r1, #0x55B5
+			mov r2, #0x5AB5
 			b sc_out
 sc_0x55B6:
-			mov r4, #0x55B6
-			mov r5, #0x5AB6
+			mov r1, #0x55B6
+			mov r2, #0x5AB6
 			b sc_out
 sc_0x55B7:
-			mov r4, #0x55B7
-			mov r5, #0x5AB7
+			mov r1, #0x55B7
+			mov r2, #0x5AB7
 			b sc_out
 sc_0x55B8:
-			mov r4, #0x55B8
-			mov r5, #0x5AB8
+			mov r1, #0x55B8
+			mov r2, #0x5AB8
 			b sc_out
 sc_0x55B9:
-			mov r4, #0x55B9
-			mov r5, #0x5AB9
+			mov r1, #0x55B9
+			mov r2, #0x5AB9
 			b sc_out
 sc_0x55BA:
-			mov r4, #0x55BA
-			mov r5, #0x5ABA
+			mov r1, #0x55BA
+			mov r2, #0x5ABA
 			b sc_out
 sc_0x55BB:
-			mov r4, #0x55BB
-			mov r5, #0x5ABB
+			mov r1, #0x55BB
+			mov r2, #0x5ABB
 			b sc_out
 sc_0x55BC:
-			mov r4, #0x55BC
-			mov r5, #0x5ABC
+			mov r1, #0x55BC
+			mov r2, #0x5ABC
 			b sc_out
 sc_0x55BD:
-			mov r4, #0x55BD
-			mov r5, #0x5ABD
+			mov r1, #0x55BD
+			mov r2, #0x5ABD
 			b sc_out
 sc_0x55BE:
-			mov r4, #0x55BE
-			mov r5, #0x5ABE
+			mov r1, #0x55BE
+			mov r2, #0x5ABE
 			b sc_out
 sc_0x55BF:
-			mov r4, #0x55BF
-			mov r5, #0x5ABF
+			mov r1, #0x55BF
+			mov r2, #0x5ABF
 			b sc_out
 sc_0x56A0:
-			mov r4, #0x56A0
-			mov r5, #0x5AA0
+			mov r1, #0x56A0
+			mov r2, #0x5AA0
 			b sc_out
 sc_0x56A1:
-			mov r4, #0x56A1
-			mov r5, #0x5AA1
+			mov r1, #0x56A1
+			mov r2, #0x5AA1
 			b sc_out
 sc_0x56A2:
-			mov r4, #0x56A2
-			mov r5, #0x5AA2
+			mov r1, #0x56A2
+			mov r2, #0x5AA2
 			b sc_out
 sc_0x56A3:
-			mov r4, #0x56A3
-			mov r5, #0x5AA3
+			mov r1, #0x56A3
+			mov r2, #0x5AA3
 			b sc_out
 sc_0x56A4:
-			mov r4, #0x56A4
-			mov r5, #0x5AA4
+			mov r1, #0x56A4
+			mov r2, #0x5AA4
 			b sc_out
 sc_0x56A5:
-			mov r4, #0x56A5
-			mov r5, #0x5AA5
+			mov r1, #0x56A5
+			mov r2, #0x5AA5
 			b sc_out
 sc_0x56A6:
-			mov r4, #0x56A6
-			mov r5, #0x5AA6
+			mov r1, #0x56A6
+			mov r2, #0x5AA6
 			b sc_out
 sc_0x56A7:
-			mov r4, #0x56A7
-			mov r5, #0x5AA7
+			mov r1, #0x56A7
+			mov r2, #0x5AA7
 			b sc_out
 sc_0x56A8:
-			mov r4, #0x56A8
-			mov r5, #0x5AA8
+			mov r1, #0x56A8
+			mov r2, #0x5AA8
 			b sc_out
 sc_0x56A9:
-			mov r4, #0x56A9
-			mov r5, #0x5AA9
+			mov r1, #0x56A9
+			mov r2, #0x5AA9
 			b sc_out
 sc_0x56AA:
-			mov r4, #0x56AA
-			mov r5, #0x5AAA
+			mov r1, #0x56AA
+			mov r2, #0x5AAA
 			b sc_out
 sc_0x56AB:
-			mov r4, #0x56AB
-			mov r5, #0x5AAB
+			mov r1, #0x56AB
+			mov r2, #0x5AAB
 			b sc_out
 sc_0x56AC:
-			mov r4, #0x56AC
-			mov r5, #0x5AAC
+			mov r1, #0x56AC
+			mov r2, #0x5AAC
 			b sc_out
 sc_0x56AD:
-			mov r4, #0x56AD
-			mov r5, #0x5AAD
+			mov r1, #0x56AD
+			mov r2, #0x5AAD
 			b sc_out
 sc_0x56AE:
-			mov r4, #0x56AE
-			mov r5, #0x5AAE
+			mov r1, #0x56AE
+			mov r2, #0x5AAE
 			b sc_out
 sc_0x56AF:
-			mov r4, #0x56AF
-			mov r5, #0x5AAF
+			mov r1, #0x56AF
+			mov r2, #0x5AAF
 			b sc_out
 sc_0x56B0:
-			mov r4, #0x56B0
-			mov r5, #0x5AB0
+			mov r1, #0x56B0
+			mov r2, #0x5AB0
 			b sc_out
 sc_0x56B1:
-			mov r4, #0x56B1
-			mov r5, #0x5AB1
+			mov r1, #0x56B1
+			mov r2, #0x5AB1
 			b sc_out
 sc_0x56B2:
-			mov r4, #0x56B2
-			mov r5, #0x5AB2
+			mov r1, #0x56B2
+			mov r2, #0x5AB2
 			b sc_out
 sc_0x56B3:
-			mov r4, #0x56B3
-			mov r5, #0x5AB3
+			mov r1, #0x56B3
+			mov r2, #0x5AB3
 			b sc_out
 sc_0x56B4:
-			mov r4, #0x56B4
-			mov r5, #0x5AB4
+			mov r1, #0x56B4
+			mov r2, #0x5AB4
 			b sc_out
 sc_0x56B5:
-			mov r4, #0x56B5
-			mov r5, #0x5AB5
+			mov r1, #0x56B5
+			mov r2, #0x5AB5
 			b sc_out
 sc_0x56B6:
-			mov r4, #0x56B6
-			mov r5, #0x5AB6
+			mov r1, #0x56B6
+			mov r2, #0x5AB6
 			b sc_out
 sc_0x56B7:
-			mov r4, #0x56B7
-			mov r5, #0x5AB7
+			mov r1, #0x56B7
+			mov r2, #0x5AB7
 			b sc_out
 sc_0x56B8:
-			mov r4, #0x56B8
-			mov r5, #0x5AB8
+			mov r1, #0x56B8
+			mov r2, #0x5AB8
 			b sc_out
 sc_0x56B9:
-			mov r4, #0x56B9
-			mov r5, #0x5AB9
+			mov r1, #0x56B9
+			mov r2, #0x5AB9
 			b sc_out
 sc_0x56BA:
-			mov r4, #0x56BA
-			mov r5, #0x5ABA
+			mov r1, #0x56BA
+			mov r2, #0x5ABA
 			b sc_out
 sc_0x56BB:
-			mov r4, #0x56BB
-			mov r5, #0x5ABB
+			mov r1, #0x56BB
+			mov r2, #0x5ABB
 			b sc_out
 sc_0x56BC:
-			mov r4, #0x56BC
-			mov r5, #0x5ABC
+			mov r1, #0x56BC
+			mov r2, #0x5ABC
 			b sc_out
 sc_0x56BD:
-			mov r4, #0x56BD
-			mov r5, #0x5ABD
+			mov r1, #0x56BD
+			mov r2, #0x5ABD
 			b sc_out
 sc_0x56BE:
-			mov r4, #0x56BE
-			mov r5, #0x5ABE
+			mov r1, #0x56BE
+			mov r2, #0x5ABE
 			b sc_out
 sc_0x56BF:
-			mov r4, #0x56BF
-			mov r5, #0x5ABF
+			mov r1, #0x56BF
+			mov r2, #0x5ABF
 			b sc_out
 sc_0x57A0:
-			mov r4, #0x57A0
-			mov r5, #0x5AA0
+			mov r1, #0x57A0
+			mov r2, #0x5AA0
 			b sc_out
 sc_0x57A1:
-			mov r4, #0x57A1
-			mov r5, #0x5AA1
+			mov r1, #0x57A1
+			mov r2, #0x5AA1
 			b sc_out
 sc_0x57A2:
-			mov r4, #0x57A2
-			mov r5, #0x5AA2
+			mov r1, #0x57A2
+			mov r2, #0x5AA2
 			b sc_out
 sc_0x57A3:
-			mov r4, #0x57A3
-			mov r5, #0x5AA3
+			mov r1, #0x57A3
+			mov r2, #0x5AA3
 			b sc_out
 sc_0x57A4:
-			mov r4, #0x57A4
-			mov r5, #0x5AA4
+			mov r1, #0x57A4
+			mov r2, #0x5AA4
 			b sc_out
 sc_0x57A5:
-			mov r4, #0x57A5
-			mov r5, #0x5AA5
+			mov r1, #0x57A5
+			mov r2, #0x5AA5
 			b sc_out
 sc_0x57A6:
-			mov r4, #0x57A6
-			mov r5, #0x5AA6
+			mov r1, #0x57A6
+			mov r2, #0x5AA6
 			b sc_out
 sc_0x57A7:
-			mov r4, #0x57A7
-			mov r5, #0x5AA7
+			mov r1, #0x57A7
+			mov r2, #0x5AA7
 			b sc_out
 sc_0x57A8:
-			mov r4, #0x57A8
-			mov r5, #0x5AA8
+			mov r1, #0x57A8
+			mov r2, #0x5AA8
 			b sc_out
 sc_0x57A9:
-			mov r4, #0x57A9
-			mov r5, #0x5AA9
+			mov r1, #0x57A9
+			mov r2, #0x5AA9
 			b sc_out
 sc_0x57AA:
-			mov r4, #0x57AA
-			mov r5, #0x5AAA
+			mov r1, #0x57AA
+			mov r2, #0x5AAA
 			b sc_out
 sc_0x57AB:
-			mov r4, #0x57AB
-			mov r5, #0x5AAB
+			mov r1, #0x57AB
+			mov r2, #0x5AAB
 			b sc_out
 sc_0x57AC:
-			mov r4, #0x57AC
-			mov r5, #0x5AAC
+			mov r1, #0x57AC
+			mov r2, #0x5AAC
 			b sc_out
 sc_0x57AD:
-			mov r4, #0x57AD
-			mov r5, #0x5AAD
+			mov r1, #0x57AD
+			mov r2, #0x5AAD
 			b sc_out
 sc_0x57AE:
-			mov r4, #0x57AE
-			mov r5, #0x5AAE
+			mov r1, #0x57AE
+			mov r2, #0x5AAE
 			b sc_out
 sc_0x57AF:
-			mov r4, #0x57AF
-			mov r5, #0x5AAF
+			mov r1, #0x57AF
+			mov r2, #0x5AAF
 			b sc_out
 sc_0x57B0:
-			mov r4, #0x57B0
-			mov r5, #0x5AB0
+			mov r1, #0x57B0
+			mov r2, #0x5AB0
 			b sc_out
 sc_0x57B1:
-			mov r4, #0x57B1
-			mov r5, #0x5AB1
+			mov r1, #0x57B1
+			mov r2, #0x5AB1
 			b sc_out
 sc_0x57B2:
-			mov r4, #0x57B2
-			mov r5, #0x5AB2
+			mov r1, #0x57B2
+			mov r2, #0x5AB2
 			b sc_out
 sc_0x57B3:
-			mov r4, #0x57B3
-			mov r5, #0x5AB3
+			mov r1, #0x57B3
+			mov r2, #0x5AB3
 			b sc_out
 sc_0x57B4:
-			mov r4, #0x57B4
-			mov r5, #0x5AB4
+			mov r1, #0x57B4
+			mov r2, #0x5AB4
 			b sc_out
 sc_0x57B5:
-			mov r4, #0x57B5
-			mov r5, #0x5AB5
+			mov r1, #0x57B5
+			mov r2, #0x5AB5
 			b sc_out
 sc_0x57B6:
-			mov r4, #0x57B6
-			mov r5, #0x5AB6
+			mov r1, #0x57B6
+			mov r2, #0x5AB6
 			b sc_out
 sc_0x57B7:
-			mov r4, #0x57B7
-			mov r5, #0x5AB7
+			mov r1, #0x57B7
+			mov r2, #0x5AB7
 			b sc_out
 sc_0x57B8:
-			mov r4, #0x57B8
-			mov r5, #0x5AB8
+			mov r1, #0x57B8
+			mov r2, #0x5AB8
 			b sc_out
 sc_0x57B9:
-			mov r4, #0x57B9
-			mov r5, #0x5AB9
+			mov r1, #0x57B9
+			mov r2, #0x5AB9
 			b sc_out
 sc_0x57BA:
-			mov r4, #0x57BA
-			mov r5, #0x5ABA
+			mov r1, #0x57BA
+			mov r2, #0x5ABA
 			b sc_out
 sc_0x57BB:
-			mov r4, #0x57BB
-			mov r5, #0x5ABB
+			mov r1, #0x57BB
+			mov r2, #0x5ABB
 			b sc_out
 sc_0x57BC:
-			mov r4, #0x57BC
-			mov r5, #0x5ABC
+			mov r1, #0x57BC
+			mov r2, #0x5ABC
 			b sc_out
 sc_0x57BD:
-			mov r4, #0x57BD
-			mov r5, #0x5ABD
+			mov r1, #0x57BD
+			mov r2, #0x5ABD
 			b sc_out
 sc_0x57BE:
-			mov r4, #0x57BE
-			mov r5, #0x5ABE
+			mov r1, #0x57BE
+			mov r2, #0x5ABE
 			b sc_out
 sc_0x57BF:
-			mov r4, #0x57BF
-			mov r5, #0x5ABF
+			mov r1, #0x57BF
+			mov r2, #0x5ABF
 			b sc_out
 sc_0x50C0:
-			mov r4, #0x50C0
-			mov r5, #0x5AC0
+			mov r1, #0x50C0
+			mov r2, #0x5AC0
 			b sc_out
 sc_0x50C1:
-			mov r4, #0x50C1
-			mov r5, #0x5AC1
+			mov r1, #0x50C1
+			mov r2, #0x5AC1
 			b sc_out
 sc_0x50C2:
-			mov r4, #0x50C2
-			mov r5, #0x5AC2
+			mov r1, #0x50C2
+			mov r2, #0x5AC2
 			b sc_out
 sc_0x50C3:
-			mov r4, #0x50C3
-			mov r5, #0x5AC3
+			mov r1, #0x50C3
+			mov r2, #0x5AC3
 			b sc_out
 sc_0x50C4:
-			mov r4, #0x50C4
-			mov r5, #0x5AC4
+			mov r1, #0x50C4
+			mov r2, #0x5AC4
 			b sc_out
 sc_0x50C5:
-			mov r4, #0x50C5
-			mov r5, #0x5AC5
+			mov r1, #0x50C5
+			mov r2, #0x5AC5
 			b sc_out
 sc_0x50C6:
-			mov r4, #0x50C6
-			mov r5, #0x5AC6
+			mov r1, #0x50C6
+			mov r2, #0x5AC6
 			b sc_out
 sc_0x50C7:
-			mov r4, #0x50C7
-			mov r5, #0x5AC7
+			mov r1, #0x50C7
+			mov r2, #0x5AC7
 			b sc_out
 sc_0x50C8:
-			mov r4, #0x50C8
-			mov r5, #0x5AC8
+			mov r1, #0x50C8
+			mov r2, #0x5AC8
 			b sc_out
 sc_0x50C9:
-			mov r4, #0x50C9
-			mov r5, #0x5AC9
+			mov r1, #0x50C9
+			mov r2, #0x5AC9
 			b sc_out
 sc_0x50CA:
-			mov r4, #0x50CA
-			mov r5, #0x5ACA
+			mov r1, #0x50CA
+			mov r2, #0x5ACA
 			b sc_out
 sc_0x50CB:
-			mov r4, #0x50CB
-			mov r5, #0x5ACB
+			mov r1, #0x50CB
+			mov r2, #0x5ACB
 			b sc_out
 sc_0x50CC:
-			mov r4, #0x50CC
-			mov r5, #0x5ACC
+			mov r1, #0x50CC
+			mov r2, #0x5ACC
 			b sc_out
 sc_0x50CD:
-			mov r4, #0x50CD
-			mov r5, #0x5ACD
+			mov r1, #0x50CD
+			mov r2, #0x5ACD
 			b sc_out
 sc_0x50CE:
-			mov r4, #0x50CE
-			mov r5, #0x5ACE
+			mov r1, #0x50CE
+			mov r2, #0x5ACE
 			b sc_out
 sc_0x50CF:
-			mov r4, #0x50CF
-			mov r5, #0x5ACF
+			mov r1, #0x50CF
+			mov r2, #0x5ACF
 			b sc_out
 sc_0x50D0:
-			mov r4, #0x50D0
-			mov r5, #0x5AD0
+			mov r1, #0x50D0
+			mov r2, #0x5AD0
 			b sc_out
 sc_0x50D1:
-			mov r4, #0x50D1
-			mov r5, #0x5AD1
+			mov r1, #0x50D1
+			mov r2, #0x5AD1
 			b sc_out
 sc_0x50D2:
-			mov r4, #0x50D2
-			mov r5, #0x5AD2
+			mov r1, #0x50D2
+			mov r2, #0x5AD2
 			b sc_out
 sc_0x50D3:
-			mov r4, #0x50D3
-			mov r5, #0x5AD3
+			mov r1, #0x50D3
+			mov r2, #0x5AD3
 			b sc_out
 sc_0x50D4:
-			mov r4, #0x50D4
-			mov r5, #0x5AD4
+			mov r1, #0x50D4
+			mov r2, #0x5AD4
 			b sc_out
 sc_0x50D5:
-			mov r4, #0x50D5
-			mov r5, #0x5AD5
+			mov r1, #0x50D5
+			mov r2, #0x5AD5
 			b sc_out
 sc_0x50D6:
-			mov r4, #0x50D6
-			mov r5, #0x5AD6
+			mov r1, #0x50D6
+			mov r2, #0x5AD6
 			b sc_out
 sc_0x50D7:
-			mov r4, #0x50D7
-			mov r5, #0x5AD7
+			mov r1, #0x50D7
+			mov r2, #0x5AD7
 			b sc_out
 sc_0x50D8:
-			mov r4, #0x50D8
-			mov r5, #0x5AD8
+			mov r1, #0x50D8
+			mov r2, #0x5AD8
 			b sc_out
 sc_0x50D9:
-			mov r4, #0x50D9
-			mov r5, #0x5AD9
+			mov r1, #0x50D9
+			mov r2, #0x5AD9
 			b sc_out
 sc_0x50DA:
-			mov r4, #0x50DA
-			mov r5, #0x5ADA
+			mov r1, #0x50DA
+			mov r2, #0x5ADA
 			b sc_out
 sc_0x50DB:
-			mov r4, #0x50DB
-			mov r5, #0x5ADB
+			mov r1, #0x50DB
+			mov r2, #0x5ADB
 			b sc_out
 sc_0x50DC:
-			mov r4, #0x50DC
-			mov r5, #0x5ADC
+			mov r1, #0x50DC
+			mov r2, #0x5ADC
 			b sc_out
 sc_0x50DD:
-			mov r4, #0x50DD
-			mov r5, #0x5ADD
+			mov r1, #0x50DD
+			mov r2, #0x5ADD
 			b sc_out
 sc_0x50DE:
-			mov r4, #0x50DE
-			mov r5, #0x5ADE
+			mov r1, #0x50DE
+			mov r2, #0x5ADE
 			b sc_out
 sc_0x50DF:
-			mov r4, #0x50DF
-			mov r5, #0x5ADF
+			mov r1, #0x50DF
+			mov r2, #0x5ADF
 			b sc_out
 sc_0x51C0:
-			mov r4, #0x51C0
-			mov r5, #0x5AC0
+			mov r1, #0x51C0
+			mov r2, #0x5AC0
 			b sc_out
 sc_0x51C1:
-			mov r4, #0x51C1
-			mov r5, #0x5AC1
+			mov r1, #0x51C1
+			mov r2, #0x5AC1
 			b sc_out
 sc_0x51C2:
-			mov r4, #0x51C2
-			mov r5, #0x5AC2
+			mov r1, #0x51C2
+			mov r2, #0x5AC2
 			b sc_out
 sc_0x51C3:
-			mov r4, #0x51C3
-			mov r5, #0x5AC3
+			mov r1, #0x51C3
+			mov r2, #0x5AC3
 			b sc_out
 sc_0x51C4:
-			mov r4, #0x51C4
-			mov r5, #0x5AC4
+			mov r1, #0x51C4
+			mov r2, #0x5AC4
 			b sc_out
 sc_0x51C5:
-			mov r4, #0x51C5
-			mov r5, #0x5AC5
+			mov r1, #0x51C5
+			mov r2, #0x5AC5
 			b sc_out
 sc_0x51C6:
-			mov r4, #0x51C6
-			mov r5, #0x5AC6
+			mov r1, #0x51C6
+			mov r2, #0x5AC6
 			b sc_out
 sc_0x51C7:
-			mov r4, #0x51C7
-			mov r5, #0x5AC7
+			mov r1, #0x51C7
+			mov r2, #0x5AC7
 			b sc_out
 sc_0x51C8:
-			mov r4, #0x51C8
-			mov r5, #0x5AC8
+			mov r1, #0x51C8
+			mov r2, #0x5AC8
 			b sc_out
 sc_0x51C9:
-			mov r4, #0x51C9
-			mov r5, #0x5AC9
+			mov r1, #0x51C9
+			mov r2, #0x5AC9
 			b sc_out
 sc_0x51CA:
-			mov r4, #0x51CA
-			mov r5, #0x5ACA
+			mov r1, #0x51CA
+			mov r2, #0x5ACA
 			b sc_out
 sc_0x51CB:
-			mov r4, #0x51CB
-			mov r5, #0x5ACB
+			mov r1, #0x51CB
+			mov r2, #0x5ACB
 			b sc_out
 sc_0x51CC:
-			mov r4, #0x51CC
-			mov r5, #0x5ACC
+			mov r1, #0x51CC
+			mov r2, #0x5ACC
 			b sc_out
 sc_0x51CD:
-			mov r4, #0x51CD
-			mov r5, #0x5ACD
+			mov r1, #0x51CD
+			mov r2, #0x5ACD
 			b sc_out
 sc_0x51CE:
-			mov r4, #0x51CE
-			mov r5, #0x5ACE
+			mov r1, #0x51CE
+			mov r2, #0x5ACE
 			b sc_out
 sc_0x51CF:
-			mov r4, #0x51CF
-			mov r5, #0x5ACF
+			mov r1, #0x51CF
+			mov r2, #0x5ACF
 			b sc_out
 sc_0x51D0:
-			mov r4, #0x51D0
-			mov r5, #0x5AD0
+			mov r1, #0x51D0
+			mov r2, #0x5AD0
 			b sc_out
 sc_0x51D1:
-			mov r4, #0x51D1
-			mov r5, #0x5AD1
+			mov r1, #0x51D1
+			mov r2, #0x5AD1
 			b sc_out
 sc_0x51D2:
-			mov r4, #0x51D2
-			mov r5, #0x5AD2
+			mov r1, #0x51D2
+			mov r2, #0x5AD2
 			b sc_out
 sc_0x51D3:
-			mov r4, #0x51D3
-			mov r5, #0x5AD3
+			mov r1, #0x51D3
+			mov r2, #0x5AD3
 			b sc_out
 sc_0x51D4:
-			mov r4, #0x51D4
-			mov r5, #0x5AD4
+			mov r1, #0x51D4
+			mov r2, #0x5AD4
 			b sc_out
 sc_0x51D5:
-			mov r4, #0x51D5
-			mov r5, #0x5AD5
+			mov r1, #0x51D5
+			mov r2, #0x5AD5
 			b sc_out
 sc_0x51D6:
-			mov r4, #0x51D6
-			mov r5, #0x5AD6
+			mov r1, #0x51D6
+			mov r2, #0x5AD6
 			b sc_out
 sc_0x51D7:
-			mov r4, #0x51D7
-			mov r5, #0x5AD7
+			mov r1, #0x51D7
+			mov r2, #0x5AD7
 			b sc_out
 sc_0x51D8:
-			mov r4, #0x51D8
-			mov r5, #0x5AD8
+			mov r1, #0x51D8
+			mov r2, #0x5AD8
 			b sc_out
 sc_0x51D9:
-			mov r4, #0x51D9
-			mov r5, #0x5AD9
+			mov r1, #0x51D9
+			mov r2, #0x5AD9
 			b sc_out
 sc_0x51DA:
-			mov r4, #0x51DA
-			mov r5, #0x5ADA
+			mov r1, #0x51DA
+			mov r2, #0x5ADA
 			b sc_out
 sc_0x51DB:
-			mov r4, #0x51DB
-			mov r5, #0x5ADB
+			mov r1, #0x51DB
+			mov r2, #0x5ADB
 			b sc_out
 sc_0x51DC:
-			mov r4, #0x51DC
-			mov r5, #0x5ADC
+			mov r1, #0x51DC
+			mov r2, #0x5ADC
 			b sc_out
 sc_0x51DD:
-			mov r4, #0x51DD
-			mov r5, #0x5ADD
+			mov r1, #0x51DD
+			mov r2, #0x5ADD
 			b sc_out
 sc_0x51DE:
-			mov r4, #0x51DE
-			mov r5, #0x5ADE
+			mov r1, #0x51DE
+			mov r2, #0x5ADE
 			b sc_out
 sc_0x51DF:
-			mov r4, #0x51DF
-			mov r5, #0x5ADF
+			mov r1, #0x51DF
+			mov r2, #0x5ADF
 			b sc_out
 sc_0x52C0:
-			mov r4, #0x52C0
-			mov r5, #0x5AC0
+			mov r1, #0x52C0
+			mov r2, #0x5AC0
 			b sc_out
 sc_0x52C1:
-			mov r4, #0x52C1
-			mov r5, #0x5AC1
+			mov r1, #0x52C1
+			mov r2, #0x5AC1
 			b sc_out
 sc_0x52C2:
-			mov r4, #0x52C2
-			mov r5, #0x5AC2
+			mov r1, #0x52C2
+			mov r2, #0x5AC2
 			b sc_out
 sc_0x52C3:
-			mov r4, #0x52C3
-			mov r5, #0x5AC3
+			mov r1, #0x52C3
+			mov r2, #0x5AC3
 			b sc_out
 sc_0x52C4:
-			mov r4, #0x52C4
-			mov r5, #0x5AC4
+			mov r1, #0x52C4
+			mov r2, #0x5AC4
 			b sc_out
 sc_0x52C5:
-			mov r4, #0x52C5
-			mov r5, #0x5AC5
+			mov r1, #0x52C5
+			mov r2, #0x5AC5
 			b sc_out
 sc_0x52C6:
-			mov r4, #0x52C6
-			mov r5, #0x5AC6
+			mov r1, #0x52C6
+			mov r2, #0x5AC6
 			b sc_out
 sc_0x52C7:
-			mov r4, #0x52C7
-			mov r5, #0x5AC7
+			mov r1, #0x52C7
+			mov r2, #0x5AC7
 			b sc_out
 sc_0x52C8:
-			mov r4, #0x52C8
-			mov r5, #0x5AC8
+			mov r1, #0x52C8
+			mov r2, #0x5AC8
 			b sc_out
 sc_0x52C9:
-			mov r4, #0x52C9
-			mov r5, #0x5AC9
+			mov r1, #0x52C9
+			mov r2, #0x5AC9
 			b sc_out
 sc_0x52CA:
-			mov r4, #0x52CA
-			mov r5, #0x5ACA
+			mov r1, #0x52CA
+			mov r2, #0x5ACA
 			b sc_out
 sc_0x52CB:
-			mov r4, #0x52CB
-			mov r5, #0x5ACB
+			mov r1, #0x52CB
+			mov r2, #0x5ACB
 			b sc_out
 sc_0x52CC:
-			mov r4, #0x52CC
-			mov r5, #0x5ACC
+			mov r1, #0x52CC
+			mov r2, #0x5ACC
 			b sc_out
 sc_0x52CD:
-			mov r4, #0x52CD
-			mov r5, #0x5ACD
+			mov r1, #0x52CD
+			mov r2, #0x5ACD
 			b sc_out
 sc_0x52CE:
-			mov r4, #0x52CE
-			mov r5, #0x5ACE
+			mov r1, #0x52CE
+			mov r2, #0x5ACE
 			b sc_out
 sc_0x52CF:
-			mov r4, #0x52CF
-			mov r5, #0x5ACF
+			mov r1, #0x52CF
+			mov r2, #0x5ACF
 			b sc_out
 sc_0x52D0:
-			mov r4, #0x52D0
-			mov r5, #0x5AD0
+			mov r1, #0x52D0
+			mov r2, #0x5AD0
 			b sc_out
 sc_0x52D1:
-			mov r4, #0x52D1
-			mov r5, #0x5AD1
+			mov r1, #0x52D1
+			mov r2, #0x5AD1
 			b sc_out
 sc_0x52D2:
-			mov r4, #0x52D2
-			mov r5, #0x5AD2
+			mov r1, #0x52D2
+			mov r2, #0x5AD2
 			b sc_out
 sc_0x52D3:
-			mov r4, #0x52D3
-			mov r5, #0x5AD3
+			mov r1, #0x52D3
+			mov r2, #0x5AD3
 			b sc_out
 sc_0x52D4:
-			mov r4, #0x52D4
-			mov r5, #0x5AD4
+			mov r1, #0x52D4
+			mov r2, #0x5AD4
 			b sc_out
 sc_0x52D5:
-			mov r4, #0x52D5
-			mov r5, #0x5AD5
+			mov r1, #0x52D5
+			mov r2, #0x5AD5
 			b sc_out
 sc_0x52D6:
-			mov r4, #0x52D6
-			mov r5, #0x5AD6
+			mov r1, #0x52D6
+			mov r2, #0x5AD6
 			b sc_out
 sc_0x52D7:
-			mov r4, #0x52D7
-			mov r5, #0x5AD7
+			mov r1, #0x52D7
+			mov r2, #0x5AD7
 			b sc_out
 sc_0x52D8:
-			mov r4, #0x52D8
-			mov r5, #0x5AD8
+			mov r1, #0x52D8
+			mov r2, #0x5AD8
 			b sc_out
 sc_0x52D9:
-			mov r4, #0x52D9
-			mov r5, #0x5AD9
+			mov r1, #0x52D9
+			mov r2, #0x5AD9
 			b sc_out
 sc_0x52DA:
-			mov r4, #0x52DA
-			mov r5, #0x5ADA
+			mov r1, #0x52DA
+			mov r2, #0x5ADA
 			b sc_out
 sc_0x52DB:
-			mov r4, #0x52DB
-			mov r5, #0x5ADB
+			mov r1, #0x52DB
+			mov r2, #0x5ADB
 			b sc_out
 sc_0x52DC:
-			mov r4, #0x52DC
-			mov r5, #0x5ADC
+			mov r1, #0x52DC
+			mov r2, #0x5ADC
 			b sc_out
 sc_0x52DD:
-			mov r4, #0x52DD
-			mov r5, #0x5ADD
+			mov r1, #0x52DD
+			mov r2, #0x5ADD
 			b sc_out
 sc_0x52DE:
-			mov r4, #0x52DE
-			mov r5, #0x5ADE
+			mov r1, #0x52DE
+			mov r2, #0x5ADE
 			b sc_out
 sc_0x52DF:
-			mov r4, #0x52DF
-			mov r5, #0x5ADF
+			mov r1, #0x52DF
+			mov r2, #0x5ADF
 			b sc_out
 sc_0x53C0:
-			mov r4, #0x53C0
-			mov r5, #0x5AC0
+			mov r1, #0x53C0
+			mov r2, #0x5AC0
 			b sc_out
 sc_0x53C1:
-			mov r4, #0x53C1
-			mov r5, #0x5AC1
+			mov r1, #0x53C1
+			mov r2, #0x5AC1
 			b sc_out
 sc_0x53C2:
-			mov r4, #0x53C2
-			mov r5, #0x5AC2
+			mov r1, #0x53C2
+			mov r2, #0x5AC2
 			b sc_out
 sc_0x53C3:
-			mov r4, #0x53C3
-			mov r5, #0x5AC3
+			mov r1, #0x53C3
+			mov r2, #0x5AC3
 			b sc_out
 sc_0x53C4:
-			mov r4, #0x53C4
-			mov r5, #0x5AC4
+			mov r1, #0x53C4
+			mov r2, #0x5AC4
 			b sc_out
 sc_0x53C5:
-			mov r4, #0x53C5
-			mov r5, #0x5AC5
+			mov r1, #0x53C5
+			mov r2, #0x5AC5
 			b sc_out
 sc_0x53C6:
-			mov r4, #0x53C6
-			mov r5, #0x5AC6
+			mov r1, #0x53C6
+			mov r2, #0x5AC6
 			b sc_out
 sc_0x53C7:
-			mov r4, #0x53C7
-			mov r5, #0x5AC7
+			mov r1, #0x53C7
+			mov r2, #0x5AC7
 			b sc_out
 sc_0x53C8:
-			mov r4, #0x53C8
-			mov r5, #0x5AC8
+			mov r1, #0x53C8
+			mov r2, #0x5AC8
 			b sc_out
 sc_0x53C9:
-			mov r4, #0x53C9
-			mov r5, #0x5AC9
+			mov r1, #0x53C9
+			mov r2, #0x5AC9
 			b sc_out
 sc_0x53CA:
-			mov r4, #0x53CA
-			mov r5, #0x5ACA
+			mov r1, #0x53CA
+			mov r2, #0x5ACA
 			b sc_out
 sc_0x53CB:
-			mov r4, #0x53CB
-			mov r5, #0x5ACB
+			mov r1, #0x53CB
+			mov r2, #0x5ACB
 			b sc_out
 sc_0x53CC:
-			mov r4, #0x53CC
-			mov r5, #0x5ACC
+			mov r1, #0x53CC
+			mov r2, #0x5ACC
 			b sc_out
 sc_0x53CD:
-			mov r4, #0x53CD
-			mov r5, #0x5ACD
+			mov r1, #0x53CD
+			mov r2, #0x5ACD
 			b sc_out
 sc_0x53CE:
-			mov r4, #0x53CE
-			mov r5, #0x5ACE
+			mov r1, #0x53CE
+			mov r2, #0x5ACE
 			b sc_out
 sc_0x53CF:
-			mov r4, #0x53CF
-			mov r5, #0x5ACF
+			mov r1, #0x53CF
+			mov r2, #0x5ACF
 			b sc_out
 sc_0x53D0:
-			mov r4, #0x53D0
-			mov r5, #0x5AD0
+			mov r1, #0x53D0
+			mov r2, #0x5AD0
 			b sc_out
 sc_0x53D1:
-			mov r4, #0x53D1
-			mov r5, #0x5AD1
+			mov r1, #0x53D1
+			mov r2, #0x5AD1
 			b sc_out
 sc_0x53D2:
-			mov r4, #0x53D2
-			mov r5, #0x5AD2
+			mov r1, #0x53D2
+			mov r2, #0x5AD2
 			b sc_out
 sc_0x53D3:
-			mov r4, #0x53D3
-			mov r5, #0x5AD3
+			mov r1, #0x53D3
+			mov r2, #0x5AD3
 			b sc_out
 sc_0x53D4:
-			mov r4, #0x53D4
-			mov r5, #0x5AD4
+			mov r1, #0x53D4
+			mov r2, #0x5AD4
 			b sc_out
 sc_0x53D5:
-			mov r4, #0x53D5
-			mov r5, #0x5AD5
+			mov r1, #0x53D5
+			mov r2, #0x5AD5
 			b sc_out
 sc_0x53D6:
-			mov r4, #0x53D6
-			mov r5, #0x5AD6
+			mov r1, #0x53D6
+			mov r2, #0x5AD6
 			b sc_out
 sc_0x53D7:
-			mov r4, #0x53D7
-			mov r5, #0x5AD7
+			mov r1, #0x53D7
+			mov r2, #0x5AD7
 			b sc_out
 sc_0x53D8:
-			mov r4, #0x53D8
-			mov r5, #0x5AD8
+			mov r1, #0x53D8
+			mov r2, #0x5AD8
 			b sc_out
 sc_0x53D9:
-			mov r4, #0x53D9
-			mov r5, #0x5AD9
+			mov r1, #0x53D9
+			mov r2, #0x5AD9
 			b sc_out
 sc_0x53DA:
-			mov r4, #0x53DA
-			mov r5, #0x5ADA
+			mov r1, #0x53DA
+			mov r2, #0x5ADA
 			b sc_out
 sc_0x53DB:
-			mov r4, #0x53DB
-			mov r5, #0x5ADB
+			mov r1, #0x53DB
+			mov r2, #0x5ADB
 			b sc_out
 sc_0x53DC:
-			mov r4, #0x53DC
-			mov r5, #0x5ADC
+			mov r1, #0x53DC
+			mov r2, #0x5ADC
 			b sc_out
 sc_0x53DD:
-			mov r4, #0x53DD
-			mov r5, #0x5ADD
+			mov r1, #0x53DD
+			mov r2, #0x5ADD
 			b sc_out
 sc_0x53DE:
-			mov r4, #0x53DE
-			mov r5, #0x5ADE
+			mov r1, #0x53DE
+			mov r2, #0x5ADE
 			b sc_out
 sc_0x53DF:
-			mov r4, #0x53DF
-			mov r5, #0x5ADF
+			mov r1, #0x53DF
+			mov r2, #0x5ADF
 			b sc_out
 sc_0x54C0:
-			mov r4, #0x54C0
-			mov r5, #0x5AC0
+			mov r1, #0x54C0
+			mov r2, #0x5AC0
 			b sc_out
 sc_0x54C1:
-			mov r4, #0x54C1
-			mov r5, #0x5AC1
+			mov r1, #0x54C1
+			mov r2, #0x5AC1
 			b sc_out
 sc_0x54C2:
-			mov r4, #0x54C2
-			mov r5, #0x5AC2
+			mov r1, #0x54C2
+			mov r2, #0x5AC2
 			b sc_out
 sc_0x54C3:
-			mov r4, #0x54C3
-			mov r5, #0x5AC3
+			mov r1, #0x54C3
+			mov r2, #0x5AC3
 			b sc_out
 sc_0x54C4:
-			mov r4, #0x54C4
-			mov r5, #0x5AC4
+			mov r1, #0x54C4
+			mov r2, #0x5AC4
 			b sc_out
 sc_0x54C5:
-			mov r4, #0x54C5
-			mov r5, #0x5AC5
+			mov r1, #0x54C5
+			mov r2, #0x5AC5
 			b sc_out
 sc_0x54C6:
-			mov r4, #0x54C6
-			mov r5, #0x5AC6
+			mov r1, #0x54C6
+			mov r2, #0x5AC6
 			b sc_out
 sc_0x54C7:
-			mov r4, #0x54C7
-			mov r5, #0x5AC7
+			mov r1, #0x54C7
+			mov r2, #0x5AC7
 			b sc_out
 sc_0x54C8:
-			mov r4, #0x54C8
-			mov r5, #0x5AC8
+			mov r1, #0x54C8
+			mov r2, #0x5AC8
 			b sc_out
 sc_0x54C9:
-			mov r4, #0x54C9
-			mov r5, #0x5AC9
+			mov r1, #0x54C9
+			mov r2, #0x5AC9
 			b sc_out
 sc_0x54CA:
-			mov r4, #0x54CA
-			mov r5, #0x5ACA
+			mov r1, #0x54CA
+			mov r2, #0x5ACA
 			b sc_out
 sc_0x54CB:
-			mov r4, #0x54CB
-			mov r5, #0x5ACB
+			mov r1, #0x54CB
+			mov r2, #0x5ACB
 			b sc_out
 sc_0x54CC:
-			mov r4, #0x54CC
-			mov r5, #0x5ACC
+			mov r1, #0x54CC
+			mov r2, #0x5ACC
 			b sc_out
 sc_0x54CD:
-			mov r4, #0x54CD
-			mov r5, #0x5ACD
+			mov r1, #0x54CD
+			mov r2, #0x5ACD
 			b sc_out
 sc_0x54CE:
-			mov r4, #0x54CE
-			mov r5, #0x5ACE
+			mov r1, #0x54CE
+			mov r2, #0x5ACE
 			b sc_out
 sc_0x54CF:
-			mov r4, #0x54CF
-			mov r5, #0x5ACF
+			mov r1, #0x54CF
+			mov r2, #0x5ACF
 			b sc_out
 sc_0x54D0:
-			mov r4, #0x54D0
-			mov r5, #0x5AD0
+			mov r1, #0x54D0
+			mov r2, #0x5AD0
 			b sc_out
 sc_0x54D1:
-			mov r4, #0x54D1
-			mov r5, #0x5AD1
+			mov r1, #0x54D1
+			mov r2, #0x5AD1
 			b sc_out
 sc_0x54D2:
-			mov r4, #0x54D2
-			mov r5, #0x5AD2
+			mov r1, #0x54D2
+			mov r2, #0x5AD2
 			b sc_out
 sc_0x54D3:
-			mov r4, #0x54D3
-			mov r5, #0x5AD3
+			mov r1, #0x54D3
+			mov r2, #0x5AD3
 			b sc_out
 sc_0x54D4:
-			mov r4, #0x54D4
-			mov r5, #0x5AD4
+			mov r1, #0x54D4
+			mov r2, #0x5AD4
 			b sc_out
 sc_0x54D5:
-			mov r4, #0x54D5
-			mov r5, #0x5AD5
+			mov r1, #0x54D5
+			mov r2, #0x5AD5
 			b sc_out
 sc_0x54D6:
-			mov r4, #0x54D6
-			mov r5, #0x5AD6
+			mov r1, #0x54D6
+			mov r2, #0x5AD6
 			b sc_out
 sc_0x54D7:
-			mov r4, #0x54D7
-			mov r5, #0x5AD7
+			mov r1, #0x54D7
+			mov r2, #0x5AD7
 			b sc_out
 sc_0x54D8:
-			mov r4, #0x54D8
-			mov r5, #0x5AD8
+			mov r1, #0x54D8
+			mov r2, #0x5AD8
 			b sc_out
 sc_0x54D9:
-			mov r4, #0x54D9
-			mov r5, #0x5AD9
+			mov r1, #0x54D9
+			mov r2, #0x5AD9
 			b sc_out
 sc_0x54DA:
-			mov r4, #0x54DA
-			mov r5, #0x5ADA
+			mov r1, #0x54DA
+			mov r2, #0x5ADA
 			b sc_out
 sc_0x54DB:
-			mov r4, #0x54DB
-			mov r5, #0x5ADB
+			mov r1, #0x54DB
+			mov r2, #0x5ADB
 			b sc_out
 sc_0x54DC:
-			mov r4, #0x54DC
-			mov r5, #0x5ADC
+			mov r1, #0x54DC
+			mov r2, #0x5ADC
 			b sc_out
 sc_0x54DD:
-			mov r4, #0x54DD
-			mov r5, #0x5ADD
+			mov r1, #0x54DD
+			mov r2, #0x5ADD
 			b sc_out
 sc_0x54DE:
-			mov r4, #0x54DE
-			mov r5, #0x5ADE
+			mov r1, #0x54DE
+			mov r2, #0x5ADE
 			b sc_out
 sc_0x54DF:
-			mov r4, #0x54DF
-			mov r5, #0x5ADF
+			mov r1, #0x54DF
+			mov r2, #0x5ADF
 			b sc_out
 sc_0x55C0:
-			mov r4, #0x55C0
-			mov r5, #0x5AC0
+			mov r1, #0x55C0
+			mov r2, #0x5AC0
 			b sc_out
 sc_0x55C1:
-			mov r4, #0x55C1
-			mov r5, #0x5AC1
+			mov r1, #0x55C1
+			mov r2, #0x5AC1
 			b sc_out
 sc_0x55C2:
-			mov r4, #0x55C2
-			mov r5, #0x5AC2
+			mov r1, #0x55C2
+			mov r2, #0x5AC2
 			b sc_out
 sc_0x55C3:
-			mov r4, #0x55C3
-			mov r5, #0x5AC3
+			mov r1, #0x55C3
+			mov r2, #0x5AC3
 			b sc_out
 sc_0x55C4:
-			mov r4, #0x55C4
-			mov r5, #0x5AC4
+			mov r1, #0x55C4
+			mov r2, #0x5AC4
 			b sc_out
 sc_0x55C5:
-			mov r4, #0x55C5
-			mov r5, #0x5AC5
+			mov r1, #0x55C5
+			mov r2, #0x5AC5
 			b sc_out
 sc_0x55C6:
-			mov r4, #0x55C6
-			mov r5, #0x5AC6
+			mov r1, #0x55C6
+			mov r2, #0x5AC6
 			b sc_out
 sc_0x55C7:
-			mov r4, #0x55C7
-			mov r5, #0x5AC7
+			mov r1, #0x55C7
+			mov r2, #0x5AC7
 			b sc_out
 sc_0x55C8:
-			mov r4, #0x55C8
-			mov r5, #0x5AC8
+			mov r1, #0x55C8
+			mov r2, #0x5AC8
 			b sc_out
 sc_0x55C9:
-			mov r4, #0x55C9
-			mov r5, #0x5AC9
+			mov r1, #0x55C9
+			mov r2, #0x5AC9
 			b sc_out
 sc_0x55CA:
-			mov r4, #0x55CA
-			mov r5, #0x5ACA
+			mov r1, #0x55CA
+			mov r2, #0x5ACA
 			b sc_out
 sc_0x55CB:
-			mov r4, #0x55CB
-			mov r5, #0x5ACB
+			mov r1, #0x55CB
+			mov r2, #0x5ACB
 			b sc_out
 sc_0x55CC:
-			mov r4, #0x55CC
-			mov r5, #0x5ACC
+			mov r1, #0x55CC
+			mov r2, #0x5ACC
 			b sc_out
 sc_0x55CD:
-			mov r4, #0x55CD
-			mov r5, #0x5ACD
+			mov r1, #0x55CD
+			mov r2, #0x5ACD
 			b sc_out
 sc_0x55CE:
-			mov r4, #0x55CE
-			mov r5, #0x5ACE
+			mov r1, #0x55CE
+			mov r2, #0x5ACE
 			b sc_out
 sc_0x55CF:
-			mov r4, #0x55CF
-			mov r5, #0x5ACF
+			mov r1, #0x55CF
+			mov r2, #0x5ACF
 			b sc_out
 sc_0x55D0:
-			mov r4, #0x55D0
-			mov r5, #0x5AD0
+			mov r1, #0x55D0
+			mov r2, #0x5AD0
 			b sc_out
 sc_0x55D1:
-			mov r4, #0x55D1
-			mov r5, #0x5AD1
+			mov r1, #0x55D1
+			mov r2, #0x5AD1
 			b sc_out
 sc_0x55D2:
-			mov r4, #0x55D2
-			mov r5, #0x5AD2
+			mov r1, #0x55D2
+			mov r2, #0x5AD2
 			b sc_out
 sc_0x55D3:
-			mov r4, #0x55D3
-			mov r5, #0x5AD3
+			mov r1, #0x55D3
+			mov r2, #0x5AD3
 			b sc_out
 sc_0x55D4:
-			mov r4, #0x55D4
-			mov r5, #0x5AD4
+			mov r1, #0x55D4
+			mov r2, #0x5AD4
 			b sc_out
 sc_0x55D5:
-			mov r4, #0x55D5
-			mov r5, #0x5AD5
+			mov r1, #0x55D5
+			mov r2, #0x5AD5
 			b sc_out
 sc_0x55D6:
-			mov r4, #0x55D6
-			mov r5, #0x5AD6
+			mov r1, #0x55D6
+			mov r2, #0x5AD6
 			b sc_out
 sc_0x55D7:
-			mov r4, #0x55D7
-			mov r5, #0x5AD7
+			mov r1, #0x55D7
+			mov r2, #0x5AD7
 			b sc_out
 sc_0x55D8:
-			mov r4, #0x55D8
-			mov r5, #0x5AD8
+			mov r1, #0x55D8
+			mov r2, #0x5AD8
 			b sc_out
 sc_0x55D9:
-			mov r4, #0x55D9
-			mov r5, #0x5AD9
+			mov r1, #0x55D9
+			mov r2, #0x5AD9
 			b sc_out
 sc_0x55DA:
-			mov r4, #0x55DA
-			mov r5, #0x5ADA
+			mov r1, #0x55DA
+			mov r2, #0x5ADA
 			b sc_out
 sc_0x55DB:
-			mov r4, #0x55DB
-			mov r5, #0x5ADB
+			mov r1, #0x55DB
+			mov r2, #0x5ADB
 			b sc_out
 sc_0x55DC:
-			mov r4, #0x55DC
-			mov r5, #0x5ADC
+			mov r1, #0x55DC
+			mov r2, #0x5ADC
 			b sc_out
 sc_0x55DD:
-			mov r4, #0x55DD
-			mov r5, #0x5ADD
+			mov r1, #0x55DD
+			mov r2, #0x5ADD
 			b sc_out
 sc_0x55DE:
-			mov r4, #0x55DE
-			mov r5, #0x5ADE
+			mov r1, #0x55DE
+			mov r2, #0x5ADE
 			b sc_out
 sc_0x55DF:
-			mov r4, #0x55DF
-			mov r5, #0x5ADF
+			mov r1, #0x55DF
+			mov r2, #0x5ADF
 			b sc_out
 sc_0x56C0:
-			mov r4, #0x56C0
-			mov r5, #0x5AC0
+			mov r1, #0x56C0
+			mov r2, #0x5AC0
 			b sc_out
 sc_0x56C1:
-			mov r4, #0x56C1
-			mov r5, #0x5AC1
+			mov r1, #0x56C1
+			mov r2, #0x5AC1
 			b sc_out
 sc_0x56C2:
-			mov r4, #0x56C2
-			mov r5, #0x5AC2
+			mov r1, #0x56C2
+			mov r2, #0x5AC2
 			b sc_out
 sc_0x56C3:
-			mov r4, #0x56C3
-			mov r5, #0x5AC3
+			mov r1, #0x56C3
+			mov r2, #0x5AC3
 			b sc_out
 sc_0x56C4:
-			mov r4, #0x56C4
-			mov r5, #0x5AC4
+			mov r1, #0x56C4
+			mov r2, #0x5AC4
 			b sc_out
 sc_0x56C5:
-			mov r4, #0x56C5
-			mov r5, #0x5AC5
+			mov r1, #0x56C5
+			mov r2, #0x5AC5
 			b sc_out
 sc_0x56C6:
-			mov r4, #0x56C6
-			mov r5, #0x5AC6
+			mov r1, #0x56C6
+			mov r2, #0x5AC6
 			b sc_out
 sc_0x56C7:
-			mov r4, #0x56C7
-			mov r5, #0x5AC7
+			mov r1, #0x56C7
+			mov r2, #0x5AC7
 			b sc_out
 sc_0x56C8:
-			mov r4, #0x56C8
-			mov r5, #0x5AC8
+			mov r1, #0x56C8
+			mov r2, #0x5AC8
 			b sc_out
 sc_0x56C9:
-			mov r4, #0x56C9
-			mov r5, #0x5AC9
+			mov r1, #0x56C9
+			mov r2, #0x5AC9
 			b sc_out
 sc_0x56CA:
-			mov r4, #0x56CA
-			mov r5, #0x5ACA
+			mov r1, #0x56CA
+			mov r2, #0x5ACA
 			b sc_out
 sc_0x56CB:
-			mov r4, #0x56CB
-			mov r5, #0x5ACB
+			mov r1, #0x56CB
+			mov r2, #0x5ACB
 			b sc_out
 sc_0x56CC:
-			mov r4, #0x56CC
-			mov r5, #0x5ACC
+			mov r1, #0x56CC
+			mov r2, #0x5ACC
 			b sc_out
 sc_0x56CD:
-			mov r4, #0x56CD
-			mov r5, #0x5ACD
+			mov r1, #0x56CD
+			mov r2, #0x5ACD
 			b sc_out
 sc_0x56CE:
-			mov r4, #0x56CE
-			mov r5, #0x5ACE
+			mov r1, #0x56CE
+			mov r2, #0x5ACE
 			b sc_out
 sc_0x56CF:
-			mov r4, #0x56CF
-			mov r5, #0x5ACF
+			mov r1, #0x56CF
+			mov r2, #0x5ACF
 			b sc_out
 sc_0x56D0:
-			mov r4, #0x56D0
-			mov r5, #0x5AD0
+			mov r1, #0x56D0
+			mov r2, #0x5AD0
 			b sc_out
 sc_0x56D1:
-			mov r4, #0x56D1
-			mov r5, #0x5AD1
+			mov r1, #0x56D1
+			mov r2, #0x5AD1
 			b sc_out
 sc_0x56D2:
-			mov r4, #0x56D2
-			mov r5, #0x5AD2
+			mov r1, #0x56D2
+			mov r2, #0x5AD2
 			b sc_out
 sc_0x56D3:
-			mov r4, #0x56D3
-			mov r5, #0x5AD3
+			mov r1, #0x56D3
+			mov r2, #0x5AD3
 			b sc_out
 sc_0x56D4:
-			mov r4, #0x56D4
-			mov r5, #0x5AD4
+			mov r1, #0x56D4
+			mov r2, #0x5AD4
 			b sc_out
 sc_0x56D5:
-			mov r4, #0x56D5
-			mov r5, #0x5AD5
+			mov r1, #0x56D5
+			mov r2, #0x5AD5
 			b sc_out
 sc_0x56D6:
-			mov r4, #0x56D6
-			mov r5, #0x5AD6
+			mov r1, #0x56D6
+			mov r2, #0x5AD6
 			b sc_out
 sc_0x56D7:
-			mov r4, #0x56D7
-			mov r5, #0x5AD7
+			mov r1, #0x56D7
+			mov r2, #0x5AD7
 			b sc_out
 sc_0x56D8:
-			mov r4, #0x56D8
-			mov r5, #0x5AD8
+			mov r1, #0x56D8
+			mov r2, #0x5AD8
 			b sc_out
 sc_0x56D9:
-			mov r4, #0x56D9
-			mov r5, #0x5AD9
+			mov r1, #0x56D9
+			mov r2, #0x5AD9
 			b sc_out
 sc_0x56DA:
-			mov r4, #0x56DA
-			mov r5, #0x5ADA
+			mov r1, #0x56DA
+			mov r2, #0x5ADA
 			b sc_out
 sc_0x56DB:
-			mov r4, #0x56DB
-			mov r5, #0x5ADB
+			mov r1, #0x56DB
+			mov r2, #0x5ADB
 			b sc_out
 sc_0x56DC:
-			mov r4, #0x56DC
-			mov r5, #0x5ADC
+			mov r1, #0x56DC
+			mov r2, #0x5ADC
 			b sc_out
 sc_0x56DD:
-			mov r4, #0x56DD
-			mov r5, #0x5ADD
+			mov r1, #0x56DD
+			mov r2, #0x5ADD
 			b sc_out
 sc_0x56DE:
-			mov r4, #0x56DE
-			mov r5, #0x5ADE
+			mov r1, #0x56DE
+			mov r2, #0x5ADE
 			b sc_out
 sc_0x56DF:
-			mov r4, #0x56DF
-			mov r5, #0x5ADF
+			mov r1, #0x56DF
+			mov r2, #0x5ADF
 			b sc_out
 sc_0x57C0:
-			mov r4, #0x57C0
-			mov r5, #0x5AC0
+			mov r1, #0x57C0
+			mov r2, #0x5AC0
 			b sc_out
 sc_0x57C1:
-			mov r4, #0x57C1
-			mov r5, #0x5AC1
+			mov r1, #0x57C1
+			mov r2, #0x5AC1
 			b sc_out
 sc_0x57C2:
-			mov r4, #0x57C2
-			mov r5, #0x5AC2
+			mov r1, #0x57C2
+			mov r2, #0x5AC2
 			b sc_out
 sc_0x57C3:
-			mov r4, #0x57C3
-			mov r5, #0x5AC3
+			mov r1, #0x57C3
+			mov r2, #0x5AC3
 			b sc_out
 sc_0x57C4:
-			mov r4, #0x57C4
-			mov r5, #0x5AC4
+			mov r1, #0x57C4
+			mov r2, #0x5AC4
 			b sc_out
 sc_0x57C5:
-			mov r4, #0x57C5
-			mov r5, #0x5AC5
+			mov r1, #0x57C5
+			mov r2, #0x5AC5
 			b sc_out
 sc_0x57C6:
-			mov r4, #0x57C6
-			mov r5, #0x5AC6
+			mov r1, #0x57C6
+			mov r2, #0x5AC6
 			b sc_out
 sc_0x57C7:
-			mov r4, #0x57C7
-			mov r5, #0x5AC7
+			mov r1, #0x57C7
+			mov r2, #0x5AC7
 			b sc_out
 sc_0x57C8:
-			mov r4, #0x57C8
-			mov r5, #0x5AC8
+			mov r1, #0x57C8
+			mov r2, #0x5AC8
 			b sc_out
 sc_0x57C9:
-			mov r4, #0x57C9
-			mov r5, #0x5AC9
+			mov r1, #0x57C9
+			mov r2, #0x5AC9
 			b sc_out
 sc_0x57CA:
-			mov r4, #0x57CA
-			mov r5, #0x5ACA
+			mov r1, #0x57CA
+			mov r2, #0x5ACA
 			b sc_out
 sc_0x57CB:
-			mov r4, #0x57CB
-			mov r5, #0x5ACB
+			mov r1, #0x57CB
+			mov r2, #0x5ACB
 			b sc_out
 sc_0x57CC:
-			mov r4, #0x57CC
-			mov r5, #0x5ACC
+			mov r1, #0x57CC
+			mov r2, #0x5ACC
 			b sc_out
 sc_0x57CD:
-			mov r4, #0x57CD
-			mov r5, #0x5ACD
+			mov r1, #0x57CD
+			mov r2, #0x5ACD
 			b sc_out
 sc_0x57CE:
-			mov r4, #0x57CE
-			mov r5, #0x5ACE
+			mov r1, #0x57CE
+			mov r2, #0x5ACE
 			b sc_out
 sc_0x57CF:
-			mov r4, #0x57CF
-			mov r5, #0x5ACF
+			mov r1, #0x57CF
+			mov r2, #0x5ACF
 			b sc_out
 sc_0x57D0:
-			mov r4, #0x57D0
-			mov r5, #0x5AD0
+			mov r1, #0x57D0
+			mov r2, #0x5AD0
 			b sc_out
 sc_0x57D1:
-			mov r4, #0x57D1
-			mov r5, #0x5AD1
+			mov r1, #0x57D1
+			mov r2, #0x5AD1
 			b sc_out
 sc_0x57D2:
-			mov r4, #0x57D2
-			mov r5, #0x5AD2
+			mov r1, #0x57D2
+			mov r2, #0x5AD2
 			b sc_out
 sc_0x57D3:
-			mov r4, #0x57D3
-			mov r5, #0x5AD3
+			mov r1, #0x57D3
+			mov r2, #0x5AD3
 			b sc_out
 sc_0x57D4:
-			mov r4, #0x57D4
-			mov r5, #0x5AD4
+			mov r1, #0x57D4
+			mov r2, #0x5AD4
 			b sc_out
 sc_0x57D5:
-			mov r4, #0x57D5
-			mov r5, #0x5AD5
+			mov r1, #0x57D5
+			mov r2, #0x5AD5
 			b sc_out
 sc_0x57D6:
-			mov r4, #0x57D6
-			mov r5, #0x5AD6
+			mov r1, #0x57D6
+			mov r2, #0x5AD6
 			b sc_out
 sc_0x57D7:
-			mov r4, #0x57D7
-			mov r5, #0x5AD7
+			mov r1, #0x57D7
+			mov r2, #0x5AD7
 			b sc_out
 sc_0x57D8:
-			mov r4, #0x57D8
-			mov r5, #0x5AD8
+			mov r1, #0x57D8
+			mov r2, #0x5AD8
 			b sc_out
 sc_0x57D9:
-			mov r4, #0x57D9
-			mov r5, #0x5AD9
+			mov r1, #0x57D9
+			mov r2, #0x5AD9
 			b sc_out
 sc_0x57DA:
-			mov r4, #0x57DA
-			mov r5, #0x5ADA
+			mov r1, #0x57DA
+			mov r2, #0x5ADA
 			b sc_out
 sc_0x57DB:
-			mov r4, #0x57DB
-			mov r5, #0x5ADB
+			mov r1, #0x57DB
+			mov r2, #0x5ADB
 			b sc_out
 sc_0x57DC:
-			mov r4, #0x57DC
-			mov r5, #0x5ADC
+			mov r1, #0x57DC
+			mov r2, #0x5ADC
 			b sc_out
 sc_0x57DD:
-			mov r4, #0x57DD
-			mov r5, #0x5ADD
+			mov r1, #0x57DD
+			mov r2, #0x5ADD
 			b sc_out
 sc_0x57DE:
-			mov r4, #0x57DE
-			mov r5, #0x5ADE
+			mov r1, #0x57DE
+			mov r2, #0x5ADE
 			b sc_out
 sc_0x57DF:
-			mov r4, #0x57DF
-			mov r5, #0x5ADF
+			mov r1, #0x57DF
+			mov r2, #0x5ADF
 			b sc_out
 sc_0x50E0:
-			mov r4, #0x50E0
-			mov r5, #0x5AE0
+			mov r1, #0x50E0
+			mov r2, #0x5AE0
 			b sc_out
 sc_0x50E1:
-			mov r4, #0x50E1
-			mov r5, #0x5AE1
+			mov r1, #0x50E1
+			mov r2, #0x5AE1
 			b sc_out
 sc_0x50E2:
-			mov r4, #0x50E2
-			mov r5, #0x5AE2
+			mov r1, #0x50E2
+			mov r2, #0x5AE2
 			b sc_out
 sc_0x50E3:
-			mov r4, #0x50E3
-			mov r5, #0x5AE3
+			mov r1, #0x50E3
+			mov r2, #0x5AE3
 			b sc_out
 sc_0x50E4:
-			mov r4, #0x50E4
-			mov r5, #0x5AE4
+			mov r1, #0x50E4
+			mov r2, #0x5AE4
 			b sc_out
 sc_0x50E5:
-			mov r4, #0x50E5
-			mov r5, #0x5AE5
+			mov r1, #0x50E5
+			mov r2, #0x5AE5
 			b sc_out
 sc_0x50E6:
-			mov r4, #0x50E6
-			mov r5, #0x5AE6
+			mov r1, #0x50E6
+			mov r2, #0x5AE6
 			b sc_out
 sc_0x50E7:
-			mov r4, #0x50E7
-			mov r5, #0x5AE7
+			mov r1, #0x50E7
+			mov r2, #0x5AE7
 			b sc_out
 sc_0x50E8:
-			mov r4, #0x50E8
-			mov r5, #0x5AE8
+			mov r1, #0x50E8
+			mov r2, #0x5AE8
 			b sc_out
 sc_0x50E9:
-			mov r4, #0x50E9
-			mov r5, #0x5AE9
+			mov r1, #0x50E9
+			mov r2, #0x5AE9
 			b sc_out
 sc_0x50EA:
-			mov r4, #0x50EA
-			mov r5, #0x5AEA
+			mov r1, #0x50EA
+			mov r2, #0x5AEA
 			b sc_out
 sc_0x50EB:
-			mov r4, #0x50EB
-			mov r5, #0x5AEB
+			mov r1, #0x50EB
+			mov r2, #0x5AEB
 			b sc_out
 sc_0x50EC:
-			mov r4, #0x50EC
-			mov r5, #0x5AEC
+			mov r1, #0x50EC
+			mov r2, #0x5AEC
 			b sc_out
 sc_0x50ED:
-			mov r4, #0x50ED
-			mov r5, #0x5AED
+			mov r1, #0x50ED
+			mov r2, #0x5AED
 			b sc_out
 sc_0x50EE:
-			mov r4, #0x50EE
-			mov r5, #0x5AEE
+			mov r1, #0x50EE
+			mov r2, #0x5AEE
 			b sc_out
 sc_0x50EF:
-			mov r4, #0x50EF
-			mov r5, #0x5AEF
+			mov r1, #0x50EF
+			mov r2, #0x5AEF
 			b sc_out
 sc_0x50F0:
-			mov r4, #0x50F0
-			mov r5, #0x5AF0
+			mov r1, #0x50F0
+			mov r2, #0x5AF0
 			b sc_out
 sc_0x50F1:
-			mov r4, #0x50F1
-			mov r5, #0x5AF1
+			mov r1, #0x50F1
+			mov r2, #0x5AF1
 			b sc_out
 sc_0x50F2:
-			mov r4, #0x50F2
-			mov r5, #0x5AF2
+			mov r1, #0x50F2
+			mov r2, #0x5AF2
 			b sc_out
 sc_0x50F3:
-			mov r4, #0x50F3
-			mov r5, #0x5AF3
+			mov r1, #0x50F3
+			mov r2, #0x5AF3
 			b sc_out
 sc_0x50F4:
-			mov r4, #0x50F4
-			mov r5, #0x5AF4
+			mov r1, #0x50F4
+			mov r2, #0x5AF4
 			b sc_out
 sc_0x50F5:
-			mov r4, #0x50F5
-			mov r5, #0x5AF5
+			mov r1, #0x50F5
+			mov r2, #0x5AF5
 			b sc_out
 sc_0x50F6:
-			mov r4, #0x50F6
-			mov r5, #0x5AF6
+			mov r1, #0x50F6
+			mov r2, #0x5AF6
 			b sc_out
 sc_0x50F7:
-			mov r4, #0x50F7
-			mov r5, #0x5AF7
+			mov r1, #0x50F7
+			mov r2, #0x5AF7
 			b sc_out
 sc_0x50F8:
-			mov r4, #0x50F8
-			mov r5, #0x5AF8
+			mov r1, #0x50F8
+			mov r2, #0x5AF8
 			b sc_out
 sc_0x50F9:
-			mov r4, #0x50F9
-			mov r5, #0x5AF9
+			mov r1, #0x50F9
+			mov r2, #0x5AF9
 			b sc_out
 sc_0x50FA:
-			mov r4, #0x50FA
-			mov r5, #0x5AFA
+			mov r1, #0x50FA
+			mov r2, #0x5AFA
 			b sc_out
 sc_0x50FB:
-			mov r4, #0x50FB
-			mov r5, #0x5AFB
+			mov r1, #0x50FB
+			mov r2, #0x5AFB
 			b sc_out
 sc_0x50FC:
-			mov r4, #0x50FC
-			mov r5, #0x5AFC
+			mov r1, #0x50FC
+			mov r2, #0x5AFC
 			b sc_out
 sc_0x50FD:
-			mov r4, #0x50FD
-			mov r5, #0x5AFD
+			mov r1, #0x50FD
+			mov r2, #0x5AFD
 			b sc_out
 sc_0x50FE:
-			mov r4, #0x50FE
-			mov r5, #0x5AFE
+			mov r1, #0x50FE
+			mov r2, #0x5AFE
 			b sc_out
 sc_0x50FF:
-			mov r4, #0x50FF
-			mov r5, #0x5AFF
+			mov r1, #0x50FF
+			mov r2, #0x5AFF
 			b sc_out
 sc_0x51E0:
-			mov r4, #0x51E0
-			mov r5, #0x5AE0
+			mov r1, #0x51E0
+			mov r2, #0x5AE0
 			b sc_out
 sc_0x51E1:
-			mov r4, #0x51E1
-			mov r5, #0x5AE1
+			mov r1, #0x51E1
+			mov r2, #0x5AE1
 			b sc_out
 sc_0x51E2:
-			mov r4, #0x51E2
-			mov r5, #0x5AE2
+			mov r1, #0x51E2
+			mov r2, #0x5AE2
 			b sc_out
 sc_0x51E3:
-			mov r4, #0x51E3
-			mov r5, #0x5AE3
+			mov r1, #0x51E3
+			mov r2, #0x5AE3
 			b sc_out
 sc_0x51E4:
-			mov r4, #0x51E4
-			mov r5, #0x5AE4
+			mov r1, #0x51E4
+			mov r2, #0x5AE4
 			b sc_out
 sc_0x51E5:
-			mov r4, #0x51E5
-			mov r5, #0x5AE5
+			mov r1, #0x51E5
+			mov r2, #0x5AE5
 			b sc_out
 sc_0x51E6:
-			mov r4, #0x51E6
-			mov r5, #0x5AE6
+			mov r1, #0x51E6
+			mov r2, #0x5AE6
 			b sc_out
 sc_0x51E7:
-			mov r4, #0x51E7
-			mov r5, #0x5AE7
+			mov r1, #0x51E7
+			mov r2, #0x5AE7
 			b sc_out
 sc_0x51E8:
-			mov r4, #0x51E8
-			mov r5, #0x5AE8
+			mov r1, #0x51E8
+			mov r2, #0x5AE8
 			b sc_out
 sc_0x51E9:
-			mov r4, #0x51E9
-			mov r5, #0x5AE9
+			mov r1, #0x51E9
+			mov r2, #0x5AE9
 			b sc_out
 sc_0x51EA:
-			mov r4, #0x51EA
-			mov r5, #0x5AEA
+			mov r1, #0x51EA
+			mov r2, #0x5AEA
 			b sc_out
 sc_0x51EB:
-			mov r4, #0x51EB
-			mov r5, #0x5AEB
+			mov r1, #0x51EB
+			mov r2, #0x5AEB
 			b sc_out
 sc_0x51EC:
-			mov r4, #0x51EC
-			mov r5, #0x5AEC
+			mov r1, #0x51EC
+			mov r2, #0x5AEC
 			b sc_out
 sc_0x51ED:
-			mov r4, #0x51ED
-			mov r5, #0x5AED
+			mov r1, #0x51ED
+			mov r2, #0x5AED
 			b sc_out
 sc_0x51EE:
-			mov r4, #0x51EE
-			mov r5, #0x5AEE
+			mov r1, #0x51EE
+			mov r2, #0x5AEE
 			b sc_out
 sc_0x51EF:
-			mov r4, #0x51EF
-			mov r5, #0x5AEF
+			mov r1, #0x51EF
+			mov r2, #0x5AEF
 			b sc_out
 sc_0x51F0:
-			mov r4, #0x51F0
-			mov r5, #0x5AF0
+			mov r1, #0x51F0
+			mov r2, #0x5AF0
 			b sc_out
 sc_0x51F1:
-			mov r4, #0x51F1
-			mov r5, #0x5AF1
+			mov r1, #0x51F1
+			mov r2, #0x5AF1
 			b sc_out
 sc_0x51F2:
-			mov r4, #0x51F2
-			mov r5, #0x5AF2
+			mov r1, #0x51F2
+			mov r2, #0x5AF2
 			b sc_out
 sc_0x51F3:
-			mov r4, #0x51F3
-			mov r5, #0x5AF3
+			mov r1, #0x51F3
+			mov r2, #0x5AF3
 			b sc_out
 sc_0x51F4:
-			mov r4, #0x51F4
-			mov r5, #0x5AF4
+			mov r1, #0x51F4
+			mov r2, #0x5AF4
 			b sc_out
 sc_0x51F5:
-			mov r4, #0x51F5
-			mov r5, #0x5AF5
+			mov r1, #0x51F5
+			mov r2, #0x5AF5
 			b sc_out
 sc_0x51F6:
-			mov r4, #0x51F6
-			mov r5, #0x5AF6
+			mov r1, #0x51F6
+			mov r2, #0x5AF6
 			b sc_out
 sc_0x51F7:
-			mov r4, #0x51F7
-			mov r5, #0x5AF7
+			mov r1, #0x51F7
+			mov r2, #0x5AF7
 			b sc_out
 sc_0x51F8:
-			mov r4, #0x51F8
-			mov r5, #0x5AF8
+			mov r1, #0x51F8
+			mov r2, #0x5AF8
 			b sc_out
 sc_0x51F9:
-			mov r4, #0x51F9
-			mov r5, #0x5AF9
+			mov r1, #0x51F9
+			mov r2, #0x5AF9
 			b sc_out
 sc_0x51FA:
-			mov r4, #0x51FA
-			mov r5, #0x5AFA
+			mov r1, #0x51FA
+			mov r2, #0x5AFA
 			b sc_out
 sc_0x51FB:
-			mov r4, #0x51FB
-			mov r5, #0x5AFB
+			mov r1, #0x51FB
+			mov r2, #0x5AFB
 			b sc_out
 sc_0x51FC:
-			mov r4, #0x51FC
-			mov r5, #0x5AFC
+			mov r1, #0x51FC
+			mov r2, #0x5AFC
 			b sc_out
 sc_0x51FD:
-			mov r4, #0x51FD
-			mov r5, #0x5AFD
+			mov r1, #0x51FD
+			mov r2, #0x5AFD
 			b sc_out
 sc_0x51FE:
-			mov r4, #0x51FE
-			mov r5, #0x5AFE
+			mov r1, #0x51FE
+			mov r2, #0x5AFE
 			b sc_out
 sc_0x51FF:
-			mov r4, #0x51FF
-			mov r5, #0x5AFF
+			mov r1, #0x51FF
+			mov r2, #0x5AFF
 			b sc_out
 sc_0x52E0:
-			mov r4, #0x52E0
-			mov r5, #0x5AE0
+			mov r1, #0x52E0
+			mov r2, #0x5AE0
 			b sc_out
 sc_0x52E1:
-			mov r4, #0x52E1
-			mov r5, #0x5AE1
+			mov r1, #0x52E1
+			mov r2, #0x5AE1
 			b sc_out
 sc_0x52E2:
-			mov r4, #0x52E2
-			mov r5, #0x5AE2
+			mov r1, #0x52E2
+			mov r2, #0x5AE2
 			b sc_out
 sc_0x52E3:
-			mov r4, #0x52E3
-			mov r5, #0x5AE3
+			mov r1, #0x52E3
+			mov r2, #0x5AE3
 			b sc_out
 sc_0x52E4:
-			mov r4, #0x52E4
-			mov r5, #0x5AE4
+			mov r1, #0x52E4
+			mov r2, #0x5AE4
 			b sc_out
 sc_0x52E5:
-			mov r4, #0x52E5
-			mov r5, #0x5AE5
+			mov r1, #0x52E5
+			mov r2, #0x5AE5
 			b sc_out
 sc_0x52E6:
-			mov r4, #0x52E6
-			mov r5, #0x5AE6
+			mov r1, #0x52E6
+			mov r2, #0x5AE6
 			b sc_out
 sc_0x52E7:
-			mov r4, #0x52E7
-			mov r5, #0x5AE7
+			mov r1, #0x52E7
+			mov r2, #0x5AE7
 			b sc_out
 sc_0x52E8:
-			mov r4, #0x52E8
-			mov r5, #0x5AE8
+			mov r1, #0x52E8
+			mov r2, #0x5AE8
 			b sc_out
 sc_0x52E9:
-			mov r4, #0x52E9
-			mov r5, #0x5AE9
+			mov r1, #0x52E9
+			mov r2, #0x5AE9
 			b sc_out
 sc_0x52EA:
-			mov r4, #0x52EA
-			mov r5, #0x5AEA
+			mov r1, #0x52EA
+			mov r2, #0x5AEA
 			b sc_out
 sc_0x52EB:
-			mov r4, #0x52EB
-			mov r5, #0x5AEB
+			mov r1, #0x52EB
+			mov r2, #0x5AEB
 			b sc_out
 sc_0x52EC:
-			mov r4, #0x52EC
-			mov r5, #0x5AEC
+			mov r1, #0x52EC
+			mov r2, #0x5AEC
 			b sc_out
 sc_0x52ED:
-			mov r4, #0x52ED
-			mov r5, #0x5AED
+			mov r1, #0x52ED
+			mov r2, #0x5AED
 			b sc_out
 sc_0x52EE:
-			mov r4, #0x52EE
-			mov r5, #0x5AEE
+			mov r1, #0x52EE
+			mov r2, #0x5AEE
 			b sc_out
 sc_0x52EF:
-			mov r4, #0x52EF
-			mov r5, #0x5AEF
+			mov r1, #0x52EF
+			mov r2, #0x5AEF
 			b sc_out
 sc_0x52F0:
-			mov r4, #0x52F0
-			mov r5, #0x5AF0
+			mov r1, #0x52F0
+			mov r2, #0x5AF0
 			b sc_out
 sc_0x52F1:
-			mov r4, #0x52F1
-			mov r5, #0x5AF1
+			mov r1, #0x52F1
+			mov r2, #0x5AF1
 			b sc_out
 sc_0x52F2:
-			mov r4, #0x52F2
-			mov r5, #0x5AF2
+			mov r1, #0x52F2
+			mov r2, #0x5AF2
 			b sc_out
 sc_0x52F3:
-			mov r4, #0x52F3
-			mov r5, #0x5AF3
+			mov r1, #0x52F3
+			mov r2, #0x5AF3
 			b sc_out
 sc_0x52F4:
-			mov r4, #0x52F4
-			mov r5, #0x5AF4
+			mov r1, #0x52F4
+			mov r2, #0x5AF4
 			b sc_out
 sc_0x52F5:
-			mov r4, #0x52F5
-			mov r5, #0x5AF5
+			mov r1, #0x52F5
+			mov r2, #0x5AF5
 			b sc_out
 sc_0x52F6:
-			mov r4, #0x52F6
-			mov r5, #0x5AF6
+			mov r1, #0x52F6
+			mov r2, #0x5AF6
 			b sc_out
 sc_0x52F7:
-			mov r4, #0x52F7
-			mov r5, #0x5AF7
+			mov r1, #0x52F7
+			mov r2, #0x5AF7
 			b sc_out
 sc_0x52F8:
-			mov r4, #0x52F8
-			mov r5, #0x5AF8
+			mov r1, #0x52F8
+			mov r2, #0x5AF8
 			b sc_out
 sc_0x52F9:
-			mov r4, #0x52F9
-			mov r5, #0x5AF9
+			mov r1, #0x52F9
+			mov r2, #0x5AF9
 			b sc_out
 sc_0x52FA:
-			mov r4, #0x52FA
-			mov r5, #0x5AFA
+			mov r1, #0x52FA
+			mov r2, #0x5AFA
 			b sc_out
 sc_0x52FB:
-			mov r4, #0x52FB
-			mov r5, #0x5AFB
+			mov r1, #0x52FB
+			mov r2, #0x5AFB
 			b sc_out
 sc_0x52FC:
-			mov r4, #0x52FC
-			mov r5, #0x5AFC
+			mov r1, #0x52FC
+			mov r2, #0x5AFC
 			b sc_out
 sc_0x52FD:
-			mov r4, #0x52FD
-			mov r5, #0x5AFD
+			mov r1, #0x52FD
+			mov r2, #0x5AFD
 			b sc_out
 sc_0x52FE:
-			mov r4, #0x52FE
-			mov r5, #0x5AFE
+			mov r1, #0x52FE
+			mov r2, #0x5AFE
 			b sc_out
 sc_0x52FF:
-			mov r4, #0x52FF
-			mov r5, #0x5AFF
+			mov r1, #0x52FF
+			mov r2, #0x5AFF
 			b sc_out
 sc_0x53E0:
-			mov r4, #0x53E0
-			mov r5, #0x5AE0
+			mov r1, #0x53E0
+			mov r2, #0x5AE0
 			b sc_out
 sc_0x53E1:
-			mov r4, #0x53E1
-			mov r5, #0x5AE1
+			mov r1, #0x53E1
+			mov r2, #0x5AE1
 			b sc_out
 sc_0x53E2:
-			mov r4, #0x53E2
-			mov r5, #0x5AE2
+			mov r1, #0x53E2
+			mov r2, #0x5AE2
 			b sc_out
 sc_0x53E3:
-			mov r4, #0x53E3
-			mov r5, #0x5AE3
+			mov r1, #0x53E3
+			mov r2, #0x5AE3
 			b sc_out
 sc_0x53E4:
-			mov r4, #0x53E4
-			mov r5, #0x5AE4
+			mov r1, #0x53E4
+			mov r2, #0x5AE4
 			b sc_out
 sc_0x53E5:
-			mov r4, #0x53E5
-			mov r5, #0x5AE5
+			mov r1, #0x53E5
+			mov r2, #0x5AE5
 			b sc_out
 sc_0x53E6:
-			mov r4, #0x53E6
-			mov r5, #0x5AE6
+			mov r1, #0x53E6
+			mov r2, #0x5AE6
 			b sc_out
 sc_0x53E7:
-			mov r4, #0x53E7
-			mov r5, #0x5AE7
+			mov r1, #0x53E7
+			mov r2, #0x5AE7
 			b sc_out
 sc_0x53E8:
-			mov r4, #0x53E8
-			mov r5, #0x5AE8
+			mov r1, #0x53E8
+			mov r2, #0x5AE8
 			b sc_out
 sc_0x53E9:
-			mov r4, #0x53E9
-			mov r5, #0x5AE9
+			mov r1, #0x53E9
+			mov r2, #0x5AE9
 			b sc_out
 sc_0x53EA:
-			mov r4, #0x53EA
-			mov r5, #0x5AEA
+			mov r1, #0x53EA
+			mov r2, #0x5AEA
 			b sc_out
 sc_0x53EB:
-			mov r4, #0x53EB
-			mov r5, #0x5AEB
+			mov r1, #0x53EB
+			mov r2, #0x5AEB
 			b sc_out
 sc_0x53EC:
-			mov r4, #0x53EC
-			mov r5, #0x5AEC
+			mov r1, #0x53EC
+			mov r2, #0x5AEC
 			b sc_out
 sc_0x53ED:
-			mov r4, #0x53ED
-			mov r5, #0x5AED
+			mov r1, #0x53ED
+			mov r2, #0x5AED
 			b sc_out
 sc_0x53EE:
-			mov r4, #0x53EE
-			mov r5, #0x5AEE
+			mov r1, #0x53EE
+			mov r2, #0x5AEE
 			b sc_out
 sc_0x53EF:
-			mov r4, #0x53EF
-			mov r5, #0x5AEF
+			mov r1, #0x53EF
+			mov r2, #0x5AEF
 			b sc_out
 sc_0x53F0:
-			mov r4, #0x53F0
-			mov r5, #0x5AF0
+			mov r1, #0x53F0
+			mov r2, #0x5AF0
 			b sc_out
 sc_0x53F1:
-			mov r4, #0x53F1
-			mov r5, #0x5AF1
+			mov r1, #0x53F1
+			mov r2, #0x5AF1
 			b sc_out
 sc_0x53F2:
-			mov r4, #0x53F2
-			mov r5, #0x5AF2
+			mov r1, #0x53F2
+			mov r2, #0x5AF2
 			b sc_out
 sc_0x53F3:
-			mov r4, #0x53F3
-			mov r5, #0x5AF3
+			mov r1, #0x53F3
+			mov r2, #0x5AF3
 			b sc_out
 sc_0x53F4:
-			mov r4, #0x53F4
-			mov r5, #0x5AF4
+			mov r1, #0x53F4
+			mov r2, #0x5AF4
 			b sc_out
 sc_0x53F5:
-			mov r4, #0x53F5
-			mov r5, #0x5AF5
+			mov r1, #0x53F5
+			mov r2, #0x5AF5
 			b sc_out
 sc_0x53F6:
-			mov r4, #0x53F6
-			mov r5, #0x5AF6
+			mov r1, #0x53F6
+			mov r2, #0x5AF6
 			b sc_out
 sc_0x53F7:
-			mov r4, #0x53F7
-			mov r5, #0x5AF7
+			mov r1, #0x53F7
+			mov r2, #0x5AF7
 			b sc_out
 sc_0x53F8:
-			mov r4, #0x53F8
-			mov r5, #0x5AF8
+			mov r1, #0x53F8
+			mov r2, #0x5AF8
 			b sc_out
 sc_0x53F9:
-			mov r4, #0x53F9
-			mov r5, #0x5AF9
+			mov r1, #0x53F9
+			mov r2, #0x5AF9
 			b sc_out
 sc_0x53FA:
-			mov r4, #0x53FA
-			mov r5, #0x5AFA
+			mov r1, #0x53FA
+			mov r2, #0x5AFA
 			b sc_out
 sc_0x53FB:
-			mov r4, #0x53FB
-			mov r5, #0x5AFB
+			mov r1, #0x53FB
+			mov r2, #0x5AFB
 			b sc_out
 sc_0x53FC:
-			mov r4, #0x53FC
-			mov r5, #0x5AFC
+			mov r1, #0x53FC
+			mov r2, #0x5AFC
 			b sc_out
 sc_0x53FD:
-			mov r4, #0x53FD
-			mov r5, #0x5AFD
+			mov r1, #0x53FD
+			mov r2, #0x5AFD
 			b sc_out
 sc_0x53FE:
-			mov r4, #0x53FE
-			mov r5, #0x5AFE
+			mov r1, #0x53FE
+			mov r2, #0x5AFE
 			b sc_out
 sc_0x53FF:
-			mov r4, #0x53FF
-			mov r5, #0x5AFF
+			mov r1, #0x53FF
+			mov r2, #0x5AFF
 			b sc_out
 sc_0x54E0:
-			mov r4, #0x54E0
-			mov r5, #0x5AE0
+			mov r1, #0x54E0
+			mov r2, #0x5AE0
 			b sc_out
 sc_0x54E1:
-			mov r4, #0x54E1
-			mov r5, #0x5AE1
+			mov r1, #0x54E1
+			mov r2, #0x5AE1
 			b sc_out
 sc_0x54E2:
-			mov r4, #0x54E2
-			mov r5, #0x5AE2
+			mov r1, #0x54E2
+			mov r2, #0x5AE2
 			b sc_out
 sc_0x54E3:
-			mov r4, #0x54E3
-			mov r5, #0x5AE3
+			mov r1, #0x54E3
+			mov r2, #0x5AE3
 			b sc_out
 sc_0x54E4:
-			mov r4, #0x54E4
-			mov r5, #0x5AE4
+			mov r1, #0x54E4
+			mov r2, #0x5AE4
 			b sc_out
 sc_0x54E5:
-			mov r4, #0x54E5
-			mov r5, #0x5AE5
+			mov r1, #0x54E5
+			mov r2, #0x5AE5
 			b sc_out
 sc_0x54E6:
-			mov r4, #0x54E6
-			mov r5, #0x5AE6
+			mov r1, #0x54E6
+			mov r2, #0x5AE6
 			b sc_out
 sc_0x54E7:
-			mov r4, #0x54E7
-			mov r5, #0x5AE7
+			mov r1, #0x54E7
+			mov r2, #0x5AE7
 			b sc_out
 sc_0x54E8:
-			mov r4, #0x54E8
-			mov r5, #0x5AE8
+			mov r1, #0x54E8
+			mov r2, #0x5AE8
 			b sc_out
 sc_0x54E9:
-			mov r4, #0x54E9
-			mov r5, #0x5AE9
+			mov r1, #0x54E9
+			mov r2, #0x5AE9
 			b sc_out
 sc_0x54EA:
-			mov r4, #0x54EA
-			mov r5, #0x5AEA
+			mov r1, #0x54EA
+			mov r2, #0x5AEA
 			b sc_out
 sc_0x54EB:
-			mov r4, #0x54EB
-			mov r5, #0x5AEB
+			mov r1, #0x54EB
+			mov r2, #0x5AEB
 			b sc_out
 sc_0x54EC:
-			mov r4, #0x54EC
-			mov r5, #0x5AEC
+			mov r1, #0x54EC
+			mov r2, #0x5AEC
 			b sc_out
 sc_0x54ED:
-			mov r4, #0x54ED
-			mov r5, #0x5AED
+			mov r1, #0x54ED
+			mov r2, #0x5AED
 			b sc_out
 sc_0x54EE:
-			mov r4, #0x54EE
-			mov r5, #0x5AEE
+			mov r1, #0x54EE
+			mov r2, #0x5AEE
 			b sc_out
 sc_0x54EF:
-			mov r4, #0x54EF
-			mov r5, #0x5AEF
+			mov r1, #0x54EF
+			mov r2, #0x5AEF
 			b sc_out
 sc_0x54F0:
-			mov r4, #0x54F0
-			mov r5, #0x5AF0
+			mov r1, #0x54F0
+			mov r2, #0x5AF0
 			b sc_out
 sc_0x54F1:
-			mov r4, #0x54F1
-			mov r5, #0x5AF1
+			mov r1, #0x54F1
+			mov r2, #0x5AF1
 			b sc_out
 sc_0x54F2:
-			mov r4, #0x54F2
-			mov r5, #0x5AF2
+			mov r1, #0x54F2
+			mov r2, #0x5AF2
 			b sc_out
 sc_0x54F3:
-			mov r4, #0x54F3
-			mov r5, #0x5AF3
+			mov r1, #0x54F3
+			mov r2, #0x5AF3
 			b sc_out
 sc_0x54F4:
-			mov r4, #0x54F4
-			mov r5, #0x5AF4
+			mov r1, #0x54F4
+			mov r2, #0x5AF4
 			b sc_out
 sc_0x54F5:
-			mov r4, #0x54F5
-			mov r5, #0x5AF5
+			mov r1, #0x54F5
+			mov r2, #0x5AF5
 			b sc_out
 sc_0x54F6:
-			mov r4, #0x54F6
-			mov r5, #0x5AF6
+			mov r1, #0x54F6
+			mov r2, #0x5AF6
 			b sc_out
 sc_0x54F7:
-			mov r4, #0x54F7
-			mov r5, #0x5AF7
+			mov r1, #0x54F7
+			mov r2, #0x5AF7
 			b sc_out
 sc_0x54F8:
-			mov r4, #0x54F8
-			mov r5, #0x5AF8
+			mov r1, #0x54F8
+			mov r2, #0x5AF8
 			b sc_out
 sc_0x54F9:
-			mov r4, #0x54F9
-			mov r5, #0x5AF9
+			mov r1, #0x54F9
+			mov r2, #0x5AF9
 			b sc_out
 sc_0x54FA:
-			mov r4, #0x54FA
-			mov r5, #0x5AFA
+			mov r1, #0x54FA
+			mov r2, #0x5AFA
 			b sc_out
 sc_0x54FB:
-			mov r4, #0x54FB
-			mov r5, #0x5AFB
+			mov r1, #0x54FB
+			mov r2, #0x5AFB
 			b sc_out
 sc_0x54FC:
-			mov r4, #0x54FC
-			mov r5, #0x5AFC
+			mov r1, #0x54FC
+			mov r2, #0x5AFC
 			b sc_out
 sc_0x54FD:
-			mov r4, #0x54FD
-			mov r5, #0x5AFD
+			mov r1, #0x54FD
+			mov r2, #0x5AFD
 			b sc_out
 sc_0x54FE:
-			mov r4, #0x54FE
-			mov r5, #0x5AFE
+			mov r1, #0x54FE
+			mov r2, #0x5AFE
 			b sc_out
 sc_0x54FF:
-			mov r4, #0x54FF
-			mov r5, #0x5AFF
+			mov r1, #0x54FF
+			mov r2, #0x5AFF
 			b sc_out
 sc_0x55E0:
-			mov r4, #0x55E0
-			mov r5, #0x5AE0
+			mov r1, #0x55E0
+			mov r2, #0x5AE0
 			b sc_out
 sc_0x55E1:
-			mov r4, #0x55E1
-			mov r5, #0x5AE1
+			mov r1, #0x55E1
+			mov r2, #0x5AE1
 			b sc_out
 sc_0x55E2:
-			mov r4, #0x55E2
-			mov r5, #0x5AE2
+			mov r1, #0x55E2
+			mov r2, #0x5AE2
 			b sc_out
 sc_0x55E3:
-			mov r4, #0x55E3
-			mov r5, #0x5AE3
+			mov r1, #0x55E3
+			mov r2, #0x5AE3
 			b sc_out
 sc_0x55E4:
-			mov r4, #0x55E4
-			mov r5, #0x5AE4
+			mov r1, #0x55E4
+			mov r2, #0x5AE4
 			b sc_out
 sc_0x55E5:
-			mov r4, #0x55E5
-			mov r5, #0x5AE5
+			mov r1, #0x55E5
+			mov r2, #0x5AE5
 			b sc_out
 sc_0x55E6:
-			mov r4, #0x55E6
-			mov r5, #0x5AE6
+			mov r1, #0x55E6
+			mov r2, #0x5AE6
 			b sc_out
 sc_0x55E7:
-			mov r4, #0x55E7
-			mov r5, #0x5AE7
+			mov r1, #0x55E7
+			mov r2, #0x5AE7
 			b sc_out
 sc_0x55E8:
-			mov r4, #0x55E8
-			mov r5, #0x5AE8
+			mov r1, #0x55E8
+			mov r2, #0x5AE8
 			b sc_out
 sc_0x55E9:
-			mov r4, #0x55E9
-			mov r5, #0x5AE9
+			mov r1, #0x55E9
+			mov r2, #0x5AE9
 			b sc_out
 sc_0x55EA:
-			mov r4, #0x55EA
-			mov r5, #0x5AEA
+			mov r1, #0x55EA
+			mov r2, #0x5AEA
 			b sc_out
 sc_0x55EB:
-			mov r4, #0x55EB
-			mov r5, #0x5AEB
+			mov r1, #0x55EB
+			mov r2, #0x5AEB
 			b sc_out
 sc_0x55EC:
-			mov r4, #0x55EC
-			mov r5, #0x5AEC
+			mov r1, #0x55EC
+			mov r2, #0x5AEC
 			b sc_out
 sc_0x55ED:
-			mov r4, #0x55ED
-			mov r5, #0x5AED
+			mov r1, #0x55ED
+			mov r2, #0x5AED
 			b sc_out
 sc_0x55EE:
-			mov r4, #0x55EE
-			mov r5, #0x5AEE
+			mov r1, #0x55EE
+			mov r2, #0x5AEE
 			b sc_out
 sc_0x55EF:
-			mov r4, #0x55EF
-			mov r5, #0x5AEF
+			mov r1, #0x55EF
+			mov r2, #0x5AEF
 			b sc_out
 sc_0x55F0:
-			mov r4, #0x55F0
-			mov r5, #0x5AF0
+			mov r1, #0x55F0
+			mov r2, #0x5AF0
 			b sc_out
 sc_0x55F1:
-			mov r4, #0x55F1
-			mov r5, #0x5AF1
+			mov r1, #0x55F1
+			mov r2, #0x5AF1
 			b sc_out
 sc_0x55F2:
-			mov r4, #0x55F2
-			mov r5, #0x5AF2
+			mov r1, #0x55F2
+			mov r2, #0x5AF2
 			b sc_out
 sc_0x55F3:
-			mov r4, #0x55F3
-			mov r5, #0x5AF3
+			mov r1, #0x55F3
+			mov r2, #0x5AF3
 			b sc_out
 sc_0x55F4:
-			mov r4, #0x55F4
-			mov r5, #0x5AF4
+			mov r1, #0x55F4
+			mov r2, #0x5AF4
 			b sc_out
 sc_0x55F5:
-			mov r4, #0x55F5
-			mov r5, #0x5AF5
+			mov r1, #0x55F5
+			mov r2, #0x5AF5
 			b sc_out
 sc_0x55F6:
-			mov r4, #0x55F6
-			mov r5, #0x5AF6
+			mov r1, #0x55F6
+			mov r2, #0x5AF6
 			b sc_out
 sc_0x55F7:
-			mov r4, #0x55F7
-			mov r5, #0x5AF7
+			mov r1, #0x55F7
+			mov r2, #0x5AF7
 			b sc_out
 sc_0x55F8:
-			mov r4, #0x55F8
-			mov r5, #0x5AF8
+			mov r1, #0x55F8
+			mov r2, #0x5AF8
 			b sc_out
 sc_0x55F9:
-			mov r4, #0x55F9
-			mov r5, #0x5AF9
+			mov r1, #0x55F9
+			mov r2, #0x5AF9
 			b sc_out
 sc_0x55FA:
-			mov r4, #0x55FA
-			mov r5, #0x5AFA
+			mov r1, #0x55FA
+			mov r2, #0x5AFA
 			b sc_out
 sc_0x55FB:
-			mov r4, #0x55FB
-			mov r5, #0x5AFB
+			mov r1, #0x55FB
+			mov r2, #0x5AFB
 			b sc_out
 sc_0x55FC:
-			mov r4, #0x55FC
-			mov r5, #0x5AFC
+			mov r1, #0x55FC
+			mov r2, #0x5AFC
 			b sc_out
 sc_0x55FD:
-			mov r4, #0x55FD
-			mov r5, #0x5AFD
+			mov r1, #0x55FD
+			mov r2, #0x5AFD
 			b sc_out
 sc_0x55FE:
-			mov r4, #0x55FE
-			mov r5, #0x5AFE
+			mov r1, #0x55FE
+			mov r2, #0x5AFE
 			b sc_out
 sc_0x55FF:
-			mov r4, #0x55FF
-			mov r5, #0x5AFF
+			mov r1, #0x55FF
+			mov r2, #0x5AFF
 			b sc_out
 sc_0x56E0:
-			mov r4, #0x56E0
-			mov r5, #0x5AE0
+			mov r1, #0x56E0
+			mov r2, #0x5AE0
 			b sc_out
 sc_0x56E1:
-			mov r4, #0x56E1
-			mov r5, #0x5AE1
+			mov r1, #0x56E1
+			mov r2, #0x5AE1
 			b sc_out
 sc_0x56E2:
-			mov r4, #0x56E2
-			mov r5, #0x5AE2
+			mov r1, #0x56E2
+			mov r2, #0x5AE2
 			b sc_out
 sc_0x56E3:
-			mov r4, #0x56E3
-			mov r5, #0x5AE3
+			mov r1, #0x56E3
+			mov r2, #0x5AE3
 			b sc_out
 sc_0x56E4:
-			mov r4, #0x56E4
-			mov r5, #0x5AE4
+			mov r1, #0x56E4
+			mov r2, #0x5AE4
 			b sc_out
 sc_0x56E5:
-			mov r4, #0x56E5
-			mov r5, #0x5AE5
+			mov r1, #0x56E5
+			mov r2, #0x5AE5
 			b sc_out
 sc_0x56E6:
-			mov r4, #0x56E6
-			mov r5, #0x5AE6
+			mov r1, #0x56E6
+			mov r2, #0x5AE6
 			b sc_out
 sc_0x56E7:
-			mov r4, #0x56E7
-			mov r5, #0x5AE7
+			mov r1, #0x56E7
+			mov r2, #0x5AE7
 			b sc_out
 sc_0x56E8:
-			mov r4, #0x56E8
-			mov r5, #0x5AE8
+			mov r1, #0x56E8
+			mov r2, #0x5AE8
 			b sc_out
 sc_0x56E9:
-			mov r4, #0x56E9
-			mov r5, #0x5AE9
+			mov r1, #0x56E9
+			mov r2, #0x5AE9
 			b sc_out
 sc_0x56EA:
-			mov r4, #0x56EA
-			mov r5, #0x5AEA
+			mov r1, #0x56EA
+			mov r2, #0x5AEA
 			b sc_out
 sc_0x56EB:
-			mov r4, #0x56EB
-			mov r5, #0x5AEB
+			mov r1, #0x56EB
+			mov r2, #0x5AEB
 			b sc_out
 sc_0x56EC:
-			mov r4, #0x56EC
-			mov r5, #0x5AEC
+			mov r1, #0x56EC
+			mov r2, #0x5AEC
 			b sc_out
 sc_0x56ED:
-			mov r4, #0x56ED
-			mov r5, #0x5AED
+			mov r1, #0x56ED
+			mov r2, #0x5AED
 			b sc_out
 sc_0x56EE:
-			mov r4, #0x56EE
-			mov r5, #0x5AEE
+			mov r1, #0x56EE
+			mov r2, #0x5AEE
 			b sc_out
 sc_0x56EF:
-			mov r4, #0x56EF
-			mov r5, #0x5AEF
+			mov r1, #0x56EF
+			mov r2, #0x5AEF
 			b sc_out
 sc_0x56F0:
-			mov r4, #0x56F0
-			mov r5, #0x5AF0
+			mov r1, #0x56F0
+			mov r2, #0x5AF0
 			b sc_out
 sc_0x56F1:
-			mov r4, #0x56F1
-			mov r5, #0x5AF1
+			mov r1, #0x56F1
+			mov r2, #0x5AF1
 			b sc_out
 sc_0x56F2:
-			mov r4, #0x56F2
-			mov r5, #0x5AF2
+			mov r1, #0x56F2
+			mov r2, #0x5AF2
 			b sc_out
 sc_0x56F3:
-			mov r4, #0x56F3
-			mov r5, #0x5AF3
+			mov r1, #0x56F3
+			mov r2, #0x5AF3
 			b sc_out
 sc_0x56F4:
-			mov r4, #0x56F4
-			mov r5, #0x5AF4
+			mov r1, #0x56F4
+			mov r2, #0x5AF4
 			b sc_out
 sc_0x56F5:
-			mov r4, #0x56F5
-			mov r5, #0x5AF5
+			mov r1, #0x56F5
+			mov r2, #0x5AF5
 			b sc_out
 sc_0x56F6:
-			mov r4, #0x56F6
-			mov r5, #0x5AF6
+			mov r1, #0x56F6
+			mov r2, #0x5AF6
 			b sc_out
 sc_0x56F7:
-			mov r4, #0x56F7
-			mov r5, #0x5AF7
+			mov r1, #0x56F7
+			mov r2, #0x5AF7
 			b sc_out
 sc_0x56F8:
-			mov r4, #0x56F8
-			mov r5, #0x5AF8
+			mov r1, #0x56F8
+			mov r2, #0x5AF8
 			b sc_out
 sc_0x56F9:
-			mov r4, #0x56F9
-			mov r5, #0x5AF9
+			mov r1, #0x56F9
+			mov r2, #0x5AF9
 			b sc_out
 sc_0x56FA:
-			mov r4, #0x56FA
-			mov r5, #0x5AFA
+			mov r1, #0x56FA
+			mov r2, #0x5AFA
 			b sc_out
 sc_0x56FB:
-			mov r4, #0x56FB
-			mov r5, #0x5AFB
+			mov r1, #0x56FB
+			mov r2, #0x5AFB
 			b sc_out
 sc_0x56FC:
-			mov r4, #0x56FC
-			mov r5, #0x5AFC
+			mov r1, #0x56FC
+			mov r2, #0x5AFC
 			b sc_out
 sc_0x56FD:
-			mov r4, #0x56FD
-			mov r5, #0x5AFD
+			mov r1, #0x56FD
+			mov r2, #0x5AFD
 			b sc_out
 sc_0x56FE:
-			mov r4, #0x56FE
-			mov r5, #0x5AFE
+			mov r1, #0x56FE
+			mov r2, #0x5AFE
 			b sc_out
 sc_0x56FF:
-			mov r4, #0x56FF
-			mov r5, #0x5AFF
+			mov r1, #0x56FF
+			mov r2, #0x5AFF
 			b sc_out
 sc_0x57E0:
-			mov r4, #0x57E0
-			mov r5, #0x5AE0
+			mov r1, #0x57E0
+			mov r2, #0x5AE0
 			b sc_out
 sc_0x57E1:
-			mov r4, #0x57E1
-			mov r5, #0x5AE1
+			mov r1, #0x57E1
+			mov r2, #0x5AE1
 			b sc_out
 sc_0x57E2:
-			mov r4, #0x57E2
-			mov r5, #0x5AE2
+			mov r1, #0x57E2
+			mov r2, #0x5AE2
 			b sc_out
 sc_0x57E3:
-			mov r4, #0x57E3
-			mov r5, #0x5AE3
+			mov r1, #0x57E3
+			mov r2, #0x5AE3
 			b sc_out
 sc_0x57E4:
-			mov r4, #0x57E4
-			mov r5, #0x5AE4
+			mov r1, #0x57E4
+			mov r2, #0x5AE4
 			b sc_out
 sc_0x57E5:
-			mov r4, #0x57E5
-			mov r5, #0x5AE5
+			mov r1, #0x57E5
+			mov r2, #0x5AE5
 			b sc_out
 sc_0x57E6:
-			mov r4, #0x57E6
-			mov r5, #0x5AE6
+			mov r1, #0x57E6
+			mov r2, #0x5AE6
 			b sc_out
 sc_0x57E7:
-			mov r4, #0x57E7
-			mov r5, #0x5AE7
+			mov r1, #0x57E7
+			mov r2, #0x5AE7
 			b sc_out
 sc_0x57E8:
-			mov r4, #0x57E8
-			mov r5, #0x5AE8
+			mov r1, #0x57E8
+			mov r2, #0x5AE8
 			b sc_out
 sc_0x57E9:
-			mov r4, #0x57E9
-			mov r5, #0x5AE9
+			mov r1, #0x57E9
+			mov r2, #0x5AE9
 			b sc_out
 sc_0x57EA:
-			mov r4, #0x57EA
-			mov r5, #0x5AEA
+			mov r1, #0x57EA
+			mov r2, #0x5AEA
 			b sc_out
 sc_0x57EB:
-			mov r4, #0x57EB
-			mov r5, #0x5AEB
+			mov r1, #0x57EB
+			mov r2, #0x5AEB
 			b sc_out
 sc_0x57EC:
-			mov r4, #0x57EC
-			mov r5, #0x5AEC
+			mov r1, #0x57EC
+			mov r2, #0x5AEC
 			b sc_out
 sc_0x57ED:
-			mov r4, #0x57ED
-			mov r5, #0x5AED
+			mov r1, #0x57ED
+			mov r2, #0x5AED
 			b sc_out
 sc_0x57EE:
-			mov r4, #0x57EE
-			mov r5, #0x5AEE
+			mov r1, #0x57EE
+			mov r2, #0x5AEE
 			b sc_out
 sc_0x57EF:
-			mov r4, #0x57EF
-			mov r5, #0x5AEF
+			mov r1, #0x57EF
+			mov r2, #0x5AEF
 			b sc_out
 sc_0x57F0:
-			mov r4, #0x57F0
-			mov r5, #0x5AF0
+			mov r1, #0x57F0
+			mov r2, #0x5AF0
 			b sc_out
 sc_0x57F1:
-			mov r4, #0x57F1
-			mov r5, #0x5AF1
+			mov r1, #0x57F1
+			mov r2, #0x5AF1
 			b sc_out
 sc_0x57F2:
-			mov r4, #0x57F2
-			mov r5, #0x5AF2
+			mov r1, #0x57F2
+			mov r2, #0x5AF2
 			b sc_out
 sc_0x57F3:
-			mov r4, #0x57F3
-			mov r5, #0x5AF3
+			mov r1, #0x57F3
+			mov r2, #0x5AF3
 			b sc_out
 sc_0x57F4:
-			mov r4, #0x57F4
-			mov r5, #0x5AF4
+			mov r1, #0x57F4
+			mov r2, #0x5AF4
 			b sc_out
 sc_0x57F5:
-			mov r4, #0x57F5
-			mov r5, #0x5AF5
+			mov r1, #0x57F5
+			mov r2, #0x5AF5
 			b sc_out
 sc_0x57F6:
-			mov r4, #0x57F6
-			mov r5, #0x5AF6
+			mov r1, #0x57F6
+			mov r2, #0x5AF6
 			b sc_out
 sc_0x57F7:
-			mov r4, #0x57F7
-			mov r5, #0x5AF7
+			mov r1, #0x57F7
+			mov r2, #0x5AF7
 			b sc_out
 sc_0x57F8:
-			mov r4, #0x57F8
-			mov r5, #0x5AF8
+			mov r1, #0x57F8
+			mov r2, #0x5AF8
 			b sc_out
 sc_0x57F9:
-			mov r4, #0x57F9
-			mov r5, #0x5AF9
+			mov r1, #0x57F9
+			mov r2, #0x5AF9
 			b sc_out
 sc_0x57FA:
-			mov r4, #0x57FA
-			mov r5, #0x5AFA
+			mov r1, #0x57FA
+			mov r2, #0x5AFA
 			b sc_out
 sc_0x57FB:
-			mov r4, #0x57FB
-			mov r5, #0x5AFB
+			mov r1, #0x57FB
+			mov r2, #0x5AFB
 			b sc_out
 sc_0x57FC:
-			mov r4, #0x57FC
-			mov r5, #0x5AFC
+			mov r1, #0x57FC
+			mov r2, #0x5AFC
 			b sc_out
 sc_0x57FD:
-			mov r4, #0x57FD
-			mov r5, #0x5AFD
+			mov r1, #0x57FD
+			mov r2, #0x5AFD
 			b sc_out
 sc_0x57FE:
-			mov r4, #0x57FE
-			mov r5, #0x5AFE
+			mov r1, #0x57FE
+			mov r2, #0x5AFE
 			b sc_out
 sc_0x57FF:
-			mov r4, #0x57FF
-			mov r5, #0x5AFF
+			mov r1, #0x57FF
+			mov r2, #0x5AFF
 			b sc_out
 
 
 sc_border_int_hi:
-			ldr r7, [r8]
-			cmp r7, #1
-			beq sc_border
-sc_border2:
-			ldr r7, [r11]
-			cmp r7, #1
-			beq sc_border2
-
-			mov r7, #1
-			str r7, [r9]
-			str r7, [r8]
-			mov r7, #1
-			strb r7, [r6]
+			ldr r0, [r8]
+			cmp r0, #1
+			beq sc_border_int_hi
+//sc_border1:
+			//ldr r0, [r9]
+			//cmp r0, #1
+			//beq sc_border1
+			mov r0, #0xffff
+			str r0, [r10]
+			mov r0, #1
+			str r0, [r8]
+			strb r0, [r7]
 			b count
 
 
 sc_border_int_lo:
-			ldr r7, [r8]
-			cmp r7, #1
-			beq sc_border
-sc_border3:
-			ldr r7, [r11]
-			cmp r7, #1
-			beq sc_border3
-
-			mov r7, #1
-			str r7, [r9]
-			str r7, [r8]
-			mov r7, #0
-			strb r7, [r6]
+			ldr r0, [r8]
+			cmp r0, #1
+			beq sc_border_int_lo
+//sc_border2:
+			//ldr r0, [r9]
+			//cmp r0, #1
+			//beq sc_border2
+			mov r0, #0xffff
+			str r0, [r10]
+			mov r0, #1
+			str r0, [r8]
+			mov r0, #0
+			strb r0, [r7]
 			b count
-
 
 
 sc_border:
-			ldr r7, [r8]
-			cmp r7, #1
+			ldr r0, [r8]
+			cmp r0, #1
 			beq sc_border
-sc_border1:
-			ldr r7, [r11]
-			cmp r7, #1
-			beq sc_border1
-
-			mov r7, #1
-			str r7, [r9]
-			str r7, [r8]
+//sc_border3:
+			//ldr r0, [r9]
+			//cmp r0, #1
+			//beq sc_border3
+			mov r0, #0xffff
+			str r0, [r10]
+			mov r0, #1
+			str r0, [r8]
 			b count
 
+
 sc_out:
-			ldr r7, [r11]
-			cmp r7, #1
-			beq sc_out
+			ldrb r1, [r5, r1]//pix
+			ldrb r2, [r5, r2]//atr
+			tst r2, #0x80
+			beq sc_no_flash
+			tst r3, #0x40000
+			bne sc_no_flash
+			eor r1, r1, #0xff
+
+sc_no_flash:
+			and r2, r2, #0x7f
+			add r2, r1, r2, lsl #8
+			add r1, r6, r2, lsl #4
 sc_out1:
-			ldr r7, [r8]
-			cmp r7, #1
+			ldr r0, [r9]
+			cmp r0, #1
 			beq sc_out1
-			mov r7, #1
-			str r7, [r12]
-			str r7, [r11]
+//sc_out2:
+			//ldr r0, [r8]
+			//cmp r0, #1
+			//beq sc_out2
+			mov r0, #0xffff
+			str r0, [r10]
+			str r1, [r11]
+			mov r0, #1
+			str r0, [r9]
+
+
 count:
 			add r3, #1
-			cmp r3, #9600
+			add r4, #1
+			cmp r4, #9600
 			bne loop
-			movw r3, #0
+			mov r4, #0
 			b loop
-init:
-			movw r3, #0
-			ldr r0, =RNG_BASE+RNG_DR
-			ldr r1, =noise
 
-			ldr r6, =INT_SCR
-			ldr r10, =TIM11_BB_SR_UIF
-
-			//ldr r6, =DMA_BB_LISR_TCIF0
+reg_init:
+			ldr r3, =counter_start
+			ldr r4, =counter_start
+			ldr r5, =memory
+			ldr r6, =screen_data
+			ldr r7, =INT_SCR
 			ldr r8, =DMA_BB_S0CR_EN
-			ldr r9, =DMA_BB_LIFCR_TCIF0
-
-			//ldr r10, =DMA_BB_LISR_TCIF1
-			ldr r11, =DMA_BB_S1CR_EN
-			ldr r12, =DMA_BB_LIFCR_TCIF1
-
+			ldr r9, =DMA_BB_S1CR_EN
+			ldr r10, =DMA2_BASE+DMA_LIFCR
+			ldr r11, =DMA2_BASE+DMA_S1PAR
+			ldr r12, =TIM11_BB_SR_UIF
 			b loop
