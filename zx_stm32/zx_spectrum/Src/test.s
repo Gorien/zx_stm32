@@ -19,6 +19,9 @@
 
 .equ TIM11_BB_SR_UIF, 0x42290200
 
+.equ enable, 1
+.equ disable, 0
+
 //.equ DMA_LISR, 0x0000
 
 
@@ -51,8 +54,8 @@ loop:
 			ldr r0, [r12] //polling tim11 up
 			cmp r0, #1
 			bne loop
-			mov r0, #0
-			str r0, [r12]
+			//mov r0, #0
+			str r9, [r12]
 
 			tbh [pc, r4]
 table:
@@ -34236,50 +34239,23 @@ sc_0x57FF:
 
 
 sc_border_int_hi:
-			ldr r0, [r8]
-			cmp r0, #1
-			beq sc_border_int_hi
-//sc_border1:
-			//ldr r0, [r9]
-			//cmp r0, #1
-			//beq sc_border1
-			mov r0, #0xffff
-			str r0, [r10]
-			mov r0, #1
-			str r0, [r8]
-			strb r0, [r7]
+			//mov r0, #1
+			str r10, [r8]
+			strb r10, [r7]
 			b count
 
 
 sc_border_int_lo:
-			ldr r0, [r8]
-			cmp r0, #1
-			beq sc_border_int_lo
-//sc_border2:
-			//ldr r0, [r9]
-			//cmp r0, #1
-			//beq sc_border2
-			mov r0, #0xffff
-			str r0, [r10]
-			mov r0, #1
-			str r0, [r8]
-			mov r0, #0
-			strb r0, [r7]
+			//mov r0, #1
+			str r10, [r8]
+			//mov r0, #0
+			strb r9, [r7]
 			b count
 
 
 sc_border:
-			ldr r0, [r8]
-			cmp r0, #1
-			beq sc_border
-//sc_border3:
-			//ldr r0, [r9]
-			//cmp r0, #1
-			//beq sc_border3
-			mov r0, #0xffff
-			str r0, [r10]
-			mov r0, #1
-			str r0, [r8]
+			//mov r0, #1
+			str r10, [r8]
 			b count
 
 
@@ -34296,24 +34272,25 @@ sc_no_flash:
 			and r2, r2, #0x7f
 			add r2, r1, r2, lsl #8
 			add r1, r6, r2, lsl #4
-sc_out1:
-			ldr r0, [r9]
-			cmp r0, #1
-			beq sc_out1
-//sc_out2:
-			//ldr r0, [r8]
-			//cmp r0, #1
-			//beq sc_out2
-			mov r0, #0xffff
-			str r0, [r10]
-			str r1, [r11]
-			mov r0, #1
-			str r0, [r9]
+
+			str r1, [r11, #0x0030]
+			//mov r0, #1
+			str r10, [r8, #0x0300]
+
 
 
 count:
 			add r3, #1
 			add r4, #1
+
+count1:
+			ldr r0, [r11, #0x0000]
+			tst r0, #0x820
+			beq count1
+
+			mov r0, #0xffff
+			str r0, [r11, #0x0008]
+
 			cmp r4, #9600
 			bne loop
 			mov r4, #0
@@ -34326,8 +34303,8 @@ reg_init:
 			ldr r6, =screen_data
 			ldr r7, =INT_SCR
 			ldr r8, =DMA_BB_S0CR_EN
-			ldr r9, =DMA_BB_S1CR_EN
-			ldr r10, =DMA2_BASE+DMA_LIFCR
-			ldr r11, =DMA2_BASE+DMA_S1PAR
+			ldr r9, =disable
+			ldr r10, =enable
+			ldr r11, =DMA2_BASE//+DMA_S1PAR
 			ldr r12, =TIM11_BB_SR_UIF
 			b loop
