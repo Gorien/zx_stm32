@@ -56,7 +56,7 @@ void zx_run(void)
 
 	z80_reset();
 
-	LCD_SetCursor(31, 23);
+	LCD_SetCursor(23, 23);
 
 	//ADC1->CR2=0;
 	//ADC1->CR2|=ADC_CR2_CONT;

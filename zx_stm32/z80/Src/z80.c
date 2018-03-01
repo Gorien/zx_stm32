@@ -52,6 +52,7 @@ uint8_t z80_run(void)
 	noise=(RNG->DR)&0x00ff;
 	if(INT_SCR&&INT_mask)
 	{
+			INT_SCR=DISABLE;
 			HAL_GPIO_TogglePin(green_LED_GPIO_Port, green_LED_Pin);
 			halt=DISABLE;
 			if(IM)
@@ -61,12 +62,14 @@ uint8_t z80_run(void)
 				vector_nmi=(I*256)+255;
 				vector_nmi=(memory[vector_nmi+1]<<8)|memory[vector_nmi];
 				RST(vector_nmi);
+				return(19);
 			}
 			else
 			{
 				IFF1=0;
 				IFF2=0;
 				RST(0x38);
+				return(13);
 			}
 	}
 	INT_mask=IFF1;
