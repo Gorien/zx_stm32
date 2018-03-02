@@ -3,7 +3,8 @@
  *	Author: Beloussov Yegor
  *	Created on: january 2018
  *
- *	The program emulating the work of the processor z80
+ *	The program emulating the work of the processor z80 (z80 in the Spectrum
+ *	version)
  *
  */
 
@@ -18,6 +19,7 @@ uint16_t vector_nmi;
 uint8_t INT_SCR;
 uint8_t INT_mask;
 uint16_t color [8]={0x0000,0x000F,0x7800,0x780F,0x03E0,0x03EF,0x7BE0,0x7BEF};
+uint16_t border;
 
 #include "z80_memory.c"
 #include "z80_registers.c"

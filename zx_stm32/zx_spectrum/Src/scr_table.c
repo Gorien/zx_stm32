@@ -3,7 +3,7 @@
  *	Author: Beloussov Yegor
  *	Created on: january 2018
  *
- *	The program emulating the work ZX Spectrum
+ *	Array of colors, depending on the value of the attribute and pixels.
  *
  */
 

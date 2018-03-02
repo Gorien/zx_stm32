@@ -3,10 +3,10 @@
  *	Author: Beloussov Yegor
  *	Created on: january 2018
  *
- *	The main interface header file of the processor emulator is z80. In writing
- *	the emulator code, different Internet resources were used. Most of the code
- *	is borrowed from https://sourceforge.net/projects/z80ex/. Creation of the
- *	famous Pigmaker57 aka Boo-boo.
+ *	The main interface header file of the processor emulator is z80 (z80 in the
+ *	Spectrum version).In writing the emulator code, different Internet
+ *	resources were used. Most of the code is borrowed from
+ *	https://sourceforge.net/projects/z80ex/. Creation of the famous Pigmaker57 aka Boo-boo.
  *
  */
 
@@ -18,6 +18,7 @@ extern uint8_t memory[0x10000];
 extern uint8_t const ROM[16384];
 extern uint8_t INT_SCR;
 extern uint8_t port_rf;
+extern uint16_t border;
 
 void z80_reset(void);
 uint8_t z80_run(void);

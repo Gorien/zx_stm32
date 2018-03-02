@@ -37,7 +37,6 @@
 
 /* USER CODE BEGIN 0 */
 #include "z80.h"
-#include "zx.h"
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/

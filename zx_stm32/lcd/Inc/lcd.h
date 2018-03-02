@@ -20,8 +20,7 @@
 #define Reset_Pin_Active HAL_GPIO_WritePin(reset_LCD_GPIO_Port, reset_LCD_Pin, GPIO_PIN_RESET);
 #define Reset_Pin_Idle HAL_GPIO_WritePin(reset_LCD_GPIO_Port, reset_LCD_Pin, GPIO_PIN_SET);
 
-/*LCD цвета*/
-#define Green          0x03E0
+#define Green          0x03E0 //LCD color
 #define Red            0x7800
 #define Blue           0x000F
 #define Black          0x0000
@@ -35,5 +34,6 @@ void LCD_Init(void);
 void LCD_Clear(uint16_t Color);
 void LCD_SetCursor(uint16_t x, uint16_t y);
 void LCD_Write(uint16_t LCD_RegValue);
+void LCD_Set_Region(void);
 
 #endif /* INC_LCD_H_ */

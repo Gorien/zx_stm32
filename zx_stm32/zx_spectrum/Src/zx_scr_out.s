@@ -1,52 +1,31 @@
-#include "zx.h"
+/*
+ *
+ *	Author: Beloussov Yegor
+ *	Created on: january 2018
+ *
+ *	Fast output of the Spectrum screen on the LCD display
+ *
+ */
 
+#include "zx.h"
 
 .syntax unified
 .thumb
 
-
-
-//.equ RNG_BASE, 0x50060800
-//.equ RNG_DR, 0x0008
-
 .equ counter_start, 0x0000
-
 .equ DMA2_BASE, 0x40026400
 .equ DMA_S1PAR, 0x0030
 .equ DMA_LIFCR, 0x0008
 .equ DMA_BB_S0CR_EN, 0x424c8200
 .equ DMA_BB_S1CR_EN, 0x424c8500
-
 .equ TIM11_BB_SR_UIF, 0x42290200
-
 .equ enable, 1
 .equ disable, 0
 
-//.equ DMA_LISR, 0x0000
-
-
-//.equ DMA_LISR_TCIF0, 0x0020
-//.equ DMA_LISR_TCIF1, 0x0800
-
-
-
-//.equ DMA_S0CR, 0x0010
-//.equ DMA_S1CR, 0x0028
-
-
-//.equ DMA_BB_LISR_TCIF0, 0x424c8014
-//.equ DMA_BB_LIFCR_TCIF0, 0x424c8114
-
-
-//.equ DMA_BB_LISR_TCIF1, 0x424c802c
-//.equ DMA_BB_LIFCR_TCIF1, 0x424c812c
-
 .global z80_screen
-
 .extern memory //pointer to memory and data array
 .extern screenn_data
 .extern INT_SCR //interrupt for z80, 50Hz
-
 
 z80_screen:
 			b reg_init
@@ -34238,7 +34217,7 @@ sc_0x57FF:
 
 
 
-sc_border:
+sc_border: //display border
 			ldr r0, [r11, #0x0000]
 			tst r0, #0x820
 			beq sc_border
@@ -34248,7 +34227,7 @@ sc_border:
 			str r10, [r8]
 			b count
 
-sc_border_int_hi:
+sc_border_int_hi: //display border and set INT for z80
 			add r3, #1
 			strb r10, [r7]
 sc_border_int_hi_trc:
@@ -34257,27 +34236,12 @@ sc_border_int_hi_trc:
 			beq sc_border_int_hi_trc
 			mov r0, #0xffff
 			str r0, [r11, #0x0008]
-
-
 			str r10, [r8]
 			b count
 
-
-//sc_border_int_lo:
-			//strb r9, [r7]
-//sc_border_int_lo_trc:
-			//ldr r0, [r11, #0x0000]
-			//tst r0, #0x820
-			//beq sc_border_int_lo_trc
-			//mov r0, #0xffff
-			//str r0, [r11, #0x0008]
-
-			//str r10, [r8]
-			//b count
-
-sc_out:
-			ldrb r1, [r5, r1]//pix
-			ldrb r2, [r5, r2]//atr
+sc_out: //display screen
+			ldrb r1, [r5, r1]//pixel
+			ldrb r2, [r5, r2]//attribute
 			tst r2, #0x80
 			beq sc_no_flash
 			tst r3, #0x20
@@ -34297,16 +34261,14 @@ sc_out_trc:
 			str r1, [r11, #0x0030]
 			str r10, [r8, #0x0300]
 
-
-
 count:
 			add r4, #1
-			cmp r4, #9600
+			cmp r4, #8960
 			bne loop
 			mov r4, #0
 			b loop
 
-reg_init:
+reg_init: //initialization of registers with addresses of memory and peripherals
 			ldr r3, =counter_start
 			ldr r4, =counter_start
 			ldr r5, =memory
@@ -34319,5 +34281,4 @@ reg_init:
 			ldr r12, =TIM11_BB_SR_UIF
 
 			str r10, [r8] //first transmit for set flag TCIF (transmit complete)
-
 			b loop
